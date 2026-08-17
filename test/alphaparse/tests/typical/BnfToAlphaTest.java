@@ -1,4 +1,4 @@
-package alphaparse.tests;
+package alphaparse.tests.typical;
 
 import alphaparse.Alpha;
 import alphaparse.Sym;
@@ -74,14 +74,29 @@ public class BnfToAlphaTest {
     @Test
     void testTransform() {
         var parse = parser().parse("""
-                <S> ::= '+' <number>
+                <S> ::= <opt-whitespace> '+' <opt-whitespace> <number> <opt-whitespace> | <opt-whitespace> '-' <opt-whitespace> <number> <opt-whitespace>
                 <number> ::= <digit> <number> | <digit>
                 <digit> ::= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+                <opt-whitespace> ::= " " <opt-whitespace> | "\\t" <opt-whitespace> | "\\n" <opt-whitespace> | ""
                 """);
         var albnf = transform(parse, Sym.sym("S"));
         Assertions.assertEquals(
-                PT.create("S", "+", PT.create("number", PT.create("digit", "9"), PT.create("number", PT.create("digit", "5")))),
+                PT.create("S",
+                        PT.create("opt-whitespace"),
+                        "+",
+                        PT.create("opt-whitespace"),
+                        PT.create("number", PT.create("digit", "9"), PT.create("number", PT.create("digit", "5"))),
+                        PT.create("opt-whitespace")),
                 albnf.parse("+95")
+        );
+        Assertions.assertEquals(
+                PT.create("S",
+                        PT.create("opt-whitespace", " ", PT.create("opt-whitespace")),
+                        "+",
+                        PT.create("opt-whitespace", "\t", PT.create("opt-whitespace")),
+                        PT.create("number", PT.create("digit", "9"), PT.create("number", PT.create("digit", "5"))),
+                        PT.create("opt-whitespace")),
+                albnf.parse(" +\t95")
         );
     }
 
@@ -107,13 +122,8 @@ public class BnfToAlphaTest {
                 <rule-name>      ::= <letter> | <rule-name> <rule-char>
                 <rule-char>      ::= <letter> | <digit> | "-"
                 """;
-
         var bnfParserForBnf = transform(parser().parse(bnfGrammar), Sym.sym("syntax"));
-        System.out.println(bnfParserForBnf);
-        System.out.println(bnfParserForBnf.show());
-        System.out.println(bnfParserForBnf.parse("<syntax>         ::= <rule> | <rule> <syntax>\n"));
-
-        //System.out.println(p.parse(bnfGrammar));
+        Assertions.assertTrue(bnfParserForBnf.parse(bnfGrammar).isSuccess());
     }
 
     // syntax         ::= rule | rule syntax
@@ -127,22 +137,22 @@ public class BnfToAlphaTest {
 
     // rule           ::= opt-whitespace "<" rule-name ">" opt-whitespace "::=" opt-whitespace expression line-end
     private Object rule(final List<Object> pt) {
-        var ruleName = pt.get(2);
-        var expression = pt.get(7);
+        var ruleName = pt.get(2); // rule-name
+        var expression = pt.get(7); // expression
         return Map.entry(Sym.sym(ruleName.toString()), expression);
     }
 
     // line-end       ::= opt-whitespace "\n" | opt-whitespace "\n" line-end
     private Object lineEnd(final List<Object> pt) {
-        return unescapeEscapeSeqOrIgnore(pt);
+        return null;
     }
 
     // expression     ::= list | list opt-whitespace "|" opt-whitespace expression
     private Object expression(final List<Object> pt) {
         if (pt.size() == 1)
-            return pt.get(0);
-        var list = (Rule) pt.get(0);
-        var expr = pt.get(4);
+            return pt.get(0); // list
+        var list = (Rule) pt.get(0); // list
+        var expr = pt.get(4); // expression
         if (expr instanceof List) {
             //noinspection unchecked
             return AlternationRule.create(Stream.concat(Stream.of(list), ((List<Rule>) expr).stream()).toList());
@@ -153,14 +163,14 @@ public class BnfToAlphaTest {
     // opt-whitespace ::= " " opt-whitespace | ""
     private Object optWhitespace(final List<Object> pt) {
         // Do nothing
-        return unescapeEscapeSeqOrIgnore(pt);
+        return null;
     }
 
     // list           ::= term | term opt-whitespace list
     private Object list(final List<Object> pt) {
         if (pt.size() > 1)
-            return ConcatRule.create(List.of((Rule) pt.get(0), (Rule) pt.get(2)));
-        return pt.get(0);
+            return ConcatRule.create(List.of((Rule) pt.get(0), (Rule) pt.get(2))); // term and list
+        return pt.get(0); // term
     }
 
     // term           ::= literal | "<" rule-name ">"
@@ -176,12 +186,13 @@ public class BnfToAlphaTest {
 
     // text1          ::= "" | character1 text1
     private Object text1(final List<Object> pt) {
-        return pt.stream().map(Object::toString).collect(Collectors.joining());
+        //System.out.println(pt.stream().map(Object::toString).collect(Collectors.joining()));
+        return unescape(pt.stream().map(Object::toString).collect(Collectors.joining()));
     }
 
     // text2          ::= "" | character2 text2
     private Object text2(final List<Object> pt) {
-        return pt.stream().map(Object::toString).collect(Collectors.joining());
+        return unescape(pt.stream().map(Object::toString).collect(Collectors.joining()));
     }
 
     // character      ::= letter | digit | symbol
@@ -194,9 +205,9 @@ public class BnfToAlphaTest {
         return pt.get(0);
     }
 
-    // symbol         ::= "|" | " " | "!" | "#" | "$" | "%" | "&" | "(" | ")" | "*" | "+" | "," | "-" | "." | "/" | ":" | ";" | ">" | "=" | "<" | "?" | "@" | "[" | "\\" | "]" | "^" | "_" | "`" | "{" | "}" | "~"
+    // symbol         ::= "\n" | "\r" | "\t" | "|" | " " | "!" | "#" | "$" | "%" | "&" | "(" | ")" | "*" | "+" | "," | "-" | "." | "/" | ":" | ";" | ">" | "=" | "<" | "?" | "@" | "[" | "\\" | "]" | "^" | "_" | "`" | "{" | "}" | "~"
     private Object symbol(final List<Object> pt) {
-        return unescapeEscapeSeqOrIgnore(pt).get(0);
+        return pt.get(0);
     }
 
     // rule-name      ::= letter | rule-name rule-char
@@ -204,13 +215,15 @@ public class BnfToAlphaTest {
         return NonTerminal.create(Sym.sym(pt.stream().map(Object::toString).collect(Collectors.joining())));
     }
 
-    private List<Object> unescapeEscapeSeqOrIgnore(List<Object> pt) {
-        return pt.stream().map(it -> {
-            if (Objects.equals(it, "\\n")) return "\n";
-            else if (Objects.equals(it, "\\r")) return "\r";
-            else if (Objects.equals(it, "\\t")) return "\t";
-            else return it;
-        }).toList();
-    }
+    private String unescape(String s) {
+        return s.replace("\\b", "\b")
+            .replace("\\t", "\t")
+            .replace("\\n", "\n")
+            .replace("\\f", "\f")
+            .replace("\\r", "\r")
+            .replace("\\s", " ")
+            .replace("\\\"", "\"")
+            .replace("\\'", "'")
+            .replace("\\\\", "\\");}
 }
     

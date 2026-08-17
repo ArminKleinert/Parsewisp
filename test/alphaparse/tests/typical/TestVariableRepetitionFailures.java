@@ -1,4 +1,4 @@
-package alphaparse.tests;
+package alphaparse.tests.typical;
 
 import alphaparse.Alpha;
 import alphaparse.error.ParserCreationFailure;
@@ -34,7 +34,7 @@ class TestVariableRepetitionFailures {
                         S = 0*6 'a' 'a'
                         """,
                 creationOpts);
-        System.out.println(repeated_a);
+        //System.out.println(repeated_a);
         Assertions.assertEquals(treesPartial, new HashSet<>(Alpha.parses(repeated_a, text, partialOpts)));
     }
     @Test
@@ -56,7 +56,7 @@ class TestVariableRepetitionFailures {
                         S = 'a' 0*6 'a'
                         """,
                 creationOpts);
-        System.out.println(repeated_a);
+        //System.out.println(repeated_a);
         Assertions.assertEquals(treesPartial, new HashSet<>(Alpha.parses(repeated_a, text, partialOpts)));
     }
 
@@ -79,7 +79,7 @@ class TestVariableRepetitionFailures {
                         S = 1*6 'a'
                         """,
                 creationOpts);
-        System.out.println(repeated_a);
+        //System.out.println(repeated_a);
         Assertions.assertEquals(treesPartial, new HashSet<>(Alpha.parses(repeated_a, text, partialOpts)));
     }
     @Test

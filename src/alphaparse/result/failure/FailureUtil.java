@@ -122,10 +122,11 @@ public final class FailureUtil {
 
         final int total = fullReasons.size() + partialReasons.size();
 
-        if (total == 1)
+        if (total == 1) {
             sb.append("Expected:").append('\n');
-        else if (total > 1)
+        } else if (total > 1) {
             sb.append("Expected one of:").append('\n');
+        }
 
         for (String fullReasonExpect : fullReasons) {
             sb.append(fullReasonExpect);

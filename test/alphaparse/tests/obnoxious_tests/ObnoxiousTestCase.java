@@ -27,7 +27,7 @@ public class ObnoxiousTestCase {
      *     Mode: All parses.
      *     Grammar: {@code S = S | epsilon}
      *     Text: {@code ""}
-     *     Expect: Does something other than timing out.
+     *     Expect: I don't know.
      *     Status: Timeout.
      *     Note: This is technically correct behavior, but...
      * </pre>
