@@ -5,14 +5,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.stream.Stream;
 
 /**
  * A list-like type of generic elements. It is used to differentiate from other List types.
  * Elements can be added and iterated upon. Each addition creates a new instance.
  */
 @Unmodifiable
-public final class FlatResultSeq implements Iterable<Object> {
+public final class FlatResultSeq {
     private static FlatResultSeq EMPTY = null;
 
     private final Object[] v;
@@ -32,19 +32,8 @@ public final class FlatResultSeq implements Iterable<Object> {
         this.v = v;
     }
 
-    @Override
-    public @NotNull Iterator<Object> iterator() {
-        return new Iterator<>() {
-            private int pos = 0;
-
-            public boolean hasNext() {
-                return v.length > pos;
-            }
-
-            public Object next() {
-                return v[pos++];
-            }
-        };
+    public Stream<Object> stream() {
+        return Arrays.stream(v);
     }
 
     /**

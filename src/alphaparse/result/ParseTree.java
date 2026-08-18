@@ -128,9 +128,7 @@ public final class ParseTree implements List<@NotNull Node>, AlphaParseResult {
         if (content == null) {
             afs = List.of();
         } else if (content instanceof FlatResultSeq) {
-            final @NotNull var res = new ArrayList<Node>();
-            for (@NotNull var t : ((FlatResultSeq) content)) res.add(Node.of(t));
-            afs = res;
+            afs = ((FlatResultSeq) content).stream().map(Node::of).toList();
         } else if (content instanceof String) {
             afs = List.of(Node.of(content));
         } else if (content instanceof TotalParsesFailureNode) {
