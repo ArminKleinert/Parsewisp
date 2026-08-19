@@ -4,7 +4,7 @@ import alphaparse.collections.FlatResultSeq;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class FlatResultSeqTest {
+class FlatResultSeqTest {
     @Test void emptyIsEmpty() {
         Assertions.assertTrue(FlatResultSeq.make().isEmpty());
     }

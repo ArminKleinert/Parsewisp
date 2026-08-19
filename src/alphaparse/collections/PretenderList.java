@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * An interface which pretends to be a list.
+ * An interface which pretends to be a list. Every method of {@link List} is defined to throw an {@link UnsupportedOperationException}.
  *
  * @param <T> The generic type.
  */

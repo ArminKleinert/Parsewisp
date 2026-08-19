@@ -32,6 +32,11 @@ public final class FlatResultSeq {
         this.v = v;
     }
 
+    /**
+     * A flat stream of all elements.
+     *
+     * @return A flat stream of all elements.
+     */
     public Stream<Object> stream() {
         return Arrays.stream(v);
     }

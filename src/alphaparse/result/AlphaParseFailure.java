@@ -10,11 +10,11 @@ import java.util.*;
 /**
  * Represents failures that occurred while parsing.
  *
- * @param index  The index where parsing failed.
+ * @param index      The index where parsing failed.
  * @param reasonList The list of expected productions or other reasons why parsing failed.
- * @param line   The line where parsing failed, 1-indexed. This can be inferred from the string and index.
- * @param column The column where parsing failed, 1-indexed. This can be inferred from the string and index.
- * @param text   The text that could not be matched.
+ * @param line       The line where parsing failed, 1-indexed. This can be inferred from the string and index.
+ * @param column     The column where parsing failed, 1-indexed. This can be inferred from the string and index.
+ * @param text       The text that could not be matched.
  */
 public record AlphaParseFailure(int index,
                                 @NotNull List<ParseFailureReason> reasonList,
@@ -25,7 +25,7 @@ public record AlphaParseFailure(int index,
     /**
      * An alternative, shorter constructor. Other information will be added later separately.
      *
-     * @param index  The index where parsing failed.
+     * @param index      The index where parsing failed.
      * @param reasonList The list of expected things or other reasons why parsing failed.
      */
     public AlphaParseFailure(final int index, final @NotNull List<ParseFailureReason> reasonList) {

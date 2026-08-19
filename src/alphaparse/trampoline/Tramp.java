@@ -167,7 +167,7 @@ public final class Tramp {
      * Removes the top of the stack.
      */
     public void popStack() {
-        stack.remove(stack.size()-1);
+        stack.remove(stack.size() - 1);
     }
 
     /**

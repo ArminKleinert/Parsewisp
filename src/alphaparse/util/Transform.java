@@ -21,10 +21,10 @@ public final class Transform {
             final @NotNull Node node,
             final @NotNull Map<@NotNull Sym, @NotNull Function<@NotNull List<Object>, Object>> transformMap
     ) {
-        if    (node instanceof Node.NodeTreeTag) return ((Node.NodeTreeTag)node).content();
-        if    (node instanceof Node.NodeString)  return ((Node.NodeString)node).content();
-        if    (node instanceof Node.NodeFail)  return ((Node.NodeFail)node).content();
-        if    (node instanceof Node.NodeParseTree)  return transform(((Node.NodeParseTree)node).content(), transformMap);
+        if (node instanceof Node.NodeTreeTag) return ((Node.NodeTreeTag) node).content();
+        if (node instanceof Node.NodeString) return ((Node.NodeString) node).content();
+        if (node instanceof Node.NodeFail) return ((Node.NodeFail) node).content();
+        if (node instanceof Node.NodeParseTree) return transform(((Node.NodeParseTree) node).content(), transformMap);
         throw new IllegalArgumentException("Invalid node: " + node + " of type " + node.getClass());
     }
 

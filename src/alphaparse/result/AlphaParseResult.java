@@ -14,13 +14,10 @@ public sealed interface AlphaParseResult
      * @return Output as {@link AlphaParseResult}.
      */
     static @NotNull AlphaParseResult make(final @NotNull Object o) {
-        if (o instanceof ParseTree || o instanceof AlphaParseFailure) {return (AlphaParseResult) o;}
+        if (o instanceof ParseTree || o instanceof AlphaParseFailure) {
+            return (AlphaParseResult) o;
+        }
         throw new IllegalArgumentException(o.getClass().toString());
-//        return switch (o) {
-//            case ParseTree objects -> objects;
-//            case AlphaParseFailure objects -> objects;
-//            default -> throw new IllegalArgumentException(o.getClass().toString());
-//        };
     }
 
     /**

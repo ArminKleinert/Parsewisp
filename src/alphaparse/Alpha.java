@@ -101,7 +101,7 @@ public final class Alpha {
      * @param options The options
      * @return The parser.
      * @throws IOException If the file doesn't exist or can't be accessed.
-     * @see #parser(String, ParserCreationOptions) 
+     * @see #parser(String, ParserCreationOptions)
      */
     public static @NotNull Parser parser(final @NotNull File grammar,
                                          final @NotNull ParserCreationOptions options) throws IOException {

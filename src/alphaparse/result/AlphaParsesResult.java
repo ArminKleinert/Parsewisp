@@ -23,10 +23,10 @@ public sealed interface AlphaParsesResult
      * @return Output as {@link AlphaParsesResult}.
      */
     static @NotNull AlphaParsesResult make(final @NotNull Object o) {
-        if    (o instanceof TotalParsesFailureNode) return (TotalParsesFailureNode)o;
-        if    (o instanceof LazyResultList)  return (LazyResultList)o;
-        if    (o instanceof ParsesFailureResult)  return (ParsesFailureResult)o;
-        if    (o instanceof AlphaParseFailure)  return new ParsesFailureResult((AlphaParseFailure)o);
+        if (o instanceof TotalParsesFailureNode) return (TotalParsesFailureNode) o;
+        if (o instanceof LazyResultList) return (LazyResultList) o;
+        if (o instanceof ParsesFailureResult) return (ParsesFailureResult) o;
+        if (o instanceof AlphaParseFailure) return new ParsesFailureResult((AlphaParseFailure) o);
         throw new IllegalArgumentException(o.getClass().toString());
     }
 

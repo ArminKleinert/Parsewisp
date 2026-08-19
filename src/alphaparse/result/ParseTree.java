@@ -75,6 +75,7 @@ public final class ParseTree implements List<@NotNull Node>, AlphaParseResult {
 
     /**
      * Equivalent to {@code getContent().get(index)}.
+     *
      * @param index The index in content.
      * @return A node.
      */
@@ -215,9 +216,13 @@ public final class ParseTree implements List<@NotNull Node>, AlphaParseResult {
         }
 
         for (@NotNull Node node : content) {
-            if (node instanceof Node.NodeParseTree) l[i++] = ((Node.NodeParseTree)node).content().toRawList();
-            else if (node instanceof Node.NodeTreeTag || node instanceof Node.NodeString || node instanceof Node.NodeFail)l[i++] = node.content();
-            else throw new IllegalArgumentException(node.getClass().toString());
+            if (node instanceof Node.NodeParseTree) {
+                l[i++] = ((Node.NodeParseTree) node).content().toRawList();
+            } else if (node instanceof Node.NodeTreeTag || node instanceof Node.NodeString || node instanceof Node.NodeFail) {
+                l[i++] = node.content();
+            } else {
+                throw new IllegalArgumentException(node.getClass().toString());
+            }
         }
 
         return Arrays.asList(l);

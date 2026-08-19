@@ -49,14 +49,14 @@ public final class Viztool {
         final @NotNull Node fpr = parseRes.get(0);
         final @NotNull String label;
         if (fpr instanceof Node.NodeString) {
-            label = ((Node.NodeString)fpr).content();
-        }else if (fpr instanceof Node.NodeTreeTag) {
-            label = ((Node.NodeTreeTag)fpr).content().name();
-        }else if (fpr instanceof Node.NodeFail) {
+            label = ((Node.NodeString) fpr).content();
+        } else if (fpr instanceof Node.NodeTreeTag) {
+            label = ((Node.NodeTreeTag) fpr).content().name();
+        } else if (fpr instanceof Node.NodeFail) {
             throw new IllegalStateException("Cannot create parse-tree visualization for " + fpr + " (TODO).");
-    }else if (fpr instanceof Node.NodeParseTree) {
-        throw new IllegalStateException("This case should be handled in dumpParseTreeHelp.");
-    } else  {
+        } else if (fpr instanceof Node.NodeParseTree) {
+            throw new IllegalStateException("This case should be handled in dumpParseTreeHelp.");
+        } else {
             throw new IllegalStateException(fpr.getClass().getName());
         }
         return label.replace("\\", "\\\\").replace("\"", "\\\"");
