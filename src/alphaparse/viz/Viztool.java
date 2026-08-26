@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Provides a utility for creating pictures of parse trees. If the trees become too large, the generation might fail.
  * <pre>
  * {@code
- *   String text = "...";
+ *   var text = "...";
  *   var p = Alpha.parser("...");
  *   var rule = Alpha.parse(p, text).castToParseSuccess();
  *   println(Viztool.dumpParseTree("vizoutput", rule));
@@ -67,7 +67,7 @@ public final class Viztool {
      * Example:
      * <pre>
      * {@code
-     *   String text = "abc";
+     *   var text = "abc";
      *   var p = Alpha.parser("S : A 'bc'\nA : 'a'");
      *   var rule = Alpha.parse(p, text).castToParseSuccess(); // Parse tree [:S, [:A, 'a'], 'bc']
      *   println(Viztool.dumpParseTree("vizoutput", rule));
@@ -98,14 +98,3 @@ public final class Viztool {
         return Runtime.getRuntime().exec(args).waitFor();
     }
 }
-
-//      APENOESCAPENOE
-//   ESCAPENOESCAPENOESCA
-// NOESCAPENOESCAPENOESCAPE
-// NOESCAP NOESCAPE OESCAPE
-// NOESCA   OESCAP   ESCAPE
-// NOESCAP NOESCAPE OESCAPE
-//   ESCAPENOESCAPENOESCA
-//     CAPENOESCAPENOES
-//     CAPE OESCAP NOES
-//     CAPE OESCAP NOES

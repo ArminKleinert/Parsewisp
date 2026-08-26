@@ -1,0 +1,2 @@
+- Investigate: Could interning ReductionType instances save memory and time?
+  - What would be the cutoff in grammar size (number of productions)?

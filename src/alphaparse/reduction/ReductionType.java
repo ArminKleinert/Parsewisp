@@ -88,7 +88,7 @@ public final class ReductionType {
      * @return A new output descriptor.
      */
     public static @NotNull ReductionType defaultNonRawReduction(final @NotNull Sym key) {
-        return new ReductionType(key, ReductionType.ReductionTypesAvailable.TAGGED_PARSE_TREE, false);
+        return new ReductionType(key, ReductionTypesAvailable.TAGGED_PARSE_TREE, false);
     }
 
     /**
@@ -98,7 +98,7 @@ public final class ReductionType {
      * @return A new output descriptor.
      */
     public static @NotNull ReductionType nonTerminalReduction(final @NotNull Sym key) {
-        return new ReductionType(key, ReductionTypesAvailable.TAGGED_PARSE_TREE, false);
+        return defaultNonRawReduction(key);
     }
 
     @Override
@@ -158,7 +158,7 @@ public final class ReductionType {
         for (final @NotNull var prod : productions.entrySet()) {
             final @NotNull var key = prod.getKey();
             @NotNull var value = prod.getValue();
-            if (value.getReduction().getReductionType() == ReductionType.ReductionTypesAvailable.INITIAL) {
+            if (value.getReduction().getReductionType() == ReductionTypesAvailable.INITIAL) {
                 value = value.withReduction(ReductionType.defaultNonRawReduction(key));
             }
             prod.setValue(value);
