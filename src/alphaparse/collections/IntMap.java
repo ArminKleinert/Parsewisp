@@ -3,7 +3,7 @@ package alphaparse.collections;
 import alphaparse.trampoline.Tramp;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Arrays;
 
 /**
  * A sorted collection which uses primitive ints as keys. It is made specifically for use in {@link Tramp}.

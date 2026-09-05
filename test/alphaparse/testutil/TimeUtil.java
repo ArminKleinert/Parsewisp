@@ -42,6 +42,21 @@ public final class TimeUtil {
         return String.format("{:lowest %.3f, :highest %.3f, :diff %.3f, :average %.3f, :mid %.3f, :median %.3f, :total %.3f}",
                 min, max, diff, avg, mid, median, sum);
     }
+    public static @NotNull double measureTimeMillisMean(final int n, final @NotNull Procedure f) {
+        if (n < 1)
+            throw new IllegalArgumentException();
+
+        final double[] stream = DoubleStream.generate(() -> {
+            final long start = System.nanoTime();
+            f.execute();
+            final long end = System.nanoTime();
+            return (end - start) / 1000000.0;
+        }).limit(n).sorted().toArray();
+
+        var factor = 0.1;
+        var keep = (long) Math.ceil((1 - factor) * stream.length);
+        return Arrays.stream(stream).skip((long) Math.floor(stream.length * factor) / 2).limit(keep).sum() / keep;
+    }
 
     /**
      * Another test method.

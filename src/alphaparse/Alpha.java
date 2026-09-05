@@ -89,8 +89,8 @@ public final class Alpha {
      */
     public static @NotNull Parser parser(final @NotNull String grammar,
                                          final @NotNull ParserCreationOptions options) {
-        var grammarForParsingGrammar = CfgGrammar.makeCfg(options);
-        var g = Cfg.make(options).buildGrammar(grammar, grammarForParsingGrammar);
+        var grammarForParsingGrammars = CfgGrammar.makeCfg(options);
+        var g = Cfg.make(options).buildGrammar(grammar, grammarForParsingGrammars);
         return parser(g, options);
     }
 

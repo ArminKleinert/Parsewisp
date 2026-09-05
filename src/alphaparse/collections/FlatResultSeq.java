@@ -1,22 +1,35 @@
 package alphaparse.collections;
 
-
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-/**
- * A list-like type of generic elements. It is used to differentiate from other List types.
- * Elements can be added and iterated upon. Each addition creates a new instance.
- */
-@Unmodifiable
-public final class FlatResultSeq {
+public class FlatResultSeq {
     private static FlatResultSeq EMPTY = null;
 
-    private final Object[] v;
-    private int hashCode = 0;
+    private final @NotNull FlatResultSeq head;
+    private final @NotNull Object nodeContent;
+    private final int size;
+
+    private Object[] cached;
+
+    private FlatResultSeq(@NotNull FlatResultSeq head, @NotNull Object nodeContent) {
+        this.head = head;
+        this.nodeContent = nodeContent;
+
+        int siz = head.size;
+        siz += (nodeContent instanceof FlatResultSeq)
+                ? ((FlatResultSeq) nodeContent).size
+                : 1;
+        this.size = siz;
+    }
+
+    private FlatResultSeq() {
+        this.head = this;
+        this.nodeContent = 0; // Meaningless value
+        this.size = 0;
+    }
 
     /**
      * Instances of this type always start empty. This method simply returns an empty sequence.
@@ -24,90 +37,45 @@ public final class FlatResultSeq {
      * @return The empty instance.
      */
     public static @NotNull FlatResultSeq make() {
-        if (EMPTY == null) EMPTY = new FlatResultSeq(new Object[0]);
+        if (EMPTY == null) EMPTY = new FlatResultSeq();
         return EMPTY;
     }
 
-    private FlatResultSeq(final @NotNull Object @NotNull [] v) {
-        this.v = v;
-    }
-
-    /**
-     * A flat stream of all elements.
-     *
-     * @return A flat stream of all elements.
-     */
-    public Stream<Object> stream() {
-        return Arrays.stream(v);
-    }
-
-    /**
-     * Return the size of the collection.
-     *
-     * @return The size as an int.
-     */
-    public int size() {
-        return v.length;
-    }
-
-    /**
-     * Equivalent to {@code size() == 0}
-     *
-     * @return true if {@code size() == 0}, false otherwise.
-     */
     public boolean isEmpty() {
-        return v.length == 0;
+        return size == 0;
     }
 
-    @Override
-    public @NotNull String toString() {
-        return Arrays.toString(v);
+    public int size() {
+        return size;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof FlatResultSeq c)) {
-            return false;
+    private int flatten(Object[] list, int backwardsIndex) {
+        if (isEmpty())
+            return backwardsIndex;
+
+        for (var h = this; h.size > 0; h = h.head) {
+            if (h.nodeContent instanceof FlatResultSeq) {
+                var fsl = (FlatResultSeq) h.nodeContent;
+                backwardsIndex = fsl.flatten(list, backwardsIndex);
+            } else {
+                list[backwardsIndex] = h.nodeContent;
+                backwardsIndex--;
+            }
         }
-        return Arrays.equals(v, c.v);
+
+        return backwardsIndex;
     }
 
-    @Override
-    public int hashCode() {
-        if (hashCode != 0)
-            return hashCode;
-        int hc = Arrays.hashCode(v);
-        hashCode = hc;
-        return hc;
+    public @NotNull Stream<Object> stream() {
+        if (cached == null) {
+            cached = new Object[size];
+            flatten(cached, size - 1);
+        }
+        return Arrays.stream(cached);
     }
 
-    /**
-     * Appends the input to the sequence. If the input is a {@link FlatResultSeq}, it is inserted into the instance flattened.
-     * <p>
-     * {@code null} inputs are ignored, as are empty {@link FlatResultSeq} inputs.
-     *
-     * @param obj Input.
-     * @return A new instance.
-     */
     public @NotNull FlatResultSeq appendOrConcat(final Object obj) {
-        if (obj == null)
-            return this;
-
-        if (obj instanceof FlatResultSeq frs) {
-            if (size() == 0)
-                return frs;
-            if (frs.isEmpty())
-                return this;
-            var otherArray = frs.v;
-            final @NotNull Object[] newV = Arrays.copyOf(v, v.length + otherArray.length);
-            System.arraycopy(otherArray, 0, newV, v.length, otherArray.length);
-
-            return new FlatResultSeq(newV);
-        } else {
-            final @NotNull Object[] newV = Arrays.copyOf(v, v.length + 1);
-            newV[newV.length - 1] = obj;
-
-            return new FlatResultSeq(newV);
-        }
+        if (obj == null) return this;
+        return new FlatResultSeq(this, obj);
     }
 }

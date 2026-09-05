@@ -15,7 +15,7 @@ import java.util.function.IntFunction;
  * @param <T> The result type for the function.
  */
 public class LazySupplierList<T> implements List<@Nullable T> {
-    private final @NotNull List<@NotNull T> evaluatedPart;
+    private final @NotNull ArrayList<@NotNull T> evaluatedPart;
     private final int maxResults;
     private @Nullable IntFunction<@Nullable T> nextFn;
     private boolean fullyEvaluated = false;
@@ -38,8 +38,10 @@ public class LazySupplierList<T> implements List<@Nullable T> {
             return evaluatedPart.get(i);
 
         // End reached.
-        if (evaluatedPart.size() >= maxResults)
+        if (evaluatedPart.size() >= maxResults) {
             fullyEvaluated = true;
+            nextFn = null; // Discard the function.
+        }
 
         // The list is fully evaluated. There is no element at index i.
         if (fullyEvaluated)

@@ -12,7 +12,10 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-final class CfgGrammar extends GrammarBuilder {
+/**
+ * A builder for grammars for parsing context free grammars (CFGs).
+ */
+public final class CfgGrammar extends GrammarBuilder {
     final @NotNull Set<RulesAvailable> rulesAvailable;
     final @NotNull ParserCreationOptions options;
 
@@ -621,8 +624,15 @@ final class CfgGrammar extends GrammarBuilder {
             addProduction("eof", makeEofRhs());
     }
 
+    /**
+     * Returns the grammar, which is constructed based on the options provided.
+     * The grammar can match EBNF grammars, ABNF grammars, or (almost) any mix thereof.
+     * For more comprehensive documentation of each option, see {@link ParserCreationOptions}.
+     * @param options The options.
+     * @return The grammar.
+     */
     @NotNull
-    static Grammar makeCfg(final @NotNull ParserCreationOptions options) {
+    public static Grammar makeCfg(final @NotNull ParserCreationOptions options) {
         return new CfgGrammar(options).build();
     }
 }

@@ -1,6 +1,7 @@
 package alphaparse.tests;
 
 import alphaparse.Alpha;
+import alphaparse.collections.FlatResultSeq;
 import alphaparse.parser.Parser;
 import alphaparse.parser_options.ParserCreationOptions;
 import alphaparse.parser_options.ParsingOptions;
@@ -16,6 +17,17 @@ import java.nio.file.Path;
 import java.util.List;
 
 class NewFeaturesTest {
+
+    @Test void test0 () {
+        {
+            var p = Alpha.parser("S = 'b' #'[a-z]'+");
+            System.out.println(p.parse("bac"));
+        }
+        {
+            var p = Alpha.parser("S = 'b' A 'n'\nA = 'A'");
+            System.out.println(p.parse("bAn"));
+        }
+    }
     @Test
     void test1() {
         var grammar = """

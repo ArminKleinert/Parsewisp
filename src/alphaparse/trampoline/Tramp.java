@@ -10,7 +10,8 @@ import alphaparse.result.success.AlphaParseMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import static alphaparse.trampoline.TrampolineListenerNode.TrampolineListenerKey;
 
@@ -21,8 +22,8 @@ public final class Tramp {
     private final @NotNull Grammar grammar;
     private final @NotNull String text;
     private final int failIndex;
-    private final @NotNull List<@NotNull Procedure> stack;
-    private final @NotNull List<@NotNull Procedure> nextStack;
+    private final @NotNull ArrayList<@NotNull Procedure> stack;
+    private final @NotNull ArrayList<@NotNull Procedure> nextStack;
     private int generation;
     //private final @NotNull TreeMap<@NotNull Integer, @NotNull NegativeListener> negativeListeners;
     private final @NotNull IntMap<@NotNull NegativeListener> negativeListeners;
@@ -95,7 +96,7 @@ public final class Tramp {
      *
      * @return A stack of derivative parse procedures of the current generation.
      */
-    public @NotNull List<@NotNull Procedure> getStack() {
+    public @NotNull ArrayList<@NotNull Procedure> getStack() {
         return stack;
     }
 
