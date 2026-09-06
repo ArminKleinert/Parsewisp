@@ -42,6 +42,13 @@ public final class TimeUtil {
         return String.format("{:lowest %.3f, :highest %.3f, :diff %.3f, :average %.3f, :mid %.3f, :median %.3f, :total %.3f}",
                 min, max, diff, avg, mid, median, sum);
     }
+
+    /**
+     * Helper method for tests.
+     * @param n Number of iterations.
+     * @param f Code to run.
+     * @return The average time in milliseconds. Outlier times are removed.
+     */
     public static @NotNull double measureTimeMillisMean(final int n, final @NotNull Procedure f) {
         if (n < 1)
             throw new IllegalArgumentException();

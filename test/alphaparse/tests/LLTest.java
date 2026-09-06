@@ -3,30 +3,36 @@ package alphaparse.tests;
 import alphaparse.Alpha;
 import alphaparse.parser.Parser;
 import alphaparse.testutil.TimeUtil;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /*
 OLD:
+.pDirect____ : 818.3564290666667
+.pLeftRecH__ : 5648.402744588889
+.pLeftRec___ : 93.51533295555556
+.pRightRecEH : 5422.940529233334
+.pRightRecE_ : 166.97516004444444
+.pRightRecH_ : 5269.696173433334
+.pRightRec__ : 154.55672841111112
+.pRegex_____ : 0.09188858888888889
 
-.pDirect____ : 739.3471753222223
-.pLeftRecH__ : 5409.360537688889
-.pLeftRec___ : 93.36093935555556
-.pRightRecEH : 5727.797799855555
-.pRightRecE_ : 170.1513648222222
-.pRightRecH_ : 5411.653376633333
-.pRightRec__ : 159.00848392222224
-.pRegex_____ : 0.15353901111111112
-
-Process finished with exit code 0
-
+NEW:
+.pDirect____ : 25.095488355555556
+.pLeftRecH__ : 5464.817504477778
+.pLeftRec___ : 88.95493266666666
+.pRightRecEH : 5563.318510811111
+.pRightRecE_ : 168.4477270111111
+.pRightRecH_ : 5544.912572888889
+.pRightRec__ : 154.1189783111111
+.pRegex_____ : 0.07210718888888888
  */
 
-public class LLTest {
-
+class LLTest {
     static final int reps = 30000;
     static final int runsPerMeasure = 100;
     static final String s = "b" + "a".repeat(reps);
+    static final String sReduced = "b" + "a".repeat(reps / 10);
 
     static final Parser pRegex = Alpha.parser("S = #'ba+'");
     static final Parser pDirect = Alpha.parser("S = 'b' 'a'+");
@@ -37,9 +43,12 @@ public class LLTest {
     static final Parser pRightRecE = Alpha.parser("S = 'b' A\nA = 'a' A | epsilon");
     static final Parser pRightRecEH = Alpha.parser("S = 'b' A\n<A> = 'a' A | epsilon");
 
-    @BeforeEach
-    void clean() {
-        System.gc();
+    @Test
+    void pEquality() {
+        var tree = pDirect.parse(sReduced);
+        Assertions.assertEquals(tree, pLeftRecH.parse(sReduced));
+        Assertions.assertEquals(tree, pRightRecH.parse(sReduced));
+        Assertions.assertEquals(tree, pRightRecEH.parse(sReduced));
     }
 
     @Test

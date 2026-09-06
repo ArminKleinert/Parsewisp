@@ -3,7 +3,7 @@ package alphaparse.tests;
 import alphaparse.Alpha;
 import org.junit.jupiter.api.Test;
 
-public class LL1Test {
+class LL1Test {
 
     static final int reps = 35000;
     static final String s = "b" + "a".repeat(reps);
