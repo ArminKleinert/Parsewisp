@@ -47,7 +47,23 @@ class FlatResultSeqTest {
                 frs121231212.stream().filter(it -> ((Integer) it) % 2 == 0).toList());
 
         Assertions.assertEquals(
+                List.of(1, 2, 1, 2, 3, 1, 2, 1, 2),
+                frs121231212.stream().toList());
+
+        Assertions.assertEquals(
                 frs121231212.stream().toList(),
                 frs121231212.stream().toList());
+    }
+
+    @Test
+    void bigTest() {
+        final int numElements = 30_000;
+        var frs = FlatResultSeq.make();
+        var lst = new ArrayList<>();
+        for (Integer i = 0; i < numElements; i++) {
+            frs = frs.appendOrConcat(i);
+            lst.add(i);
+        }
+        Assertions.assertEquals(lst, frs.stream().toList());
     }
 }
