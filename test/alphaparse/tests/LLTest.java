@@ -1,6 +1,7 @@
 package alphaparse.tests;
 
 import alphaparse.Alpha;
+import alphaparse.functions.Procedure;
 import alphaparse.parser.Parser;
 import alphaparse.testutil.TimeUtil;
 import org.junit.jupiter.api.Assertions;
@@ -29,22 +30,22 @@ NEW:
  */
 
 class LLTest {
-    static final int reps = 30000;
-    static final int runsPerMeasure = 100;
-    static final String s = "b" + "a".repeat(reps);
-    static final String sReduced = "b" + "a".repeat(reps / 10);
+    final int reps = 30_000;
+    final int runsPerMeasure = 100;
+    final String s = "b" + "a".repeat(reps);
+    final String sReduced = "b" + "a".repeat(reps / 10);
 
-    static final Parser pRegex = Alpha.parser("S = #'ba+'");
-    static final Parser pDirect = Alpha.parser("S = 'b' 'a'+");
-    static final Parser pLeftRec = Alpha.parser("S = S1\nS1 = S1 'a' | 'b'");
-    static final Parser pLeftRecH = Alpha.parser("S = S1\n<S1> = S1 'a' | 'b'");
-    static final Parser pRightRec = Alpha.parser("S = 'b' A\nA = 'a' A | 'a'");
-    static final Parser pRightRecH = Alpha.parser("S = 'b' A\n<A> = 'a' A | 'a'");
-    static final Parser pRightRecE = Alpha.parser("S = 'b' A\nA = 'a' A | epsilon");
-    static final Parser pRightRecEH = Alpha.parser("S = 'b' A\n<A> = 'a' A | epsilon");
+    final Parser pRegex = Alpha.parser("S = #'ba+'");
+    final Parser pDirect = Alpha.parser("S = 'b' 'a'+");
+    final Parser pLeftRec = Alpha.parser("S = S1\nS1 = S1 'a' | 'b'");
+    final Parser pLeftRecH = Alpha.parser("S = S1\n<S1> = S1 'a' | 'b'");
+    final Parser pRightRec = Alpha.parser("S = 'b' A\nA = 'a' A | 'a'");
+    final Parser pRightRecH = Alpha.parser("S = 'b' A\n<A> = 'a' A | 'a'");
+    final Parser pRightRecE = Alpha.parser("S = 'b' A\nA = 'a' A | epsilon");
+    final Parser pRightRecEH = Alpha.parser("S = 'b' A\n<A> = 'a' A | epsilon");
 
     @Test
-    void pEquality() {
+    void pEqualityReduced() {
         var tree = pDirect.parse(sReduced);
         Assertions.assertEquals(tree, pLeftRecH.parse(sReduced));
         Assertions.assertEquals(tree, pRightRecH.parse(sReduced));
@@ -52,71 +53,58 @@ class LLTest {
     }
 
     @Test
+    void pEquality() {
+        var tree = pDirect.parse(s);
+        Assertions.assertEquals(tree, pLeftRecH.parse(s));
+        Assertions.assertEquals(tree, pRightRecH.parse(s));
+        Assertions.assertEquals(tree, pRightRecEH.parse(s));
+    }
+
+    @Test
     void pRegex_____() {
-        System.out.println("."
-                + getMethodName()
-                + " : "
-                + TimeUtil.measureTimeMillisMean(runsPerMeasure, () -> pRegex.parse(s)));
+        printStat(() -> pRegex.parse(s));
     }
 
     @Test
     void pDirect____() {
-        System.out.println("."
-                + getMethodName()
-                + " : "
-                + TimeUtil.measureTimeMillisMean(runsPerMeasure, () -> pDirect.parse(s)));
+        printStat(() -> pDirect.parse(s));
     }
 
     @Test
     void pLeftRec___() {
-        System.out.println("."
-                + getMethodName()
-                + " : "
-                + TimeUtil.measureTimeMillisMean(runsPerMeasure, () -> pLeftRec.parse(s)));
+        printStat(() -> pLeftRec.parse(s));
     }
 
     @Test
     void pLeftRecH__() {
-        System.out.println("."
-                + getMethodName()
-                + " : "
-                + TimeUtil.measureTimeMillisMean(runsPerMeasure, () -> pLeftRecH.parse(s)));
+        printStat(() -> pLeftRecH.parse(s));
     }
 
     @Test
     void pRightRec__() {
-        System.out.println("."
-                + getMethodName()
-                + " : "
-                + TimeUtil.measureTimeMillisMean(runsPerMeasure, () -> pRightRec.parse(s)));
+        printStat(() -> pRightRec.parse(s));
     }
 
     @Test
     void pRightRecH_() {
-        System.out.println("."
-                + getMethodName()
-                + " : "
-                + TimeUtil.measureTimeMillisMean(runsPerMeasure, () -> pRightRecH.parse(s)));
+        printStat(() -> pRightRecH.parse(s));
     }
 
     @Test
     void pRightRecE_() {
-        System.out.println("."
-                + getMethodName()
-                + " : "
-                + TimeUtil.measureTimeMillisMean(runsPerMeasure, () -> pRightRecE.parse(s)));
+        printStat(() -> pRightRecE.parse(s));
     }
 
     @Test
     void pRightRecEH() {
-        System.out.println("."
-                + getMethodName()
-                + " : "
-                + TimeUtil.measureTimeMillisMean(runsPerMeasure, () -> pRightRecEH.parse(s)));
+        printStat(() -> pRightRecEH.parse(s));
     }
 
-    private static String getMethodName() {
+    private void printStat(Procedure prod) {
         final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
-        return ste[2].getMethodName();
+        System.out.println("."
+                + ste[2].getMethodName()
+                + " : "
+                + TimeUtil.measureTimeMillisMean(runsPerMeasure, prod));
     }
 }

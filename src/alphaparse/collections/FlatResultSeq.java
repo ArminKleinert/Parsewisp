@@ -147,13 +147,6 @@ public class FlatResultSeq {
      */
     public @NotNull FlatResultSeq appendOrConcat(final Object obj) {
         if (obj == null) return this;
-        if (!(obj instanceof FlatResultSeq)) {
-            return new FlatResultSeq(this, obj);
-        }
-
-        var frs = (FlatResultSeq) obj;
-        if (frs.isEmpty()) return this;
-        if (isEmpty()) return frs;
         return new FlatResultSeq(this, obj);
     }
 }

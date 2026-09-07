@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class FlatResultSeqTest {
     @Test
     void isEmpty() {
@@ -44,7 +42,9 @@ class FlatResultSeqTest {
         var frs12 = FlatResultSeq.make().appendOrConcat(1).appendOrConcat(2);
         var frs121231212 = frs12.appendOrConcat(frs12).appendOrConcat(3).appendOrConcat(frs12).appendOrConcat(frs12);
 
-        Assertions.assertEquals(List.of(2, 2, 2, 2), frs121231212.stream().filter(it -> ((Integer) it) % 2 == 0).toList());
+        Assertions.assertEquals(
+                List.of(2, 2, 2, 2),
+                frs121231212.stream().filter(it -> ((Integer) it) % 2 == 0).toList());
 
         Assertions.assertEquals(
                 frs121231212.stream().toList(),
