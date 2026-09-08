@@ -1,5 +1,6 @@
-package alphaparse.collections;
+package alphaparse.tests.typical.collections;
 
+import alphaparse.collections.FlatResultSeq;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

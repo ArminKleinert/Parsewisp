@@ -122,6 +122,8 @@ class AlphaParserCreationTest {
                     null,
                     true,
                     null,
+                    null,
+                    null,
                     null);
             Assertions.assertThrows(
                     ParserCreationFailure.class,

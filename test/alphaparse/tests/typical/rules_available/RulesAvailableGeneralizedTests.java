@@ -8,6 +8,7 @@ import alphaparse.parser_options.ParserCreationOptions;
 import alphaparse.parser_options.RulesAvailable;
 import alphaparse.testutil.PT;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -119,6 +120,12 @@ class RulesAvailableGeneralizedTests {
         variableRepetitionUnavailable(opts, !expectedAvailability);
         Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.VARIABLE_REPEAT), expectedAvailability);
     }
+
+//    static void semicolonLineComment(ParserCreationOptions opts, boolean expectedAvailability) {
+//        semicolonLineComment1(opts, expectedAvailability);
+//        semicolonLineComment1(opts, !expectedAvailability);
+//        //Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.SEMICOLON_AS_LINECOMMENT), expectedAvailability);
+//    }
 
     // Concrete tests start here.
 
@@ -493,5 +500,25 @@ class RulesAvailableGeneralizedTests {
         Assertions.assertThrows(IllegalGrammarException.class, () -> AlphaParser(
                 "S = ALPHA BIT CHAR CR CRLF CTL DIGIT DQUOTE HEXDIG HTAB LF LWSP OCTET SP VCHAR WSP",
                 opts));
+    }
+
+
+    private static
+    void semicolonLineComment1(ParserCreationOptions opts, boolean run) {
+        if (!run) return;
+
+        Assertions.assertEquals(
+                PT.create("S", "a"),
+                AlphaParser("S = \"a\" ; ignore", opts).parse("a")
+        );
+        Assertions.assertEquals(
+                PT.create("S",
+                        PT.create("A", "a")),
+                AlphaParser(""" 
+                        S = A ; ignore
+                        A = "a"
+                        """, opts)
+                        .parse("a")
+        );
     }
 }

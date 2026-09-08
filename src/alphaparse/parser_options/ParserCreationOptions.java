@@ -22,6 +22,7 @@ import java.util.stream.Stream;
  * @param checkCorrectness      Whether to check the correctness of the grammar when creating the parser.
  * @param ruleDefinitionOpts    A collection of possible "definition operators" for rules.
  * @param epsilonNames          A collection of possible epsilon names. If null, use {@link #defaultEpsilonNames()}.
+ * @param ruleTerminators
  */
 @Unmodifiable
 public record ParserCreationOptions(@Nullable Parser whitespaceParser,
@@ -31,7 +32,9 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
                                     @NotNull Set<RulesAvailable> usableRules,
                                     boolean checkCorrectness,
                                     @NotNull Collection<@NotNull String> ruleDefinitionOpts,
-                                    @NotNull Collection<@NotNull String> epsilonNames) {
+                                    @NotNull Collection<@NotNull String> epsilonNames,
+                                    @NotNull Collection<@NotNull String> ruleTerminators,
+                                    @NotNull Collection<@NotNull String> lineCommentIndicators) {
     private static final boolean defaultCheckCorrectness = true;
 
     /**
@@ -54,6 +57,15 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
      */
     public static @NotNull @Unmodifiable List<String> defaultEpsilonNames() {
         return List.of("Epsilon", "epsilon", "EPSILON", "eps", "ε");
+    }
+
+    /**
+     *
+     *
+     * @return
+     */
+    public static @NotNull @Unmodifiable List<String> defaultRuleTerminators() {
+        return List.of(";", ".");
     }
 
     /**
@@ -123,7 +135,9 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
             final @Nullable Set<RulesAvailable> usableRules,
             final boolean checkCorrectness,
             final @Nullable Collection<String> ruleDefinitionOpts,
-            final @Nullable Collection<String> epsilonNames) {
+            final @Nullable Collection<String> epsilonNames,
+            final @Nullable Collection<String> ruleTerminators,
+            final @Nullable Collection<String> lineCommentIndicators) {
         var stringCaseInsensitive1 = stringCaseInsensitive == null
                 ? GlobalCaseInsensitivity.DEFAULT
                 : stringCaseInsensitive;
@@ -144,7 +158,13 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
                 ? defaultEpsilonNames()
                 : epsilonNames.stream().sorted(Comparator.comparingInt(String::length)).toList();
 
-        return new ParserCreationOptions(whitespaceParser, startProduction, stringCaseInsensitive1, redefinitionOption1, usableRules1, checkCorrectness, ruleDefinitionOpts1, epsilonNames1);
+        var ruleTerminators1 = ruleTerminators == null ?
+                defaultRuleTerminators() : ruleTerminators;
+
+        var lineCommentIndicators1 = lineCommentIndicators==null
+                ?List.<String>of() : lineCommentIndicators;
+
+        return new ParserCreationOptions(whitespaceParser, startProduction, stringCaseInsensitive1, redefinitionOption1, usableRules1, checkCorrectness, ruleDefinitionOpts1, epsilonNames1, ruleTerminators1,lineCommentIndicators1);
     }
 
     /**
@@ -160,7 +180,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction, stringCaseInsensitive,
                 redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOpts, epsilonNames);
+                checkCorrectness, ruleDefinitionOpts, epsilonNames,ruleTerminators,lineCommentIndicators);
     }
 
     /**
@@ -176,7 +196,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction, stringCaseInsensitive,
                 redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOpts, epsilonNames);
+                checkCorrectness, ruleDefinitionOpts, epsilonNames,ruleTerminators,lineCommentIndicators);
     }
 
     /**
@@ -192,7 +212,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction, stringCaseInsensitive,
                 redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOpts, epsilonNames);
+                checkCorrectness, ruleDefinitionOpts, epsilonNames,ruleTerminators,lineCommentIndicators);
     }
 
     /**
@@ -220,7 +240,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction, stringCaseInsensitive,
                 redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOpts, epsilonNames);
+                checkCorrectness, ruleDefinitionOpts, epsilonNames,ruleTerminators,lineCommentIndicators);
     }
 
     /**
@@ -234,7 +254,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction, stringCaseInsensitive,
                 redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOpts, epsilonNames);
+                checkCorrectness, ruleDefinitionOpts, epsilonNames,ruleTerminators,lineCommentIndicators);
     }
 
     /**
@@ -278,7 +298,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction, stringCaseInsensitive,
                 redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOpts, epsilonNames);
+                checkCorrectness, ruleDefinitionOpts, epsilonNames,ruleTerminators,lineCommentIndicators);
     }
 
     /**
@@ -292,7 +312,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction, stringCaseInsensitive,
                 redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOps, epsilonNames);
+                checkCorrectness, ruleDefinitionOps, epsilonNames,ruleTerminators,lineCommentIndicators);
     }
 
     /**
@@ -306,7 +326,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction, stringCaseInsensitive,
                 redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOpts, epsilonNames);
+                checkCorrectness, ruleDefinitionOpts, epsilonNames,ruleTerminators,lineCommentIndicators);
     }
 
     /**
@@ -333,7 +353,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
     }
 
     /**
-     * The default settings. Equivalent to {@link ParserCreationOptions#ParserCreationOptions(Parser, Sym, GlobalCaseInsensitivity, RedefinitionOption, Set, boolean, Collection, Collection)} with using {@code null} or whichever defaults this class provides.
+     * The default settings. Equivalent to {@link ParserCreationOptions#ParserCreationOptions(Parser, Sym, GlobalCaseInsensitivity, RedefinitionOption, Set, boolean, Collection, Collection,Collection,Collection)} with using {@code null} or whichever defaults this class provides.
      *
      * <p>
      * Characteristics:
@@ -351,7 +371,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 null, null, null,
                 null, null,
-                defaultCheckCorrectness, null, null);
+                defaultCheckCorrectness, null, null,null, null);
     }
 
     /**
@@ -393,7 +413,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
                 null, null, GlobalCaseInsensitivity.TRUE,
                 RedefinitionOption.CHOICE, rules, defaultCheckCorrectness,
                 List.of("=/", "="),
-                List.of("ε")
+                List.of("ε"),List.of(),List.of(";")
         );
     }
 
@@ -442,7 +462,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
                 null, null, GlobalCaseInsensitivity.FALSE,
                 RedefinitionOption.defaultOption, rules, defaultCheckCorrectness,
                 List.of("="),
-                List.of("ε")
+                List.of("ε"),List.of(";"),List.of()
         );
     }
 
@@ -485,7 +505,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
                 null, null, GlobalCaseInsensitivity.FALSE,
                 RedefinitionOption.defaultOption, rules, defaultCheckCorrectness,
                 List.of("←", "<-"),
-                List.of("ε")
+                List.of("ε"),List.of(),List.of("#")
         );
     }
 
@@ -524,7 +544,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
                 null, null, GlobalCaseInsensitivity.FALSE,
                 RedefinitionOption.defaultOption, rules, defaultCheckCorrectness,
                 List.of("="),
-                List.of("ε")
+                List.of("ε"),List.of(";"),List.of()
         );
     }
 }

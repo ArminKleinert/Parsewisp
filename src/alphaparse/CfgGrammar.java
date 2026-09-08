@@ -90,6 +90,16 @@ public final class CfgGrammar extends GrammarBuilder {
                                 makeCfgInsideCommentRhs(),
                                 string("*)")))
                         .hideTag();
+
+//        if (!options.lineCommentIndicators().isEmpty()) {
+//            return specialSequence("Linecomment: One of " + options.lineCommentIndicators() + " until end of line.",
+//                    string -> {
+//                        if (!options.lineCommentIndicators().stream().anyMatch(it -> string.startsWith(it)))
+//                            return Optional.empty();
+//                var index
+//                    });
+//        }
+
         return rulesRule;
     }
 
@@ -274,11 +284,14 @@ public final class CfgGrammar extends GrammarBuilder {
      * @return A {@link Rule}.
      */
     private @NotNull Rule makeCfgNtRhs() {
-        final var regex = rulesAvailable.contains(RulesAvailable.EXTENDED_IDENTIFIERS)
-                ? Pattern.compile("[^, \\r\\t\\n<>(){}\\[\\]+*?:=|'\"#&!;./%\\-0-9][^, \\r\\t\\n<>(){}\\[\\]+*?:=|'\"#&!;./%]*")
-                : (rulesAvailable.contains(RulesAvailable.ABNF_IDENTIFIERS)
-                ? Pattern.compile("[a-zA-Z][a-zA-Z0-9\\-]*")
-                : Pattern.compile("[a-zA-Z][a-zA-Z0-9_]*"));
+        final Pattern regex;
+        if (rulesAvailable.contains(RulesAvailable.EXTENDED_IDENTIFIERS))
+            regex = Pattern.compile("[^, \\r\\t\\n<>(){}\\[\\]+*?:=|'\"#&!;./%\\-0-9][^, \\r\\t\\n<>(){}\\[\\]+*?:=|'\"#&!;./%]*");
+        else if (rulesAvailable.contains(RulesAvailable.ABNF_IDENTIFIERS))
+            regex = Pattern.compile("[a-zA-Z][a-zA-Z0-9\\-]*");
+        else
+            regex = Pattern.compile("[a-zA-Z][a-zA-Z0-9_]*");
+
         final boolean eofPossible = options.usableRules().contains(RulesAvailable.EXPLICIT_EOF);
 
         return specialSequence(
@@ -442,6 +455,20 @@ public final class CfgGrammar extends GrammarBuilder {
 
     private @NotNull Rule makeCfgRuleRhs() {
         final @NotNull Rule optWs = nt("opt-whitespace"); /// {@link #makeCfgOptWhitespaceRhs}
+
+        final @NotNull Rule ruleTerminator;
+        if (options.ruleTerminators().isEmpty())
+            ruleTerminator = optWhitespace;
+        else
+            ruleTerminator = alternationGuaranteeDistinctAndNotEmpty(
+                    List.of(optWs,
+                            concatNoEpsilonMoreThan1(
+                                    List.of(optWs,
+                                            alternationGuaranteeDistinctAndNotEmpty(
+                                                    options.ruleTerminators().stream().map(this::string).toList()),
+                                            optWs))))
+                    .enableHideTag();
+
         final @NotNull Rule rulesRule =
                 concatNoEpsilonMoreThan1(
                         List.of(alternationGuaranteeDistinctAndNotEmpty(
@@ -452,15 +479,7 @@ public final class CfgGrammar extends GrammarBuilder {
                                 nt("rule-separator").enableHideTag(), /// {@link #makeCfgRuleSeparatorRhs}
                                 optWhitespace,
                                 altOrOrdNt, /// {@link #makeCfgAltOrOrdRhs}
-                                alternationGuaranteeDistinctAndNotEmpty(
-                                        List.of(optWs,
-                                                concatNoEpsilonMoreThan1(
-                                                        List.of(optWs,
-                                                                alternationGuaranteeDistinctAndNotEmpty(
-                                                                        List.of(string(";"),
-                                                                                string("."))),
-                                                                optWs))))
-                                        .enableHideTag()));
+                                ruleTerminator));
         return rulesRule;
     }
 
@@ -628,6 +647,7 @@ public final class CfgGrammar extends GrammarBuilder {
      * Returns the grammar, which is constructed based on the options provided.
      * The grammar can match EBNF grammars, ABNF grammars, or (almost) any mix thereof.
      * For more comprehensive documentation of each option, see {@link ParserCreationOptions}.
+     *
      * @param options The options.
      * @return The grammar.
      */

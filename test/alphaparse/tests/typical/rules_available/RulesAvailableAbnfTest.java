@@ -102,5 +102,9 @@ class RulesAvailableAbnfTest {
     void variableRepetition() {
         RulesAvailableGeneralizedTests.variableRepetition(opts, true);
     }
+
+    @Test void semicolonAsComment() {
+        //RulesAvailableGeneralizedTests.semicolonLineComment(opts, true);
+    }
 }
 
