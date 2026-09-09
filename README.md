@@ -1,4 +1,4 @@
-# AlphaParse 0.9.5
+# Parsewisp 0.9.5
 
 A tool to generate and use parsers at runtime.
 
@@ -22,11 +22,11 @@ Missing features and problems:
 
 ## First parser
 
-To create a parser, you'll typically want to use the `Alpha.parser` static method. It takes a string as its first argument.
+To create a parser, you'll typically want to use the `Parsewisp.parser` static method. It takes a string as its first argument.
 
 ```java
-import alphaparse.Alpha;
-import alphaparse.parser_options.ParserCreationOptions;
+import de.kleinert.parsewisp.Parsewisp;
+import parser_options.de.kleinert.parsewisp.ParserCreationOptions;
 
 class MyFirstParser {
   public static void main(String[] args) {
@@ -38,18 +38,18 @@ class MyFirstParser {
             paren-or-val = '(' sum ')'             | number
             number       = ('+'|'-')? ('0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9')+
             """;
-    var p = Alpha.parser(grammar);
+    var p = Parsewisp.parser(grammar);
 
     // Start the parser by using its parse(String) method.
     // The parser will output the parse tree.
     System.out.println(p.parse("1")); // [:sum, [:product, [:power, [:paren-or-val, [:number, "1"]]]]]
-    
+
     // The grammar can not yet handle whitespace.
     // The following returns an error:
     System.out.println(p.parse("1 + 2"));
-    
-    // You can manually add support for whitespace to the grammar or use the optional argument for the Alpha.parser method:
-    p = Alpha.parser(grammar, ParserCreationOptions.newWithStandardWhitespace());
+
+    // You can manually add support for whitespace to the grammar or use the optional argument for the Parsewisp.parser method:
+    p = Parsewisp.parser(grammar, ParserCreationOptions.newWithStandardWhitespace());
     // Now, the parse works. Go on, try it. :)
     System.out.println(p.parse("1 + 2"));
   }
@@ -61,15 +61,15 @@ class MyFirstParser {
 1. Download the `.jar` file or compile it yourself.
 2. Add the library to your classpath. I recommend using an IDE for this.
 
-Older versions of AlphaParse required Java 21.
+Older versions of Parsewisp required Java 21.
 
 ## User-side Priorities
 
 These are priorities that directly impact the usage.
 
 - Parse tree format follows OOP style: Instaparse uses raw objects and supports two different formats for parse trees.
-  Alphaparse has only one type for parse trees which uses a wrapping type `Node`.
-- Parse trees are smaller. If the grammar is ambiguous, AlphaParse can hold more output trees than Instaparse, at least
+  Parsewisp has only one type for parse trees which uses a wrapping type `Node`.
+- Parse trees are smaller. If the grammar is ambiguous, Parsewisp can hold more output trees than Instaparse, at least
   on my machine.
 - Smaller library `.jar` size. I set a maximum size goal of 220 kB.
 
@@ -121,80 +121,80 @@ These are priorities that directly impact the usage.
   correct behavior, but very confusing to users. This corner case can be checked for my using the `infiniteEmptyRecursionPossible(Sym)` analysis. (See example below.)
 
 ```java
-import alphaparse.Alpha;
-import alphaparse.Sym;
+import de.kleinert.parsewisp.Parsewisp;
+import de.kleinert.parsewisp.Sym;
 
 class VerySpecificGrammarProblems {
-    void test() {
-        var parser1 = Alpha.parser("S = A S ; A = epsilon ;");
-        var analysis1 = parser1.grammar().analyze();
-        System.out.println(analysis1.isProductive(Sym.sym("S"))); // True if the grammar can produce a result
+  void test() {
+    var parser1 = Parsewisp.parser("S = A S ; A = epsilon ;");
+    var analysis1 = parser1.grammar().analyze();
+    System.out.println(analysis1.isProductive(Sym.sym("S"))); // True if the grammar can produce a result
 
-        var parser2 = Alpha.parser("S = S | epsilon");
-        var analysis2 = parser2.grammar().analyze();
-        // TODO: Does not work yet.
-        System.out.println(analysis2.infiniteEmptyRecursionPossible(Sym.sym("S"))); // True if the problem is possible.
-    }
+    var parser2 = Parsewisp.parser("S = S | epsilon");
+    var analysis2 = parser2.grammar().analyze();
+    // TODO: Does not work yet.
+    System.out.println(analysis2.infiniteEmptyRecursionPossible(Sym.sym("S"))); // True if the problem is possible.
+  }
 }
 ```
 
 ## Differences from Instaparse
 
-The biggest difference to Instaparse is that AlphaParse does not require Clojure. Jokes aside, there are a few important
+The biggest difference to Instaparse is that Parsewisp does not require Clojure. Jokes aside, there are a few important
 internal differences.
 
 ### Smaller things
 
-AlphaParse does not support Instaparse's `:optimize :memory` mode. I found that the additional work is not worth it.
-Rest assured that AlphaParse tries its best to save both time and memory by default.
+Parsewisp does not support Instaparse's `:optimize :memory` mode. I found that the additional work is not worth it.
+Rest assured that Parsewisp tries its best to save both time and memory by default.
 
-AlphaParse treats some features of Instaparse as bugs. For example, Instaparse treats
-`S = epsir \n epsir = 'a'` as equivalent to `S = epsilon ir epsilon\nir = 'a'`. AlphaParse treats it as
+Parsewisp treats some features of Instaparse as bugs. For example, Instaparse treats
+`S = epsir \n epsir = 'a'` as equivalent to `S = epsilon ir epsilon\nir = 'a'`. Parsewisp treats it as
 `S = epsir \n epsir = 'a'`.
 
 ### Production redefinitions
 
 When you write a grammar like `S = A ; S = B ; S = C ;` the question arises: What is the right-hand side of the
 production `S`?  
-Instaparse chooses to override the previous definitions silently. AlphaParse allows the user to choose between options:
+Instaparse chooses to override the previous definitions silently. Parsewisp allows the user to choose between options:
 
 ```java
-import alphaparse.Alpha;
-import alphaparse.parser_options.RedefinitionOption;
-import alphaparse.parser.Parser;
-import alphaparse.parser_options.ParserCreationOptions;
+import de.kleinert.parsewisp.Parsewisp;
+import parser_options.de.kleinert.parsewisp.RedefinitionOption;
+import parser.de.kleinert.parsewisp.Parser;
+import parser_options.de.kleinert.parsewisp.ParserCreationOptions;
 
 class RedefTest {
-    static void main(String[] args) {
-        String grammar = """
-                S = 'A' ;
-                S = 'B' ;
-                S = 'C' ;
-                """; // Three different definitions for "S".
-        Parser p;
-        var opts = ParserCreationOptions.getDefault();
+  static void main(String[] args) {
+    String grammar = """
+            S = 'A' ;
+            S = 'B' ;
+            S = 'C' ;
+            """; // Three different definitions for "S".
+    Parser p;
+    var opts = ParserCreationOptions.getDefault();
 
-        // Override: The grammar is equal to `S = 'C'`
-        p = Alpha.parser(grammar, opts.withRedefinitionOption(RedefinitionOption.OVERRIDE));
-        System.out.println(p.parse("A").isSuccess()); // false
-        System.out.println(p.parse("B").isSuccess()); // false
-        System.out.println(p.parse("C").isSuccess()); // true
+    // Override: The grammar is equal to `S = 'C'`
+    p = Parsewisp.parser(grammar, opts.withRedefinitionOption(RedefinitionOption.OVERRIDE));
+    System.out.println(p.parse("A").isSuccess()); // false
+    System.out.println(p.parse("B").isSuccess()); // false
+    System.out.println(p.parse("C").isSuccess()); // true
 
-        // Choice: The grammar is equal to `S = 'A' | 'B' | 'C'`
-        p = Alpha.parser(grammar, opts.withRedefinitionOption(RedefinitionOption.CHOICE));
-        System.out.println(p.parse("A").isSuccess()); // true
-        System.out.println(p.parse("B").isSuccess()); // true
-        System.out.println(p.parse("C").isSuccess()); // true
+    // Choice: The grammar is equal to `S = 'A' | 'B' | 'C'`
+    p = Parsewisp.parser(grammar, opts.withRedefinitionOption(RedefinitionOption.CHOICE));
+    System.out.println(p.parse("A").isSuccess()); // true
+    System.out.println(p.parse("B").isSuccess()); // true
+    System.out.println(p.parse("C").isSuccess()); // true
 
-        // Keep first: The grammar is equal to `S = 'A'`
-        p = Alpha.parser(grammar, opts.withRedefinitionOption(RedefinitionOption.KEEP));
-        System.out.println(p.parse("A").isSuccess()); // true
-        System.out.println(p.parse("B").isSuccess()); // false
-        System.out.println(p.parse("C").isSuccess()); // false
+    // Keep first: The grammar is equal to `S = 'A'`
+    p = Parsewisp.parser(grammar, opts.withRedefinitionOption(RedefinitionOption.KEEP));
+    System.out.println(p.parse("A").isSuccess()); // true
+    System.out.println(p.parse("B").isSuccess()); // false
+    System.out.println(p.parse("C").isSuccess()); // false
 
-        // Error: The grammar is considered invalid and will throw an exception.
-        p = Alpha.parser(grammar, opts.withRedefinitionOption(RedefinitionOption.ERROR)); // Fails
-    }
+    // Error: The grammar is considered invalid and will throw an exception.
+    p = Parsewisp.parser(grammar, opts.withRedefinitionOption(RedefinitionOption.ERROR)); // Fails
+  }
 }
 ```
 
@@ -235,8 +235,8 @@ using records is sometimes 60% slower than equivalent classes, let me know. :)
 
 ### `Sym` vs `String`
 
-Strings in Java are very optimized. Still, AlphaParse uses its own type `Sym` for production names. Like Clojure's
-`Keyword`, `Sym` instances are interned. Clojure embeds the Keywords into the code directly, while AlphaParse always
+Strings in Java are very optimized. Still, Parsewisp uses its own type `Sym` for production names. Like Clojure's
+`Keyword`, `Sym` instances are interned. Clojure embeds the Keywords into the code directly, while Parsewisp always
 instantiates them when needed. The advantage that interning provides is the possibility of a constant `O(1)` equality
 check.
 
@@ -256,12 +256,16 @@ types. But only *sometimes*. I prefer deterministic behavior.
 ### New interfaces for some functions
 
 ```java
-// Could be java.util.function.Consumer<AlphaParseMessage>. New type for clarity.
-alphaparse.functions.Listener listener = (AlphaParseMessage o) -> System.out.println("Listener");
+import de.kleinert.parsewisp.functions.Listener;
+import de.kleinert.parsewisp.functions.NegativeListener;
+import de.kleinert.parsewisp.functions.Procedure;
+
+// Could be java.util.function.Consumer<ParsewispMessage>. New type for clarity.
+functions.de.kleinert.parsewisp.Listener listener = (ParsewispMessage o) -> System.out.println("Listener");
 
 // Could be java.lang.Runnable. New type because Runnable is associated with Threads.
-alphaparse.functions.NegativeListener negativeListener = () -> System.out.println("NegativeListener");
-alphaparse.functions.Procedure procedure = () -> System.out.println("Procedure");
+functions.de.kleinert.parsewisp.NegativeListener negativeListener = () -> System.out.println("NegativeListener");
+functions.de.kleinert.parsewisp.Procedure procedure = () -> System.out.println("Procedure");
 ```
 
 ### New collection types
@@ -273,7 +277,9 @@ Clojure's [LazySeq](https://github.com/clojure/clojure/blob/master/src/jvm/cloju
 same while being simpler, but after testing each approach, I found this new type to be substantially faster.
 
 ```java
-alphaparse.collections.LazySupplierList<T> lazySupplierList;
+import de.kleinert.parsewisp.collections.LazySupplierList;
+
+LazySupplierList<T> lazySupplierList;
 ```
 
 

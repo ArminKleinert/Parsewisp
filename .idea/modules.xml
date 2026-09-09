@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/AlphaParse.iml" filepath="$PROJECT_DIR$/AlphaParse.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Parsewisp.iml" filepath="$PROJECT_DIR$/Parsewisp.iml" />
     </modules>
   </component>
 </project>

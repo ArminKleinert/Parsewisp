@@ -2,7 +2,7 @@
   <artifact type="jar" name="LibAlphaParse:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/LibAlphaParse_jar</output-path>
     <root id="archive" name="LibAlphaParse.jar">
-      <element id="module-output" name="AlphaParse" />
+      <element id="module-output" name="Parsewisp" />
     </root>
   </artifact>
 </component>

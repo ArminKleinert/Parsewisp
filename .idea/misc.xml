@@ -9,7 +9,7 @@
   <component name="PrintToLogpointModuleInspectionState">
     <option name="disabledModuleNames">
       <set>
-        <option value="AlphaParse" />
+        <option value="Parsewisp" />
       </set>
     </option>
   </component>
