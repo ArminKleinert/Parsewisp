@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="LibParsewisp:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/LibParsewisp_jar</output-path>
+    <root id="archive" name="LibParsewisp.jar">
+      <element id="module-output" name="Parsewisp" />
+    </root>
+  </artifact>
+</component>
