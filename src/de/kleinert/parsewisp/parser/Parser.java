@@ -1,17 +1,11 @@
 package de.kleinert.parsewisp.parser;
 
-import de.kleinert.parsewisp.Parsewisp;
-import de.kleinert.parsewisp.Print;
-import de.kleinert.parsewisp.Sym;
+import de.kleinert.parsewisp.*;
 import de.kleinert.parsewisp.error.ParserCreationFailure;
 import de.kleinert.parsewisp.grammar.Grammar;
-import de.kleinert.parsewisp.parser_options.ParsingOptions;
-import de.kleinert.parsewisp.parser_options.Unhide;
+import de.kleinert.parsewisp.parser_options.*;
 import de.kleinert.parsewisp.parsing.Gll;
-import de.kleinert.parsewisp.result.ParseFailure;
-import de.kleinert.parsewisp.result.ParseResult;
-import de.kleinert.parsewisp.result.ParsesResult;
-import de.kleinert.parsewisp.result.ParseTree;
+import de.kleinert.parsewisp.result.*;
 import org.jetbrains.annotations.NotNull;
 
 /**

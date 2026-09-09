@@ -1,9 +1,7 @@
 package de.kleinert.parsewisp.util;
 
 import de.kleinert.parsewisp.Sym;
-import de.kleinert.parsewisp.result.ParseResult;
-import de.kleinert.parsewisp.result.Node;
-import de.kleinert.parsewisp.result.ParseTree;
+import de.kleinert.parsewisp.result.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

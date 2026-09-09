@@ -1,7 +1,6 @@
 package de.kleinert.parsewisp.result;
 
-import de.kleinert.parsewisp.result.failure.FailureUtil;
-import de.kleinert.parsewisp.result.failure.ParseFailureReason;
+import de.kleinert.parsewisp.result.failure.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

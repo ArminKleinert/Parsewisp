@@ -3,8 +3,6 @@ package de.kleinert.parsewisp;
 import de.kleinert.parsewisp.grammar.Grammar;
 import de.kleinert.parsewisp.parser.*;
 import de.kleinert.parsewisp.parsing.*;
-import de.kleinert.parsewisp.parser.Parser;
-import de.kleinert.parsewisp.parsing.*;
 import de.kleinert.parsewisp.reduction.ReductionType;
 import org.jetbrains.annotations.NotNull;
 

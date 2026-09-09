@@ -1,18 +1,10 @@
 package de.kleinert.parsewisp;
 
 import de.kleinert.parsewisp.error.ParserCreationFailure;
-import de.kleinert.parsewisp.grammar.Grammar;
-import de.kleinert.parsewisp.grammar.GrammarBuilder;
-import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
-import de.kleinert.parsewisp.parser_options.RulesAvailable;
-import de.kleinert.parsewisp.parsing.EOFTerm;
-import de.kleinert.parsewisp.parsing.EpsilonTerm;
-import de.kleinert.parsewisp.parsing.Gll;
-import de.kleinert.parsewisp.parsing.Rule;
-import de.kleinert.parsewisp.result.ParseFailure;
-import de.kleinert.parsewisp.result.ParseResult;
-import de.kleinert.parsewisp.result.Node;
-import de.kleinert.parsewisp.result.ParseTree;
+import de.kleinert.parsewisp.grammar.*;
+import de.kleinert.parsewisp.parser_options.*;
+import de.kleinert.parsewisp.parsing.*;
+import de.kleinert.parsewisp.result.*;
 import de.kleinert.parsewisp.util.StrParser;
 import org.jetbrains.annotations.NotNull;
 

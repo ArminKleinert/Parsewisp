@@ -1,4 +1,4 @@
-package alphaparse.collections;
+package de.kleinert.parsewisp.collections;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  * It is advised that users of this library do not use this type directly.
  */
 public class FlatResultSeq {
-    private @Nullable FlatResultSeq inheritor;
+    private @Nullable de.kleinert.parsewisp.collections.FlatResultSeq inheritor;
     private final int size;
     private final ArrayList<Object> arr;
 
@@ -31,8 +31,8 @@ public class FlatResultSeq {
      *
      * @return The empty instance.
      */
-    public static @NotNull FlatResultSeq make() {
-        return new FlatResultSeq(new ArrayList<>(), 0);
+    public static @NotNull de.kleinert.parsewisp.collections.FlatResultSeq make() {
+        return new de.kleinert.parsewisp.collections.FlatResultSeq(new ArrayList<>(), 0);
     }
 
     /**
@@ -66,38 +66,38 @@ public class FlatResultSeq {
      * Adds an element or multiple elements to this sequence.
      * <ul>
      *     <li>If the input is {@code null}, do nothing.</li>
-     *     <li>If the input is a {@link FlatResultSeq}, add all elements flattened, as if by {@link Collection#addAll(Collection)}</li>
+     *     <li>If the input is a {@link de.kleinert.parsewisp.collections.FlatResultSeq}, add all elements flattened, as if by {@link Collection#addAll(Collection)}</li>
      *     <li>Otherwise, add the input as a single element, as if by {@link Collection#add(Object)}.</li>
      * </ul>
      *
      * @param obj The input.
      * @return A new instance or {@code this}, if nothing is added.
      */
-    public @NotNull FlatResultSeq appendOrConcat(final Object obj) {
+    public @NotNull de.kleinert.parsewisp.collections.FlatResultSeq appendOrConcat(final Object obj) {
         if (obj == null) return this;
 
         if (inheritor == null) {
-            if (obj instanceof FlatResultSeq) {
-                arr.addAll(((FlatResultSeq) obj).arr.subList(0, ((FlatResultSeq) obj).size));
+            if (obj instanceof de.kleinert.parsewisp.collections.FlatResultSeq) {
+                arr.addAll(((de.kleinert.parsewisp.collections.FlatResultSeq) obj).arr.subList(0, ((de.kleinert.parsewisp.collections.FlatResultSeq) obj).size));
             } else {
                 arr.add(obj);
             }
 
-            var newSeq = new FlatResultSeq(arr, arr.size());
+            var newSeq = new de.kleinert.parsewisp.collections.FlatResultSeq(arr, arr.size());
             inheritor = newSeq;
             return newSeq;
         }
 
         var newArr = new ArrayList<>(arr.subList(0, size));
         var newSize = size;
-        if (obj instanceof FlatResultSeq) {
-            newArr.addAll(((FlatResultSeq) obj).arr.subList(0, ((FlatResultSeq) obj).size));
-            newSize += ((FlatResultSeq) obj).size;
+        if (obj instanceof de.kleinert.parsewisp.collections.FlatResultSeq) {
+            newArr.addAll(((de.kleinert.parsewisp.collections.FlatResultSeq) obj).arr.subList(0, ((de.kleinert.parsewisp.collections.FlatResultSeq) obj).size));
+            newSize += ((de.kleinert.parsewisp.collections.FlatResultSeq) obj).size;
         } else {
             newArr.add(obj);
             newSize++;
         }
 
-        return new FlatResultSeq(newArr, newSize);
+        return new de.kleinert.parsewisp.collections.FlatResultSeq(newArr, newSize);
     }
 }

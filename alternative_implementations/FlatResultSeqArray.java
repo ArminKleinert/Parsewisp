@@ -1,4 +1,4 @@
-package alphaparse.collections;
+package de.kleinert.parsewisp.collections;
 
 
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +13,7 @@ import java.util.stream.Stream;
  */
 @Unmodifiable
 public final class FlatResultSeq {
-    private static FlatResultSeq EMPTY = null;
+    private static de.kleinert.parsewisp.collections.FlatResultSeq EMPTY = null;
 
     private final Object[] v;
     private int hashCode = 0;
@@ -23,8 +23,8 @@ public final class FlatResultSeq {
      *
      * @return The empty instance.
      */
-    public static @NotNull FlatResultSeq make() {
-        if (EMPTY == null) EMPTY = new FlatResultSeq(new Object[0]);
+    public static @NotNull de.kleinert.parsewisp.collections.FlatResultSeq make() {
+        if (EMPTY == null) EMPTY = new de.kleinert.parsewisp.collections.FlatResultSeq(new Object[0]);
         return EMPTY;
     }
 
@@ -66,7 +66,7 @@ public final class FlatResultSeq {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof FlatResultSeq c)) {
+        if (!(o instanceof de.kleinert.parsewisp.collections.FlatResultSeq c)) {
             return false;
         }
         return Arrays.equals(v, c.v);
@@ -82,18 +82,18 @@ public final class FlatResultSeq {
     }
 
     /**
-     * Appends the input to the sequence. If the input is a {@link FlatResultSeq}, it is inserted into the instance flattened.
+     * Appends the input to the sequence. If the input is a {@link de.kleinert.parsewisp.collections.FlatResultSeq}, it is inserted into the instance flattened.
      * <p>
-     * {@code null} inputs are ignored, as are empty {@link FlatResultSeq} inputs.
+     * {@code null} inputs are ignored, as are empty {@link de.kleinert.parsewisp.collections.FlatResultSeq} inputs.
      *
      * @param obj Input.
      * @return A new instance.
      */
-    public @NotNull FlatResultSeq appendOrConcat(final Object obj) {
+    public @NotNull de.kleinert.parsewisp.collections.FlatResultSeq appendOrConcat(final Object obj) {
         if (obj == null)
             return this;
 
-        if (obj instanceof FlatResultSeq frs) {
+        if (obj instanceof de.kleinert.parsewisp.collections.FlatResultSeq frs) {
             if (size() == 0)
                 return frs;
             if (frs.isEmpty())
@@ -102,12 +102,12 @@ public final class FlatResultSeq {
             final @NotNull Object[] newV = Arrays.copyOf(v, v.length + otherArray.length);
             System.arraycopy(otherArray, 0, newV, v.length, otherArray.length);
 
-            return new FlatResultSeq(newV);
+            return new de.kleinert.parsewisp.collections.FlatResultSeq(newV);
         } else {
             final @NotNull Object[] newV = Arrays.copyOf(v, v.length + 1);
             newV[newV.length - 1] = obj;
 
-            return new FlatResultSeq(newV);
+            return new de.kleinert.parsewisp.collections.FlatResultSeq(newV);
         }
     }
 }

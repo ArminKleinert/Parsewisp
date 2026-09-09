@@ -1,4 +1,4 @@
-# Parsewisp 0.9.5
+# Parsewisp 0.9.6
 
 A tool to generate and use parsers at runtime.
 
@@ -261,11 +261,11 @@ import de.kleinert.parsewisp.functions.NegativeListener;
 import de.kleinert.parsewisp.functions.Procedure;
 
 // Could be java.util.function.Consumer<ParsewispMessage>. New type for clarity.
-functions.de.kleinert.parsewisp.Listener listener = (ParsewispMessage o) -> System.out.println("Listener");
+de.kleinert.parsewisp.functions.Listener listener = (ParsewispMessage o) -> System.out.println("Listener");
 
 // Could be java.lang.Runnable. New type because Runnable is associated with Threads.
-functions.de.kleinert.parsewisp.NegativeListener negativeListener = () -> System.out.println("NegativeListener");
-functions.de.kleinert.parsewisp.Procedure procedure = () -> System.out.println("Procedure");
+de.kleinert.parsewisp.functions.NegativeListener negativeListener = () -> System.out.println("NegativeListener");
+de.kleinert.parsewisp.functions.Procedure procedure = () -> System.out.println("Procedure");
 ```
 
 ### New collection types

@@ -2,11 +2,9 @@ package de.kleinert.parsewisp.trampoline;
 
 import de.kleinert.parsewisp.collections.IntMap;
 import de.kleinert.parsewisp.grammar.Grammar;
-import de.kleinert.parsewisp.functions.NegativeListener;
-import de.kleinert.parsewisp.functions.Procedure;
+import de.kleinert.parsewisp.functions.*;
 import de.kleinert.parsewisp.parsing.StringTerm;
-import de.kleinert.parsewisp.result.ParseFailure;
-import de.kleinert.parsewisp.result.ParseTree;
+import de.kleinert.parsewisp.result.*;
 import de.kleinert.parsewisp.result.success.ParseMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

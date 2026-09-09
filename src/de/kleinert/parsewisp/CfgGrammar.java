@@ -1,10 +1,8 @@
 package de.kleinert.parsewisp;
 
-import de.kleinert.parsewisp.grammar.Grammar;
-import de.kleinert.parsewisp.grammar.GrammarBuilder;
+import de.kleinert.parsewisp.grammar.*;
 import de.kleinert.parsewisp.parsing.*;
-import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
-import de.kleinert.parsewisp.parser_options.RulesAvailable;
+import de.kleinert.parsewisp.parser_options.*;
 import de.kleinert.parsewisp.parsing.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -1,10 +1,7 @@
 package de.kleinert.parsewisp.grammar;
 
 import de.kleinert.parsewisp.Sym;
-import de.kleinert.parsewisp.parsing.NonTerminal;
-import de.kleinert.parsewisp.parsing.RegexTerm;
-import de.kleinert.parsewisp.parsing.Rule;
-import de.kleinert.parsewisp.parsing.StringTerm;
+import de.kleinert.parsewisp.parsing.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

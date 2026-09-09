@@ -2,12 +2,10 @@ package de.kleinert.parsewisp.parser_options;
 
 import static de.kleinert.parsewisp.parser_options.Unhide.UnhideOptions;
 
-import de.kleinert.parsewisp.Parsewisp;
-import de.kleinert.parsewisp.Sym;
+import de.kleinert.parsewisp.*;
 import de.kleinert.parsewisp.parser.Parser;
 import de.kleinert.parsewisp.parsing.RegexTerm;
-import de.kleinert.parsewisp.result.ParseFailureNode;
-import de.kleinert.parsewisp.result.ParseTree;
+import de.kleinert.parsewisp.result.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

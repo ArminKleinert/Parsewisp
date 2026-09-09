@@ -1,7 +1,6 @@
 package de.kleinert.parsewisp.viz;
 
-import de.kleinert.parsewisp.result.Node;
-import de.kleinert.parsewisp.result.ParseTree;
+import de.kleinert.parsewisp.result.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.FileNotFoundException;

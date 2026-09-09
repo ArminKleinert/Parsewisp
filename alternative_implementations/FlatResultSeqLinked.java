@@ -1,4 +1,4 @@
-package alphaparse.collections;
+package de.kleinert.parsewisp.collections;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -15,21 +15,21 @@ import java.util.stream.Stream;
  * It is advised that users of this library do not use this type directly.
  */
 public class FlatResultSeq {
-    private static alphaparse.collections.FlatResultSeq EMPTY = null;
+    private static de.kleinert.parsewisp.collections.FlatResultSeq EMPTY = null;
 
-    private final @NotNull alphaparse.collections.FlatResultSeq head;
+    private final @NotNull de.kleinert.parsewisp.collections.FlatResultSeq head;
     private final @NotNull Object nodeContent;
     private final int size;
 
     private Object[] cached;
 
-    private FlatResultSeq(@NotNull alphaparse.collections.FlatResultSeq head, @NotNull Object nodeContent) {
+    private FlatResultSeq(@NotNull de.kleinert.parsewisp.collections.FlatResultSeq head, @NotNull Object nodeContent) {
         this.head = head;
         this.nodeContent = nodeContent;
 
         int siz = head.size;
-        siz += (nodeContent instanceof alphaparse.collections.FlatResultSeq)
-                ? ((alphaparse.collections.FlatResultSeq) nodeContent).size
+        siz += (nodeContent instanceof de.kleinert.parsewisp.collections.FlatResultSeq)
+                ? ((de.kleinert.parsewisp.collections.FlatResultSeq) nodeContent).size
                 : 1;
         this.size = siz;
     }
@@ -45,8 +45,8 @@ public class FlatResultSeq {
      *
      * @return The empty instance.
      */
-    public static @NotNull alphaparse.collections.FlatResultSeq make() {
-        if (EMPTY == null) EMPTY = new alphaparse.collections.FlatResultSeq();
+    public static @NotNull de.kleinert.parsewisp.collections.FlatResultSeq make() {
+        if (EMPTY == null) EMPTY = new de.kleinert.parsewisp.collections.FlatResultSeq();
         return EMPTY;
     }
 
@@ -69,7 +69,7 @@ public class FlatResultSeq {
     /**
      * This method flattens the sequence into an array.
      * <p>
-     * Implementation note: {@link alphaparse.collections.FlatResultSeq} is built as a reversed singly-linked list.
+     * Implementation note: {@link de.kleinert.parsewisp.collections.FlatResultSeq} is built as a reversed singly-linked list.
      *
      * <pre>
      * {@code
@@ -92,7 +92,7 @@ public class FlatResultSeq {
      * Add {@code content} at the index to the array, decrement index, continue with {@code head}.<br/>
      * Iteration 2: {@code array=[null,null,null,null,3], index=3, seq=(content=(content=2, head=(content=1, head=EMPTY)), head=(content=2, head=(content=1, head=EMPTY)))}
      * <p>
-     * {@code content} is a {@link alphaparse.collections.FlatResultSeq}, so do a recursive call. This adds {@code 2} at index 3 and {@code 1} at index 2. The index is decremented by 2 because two elements were added.<br/>
+     * {@code content} is a {@link de.kleinert.parsewisp.collections.FlatResultSeq}, so do a recursive call. This adds {@code 2} at index 3 and {@code 1} at index 2. The index is decremented by 2 because two elements were added.<br/>
      * Iteration 3: {@code array=[null,null,1,2,3], index=1, seq=(content=2, head=(content=1, head=EMPTY))}
      * <p>
      * Do another recursive call on the last two elements.<br/>
@@ -109,8 +109,8 @@ public class FlatResultSeq {
             return backwardsIndex;
 
         for (var h = this; h.size > 0; h = h.head) {
-            if (h.nodeContent instanceof alphaparse.collections.FlatResultSeq) {
-                var frs = (alphaparse.collections.FlatResultSeq) h.nodeContent;
+            if (h.nodeContent instanceof de.kleinert.parsewisp.collections.FlatResultSeq) {
+                var frs = (de.kleinert.parsewisp.collections.FlatResultSeq) h.nodeContent;
                 backwardsIndex = frs.flatten(list, backwardsIndex); // recursive call
             } else {
                 list[backwardsIndex] = h.nodeContent;
@@ -138,15 +138,15 @@ public class FlatResultSeq {
      * Adds an element or multiple elements to this sequence.
      * <ul>
      *     <li>If the input is {@code null}, do nothing.</li>
-     *     <li>If the input is a {@link alphaparse.collections.FlatResultSeq}, add all elements flattened, as if by {@link Collection#addAll(Collection)}</li>
+     *     <li>If the input is a {@link de.kleinert.parsewisp.collections.FlatResultSeq}, add all elements flattened, as if by {@link Collection#addAll(Collection)}</li>
      *     <li>Otherwise, add the input as a single element, as if by {@link Collection#add(Object)}.</li>
      * </ul>
      *
      * @param obj The input.
      * @return A new instance or {@code this}, if nothing is added.
      */
-    public @NotNull alphaparse.collections.FlatResultSeq appendOrConcat(final Object obj) {
+    public @NotNull de.kleinert.parsewisp.collections.FlatResultSeq appendOrConcat(final Object obj) {
         if (obj == null) return this;
-        return new alphaparse.collections.FlatResultSeq(this, obj);
+        return new de.kleinert.parsewisp.collections.FlatResultSeq(this, obj);
     }
 }
