@@ -455,20 +455,6 @@ public final class CfgGrammar extends GrammarBuilder {
 
     private @NotNull Rule makeCfgRuleRhs() {
         final @NotNull Rule optWs = nt("opt-whitespace"); /// {@link #makeCfgOptWhitespaceRhs}
-
-        final @NotNull Rule ruleTerminator;
-        if (options.ruleTerminators().isEmpty())
-            ruleTerminator = optWhitespace;
-        else
-            ruleTerminator = alternationGuaranteeDistinctAndNotEmpty(
-                    List.of(optWs,
-                            concatNoEpsilonMoreThan1(
-                                    List.of(optWs,
-                                            alternationGuaranteeDistinctAndNotEmpty(
-                                                    options.ruleTerminators().stream().map(this::string).toList()),
-                                            optWs))))
-                    .enableHideTag();
-
         final @NotNull Rule rulesRule =
                 concatNoEpsilonMoreThan1(
                         List.of(alternationGuaranteeDistinctAndNotEmpty(
@@ -479,7 +465,15 @@ public final class CfgGrammar extends GrammarBuilder {
                                 nt("rule-separator").enableHideTag(), /// {@link #makeCfgRuleSeparatorRhs}
                                 optWhitespace,
                                 altOrOrdNt, /// {@link #makeCfgAltOrOrdRhs}
-                                ruleTerminator));
+                                alternationGuaranteeDistinctAndNotEmpty(
+                                        List.of(optWs,
+                                                concatNoEpsilonMoreThan1(
+                                                        List.of(optWs,
+                                                                alternationGuaranteeDistinctAndNotEmpty(
+                                                                        List.of(string(";"),
+                                                                                string("."))),
+                                                                optWs))))
+                                        .enableHideTag()));
         return rulesRule;
     }
 

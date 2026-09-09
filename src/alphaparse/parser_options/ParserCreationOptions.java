@@ -22,7 +22,6 @@ import java.util.stream.Stream;
  * @param checkCorrectness      Whether to check the correctness of the grammar when creating the parser.
  * @param ruleDefinitionOpts    A collection of possible "definition operators" for rules.
  * @param epsilonNames          A collection of possible epsilon names. If null, use {@link #defaultEpsilonNames()}.
- * @param ruleTerminators
  */
 @Unmodifiable
 public record ParserCreationOptions(@Nullable Parser whitespaceParser,
@@ -32,9 +31,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
                                     @NotNull Set<RulesAvailable> usableRules,
                                     boolean checkCorrectness,
                                     @NotNull Collection<@NotNull String> ruleDefinitionOpts,
-                                    @NotNull Collection<@NotNull String> epsilonNames,
-                                    @NotNull Collection<@NotNull String> ruleTerminators,
-                                    @NotNull Collection<@NotNull String> lineCommentIndicators) {
+                                    @NotNull Collection<@NotNull String> epsilonNames) {
     private static final boolean defaultCheckCorrectness = true;
 
     /**
@@ -135,9 +132,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
             final @Nullable Set<RulesAvailable> usableRules,
             final boolean checkCorrectness,
             final @Nullable Collection<String> ruleDefinitionOpts,
-            final @Nullable Collection<String> epsilonNames,
-            final @Nullable Collection<String> ruleTerminators,
-            final @Nullable Collection<String> lineCommentIndicators) {
+            final @Nullable Collection<String> epsilonNames) {
         var stringCaseInsensitive1 = stringCaseInsensitive == null
                 ? GlobalCaseInsensitivity.DEFAULT
                 : stringCaseInsensitive;
@@ -158,13 +153,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
                 ? defaultEpsilonNames()
                 : epsilonNames.stream().sorted(Comparator.comparingInt(String::length)).toList();
 
-        var ruleTerminators1 = ruleTerminators == null ?
-                defaultRuleTerminators() : ruleTerminators;
-
-        var lineCommentIndicators1 = lineCommentIndicators==null
-                ?List.<String>of() : lineCommentIndicators;
-
-        return new ParserCreationOptions(whitespaceParser, startProduction, stringCaseInsensitive1, redefinitionOption1, usableRules1, checkCorrectness, ruleDefinitionOpts1, epsilonNames1, ruleTerminators1,lineCommentIndicators1);
+        return new ParserCreationOptions(whitespaceParser, startProduction, stringCaseInsensitive1, redefinitionOption1, usableRules1, checkCorrectness, ruleDefinitionOpts1, epsilonNames1);
     }
 
     /**
@@ -180,7 +169,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction, stringCaseInsensitive,
                 redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOpts, epsilonNames,ruleTerminators,lineCommentIndicators);
+                checkCorrectness, ruleDefinitionOpts, epsilonNames);
     }
 
     /**
@@ -196,7 +185,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction, stringCaseInsensitive,
                 redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOpts, epsilonNames,ruleTerminators,lineCommentIndicators);
+                checkCorrectness, ruleDefinitionOpts, epsilonNames);
     }
 
     /**
@@ -212,7 +201,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction, stringCaseInsensitive,
                 redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOpts, epsilonNames,ruleTerminators,lineCommentIndicators);
+                checkCorrectness, ruleDefinitionOpts, epsilonNames);
     }
 
     /**
@@ -240,7 +229,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction, stringCaseInsensitive,
                 redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOpts, epsilonNames,ruleTerminators,lineCommentIndicators);
+                checkCorrectness, ruleDefinitionOpts, epsilonNames);
     }
 
     /**
@@ -254,7 +243,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction, stringCaseInsensitive,
                 redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOpts, epsilonNames,ruleTerminators,lineCommentIndicators);
+                checkCorrectness, ruleDefinitionOpts, epsilonNames);
     }
 
     /**
@@ -298,7 +287,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction, stringCaseInsensitive,
                 redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOpts, epsilonNames,ruleTerminators,lineCommentIndicators);
+                checkCorrectness, ruleDefinitionOpts, epsilonNames);
     }
 
     /**
@@ -312,7 +301,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction, stringCaseInsensitive,
                 redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOps, epsilonNames,ruleTerminators,lineCommentIndicators);
+                checkCorrectness, ruleDefinitionOps, epsilonNames);
     }
 
     /**
@@ -326,7 +315,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction, stringCaseInsensitive,
                 redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOpts, epsilonNames,ruleTerminators,lineCommentIndicators);
+                checkCorrectness, ruleDefinitionOpts, epsilonNames);
     }
 
     /**
@@ -353,7 +342,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
     }
 
     /**
-     * The default settings. Equivalent to {@link ParserCreationOptions#ParserCreationOptions(Parser, Sym, GlobalCaseInsensitivity, RedefinitionOption, Set, boolean, Collection, Collection,Collection,Collection)} with using {@code null} or whichever defaults this class provides.
+     * The default settings. Equivalent to {@link ParserCreationOptions#ParserCreationOptions(Parser, Sym, GlobalCaseInsensitivity, RedefinitionOption, Set, boolean, Collection, Collection)} with using {@code null} or whichever defaults this class provides.
      *
      * <p>
      * Characteristics:
@@ -371,7 +360,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 null, null, null,
                 null, null,
-                defaultCheckCorrectness, null, null,null, null);
+                defaultCheckCorrectness, null, null);
     }
 
     /**
@@ -413,7 +402,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
                 null, null, GlobalCaseInsensitivity.TRUE,
                 RedefinitionOption.CHOICE, rules, defaultCheckCorrectness,
                 List.of("=/", "="),
-                List.of("ε"),List.of(),List.of(";")
+                List.of("ε")
         );
     }
 
@@ -462,89 +451,89 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
                 null, null, GlobalCaseInsensitivity.FALSE,
                 RedefinitionOption.defaultOption, rules, defaultCheckCorrectness,
                 List.of("="),
-                List.of("ε"),List.of(";"),List.of()
+                List.of("ε")
         );
     }
 
-    /**
-     * PEG settings.
-     * <p>
-     * Characteristics:
-     * <ul>
-     *     <li>Rule definition operators: {@code "←", "<-"}</li>
-     *     <li>Case insensitivity: {@code false}</li>
-     *     <li>Redefinition option: {@link RedefinitionOption#defaultOption}</li>
-     *     <li>Epsilon equivalents: {@code "ε"}</li>
-     * </ul>
-     * <p>
-     * Available rules:
-     * <ul>
-     *     <li>{@link RulesAvailable#LOOKAHEAD}</li>
-     *     <li>{@link RulesAvailable#NEGATIVE_LOOKAHEAD}</li>
-     *     <li>{@link RulesAvailable#OPTIONAL_QUERY},
-     *     <li>{@link RulesAvailable#OPTIONAL_REPETITION_STAR}</li>
-     *     <li>{@link RulesAvailable#ORDERED_CHOICE}</li>
-     *     <li>{@link RulesAvailable#PLUS}</li>
-     *     <li>{@link RulesAvailable#REGEX}</li>
-     *     <li>{@link RulesAvailable#SINGLY_QUOTED}</li>
-     * </ul>
-     *
-     * @return Options for PEG parsers.
-     */
-    public static @NotNull ParserCreationOptions peg() {
-        var rules = EnumSet.of(
-                RulesAvailable.LOOKAHEAD,
-                RulesAvailable.NEGATIVE_LOOKAHEAD,
-                RulesAvailable.OPTIONAL_QUERY,
-                RulesAvailable.OPTIONAL_REPETITION_STAR,
-                RulesAvailable.ORDERED_CHOICE,
-                RulesAvailable.PLUS,
-                RulesAvailable.REGEX,
-                RulesAvailable.SINGLY_QUOTED);
-        return ParserCreationOptions.create(
-                null, null, GlobalCaseInsensitivity.FALSE,
-                RedefinitionOption.defaultOption, rules, defaultCheckCorrectness,
-                List.of("←", "<-"),
-                List.of("ε"),List.of(),List.of("#")
-        );
-    }
+//    /**
+//     * PEG settings.
+//     * <p>
+//     * Characteristics:
+//     * <ul>
+//     *     <li>Rule definition operators: {@code "←", "<-"}</li>
+//     *     <li>Case insensitivity: {@code false}</li>
+//     *     <li>Redefinition option: {@link RedefinitionOption#defaultOption}</li>
+//     *     <li>Epsilon equivalents: {@code "ε"}</li>
+//     * </ul>
+//     * <p>
+//     * Available rules:
+//     * <ul>
+//     *     <li>{@link RulesAvailable#LOOKAHEAD}</li>
+//     *     <li>{@link RulesAvailable#NEGATIVE_LOOKAHEAD}</li>
+//     *     <li>{@link RulesAvailable#OPTIONAL_QUERY},
+//     *     <li>{@link RulesAvailable#OPTIONAL_REPETITION_STAR}</li>
+//     *     <li>{@link RulesAvailable#ORDERED_CHOICE}</li>
+//     *     <li>{@link RulesAvailable#PLUS}</li>
+//     *     <li>{@link RulesAvailable#REGEX}</li>
+//     *     <li>{@link RulesAvailable#SINGLY_QUOTED}</li>
+//     * </ul>
+//     *
+//     * @return Options for PEG parsers.
+//     */
+//    public static @NotNull ParserCreationOptions peg() {
+//        var rules = EnumSet.of(
+//                RulesAvailable.LOOKAHEAD,
+//                RulesAvailable.NEGATIVE_LOOKAHEAD,
+//                RulesAvailable.OPTIONAL_QUERY,
+//                RulesAvailable.OPTIONAL_REPETITION_STAR,
+//                RulesAvailable.ORDERED_CHOICE,
+//                RulesAvailable.PLUS,
+//                RulesAvailable.REGEX,
+//                RulesAvailable.SINGLY_QUOTED);
+//        return ParserCreationOptions.create(
+//                null, null, GlobalCaseInsensitivity.FALSE,
+//                RedefinitionOption.defaultOption, rules, defaultCheckCorrectness,
+//                List.of("←", "<-"),
+//                List.of("ε")
+//        );
+//    }
 
-    /**
-     * EBNF settings without addons.
-     * <p>
-     * Characteristics:
-     * <ul>
-     *     <li>Rule definition operators: {@code "="}</li>
-     *     <li>Case insensitivity: {@code false}</li>
-     *     <li>Redefinition option: {@link RedefinitionOption#defaultOption}</li>
-     *     <li>Epsilon equivalents: {@code "ε"}</li>
-     * </ul>
-     * <p>
-     * Available rules:
-     * <ul>
-     *     <li>{@link RulesAvailable#ALTERNATION}</li>
-     *     <li>{@link RulesAvailable#EXCLUSION}</li>
-     *     <li>{@link RulesAvailable#OPTIONAL_REPETITION}</li>
-     *     <li>{@link RulesAvailable#OPTIONAL}</li>
-     *     <li>{@link RulesAvailable#REGEX}</li>
-     *     <li>{@link RulesAvailable#SINGLY_QUOTED}</li>
-     * </ul>
-     *
-     * @return Options for EBNF parsers.
-     */
-    public static @NotNull ParserCreationOptions pureEbnf() {
-        var rules = EnumSet.of(
-                RulesAvailable.ALTERNATION,
-                RulesAvailable.EXCLUSION,
-                RulesAvailable.OPTIONAL,
-                RulesAvailable.OPTIONAL_REPETITION,
-                RulesAvailable.REGEX,
-                RulesAvailable.SINGLY_QUOTED);
-        return ParserCreationOptions.create(
-                null, null, GlobalCaseInsensitivity.FALSE,
-                RedefinitionOption.defaultOption, rules, defaultCheckCorrectness,
-                List.of("="),
-                List.of("ε"),List.of(";"),List.of()
-        );
-    }
+//    /**
+//     * EBNF settings without addons.
+//     * <p>
+//     * Characteristics:
+//     * <ul>
+//     *     <li>Rule definition operators: {@code "="}</li>
+//     *     <li>Case insensitivity: {@code false}</li>
+//     *     <li>Redefinition option: {@link RedefinitionOption#defaultOption}</li>
+//     *     <li>Epsilon equivalents: {@code "ε"}</li>
+//     * </ul>
+//     * <p>
+//     * Available rules:
+//     * <ul>
+//     *     <li>{@link RulesAvailable#ALTERNATION}</li>
+//     *     <li>{@link RulesAvailable#EXCLUSION}</li>
+//     *     <li>{@link RulesAvailable#OPTIONAL_REPETITION}</li>
+//     *     <li>{@link RulesAvailable#OPTIONAL}</li>
+//     *     <li>{@link RulesAvailable#REGEX}</li>
+//     *     <li>{@link RulesAvailable#SINGLY_QUOTED}</li>
+//     * </ul>
+//     *
+//     * @return Options for EBNF parsers.
+//     */
+//    public static @NotNull ParserCreationOptions pureEbnf() {
+//        var rules = EnumSet.of(
+//                RulesAvailable.ALTERNATION,
+//                RulesAvailable.EXCLUSION,
+//                RulesAvailable.OPTIONAL,
+//                RulesAvailable.OPTIONAL_REPETITION,
+//                RulesAvailable.REGEX,
+//                RulesAvailable.SINGLY_QUOTED);
+//        return ParserCreationOptions.create(
+//                null, null, GlobalCaseInsensitivity.FALSE,
+//                RedefinitionOption.defaultOption, rules, defaultCheckCorrectness,
+//                List.of("="),
+//                List.of("ε")
+//        );
+//    }
 }
