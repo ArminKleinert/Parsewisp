@@ -11,6 +11,7 @@ import de.kleinert.parsewisp.result.ParseResult;
 import de.kleinert.parsewisp.testutil.PT;
 import de.kleinert.parsewisp.util.Transform;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -79,7 +80,7 @@ class TransformBnfToParsewispTest {
                 <digit> ::= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
                 <opt-whitespace> ::= " " <opt-whitespace> | "\\t" <opt-whitespace> | "\\n" <opt-whitespace> | ""
                 """);
-        var albnf = transform(parse, Sym.sym("S"));
+        var bnfParser = transform(parse, Sym.sym("S"));
         Assertions.assertEquals(
                 PT.create("S",
                         PT.create("opt-whitespace"),
@@ -87,7 +88,7 @@ class TransformBnfToParsewispTest {
                         PT.create("opt-whitespace"),
                         PT.create("number", PT.create("digit", "9"), PT.create("number", PT.create("digit", "5"))),
                         PT.create("opt-whitespace")),
-                albnf.parse("+95")
+                bnfParser.parse("+95")
         );
         Assertions.assertEquals(
                 PT.create("S",
@@ -96,7 +97,7 @@ class TransformBnfToParsewispTest {
                         PT.create("opt-whitespace", "\t", PT.create("opt-whitespace")),
                         PT.create("number", PT.create("digit", "9"), PT.create("number", PT.create("digit", "5"))),
                         PT.create("opt-whitespace")),
-                albnf.parse(" +\t95")
+                bnfParser.parse(" +\t95")
         );
     }
 
@@ -127,7 +128,7 @@ class TransformBnfToParsewispTest {
     }
 
     // syntax         ::= rule | rule syntax
-    private Object syntax(List<Object> pt) {
+    private @NotNull Object syntax(@NotNull List<@NotNull Object> pt) {
         if (pt.size() == 1) return List.of(pt.get(0));
         var arr = new ArrayList<>();
         arr.add(pt.get(0));
@@ -136,19 +137,19 @@ class TransformBnfToParsewispTest {
     }
 
     // rule           ::= opt-whitespace "<" rule-name ">" opt-whitespace "::=" opt-whitespace expression line-end
-    private Object rule(final List<Object> pt) {
+    private @NotNull Object rule(final @NotNull List<@NotNull Object> pt) {
         var ruleName = pt.get(2); // rule-name
         var expression = pt.get(7); // expression
         return Map.entry(Sym.sym(ruleName.toString()), expression);
     }
 
     // line-end       ::= opt-whitespace "\n" | opt-whitespace "\n" line-end
-    private Object lineEnd(final List<Object> pt) {
+    private @Nullable Object lineEnd(final @NotNull List<@NotNull Object> pt) {
         return null;
     }
 
     // expression     ::= list | list opt-whitespace "|" opt-whitespace expression
-    private Object expression(final List<Object> pt) {
+    private @NotNull Object expression(final @NotNull List<@NotNull Object> pt) {
         if (pt.size() == 1)
             return pt.get(0); // list
         var list = (Rule) pt.get(0); // list
@@ -161,37 +162,37 @@ class TransformBnfToParsewispTest {
     }
 
     // opt-whitespace ::= " " opt-whitespace | ""
-    private Object optWhitespace(final List<Object> pt) {
+    private @Nullable Object optWhitespace(final @NotNull List<@NotNull Object> pt) {
         // Do nothing
         return null;
     }
 
     // list           ::= term | term opt-whitespace list
-    private Object list(final List<Object> pt) {
+    private @NotNull Object list(final @NotNull List<@NotNull Object> pt) {
         if (pt.size() > 1)
             return ConcatRule.create(List.of((Rule) pt.get(0), (Rule) pt.get(2))); // term and list
         return pt.get(0); // term
     }
 
     // term           ::= literal | "<" rule-name ">"
-    private Object term(final List<Object> pt) {
+    private @NotNull Object term(final @NotNull List<@NotNull Object> pt) {
         if (pt.size() == 1) return pt.get(0);
         return pt.get(1);
     }
 
     // literal        ::= '"' text1 '"' | "'" text2 "'"
-    private Object literal(final List<Object> pt) {
+    private @NotNull Object literal(final @NotNull List<@NotNull Object> pt) {
         return StringTerm.create(pt.get(1).toString(), false);
     }
 
     // text1          ::= "" | character1 text1
-    private Object text1(final List<Object> pt) {
+    private @NotNull Object text1(final @NotNull List<@NotNull Object> pt) {
         //System.out.println(pt.stream().map(Object::toString).collect(Collectors.joining()));
         return unescape(pt.stream().map(Object::toString).collect(Collectors.joining()));
     }
 
     // text2          ::= "" | character2 text2
-    private Object text2(final List<Object> pt) {
+    private @NotNull Object text2(final @NotNull List<@NotNull Object> pt) {
         return unescape(pt.stream().map(Object::toString).collect(Collectors.joining()));
     }
 
@@ -201,29 +202,29 @@ class TransformBnfToParsewispTest {
     // character1     ::= character | "'"
     // character2     ::= character | '"'
     // rule-char      ::= letter | digit | "-"
-    private Object firstNode(final List<Object> pt) {
+    private @NotNull Object firstNode(final @NotNull List<@NotNull Object> pt) {
         return pt.get(0);
     }
 
     // symbol         ::= "\n" | "\r" | "\t" | "|" | " " | "!" | "#" | "$" | "%" | "&" | "(" | ")" | "*" | "+" | "," | "-" | "." | "/" | ":" | ";" | ">" | "=" | "<" | "?" | "@" | "[" | "\\" | "]" | "^" | "_" | "`" | "{" | "}" | "~"
-    private Object symbol(final List<Object> pt) {
+    private @NotNull Object symbol(final @NotNull List<@NotNull Object> pt) {
         return pt.get(0);
     }
 
     // rule-name      ::= letter | rule-name rule-char
-    private Object ruleName(final List<Object> pt) {
+    private @NotNull Object ruleName(final @NotNull List<@NotNull Object> pt) {
         return NonTerminal.create(Sym.sym(pt.stream().map(Object::toString).collect(Collectors.joining())));
     }
 
-    private String unescape(String s) {
+    private @NotNull String unescape(@NotNull String s) {
         return s.replace("\\b", "\b")
-            .replace("\\t", "\t")
-            .replace("\\n", "\n")
-            .replace("\\f", "\f")
-            .replace("\\r", "\r")
-            .replace("\\s", " ")
-            .replace("\\\"", "\"")
-            .replace("\\'", "'")
-            .replace("\\\\", "\\");}
+                .replace("\\t", "\t")
+                .replace("\\n", "\n")
+                .replace("\\f", "\f")
+                .replace("\\r", "\r")
+                .replace("\\s", " ")
+                .replace("\\\"", "\"")
+                .replace("\\'", "'")
+                .replace("\\\\", "\\");
+    }
 }
-    

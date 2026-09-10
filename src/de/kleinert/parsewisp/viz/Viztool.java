@@ -14,8 +14,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <pre>
  * {@code
  *   var text = "...";
- *   var p = Alpha.parser("...");
- *   var rule = Alpha.parse(p, text).castToParseSuccess();
+ *   var p = Parsewisp.parser("...");
+ *   var rule = Parsewisp.parse(p, text).castToParseSuccess();
  *   println(Viztool.dumpParseTree("vizoutput", rule));
  * }
  * </pre>
@@ -67,8 +67,8 @@ public final class Viztool {
      * <pre>
      * {@code
      *   var text = "abc";
-     *   var p = Alpha.parser("S : A 'bc'\nA : 'a'");
-     *   var rule = Alpha.parse(p, text).castToParseSuccess(); // Parse tree [:S, [:A, 'a'], 'bc']
+     *   var p = Parsewisp.parser("S : A 'bc'\nA : 'a'");
+     *   var rule = Parsewisp.parse(p, text).castToParseSuccess(); // Parse tree [:S, [:A, 'a'], 'bc']
      *   println(Viztool.dumpParseTree("vizoutput", rule));
      * }
      * </pre>

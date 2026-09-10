@@ -315,11 +315,11 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
      * {@code
      *
      *   // With whitespace parser:
-     *   var p = Alpha.parser("S = ('a' | 'b')*");
+     *   var p = Parsewisp.parser("S = ('a' | 'b')*");
      *   println(p.parse("a b      a\tb\na")); // Error
      *
      *   // With whitespace parser:
-     *   var p = Alpha.parser("S = ('a' | 'b')*", Alpha.ParserCreationOptions.newWithStandardWhitespace());
+     *   var p = Parsewisp.parser("S = ('a' | 'b')*", Parsewisp.ParserCreationOptions.newWithStandardWhitespace());
      *   println(p.parse("a b      a\tb\na")); // [:S, a, b, a, b, a]
      * }
      * </pre>

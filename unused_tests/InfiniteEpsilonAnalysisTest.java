@@ -1,8 +1,8 @@
-//package alphaparse.tests.typical;
+//package parsewisp.tests.typical;
 //
-//import alphaparse.Alpha;
-//import alphaparse.Sym;
-//import alphaparse.result.PT;
+//import parsewisp.Parsewisp;
+//import parsewisp.Sym;
+//import parsewisp.result.PT;
 //import org.junit.Rule;
 //import org.junit.Test;
 //import org.junit.jupiter.api.Assertions;
@@ -35,7 +35,7 @@
 //     */
 //    @Test
 //    public void infiniteEpsilon() {
-//        var p = Alpha.parser("S = S | epsilon");
+//        var p = Parsewisp.parser("S = S | epsilon");
 //        Assertions.assertEquals(PT.create("S"), p.parse(""));
 //        Assertions.assertEquals(
 //                List.of(PT.create("S"),
@@ -48,7 +48,7 @@
 //
 //    @Test
 //    public void infiniteEpsilon2() {
-//        var p = Alpha.parser("S = A epsilon | epsilon\nA = S");
+//        var p = Parsewisp.parser("S = A epsilon | epsilon\nA = S");
 //        Assertions.assertEquals(PT.create("S"), p.parse(""));
 ////        Assertions.assertEquals(
 ////                List.of(PT.create("S"),

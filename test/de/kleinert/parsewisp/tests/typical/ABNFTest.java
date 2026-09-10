@@ -12,7 +12,7 @@ class ABNFTest {
 //    void lineCommentToEOF() {
 //        Assertions.assertEquals(
 //                PT.create("S", "a"),
-//                Alpha.parser("S = \"a\" ; ignore", ParserCreationOptions.abnf()).parse("a")
+//                Parsewisp.parser("S = \"a\" ; ignore", ParserCreationOptions.abnf()).parse("a")
 //        );
 //    }
 //
@@ -21,7 +21,7 @@ class ABNFTest {
 //        Assertions.assertEquals(
 //                PT.create("S",
 //                        PT.create("A", "a")),
-//                Alpha.parser("""
+//                Parsewisp.parser("""
 //                        S = A ; ignore
 //                        A = "a"
 //                        """, ParserCreationOptions.abnf())

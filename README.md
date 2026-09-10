@@ -18,7 +18,7 @@ but has grown beyond it.
 
 Missing features and problems:
 
-- [ ] ABNF line comments are not implemented yet.
+- [ ] ABNFand PEG line comments are not implemented yet.
 
 ## First parser
 

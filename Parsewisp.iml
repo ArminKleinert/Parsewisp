@@ -9,6 +9,7 @@
       <sourceFolder url="file://$MODULE_DIR$/res" type="java-resource" />
       <excludeFolder url="file://$MODULE_DIR$/alternative_implementations" />
       <excludeFolder url="file://$MODULE_DIR$/doc" />
+      <excludeFolder url="file://$MODULE_DIR$/unused_tests" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

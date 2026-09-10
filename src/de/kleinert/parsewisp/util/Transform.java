@@ -45,7 +45,7 @@ public final class Transform {
      *
      * <pre>
      * {@code
-     *         var p = Alpha.parser("""
+     *         var p = Parsewisp.parser("""
      *                 S := NUM ('+' NUM)*
      *                 NUM := #'\\d+'
      *                 """);
@@ -91,7 +91,7 @@ public final class Transform {
      * In this case, all nodes in the content MUST have a corresponding {@link Node} wrapper ({@link ParseTree} or {@link String})!
      * <pre>
      * {@code
-     *         var p = Alpha.parser("""
+     *         var p = Parsewisp.parser("""
      *                 S := A
      *                 A := NUM ('+' NUM)*
      *                 NUM := #'\\d+'

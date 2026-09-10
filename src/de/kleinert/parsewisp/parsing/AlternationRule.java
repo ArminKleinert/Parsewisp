@@ -19,7 +19,7 @@ import java.util.List;
  * <pre>
  * {@code
  *         // Accepts the language {"a", "b", "ab"}
- *         var p = Alpha.parser("S := 'a' | 'b' | 'ab'");
+ *         var p = Parsewisp.parser("S := 'a' | 'b' | 'ab'");
  *         println(p.parse("a"));  // [:S, a]
  *         println(p.parse("b"));  // [:S, b]
  *         println(p.parse("ab")); // [:S, ab]
@@ -29,10 +29,10 @@ import java.util.List;
  * Alternatively, the {@link ParserCreationOptions} class allows an alternative notation for defining alternations:
  * <pre>
  * {@code
- *         var opts = Alpha.ParserCreationOptions
+ *         var opts = Parsewisp.ParserCreationOptions
  *                 .getDefault()
  *                 .withRedefinitionOption(Grammar.RedefinitionOption.CHOICE);
- *         var p = Alpha.parser("""
+ *         var p = Parsewisp.parser("""
  *                 S : 'a'
  *                 S : 'b'
  *                 S : 'ab'

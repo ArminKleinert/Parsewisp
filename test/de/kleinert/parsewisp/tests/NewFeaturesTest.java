@@ -143,7 +143,7 @@ class NewFeaturesTest {
                     PT.create("S", PT.create("r2", "a"), PT.create("r2", "a"))
             );
 //            System.out.println("Expect: "+possibleParses);
-//            System.out.println("Have:   "+Alpha.parses(p, text));
+//            System.out.println("Have:   "+Parsewisp.parses(p, text));
         }
     }
 

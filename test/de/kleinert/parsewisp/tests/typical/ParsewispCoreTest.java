@@ -389,7 +389,7 @@ class ParsewispCoreTest {
     void testParenAbHideBothTags() {
         var text = "(aba)";
 
-        // Sadly, AlphaParse can not output untagged trees.
+        // Sadly, Parsewisp can not output untagged trees.
         // The expected result for Instaparse is as follows:
         //    (paren-ab-hide-both-tags "(aba)") ;=> ("a" "b" "a")
         var tree = PT.create(ParseTree.NULL_TAG.content().name(), "a", "b", "a");

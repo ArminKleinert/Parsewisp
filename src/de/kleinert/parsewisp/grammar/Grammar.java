@@ -123,7 +123,7 @@ public final class Grammar extends LinkedHashMap<@NotNull Sym, Rule> {
          *
          * <pre>
          * {@code
-         *     var parser = Alpha.parser("""
+         *     var parser = Parsewisp.parser("""
          *                     S = A*
          *                     A = "a" | "b"
          *                     """);
@@ -282,7 +282,7 @@ public final class Grammar extends LinkedHashMap<@NotNull Sym, Rule> {
          * With a naive algorithm, the parser could never terminate. You can check for this case by using the following:
          * <pre>
          * {@code
-         *         var parser1 = Alpha.parser("S = A S ; A = epsilon ;");
+         *         var parser1 = Parsewisp.parser("S = A S ; A = epsilon ;");
          *         var analysis1 = parser1.grammar().analyze();
          *         System.out.println(analysis1.isProductive(Sym.sym("S"))); // false
          * }

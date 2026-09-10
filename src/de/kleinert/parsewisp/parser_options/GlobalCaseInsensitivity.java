@@ -13,7 +13,7 @@ public enum GlobalCaseInsensitivity {
      */
     FALSE,
     /**
-     * Eh, depends. E.g. for ABNF, would be true. False for EBNF. Leave it to the implementation of AlphaParse.
+     * Eh, depends. E.g. for ABNF, would be true. False for EBNF. Leave it to the implementation of Parsewisp.
      */
     DEFAULT
 }

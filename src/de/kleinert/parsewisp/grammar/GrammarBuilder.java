@@ -21,7 +21,7 @@ import java.util.stream.Stream;
  * In the following example, two equivalent grammars and parsers are constructed from a string and from a builder. The assertions show that the grammars are equal and that the parsers give equivalent outputs.
  * <pre>
  * {@code
- *         var gFromString = Alpha.parser("""
+ *         var gFromString = Parsewisp.parser("""
  *                         S = NUMBER NUMBER*
  *                         NUMBER = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
  *                         """)
@@ -36,8 +36,8 @@ import java.util.stream.Stream;
  *
  *         Assertions.assertEquals(gFromString, gFromGB);
  *
- *         var pFromString = Alpha.parser(gFromString, ParserCreationOptions.getDefault().withStartProduction(Sym.sym("S")));
- *         var pFromGB = Alpha.parser(gFromGB, ParserCreationOptions.getDefault().withStartProduction(Sym.sym("S")));
+ *         var pFromString = Parsewisp.parser(gFromString, ParserCreationOptions.getDefault().withStartProduction(Sym.sym("S")));
+ *         var pFromGB = Parsewisp.parser(gFromGB, ParserCreationOptions.getDefault().withStartProduction(Sym.sym("S")));
  *         var text = "0123456789";
  *         Assertions.assertEquals(pFromString.parse(text), pFromGB.parse(text));
  * }

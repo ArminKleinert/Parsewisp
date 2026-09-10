@@ -22,7 +22,7 @@ import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.Trampoline
  * <pre>
  * {@code
  *         // Accepts the language {"a", "b", "ab"}
- *         var p = Alpha.parser("S := #'[0-9]+' - '11'"); // Any positive number except 11.
+ *         var p = Parsewisp.parser("S := #'[0-9]+' - '11'"); // Any positive number except 11.
  *         println(p.parse("12"));  // [:S, 12]
  *         println(p.parse("11"));  // Failure
  * }

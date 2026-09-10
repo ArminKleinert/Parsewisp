@@ -23,12 +23,12 @@ import java.util.LinkedHashMap;
  * Now, parsing the text {@code "abcda"}, the expected tree would be {@code [:S, "a", "c", "a"]}. Where the {@code B} subtree is completely hidden, {@code C} is flattened (merged into {@code S}) and {@code D} is also completely hidden.
  * <pre>
  * {@code
- *      var p = Alpha.parser("S = 'a' <B> C <D> 'a'\nB = 'b'+\n<C> = 'c'\n<D> = 'd'");
+ *      var p = Parsewisp.parser("S = 'a' <B> C <D> 'a'\nB = 'b'+\n<C> = 'c'\n<D> = 'd'");
  *
- *      Alpha.parse(p, "abcda", ParsingOptions.getDefault().withUnhide(UnhideOptions.NONE));    // [:S, "a", "c", "a"]
- *      Alpha.parse(p, "abcda", ParsingOptions.getDefault().withUnhide(UnhideOptions.TAGS));    // [:S, "a", [:C, "c"], "a"]
- *      Alpha.parse(p, "abcda", ParsingOptions.getDefault().withUnhide(UnhideOptions.CONTENT)); // [:S, "a", [:B, "b"], "c", "d", "a"]
- *      Alpha.parse(p, "abcda", ParsingOptions.getDefault().withUnhide(UnhideOptions.ALL));     // [:S, "a", [:B, "b"], [:C, "c"], [:D, "d"], "a"]
+ *      Parsewisp.parse(p, "abcda", ParsingOptions.getDefault().withUnhide(UnhideOptions.NONE));    // [:S, "a", "c", "a"]
+ *      Parsewisp.parse(p, "abcda", ParsingOptions.getDefault().withUnhide(UnhideOptions.TAGS));    // [:S, "a", [:C, "c"], "a"]
+ *      Parsewisp.parse(p, "abcda", ParsingOptions.getDefault().withUnhide(UnhideOptions.CONTENT)); // [:S, "a", [:B, "b"], "c", "d", "a"]
+ *      Parsewisp.parse(p, "abcda", ParsingOptions.getDefault().withUnhide(UnhideOptions.ALL));     // [:S, "a", [:B, "b"], [:C, "c"], [:D, "d"], "a"]
  * }
  * </pre>
  *

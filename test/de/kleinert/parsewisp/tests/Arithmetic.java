@@ -27,7 +27,7 @@ public class Arithmetic {
                 """;
         var p = Parsewisp.parser(g);
 
-        // Since AlphaParse is scannerless, we can not include spaces for now.
+        // Since Parsewisp is scannerless, we can not include spaces for now.
         return p.parse("(8-9)*-20/18+1");
     }
     /**
@@ -45,7 +45,7 @@ public class Arithmetic {
                 """;
         var p = Parsewisp.parser(g);
 
-        // Since AlphaParse is scannerless, we can not include spaces for now.
+        // Since Parsewisp is scannerless, we can not include spaces for now.
         return p.parse("(8-9)*-20/18+1");
     }
     /**
@@ -63,7 +63,7 @@ public class Arithmetic {
                 """;
         var p = Parsewisp.parser(g);
 
-        // Since AlphaParse is scannerless, we can not include spaces for now.
+        // Since Parsewisp is scannerless, we can not include spaces for now.
         return p.parse("(8-9)*-20/18+1");
     }
     /**
@@ -74,7 +74,7 @@ public class Arithmetic {
      * {@code
      *         var options = ParserCreationOptions
      *                 .getDefault()
-     *                 .withWhitespaceParser(Alpha.parser("whitespace = ' ' | '\\t' | '\\n'"));
+     *                 .withWhitespaceParser(Parsewisp.parser("whitespace = ' ' | '\\t' | '\\n'"));
      * }
      * </pre>
      * Since this pattern came up so often, a shorter alternative is provided:
@@ -159,7 +159,7 @@ public class Arithmetic {
         return p.parse("(8 - 9) * -20 / 18 + 1");
     }
     /**
-     * AlphaParse also supports '+' to shorten our rule "Digit Digit*".
+     * Parsewisp also supports '+' to shorten our rule "Digit Digit*".
      *
      * @return output for tutorial state
      */

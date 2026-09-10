@@ -57,14 +57,14 @@ public final class RegexTerm extends Terminal {
      * So by default, the following is true:
      * <pre>
      * {@code
-     *         var p = Alpha.parser("S : #'A+' 'A'");
+     *         var p = Parsewisp.parser("S : #'A+' 'A'");
      *         Assertions.assertTrue(p.parse("AAA").isFailure()); // Parsing failed because #'A+' eagerly matched the entire input.
      * }
      * </pre>
      * If the {@link ParsingOptions#iterativeDeepening()} option is true, the parse would succeed.
      * <pre>
      * {@code
-     *         var p = Alpha.parser("S : #'A+' 'A'");
+     *         var p = Parsewisp.parser("S : #'A+' 'A'");
      *         var opts = ParsingOptions.getDefault().withIterativeDeepening(true);
      *         Assertions.assertEquals(ParseTree.create("S", "AA", "A"), p.parse("AAA", opts));
      * }

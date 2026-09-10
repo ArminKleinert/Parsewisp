@@ -84,13 +84,13 @@ public record ParsingOptions(
      *      // The grammar has these two, unrelated productions. The first production is A. So that is the production the parser uses.
      *      //    A := 'a'
      *      //    B := 'b'
-     *      var p = Alpha.parser("A := 'a'\nB := 'b'");
+     *      var p = Parsewisp.parser("A := 'a'\nB := 'b'");
      *
      *      println(p.parse("a")); // Success: [:A, a]
      *      println(p.parse("b")); // Failure: 'b' could not be parsed from production A.
      *
      *      // With the start production explicitly changed, it works:
-     *      println(p.parse("b", Alpha.ParsingOptions.getDefault().withStart(Keyword.intern("B")))); // [:B, b]
+     *      println(p.parse("b", Parsewisp.ParsingOptions.getDefault().withStart(Keyword.intern("B")))); // [:B, b]
      * }
      * </pre>
      * This can be useful if the grammar has multiple unrelated parts.
@@ -112,10 +112,10 @@ public record ParsingOptions(
      * The option only applies when requesting the full parse forest (e.g. {@link Parsewisp#parses(Parser, String, ParsingOptions)}), but not when only a single parse is requested (e.g. {@link Parsewisp#parse(Parser, String, ParsingOptions)}).
      * <pre>
      * {@code
-     *      var p = Alpha.parser("S := 'a'+");
+     *      var p = Parsewisp.parser("S := 'a'+");
      *      println(p.parses("aa")); // [[:S, a, a]]
      *
-     *      var opts = Alpha.ParsingOptions.getDefault().withPartialSetTo(true);
+     *      var opts = Parsewisp.ParsingOptions.getDefault().withPartialSetTo(true);
      *      println(p.parses("aa", opts)); // [[:S, a], [:S, a, a]]
      *
      *      // The option has no effect on single parse:
@@ -149,24 +149,24 @@ public record ParsingOptions(
      * Now the code:
      * <pre>
      * {@code
-     *   var p = Alpha.parser("S = 'a' <B> C <D> 'a'\nB = 'b'+\n<C> = 'c'\n<D> = 'd'");
+     *   var p = Parsewisp.parser("S = 'a' <B> C <D> 'a'\nB = 'b'+\n<C> = 'c'\n<D> = 'd'");
      *
      *   // No options.
      *   println("Default => " + p.parse("abcda"));       // [:S, a, c, a]
      *
-     *   var opts = Alpha.ParsingOptions.getDefault();
+     *   var opts = Parsewisp.ParsingOptions.getDefault();
      *   println("Default => " + p.parse("abcda"));       // [:S, a, c, a]
      *
-     *   opts = opts.withUnhide(Alpha.UnhideOptions.none);
+     *   opts = opts.withUnhide(Parsewisp.UnhideOptions.none);
      *   println("none    => " + p.parse("abcda", opts)); // [:S, a, c, a]
      *
-     *   opts = opts.withUnhide(Alpha.UnhideOptions.tags);
+     *   opts = opts.withUnhide(Parsewisp.UnhideOptions.tags);
      *   println("tags    => " + p.parse("abcda", opts)); // [:S, a, [:C, c], a]
      *
-     *   opts = opts.withUnhide(Alpha.UnhideOptions.content);
+     *   opts = opts.withUnhide(Parsewisp.UnhideOptions.content);
      *   println("content => " + p.parse("abcda", opts)); // [:S, a, [:B, b], c, d, a]
      *
-     *   opts = opts.withUnhide(Alpha.UnhideOptions.all);
+     *   opts = opts.withUnhide(Parsewisp.UnhideOptions.all);
      *   println("all     => " + p.parse("abcda", opts)); // [:S, a, [:B, b], [:C, c], [:D, d], a]
      * }
      * </pre>
@@ -185,7 +185,7 @@ public record ParsingOptions(
      *
      * <pre>
      * {@code
-     *      var p = Alpha.parser("S := #'a'+");
+     *      var p = Parsewisp.parser("S := #'a'+");
      *      var text = "ab";
      *
      *      // A normal parse results in a failure.
@@ -193,7 +193,7 @@ public record ParsingOptions(
      *      // => [1, [ParseFailureReason[rule=#"a", reasonString=null, untilEndOfInput=false, tag=regex]], 1, 2, ab]
      *
      *      // With the total option, a parsetree is returned, potentially providing more information about the failure.
-     *      var opts = Alpha.ParsingOptions.getDefault().withTotal(true);
+     *      var opts = Parsewisp.ParsingOptions.getDefault().withTotal(true);
      *      println(p.parse("ab", opts));
      *      // => [:S, "a", [:failure, could not parse "b" at 1..2]]
      * }
