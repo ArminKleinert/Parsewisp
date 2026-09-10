@@ -35,7 +35,7 @@ class TestVariableRepetitionFailures {
                         """,
                 creationOpts);
         //System.out.println(repeated_a);
-        Assertions.assertEquals(treesPartial, new HashSet<>(Parsewisp.parses(repeated_a, text, partialOpts)));
+        Assertions.assertEquals(treesPartial, new HashSet<>(repeated_a.parses(text, partialOpts)));
     }
     @Test
     void parseWithPartial2() {
@@ -57,7 +57,7 @@ class TestVariableRepetitionFailures {
                         """,
                 creationOpts);
         //System.out.println(repeated_a);
-        Assertions.assertEquals(treesPartial, new HashSet<>(Parsewisp.parses(repeated_a, text, partialOpts)));
+        Assertions.assertEquals(treesPartial, new HashSet<>(repeated_a.parses(text, partialOpts)));
     }
 
     @Test
@@ -80,7 +80,7 @@ class TestVariableRepetitionFailures {
                         """,
                 creationOpts);
         //System.out.println(repeated_a);
-        Assertions.assertEquals(treesPartial, new HashSet<>(Parsewisp.parses(repeated_a, text, partialOpts)));
+        Assertions.assertEquals(treesPartial, new HashSet<>(repeated_a.parses(text, partialOpts)));
     }
     @Test
     void parseRepetitionMinMax() {

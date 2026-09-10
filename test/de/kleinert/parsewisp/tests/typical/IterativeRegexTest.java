@@ -14,7 +14,7 @@ class IterativeRegexTest {
     @Test
     void testCheckByPartials() {
         var p = Parsewisp.parser("S = #'A+'");
-        var parses = Parsewisp.parses(p, "AAAA",
+        var parses = p.parses("AAAA",
                 ParsingOptions.getDefault()
                         .withIterativeDeepening(true)
                         .withPartial(true));
@@ -33,7 +33,7 @@ class IterativeRegexTest {
         Assertions.assertTrue(p.parses("").isEmpty());
         Assertions.assertTrue(p.parses("ABA").isEmpty());
 
-        var parses = Parsewisp.parses(p, "AAAA",
+        var parses = p.parses("AAAA",
                 ParsingOptions.getDefault().withIterativeDeepening(true));
         Assertions.assertEquals(
                 Set.of(PT.create("S", "A", "AAA"),
@@ -49,7 +49,7 @@ class IterativeRegexTest {
         Assertions.assertTrue(p.parses("").isEmpty());
         Assertions.assertTrue(p.parses("ABA").isEmpty());
 
-        var parses = Parsewisp.parses(p, "AAAA",
+        var parses = p.parses("AAAA",
                 ParsingOptions.getDefault().withIterativeDeepening(true));
         Assertions.assertEquals(
                 Set.of(PT.create("S", "A", "AAA"),
@@ -65,7 +65,7 @@ class IterativeRegexTest {
         Assertions.assertTrue(p.parses("").isEmpty());
         Assertions.assertTrue(p.parses("ABA").isEmpty());
 
-        var parses = Parsewisp.parses(p, "AAAA",
+        var parses = p.parses("AAAA",
                 ParsingOptions.getDefault().withIterativeDeepening(true));
         Assertions.assertEquals(
                 Set.of(PT.create("S", "A", "AAA"),

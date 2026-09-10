@@ -19,7 +19,7 @@ import java.util.Objects;
  * @param unhide                  Which parts of a parse result to show when they would normally be hidden by the parser.
  * @param embedFailureInParseTree If true, a failed parse results in a {@link ParseTree}, as a success would, but a {@link ParseFailureNode} is embedded in the tree.
  * @param iterativeDeepening      Whether to iteratively deepen parsing when parsing with a regex terminal. See {@link RegexTerm#parse}.
- * @param failureIfEmpty          Important for {@link Parsewisp#parses(Parser, String, ParsingOptions)} only. If false, return an empty list if the parsing failed. If true, return the failure.
+ * @param failureIfEmpty          Important for {@link Parser#parses(String, ParsingOptions)} only. If false, return an empty list if the parsing failed. If true, return the failure.
  * @see ParsingOptions#DEFAULT_START
  * @see ParsingOptions#DEFAULT_PARTIAL
  * @see ParsingOptions#DEFAULT_UNHIDE
@@ -109,7 +109,7 @@ public record ParsingOptions(
     /**
      * When generating a parse tree, the parser tries to parse the full string first. With this option, partial parses can be made available.
      * <br>
-     * The option only applies when requesting the full parse forest (e.g. {@link Parsewisp#parses(Parser, String, ParsingOptions)}), but not when only a single parse is requested (e.g. {@link Parsewisp#parse(Parser, String, ParsingOptions)}).
+     * The option only applies when requesting the full parse forest (e.g. {@link Parser#parses(String, ParsingOptions)}), but not when only a single parse is requested (e.g. {@link Parser#parse(String, ParsingOptions)}).
      * <pre>
      * {@code
      *      var p = Parsewisp.parser("S := 'a'+");

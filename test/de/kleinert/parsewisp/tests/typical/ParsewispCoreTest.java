@@ -255,7 +255,7 @@ class ParsewispCoreTest {
 
         Assertions.assertEquals(
                 tree,
-                Parsewisp.parse(as_and_bs, text, ParsingOptions.getDefault())
+                as_and_bs.parse(text, ParsingOptions.getDefault())
         );
 
         Assertions.assertEquals(
@@ -275,7 +275,7 @@ class ParsewispCoreTest {
 
         Assertions.assertEquals(
                 tree,
-                Parsewisp.parse(as_and_bs_regex, text, ParsingOptions.getDefault())
+                as_and_bs_regex.parse(text, ParsingOptions.getDefault())
         );
 
         Assertions.assertEquals(
@@ -308,7 +308,7 @@ class ParsewispCoreTest {
 
         Assertions.assertEquals(
                 treeHiccup,
-                Parsewisp.parse(as_and_bs, text, ParsingOptions.getDefault()).castToParseSuccess().toRawList()
+                as_and_bs.parse(text, ParsingOptions.getDefault()).castToParseSuccess().toRawList()
         );
     }
 
@@ -352,9 +352,9 @@ class ParsewispCoreTest {
                 PT.create("seq-of-A-or-B", "a", "b", "a"),
                 ")");
 
-        Assertions.assertEquals(tree, Parsewisp.parse(paren_ab, text, ParsingOptions.getDefault()));
+        Assertions.assertEquals(tree, paren_ab.parse(text, ParsingOptions.getDefault()));
 
-        Assertions.assertEquals(Parsewisp.parse(paren_ab, text, ParsingOptions.getDefault()), paren_ab.parse(text));
+        Assertions.assertEquals(paren_ab.parse(text, ParsingOptions.getDefault()), paren_ab.parse(text));
     }
 
     @Test
@@ -363,8 +363,8 @@ class ParsewispCoreTest {
         var tree = PT.create("paren-wrapped",
                 PT.create("seq-of-A-or-B", "a", "b", "a"));
 
-        Assertions.assertEquals(tree, Parsewisp.parse(paren_ab_hide_parens, text, ParsingOptions.getDefault()));
-        Assertions.assertEquals(Parsewisp.parse(paren_ab_hide_parens, text, ParsingOptions.getDefault()), paren_ab_hide_parens.parse(text));
+        Assertions.assertEquals(tree, paren_ab_hide_parens.parse(text, ParsingOptions.getDefault()));
+        Assertions.assertEquals(paren_ab_hide_parens.parse(text, ParsingOptions.getDefault()), paren_ab_hide_parens.parse(text));
     }
 
     @Test
@@ -372,8 +372,8 @@ class ParsewispCoreTest {
         var text = "(aba)";
         var tree = PT.create("paren-wrapped", "a", "b", "a");
 
-        Assertions.assertEquals(tree, Parsewisp.parse(paren_ab_manually_flattened, text, ParsingOptions.getDefault()));
-        Assertions.assertEquals(Parsewisp.parse(paren_ab_manually_flattened, text, ParsingOptions.getDefault()), paren_ab_manually_flattened.parse(text));
+        Assertions.assertEquals(tree, paren_ab_manually_flattened.parse(text, ParsingOptions.getDefault()));
+        Assertions.assertEquals(paren_ab_manually_flattened.parse(text, ParsingOptions.getDefault()), paren_ab_manually_flattened.parse(text));
     }
 
     @Test
@@ -381,8 +381,8 @@ class ParsewispCoreTest {
         var text = "(aba)";
         var tree = PT.create("paren-wrapped", "a", "b", "a");
 
-        Assertions.assertEquals(tree, Parsewisp.parse(paren_ab_hide_tag, text, ParsingOptions.getDefault()));
-        Assertions.assertEquals(Parsewisp.parse(paren_ab_hide_tag, text, ParsingOptions.getDefault()), paren_ab_hide_tag.parse(text));
+        Assertions.assertEquals(tree, paren_ab_hide_tag.parse(text, ParsingOptions.getDefault()));
+        Assertions.assertEquals(paren_ab_hide_tag.parse(text, ParsingOptions.getDefault()), paren_ab_hide_tag.parse(text));
     }
 
     @Test
@@ -397,8 +397,8 @@ class ParsewispCoreTest {
         // That raw output can be achieved by manual conversion:
         Assertions.assertEquals(List.of("a", "b", "a"), tree.toRawList());
 
-        Assertions.assertEquals(tree, Parsewisp.parse(paren_ab_hide_both_tags, text, ParsingOptions.getDefault()));
-        Assertions.assertEquals(Parsewisp.parse(paren_ab_hide_both_tags, text, ParsingOptions.getDefault()), paren_ab_hide_both_tags.parse(text));
+        Assertions.assertEquals(tree, paren_ab_hide_both_tags.parse(text, ParsingOptions.getDefault()));
+        Assertions.assertEquals(paren_ab_hide_both_tags.parse(text, ParsingOptions.getDefault()), paren_ab_hide_both_tags.parse(text));
     }
 
     @Test
@@ -435,8 +435,6 @@ class ParsewispCoreTest {
                 PT.create("S", PT.create("A"), PT.create("A", "a", "a", "a", "a", "a", "a"))
         );
 
-        Assertions.assertEquals(treesAmbiguous, Parsewisp.parses(ambiguous, text, ParsingOptions.getDefault()));
-
         Assertions.assertEquals(treesAmbiguous, ambiguous.parses(text));
         Assertions.assertEquals(treesAmbiguous, ambiguous.parses(text, ParsingOptions.getDefault()));
     }
@@ -449,8 +447,6 @@ class ParsewispCoreTest {
         var treesUnambiguous = List.of(
                 PT.create("S", PT.create("A", text), PT.create("A", ""))
         );
-
-        Assertions.assertEquals(treesUnambiguous, Parsewisp.parses(not_ambiguous, text, ParsingOptions.getDefault()));
 
         Assertions.assertEquals(treesUnambiguous, not_ambiguous.parses(text));
         Assertions.assertEquals(treesUnambiguous, not_ambiguous.parses(text, ParsingOptions.getDefault()));
@@ -522,7 +518,7 @@ class ParsewispCoreTest {
                 PT.create("sentence", PT.create("keyword", "defn"), PT.create("identifier", "my"), PT.create("keyword", "cond"))
         );
 
-        Assertions.assertEquals(trees, new HashSet<>(Parsewisp.parses(ambiguous_tokenizer, text, ParsingOptions.getDefault())));
+        Assertions.assertEquals(trees, new HashSet<>(ambiguous_tokenizer.parses(text, ParsingOptions.getDefault())));
     }
 
     @Test
@@ -532,7 +528,7 @@ class ParsewispCoreTest {
                 PT.create("sentence", PT.create("keyword", "defn"), PT.create("identifier", "my"), PT.create("keyword", "cond"))
         );
 
-        Assertions.assertEquals(trees, Parsewisp.parses(unambiguous_tokenizer, text, ParsingOptions.getDefault()));
+        Assertions.assertEquals(trees, unambiguous_tokenizer.parses(text, ParsingOptions.getDefault()));
     }
 
     @Test
@@ -548,7 +544,7 @@ class ParsewispCoreTest {
                 PT.create("sentence", PT.create("identifier", "defn"), PT.create("identifier", "my"), PT.create("identifier", "cond"))
         );
 
-        Assertions.assertEquals(trees, new HashSet<>(Parsewisp.parses(preferential_tokenizer, text, ParsingOptions.getDefault())));
+        Assertions.assertEquals(trees, new HashSet<>(preferential_tokenizer.parses(text, ParsingOptions.getDefault())));
     }
 
     @Test
@@ -562,7 +558,7 @@ class ParsewispCoreTest {
                 PT.create("S", "a", "a", "a", "a", "a", "a")
         );
 
-        Assertions.assertEquals(trees, Parsewisp.parses(repeated_a, text, ParsingOptions.getDefault()));
+        Assertions.assertEquals(trees, repeated_a.parses(text, ParsingOptions.getDefault()));
 
         var partialOpts = ParsingOptions.getDefault().withPartial(true);
         var treesPartial = List.of(
@@ -574,7 +570,7 @@ class ParsewispCoreTest {
                 PT.create("S", "a", "a", "a", "a", "a", "a")
         );
 
-        Assertions.assertEquals(treesPartial, Parsewisp.parses(repeated_a, text, partialOpts));
+        Assertions.assertEquals(treesPartial, repeated_a.parses(text, partialOpts));
     }
 
     @Test
@@ -585,7 +581,7 @@ class ParsewispCoreTest {
                 PT.create("number", "1", "2", "3"),
                 PT.create("word", "d", "e", "f"));
 
-        Assertions.assertEquals(tree, Parsewisp.parse(words_and_numbers_one_character_at_a_time, text, ParsingOptions.getDefault()));
+        Assertions.assertEquals(tree, words_and_numbers_one_character_at_a_time.parse(text, ParsingOptions.getDefault()));
     }
 
     @Test
@@ -605,7 +601,7 @@ class ParsewispCoreTest {
                                 PT.create("number", "6")))
         );
 
-        Assertions.assertEquals(tree, Parsewisp.parse(arithmetic, text, ParsingOptions.getDefault()));
+        Assertions.assertEquals(tree, arithmetic.parse(text, ParsingOptions.getDefault()));
     }
 
     /*
@@ -623,8 +619,8 @@ class ParsewispCoreTest {
         var tree1 = PT.create("S", "=", "=", "=");
         var tree2 = PT.create("S", PT.create("B", "b", "="));
 
-        Assertions.assertEquals(tree1, Parsewisp.parse(tricky_ebnf_build, text1, ParsingOptions.getDefault()));
-        Assertions.assertEquals(tree2, Parsewisp.parse(tricky_ebnf_build, text2, ParsingOptions.getDefault()));
+        Assertions.assertEquals(tree1, tricky_ebnf_build.parse(text1, ParsingOptions.getDefault()));
+        Assertions.assertEquals(tree2, tricky_ebnf_build.parse(text2, ParsingOptions.getDefault()));
     }
 
     @Test

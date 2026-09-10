@@ -107,7 +107,7 @@ class PerformanceTests {
         var p = Parsewisp.parser(grammar);
         var sb = new StringBuilder();
         for (int n = 0; n < max; n++) {
-            int num = Parsewisp.parses(p, sb.toString(), ParsingOptions.getDefault()).size();
+            int num = p.parses(sb.toString(), ParsingOptions.getDefault()).size();
             System.out.println("Parses for " + n + ": " + num + " (Correct? "
                     + (num == 0 || num == 1 << n)
                     + ")");

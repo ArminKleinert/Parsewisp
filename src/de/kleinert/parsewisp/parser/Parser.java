@@ -105,7 +105,7 @@ public record Parser(@NotNull Grammar grammar,
      * @param text    The text.
      * @param options The options for the parse operation.
      * @return A (potentially empty) parse forest. ({@link ParsesResult.LazyResultList})
-     * @see Parsewisp#parses(Parser, String, ParsingOptions)
+     * @see Parser#parses(String, ParsingOptions)
      */
     public @NotNull ParsesResult parses(final @NotNull String text,
                                         final @NotNull ParsingOptions options) {

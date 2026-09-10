@@ -86,7 +86,7 @@ public sealed interface ParsesResult
     }
 
     /**
-     * This class is used for {@link Parsewisp#parses(Parser, String, ParsingOptions)} to represent the failure.
+     * This class is used for {@link Parser#parses(String, ParsingOptions)} to represent the failure.
      */
     final class ParsesFailureResult implements ParsesResult, PretenderList<ParseTree> {
         final @NotNull ParseFailure parseFailure;

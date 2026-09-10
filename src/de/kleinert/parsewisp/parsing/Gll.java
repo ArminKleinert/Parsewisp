@@ -374,7 +374,7 @@ public final class Gll {
     }
 
     /**
-     * This method should not be called directly. Use {@link Parsewisp#parses(Parser, String, ParsingOptions)} with {@link ParsingOptions#embedFailureInParseTree()} set to true instead.
+     * This method should not be called directly. Use {@link Parser#parses(String, ParsingOptions)} with {@link ParsingOptions#embedFailureInParseTree()} set to true instead.
      *
      * @param grammar            The grammar.
      * @param start              The name of the start production.
@@ -382,7 +382,7 @@ public final class Gll {
      * @param partial            Whether to include partial results.
      * @param iterativeDeepening Iteratively deepens the evaluation of {@link RegexTerm#parse}.
      * @return The parse forest.
-     * @see Parsewisp#parses(Parser, String, ParsingOptions)
+     * @see Parser#parses(String, ParsingOptions)
      * @see ParsingOptions#embedFailureInParseTree()
      */
     public static @NotNull ParsesResult parsesEmbedFailure(
@@ -414,7 +414,7 @@ public final class Gll {
     }
 
     /**
-     * This method should not be called directly. Use {@link Parsewisp#parse(Parser, String, ParsingOptions)} with {@link ParsingOptions#embedFailureInParseTree()} set to true instead.
+     * This method should not be called directly. Use {@link Parser#parse(String, ParsingOptions)} with {@link ParsingOptions#embedFailureInParseTree()} set to true instead.
      *
      * @param grammar            The grammar.
      * @param start              The name of the start production.
@@ -422,7 +422,7 @@ public final class Gll {
      * @param partial            Whether to include partial results.
      * @param iterativeDeepening Iteratively deepens the evaluation of {@link RegexTerm#parse}.
      * @return The parse tree or failure.
-     * @see Parsewisp#parse(Parser, String, ParsingOptions)
+     * @see Parser#parse(String, ParsingOptions)
      * @see ParsingOptions#embedFailureInParseTree()
      */
     public static @NotNull ParseResult parseEmbedFailure(

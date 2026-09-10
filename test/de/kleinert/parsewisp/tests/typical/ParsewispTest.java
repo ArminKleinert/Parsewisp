@@ -93,7 +93,7 @@ class ParsewispTest {
         var p = Parsewisp.parser("S = 'a' <B> C <D> 'a'\nB = 'b'+\n<C> = 'c'\n<D> = 'd'");
         var opts = ParsingOptions.getDefault().withUnhide(Unhide.UnhideOptions.NONE);
         var tree = PT.create("S", "a", "c", "a");
-        Assertions.assertEquals(tree, Parsewisp.parse(p, "abcda", opts));
+        Assertions.assertEquals(tree, p.parse("abcda", opts));
     }
 
     @Test
@@ -101,7 +101,7 @@ class ParsewispTest {
         var p = Parsewisp.parser("S = 'a' <B> C <D> 'a'\nB = 'b'+\n<C> = 'c'\n<D> = 'd'");
         var opts = ParsingOptions.getDefault().withUnhide(Unhide.UnhideOptions.TAGS);
         var tree = PT.create("S", "a", PT.create("C", "c"), "a");
-        Assertions.assertEquals(tree, Parsewisp.parse(p, "abcda", opts));
+        Assertions.assertEquals(tree, p.parse("abcda", opts));
     }
 
     @Test
@@ -109,7 +109,7 @@ class ParsewispTest {
         var p = Parsewisp.parser("S = 'a' <B> C <D> 'a'\nB = 'b'+\n<C> = 'c'\n<D> = 'd'");
         var opts = ParsingOptions.getDefault().withUnhide(Unhide.UnhideOptions.CONTENT);
         var tree = PT.create("S", "a", PT.create("B", "b"), "c", "d", "a");
-        Assertions.assertEquals(tree, Parsewisp.parse(p, "abcda", opts));
+        Assertions.assertEquals(tree, p.parse("abcda", opts));
     }
 
     @Test
@@ -117,7 +117,7 @@ class ParsewispTest {
         var p = Parsewisp.parser("S = 'a' <B> C <D> 'a'\nB = 'b'+\n<C> = 'c'\n<D> = 'd'");
         var opts = ParsingOptions.getDefault().withUnhide(Unhide.UnhideOptions.ALL);
         var tree = PT.create("S", "a", PT.create("B", "b"), PT.create("C", "c"), PT.create("D", "d"), "a");
-        Assertions.assertEquals(tree, Parsewisp.parse(p, "abcda", opts));
+        Assertions.assertEquals(tree, p.parse("abcda", opts));
     }
 
     @Test
@@ -126,15 +126,15 @@ class ParsewispTest {
 
         Assertions.assertEquals(
                 PT.create("S", "a", "c", "a"),
-                Parsewisp.parse(p, "abcda", ParsingOptions.getDefault().withUnhide(Unhide.UnhideOptions.NONE)));
+                p.parse("abcda", ParsingOptions.getDefault().withUnhide(Unhide.UnhideOptions.NONE)));
 
         Assertions.assertEquals(
                 PT.create("S", "a", PT.create("C", "c"), "a"),
-                Parsewisp.parse(p, "abcda", ParsingOptions.getDefault().withUnhide(Unhide.UnhideOptions.TAGS)));
+                p.parse("abcda", ParsingOptions.getDefault().withUnhide(Unhide.UnhideOptions.TAGS)));
 
         Assertions.assertEquals(
                 PT.create("S", "a", PT.create("B", "b"), "c", "d", "a"),
-                Parsewisp.parse(p, "abcda", ParsingOptions.getDefault().withUnhide(Unhide.UnhideOptions.CONTENT)));
+                p.parse("abcda", ParsingOptions.getDefault().withUnhide(Unhide.UnhideOptions.CONTENT)));
 
         Assertions.assertEquals(
                 PT.create("S",
@@ -143,7 +143,7 @@ class ParsewispTest {
                         PT.create("C", "c"),
                         PT.create("D", "d"),
                         "a"),
-                Parsewisp.parse(p, "abcda", ParsingOptions.getDefault().withUnhide(Unhide.UnhideOptions.ALL)));
+                p.parse("abcda", ParsingOptions.getDefault().withUnhide(Unhide.UnhideOptions.ALL)));
     }
 
     @Test
@@ -177,8 +177,8 @@ class ParsewispTest {
 
             Assertions.assertEquals(p.startProduction(), opts.startProduction());
 
-            Assertions.assertTrue(Parsewisp.parse(p, "a", ParsingOptions.getDefault()).isFailure());
-            Assertions.assertEquals(PT.create("B", "b"), Parsewisp.parse(p, "b", ParsingOptions.getDefault()));
+            Assertions.assertTrue(p.parse("a", ParsingOptions.getDefault()).isFailure());
+            Assertions.assertEquals(PT.create("B", "b"), p.parse("b", ParsingOptions.getDefault()));
         }
         {
             // The production is not in the grammar => Fail
@@ -194,14 +194,14 @@ class ParsewispTest {
 
             final var opts = ParsingOptions.getDefault().withStart(Sym.sym("B"));
 
-            Assertions.assertTrue(Parsewisp.parse(p, "b", ParsingOptions.getDefault()).isFailure());
-            Assertions.assertEquals(PT.create("B", "b"), Parsewisp.parse(p, "b", opts));
+            Assertions.assertTrue(p.parse("b", ParsingOptions.getDefault()).isFailure());
+            Assertions.assertEquals(PT.create("B", "b"), p.parse("b", opts));
         }
         {
             // The production is not in the grammar => Fail
             final var opts = ParsingOptions.getDefault().withStart(Sym.sym("B"));
             final @NotNull var p = Parsewisp.parser("A = 'a'");
-            Assertions.assertThrows(ParserCreationFailure.class, () -> Parsewisp.parse(p, "a", opts));
+            Assertions.assertThrows(ParserCreationFailure.class, () -> p.parse("a", opts));
         }
     }
 
@@ -209,15 +209,15 @@ class ParsewispTest {
     void parse() {
         final @NotNull var p = Parsewisp.parser("S = 'A' | 'B' | S S");
         {
-            final @NotNull var res = Parsewisp.parse(p, "A", ParsingOptions.getDefault());
+            final @NotNull var res = p.parse("A", ParsingOptions.getDefault());
             Assertions.assertEquals(PT.create("S", "A"), res);
         }
         {
-            final @NotNull var res = Parsewisp.parse(p, "B", ParsingOptions.getDefault());
+            final @NotNull var res = p.parse("B", ParsingOptions.getDefault());
             Assertions.assertEquals(PT.create("S", "B"), res);
         }
         {
-            final @NotNull var res = Parsewisp.parse(p, "AB", ParsingOptions.getDefault());
+            final @NotNull var res = p.parse("AB", ParsingOptions.getDefault());
             Assertions.assertEquals(
                     PT.create("S", PT.create("S", "A"), PT.create("S", "B")),
                     res);
@@ -228,13 +228,13 @@ class ParsewispTest {
     void parseCat() {
         {
             final @NotNull var p = Parsewisp.parser("S = 'A' 'B'");
-            final @NotNull var res = Parsewisp.parse(p, "AB", ParsingOptions.getDefault());
+            final @NotNull var res = p.parse("AB", ParsingOptions.getDefault());
             Assertions.assertEquals(PT.create("S", "A", "B"), res);
         }
         {
             final @NotNull var p = Parsewisp.parser("S = 'A' 'B' S | ε");
-            Assertions.assertEquals(PT.create("S"), Parsewisp.parse(p, "", ParsingOptions.getDefault()));
-            Assertions.assertEquals(PT.create("S", "A", "B", PT.create("S")), Parsewisp.parse(p, "AB", ParsingOptions.getDefault()));
+            Assertions.assertEquals(PT.create("S"), p.parse("", ParsingOptions.getDefault()));
+            Assertions.assertEquals(PT.create("S", "A", "B", PT.create("S")), p.parse("AB", ParsingOptions.getDefault()));
         }
         {
             final @NotNull var p = Parsewisp.parser("S = 'a' 'a' 'a'");
@@ -250,16 +250,16 @@ class ParsewispTest {
     void parsePlus() {
         {
             final @NotNull var p = Parsewisp.parser("S = 'a'+");
-            Assertions.assertTrue(Parsewisp.parse(p, "", ParsingOptions.getDefault()).isFailure());
-            Assertions.assertEquals(PT.create("S", "a"), Parsewisp.parse(p, "a", ParsingOptions.getDefault()));
-            Assertions.assertEquals(PT.create("S", "a", "a"), Parsewisp.parse(p, "aa", ParsingOptions.getDefault()));
-            Assertions.assertEquals(PT.create("S", "a", "a", "a"), Parsewisp.parse(p, "aaa", ParsingOptions.getDefault()));
+            Assertions.assertTrue(p.parse("", ParsingOptions.getDefault()).isFailure());
+            Assertions.assertEquals(PT.create("S", "a"), p.parse("a", ParsingOptions.getDefault()));
+            Assertions.assertEquals(PT.create("S", "a", "a"), p.parse("aa", ParsingOptions.getDefault()));
+            Assertions.assertEquals(PT.create("S", "a", "a", "a"), p.parse("aaa", ParsingOptions.getDefault()));
         }
         {
             final @NotNull var p = Parsewisp.parser("S = ('a' | 'b')+");
-            Assertions.assertTrue(Parsewisp.parse(p, "", ParsingOptions.getDefault()).isFailure());
-            Assertions.assertEquals(PT.create("S", "b"), Parsewisp.parse(p, "b", ParsingOptions.getDefault()));
-            Assertions.assertEquals(PT.create("S", "a", "b", "a"), Parsewisp.parse(p, "aba", ParsingOptions.getDefault()));
+            Assertions.assertTrue(p.parse("", ParsingOptions.getDefault()).isFailure());
+            Assertions.assertEquals(PT.create("S", "b"), p.parse("b", ParsingOptions.getDefault()));
+            Assertions.assertEquals(PT.create("S", "a", "b", "a"), p.parse("aba", ParsingOptions.getDefault()));
         }
     }
 
@@ -267,16 +267,16 @@ class ParsewispTest {
     void parseStar() {
         {
             final @NotNull var p = Parsewisp.parser("S = 'a'*");
-            Assertions.assertEquals(PT.create("S"), Parsewisp.parse(p, "", ParsingOptions.getDefault()));
-            Assertions.assertEquals(PT.create("S", "a"), Parsewisp.parse(p, "a", ParsingOptions.getDefault()));
-            Assertions.assertEquals(PT.create("S", "a", "a"), Parsewisp.parse(p, "aa", ParsingOptions.getDefault()));
-            Assertions.assertEquals(PT.create("S", "a", "a", "a"), Parsewisp.parse(p, "aaa", ParsingOptions.getDefault()));
+            Assertions.assertEquals(PT.create("S"), p.parse("", ParsingOptions.getDefault()));
+            Assertions.assertEquals(PT.create("S", "a"), p.parse("a", ParsingOptions.getDefault()));
+            Assertions.assertEquals(PT.create("S", "a", "a"), p.parse("aa", ParsingOptions.getDefault()));
+            Assertions.assertEquals(PT.create("S", "a", "a", "a"), p.parse("aaa", ParsingOptions.getDefault()));
         }
         {
             final @NotNull var p = Parsewisp.parser("S = ('a' | 'b')*");
-            Assertions.assertEquals(PT.create("S"), Parsewisp.parse(p, "", ParsingOptions.getDefault()));
-            Assertions.assertEquals(PT.create("S", "b"), Parsewisp.parse(p, "b", ParsingOptions.getDefault()));
-            Assertions.assertEquals(PT.create("S", "a", "b", "a"), Parsewisp.parse(p, "aba", ParsingOptions.getDefault()));
+            Assertions.assertEquals(PT.create("S"), p.parse("", ParsingOptions.getDefault()));
+            Assertions.assertEquals(PT.create("S", "b"), p.parse("b", ParsingOptions.getDefault()));
+            Assertions.assertEquals(PT.create("S", "a", "b", "a"), p.parse("aba", ParsingOptions.getDefault()));
         }
     }
 
@@ -299,12 +299,12 @@ class ParsewispTest {
     void parseSimpleString() {
         {
             final @NotNull var p = Parsewisp.parser("S = 'AB'");
-            final @NotNull var res = Parsewisp.parse(p, "AB", ParsingOptions.getDefault());
+            final @NotNull var res = p.parse("AB", ParsingOptions.getDefault());
             Assertions.assertEquals(PT.create("S", "AB"), res);
         }
         {
             final @NotNull var p = Parsewisp.parser("S = ''");
-            final @NotNull var res = Parsewisp.parse(p, "", ParsingOptions.getDefault());
+            final @NotNull var res = p.parse("", ParsingOptions.getDefault());
             Assertions.assertEquals(PT.create("S"), res);
         }
     }
@@ -313,12 +313,12 @@ class ParsewispTest {
     void parsePartial() {
         {
             final @NotNull var p = Parsewisp.parser("S = ''");
-            final @NotNull var res = Parsewisp.parse(p, "", ParsingOptions.getDefault());
+            final @NotNull var res = p.parse("", ParsingOptions.getDefault());
             Assertions.assertEquals(PT.create("S"), res);
         }
         {
             final @NotNull var p = Parsewisp.parser("S = 'AB'");
-            final @NotNull var res = Parsewisp.parse(p, "AB", ParsingOptions.getDefault());
+            final @NotNull var res = p.parse("AB", ParsingOptions.getDefault());
             Assertions.assertEquals(PT.create("S", "AB"), res);
         }
     }
@@ -327,7 +327,7 @@ class ParsewispTest {
     void parsesWithChoice() {
         {
             final @NotNull var p = Parsewisp.parser("S = 'A' | 'B' | S S");
-            final @NotNull var res = Parsewisp.parses(p, "ABA", ParsingOptions.getDefault());
+            final @NotNull var res = p.parses("ABA", ParsingOptions.getDefault());
             final var possibleResults = new HashSet<>(sabssPossibleResults());
 
             // Using Sets because the order of results is implementation-dependent when using alternation rules.
@@ -345,7 +345,7 @@ class ParsewispTest {
                     PT.create("S", PT.create("A", PT.create("C"))),
                     PT.create("S", PT.create("B", PT.create("C")))
             );
-            Assertions.assertEquals(possibleTrees, new HashSet<>(Parsewisp.parses(p, "", ParsingOptions.getDefault())));
+            Assertions.assertEquals(possibleTrees, new HashSet<>(p.parses("", ParsingOptions.getDefault())));
         }
         {
             final @NotNull var grammar = """
@@ -356,7 +356,7 @@ class ParsewispTest {
                     """;
             final @NotNull var text = "aa";
             final @NotNull var p = Parsewisp.parser(grammar);
-            final @NotNull var ps = new HashSet<>(Parsewisp.parses(p, text, ParsingOptions.getDefault()));
+            final @NotNull var ps = new HashSet<>(p.parses(text, ParsingOptions.getDefault()));
             final @NotNull var possibleParses = new HashSet<>(r1r2r3Results());
             Assertions.assertEquals(possibleParses, ps);
         }
@@ -366,7 +366,7 @@ class ParsewispTest {
     void parsesWithOrderedChoice() {
         {
             final @NotNull var p = Parsewisp.parser("S = 'A' / 'B' / S S");
-            final @NotNull var res = Parsewisp.parses(p, "ABA", ParsingOptions.getDefault());
+            final @NotNull var res = p.parses("ABA", ParsingOptions.getDefault());
             final @NotNull var possibleResults = sabssPossibleResults();
 
             Assertions.assertEquals(possibleResults, res);
@@ -388,17 +388,17 @@ class ParsewispTest {
                     PT.create("S", PT.create("D")),
                     PT.create("S", PT.create("E"))
             );
-            Assertions.assertEquals(expect, Parsewisp.parses(p, "", ParsingOptions.getDefault()));
+            Assertions.assertEquals(expect, p.parses("", ParsingOptions.getDefault()));
         }
         {
             final @NotNull var p = Parsewisp.parser("S = 'a' / ε / 'a'");
             final @NotNull var possibleTrees = List.of(PT.create("S", "a"));
-            Assertions.assertEquals(possibleTrees, Parsewisp.parses(p, "a", ParsingOptions.getDefault()));
+            Assertions.assertEquals(possibleTrees, p.parses("a", ParsingOptions.getDefault()));
         }
         {
             final @NotNull var p = Parsewisp.parser("S = ε / 'a' / 'a' / ε");
             final @NotNull var possibleTrees = List.of(PT.create("S", "a"));
-            Assertions.assertEquals(possibleTrees, Parsewisp.parses(p, "a", ParsingOptions.getDefault()));
+            Assertions.assertEquals(possibleTrees, p.parses("a", ParsingOptions.getDefault()));
         }
         {
             final @NotNull var grammar = """
@@ -409,7 +409,7 @@ class ParsewispTest {
                     """;
             final @NotNull var text = "a";
             final @NotNull var p = Parsewisp.parser(grammar);
-            final @NotNull var ps = Parsewisp.parses(p, text, ParsingOptions.getDefault());
+            final @NotNull var ps = p.parses(text, ParsingOptions.getDefault());
             final @NotNull var possibleParses = List.of(
                     PT.create("S", PT.create("r1", "a")),
                     PT.create("S", PT.create("r2", "a")),
@@ -425,7 +425,7 @@ class ParsewispTest {
                     """;
             final @NotNull var text = "aa";
             final @NotNull var p = Parsewisp.parser(grammar);
-            final @NotNull var ps = Parsewisp.parses(p, text, ParsingOptions.getDefault());
+            final @NotNull var ps = p.parses(text, ParsingOptions.getDefault());
             final @NotNull var possibleParses = List.of(
                     PT.create("S", PT.create("r1", "a"), PT.create("r1", "a")),
                     PT.create("S", PT.create("r2", "a"), PT.create("r1", "a")),
@@ -476,7 +476,7 @@ class ParsewispTest {
                     """;
             final @NotNull var text = "aa";
             final @NotNull var p = Parsewisp.parser(grammar);
-            final @NotNull var ps = Parsewisp.parses(p, text, new ParsingOptions(null, true, Unhide.UnhideOptions.NONE, false, false, false));
+            final @NotNull var ps = p.parses(text, new ParsingOptions(null, true, Unhide.UnhideOptions.NONE, false, false, false));
             final @NotNull var possibleParses = partialParsesOrderedR123();
             Assertions.assertEquals(possibleParses, ps);
         }
@@ -489,7 +489,7 @@ class ParsewispTest {
                     """;
             final @NotNull var text = "aa";
             final @NotNull var p = Parsewisp.parser(grammar);
-            final @NotNull var ps = new HashSet<>(Parsewisp.parses(p, text, new ParsingOptions(null, true, Unhide.UnhideOptions.NONE, false, false, false)));
+            final @NotNull var ps = new HashSet<>(p.parses(text, new ParsingOptions(null, true, Unhide.UnhideOptions.NONE, false, false, false)));
             final @NotNull var possibleParses = new HashSet<>(partialParsesOrderedR123());
             Assertions.assertEquals(possibleParses, ps);
         }

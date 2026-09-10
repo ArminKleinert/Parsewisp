@@ -19,48 +19,48 @@ public final class Parsewisp {
     private Parsewisp() {
     }
 
-    /**
-     * Runs a parser on a text. If the parse is successful, returns a {@link ParseTree}. If the parse fails, returns a {@link ParseFailure}
-     * <p>
-     * The options apply as follows:
-     * <ul>
-     *     <li>{@link ParsingOptions#embedFailureInParseTree()}: Return a {@link ParseTree} on failure, with the information included in the tree.</li>
-     *     <li>{@link ParsingOptions#unhide()}: Unhide some parts of the parser in the output.</li>
-     *     <li>{@link ParsingOptions#start()}: Explicitly changes the start production.</li>
-     * </ul>
-     *
-     * @param parser  The parser.
-     * @param text    The text.
-     * @param options Options.
-     * @return {@link ParseTree} if successful, {@link ParseFailure} if not.
-     */
-    public static @NotNull ParseResult parse(final @NotNull Parser parser,
-                                             final @NotNull String text,
-                                             final @NotNull ParsingOptions options) {
-        return parser.parse(text, options);
-    }
-
-    /**
-     * Runs a parser on a string and returns a parse forest as a {@link ParsesResult.LazyResultList}.
-     * <p>
-     * The following options apply:
-     * <ul>
-     *     <li>{@link ParsingOptions#usePartial()}: Include partial parses.</li>
-     *     <li>{@link ParsingOptions#embedFailureInParseTree()}: Include failure information in parse trees.</li>
-     *     <li>{@link ParsingOptions#unhide()}: Unhide some parts of the parser in the output.</li>
-     *     <li>{@link ParsingOptions#start()}: Explicitly changes the start production.</li>
-     * </ul>
-     *
-     * @param parser  The parser.
-     * @param text    The text.
-     * @param options The options.
-     * @return A (potentially empty) parse forest. ({@link ParsesResult.LazyResultList})
-     */
-    public static @NotNull ParsesResult parses(final @NotNull Parser parser,
-                                               final @NotNull String text,
-                                               final @NotNull ParsingOptions options) {
-        return parser.parses(text, options);
-    }
+//    /**
+//     * Runs a parser on a text. If the parse is successful, returns a {@link ParseTree}. If the parse fails, returns a {@link ParseFailure}
+//     * <p>
+//     * The options apply as follows:
+//     * <ul>
+//     *     <li>{@link ParsingOptions#embedFailureInParseTree()}: Return a {@link ParseTree} on failure, with the information included in the tree.</li>
+//     *     <li>{@link ParsingOptions#unhide()}: Unhide some parts of the parser in the output.</li>
+//     *     <li>{@link ParsingOptions#start()}: Explicitly changes the start production.</li>
+//     * </ul>
+//     *
+//     * @param parser  The parser.
+//     * @param text    The text.
+//     * @param options Options.
+//     * @return {@link ParseTree} if successful, {@link ParseFailure} if not.
+//     */
+//    public static @NotNull ParseResult parse(final @NotNull Parser parser,
+//                                             final @NotNull String text,
+//                                             final @NotNull ParsingOptions options) {
+//        return parser.parse(text, options);
+//    }
+//
+//    /**
+//     * Runs a parser on a string and returns a parse forest as a {@link ParsesResult.LazyResultList}.
+//     * <p>
+//     * The following options apply:
+//     * <ul>
+//     *     <li>{@link ParsingOptions#usePartial()}: Include partial parses.</li>
+//     *     <li>{@link ParsingOptions#embedFailureInParseTree()}: Include failure information in parse trees.</li>
+//     *     <li>{@link ParsingOptions#unhide()}: Unhide some parts of the parser in the output.</li>
+//     *     <li>{@link ParsingOptions#start()}: Explicitly changes the start production.</li>
+//     * </ul>
+//     *
+//     * @param parser  The parser.
+//     * @param text    The text.
+//     * @param options The options.
+//     * @return A (potentially empty) parse forest. ({@link ParsesResult.LazyResultList})
+//     */
+//    public static @NotNull ParsesResult parses(final @NotNull Parser parser,
+//                                               final @NotNull String text,
+//                                               final @NotNull ParsingOptions options) {
+//        return parser.parses(text, options);
+//    }
 
     /**
      * Creates a parser from a grammar specification, using the default creation options.

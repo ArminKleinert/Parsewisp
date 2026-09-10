@@ -17,7 +17,7 @@ class ParserAsFunctionTest {
         var p = Parsewisp.parser("S = #'[A-Z]'");
         var strings = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".chars().mapToObj(it -> String.valueOf((char) it)).toList();
         Assertions.assertEquals(
-                strings.stream().map(it -> Parsewisp.parse(p, it, ParsingOptions.getDefault())).toList(),
+                strings.stream().map(it -> p.parse(it, ParsingOptions.getDefault())).toList(),
                 strings.stream().map(p::parse).toList()
         );
     }

@@ -48,8 +48,7 @@ public class Unhide {
     public static @NotNull Grammar unhideContent(final @NotNull Grammar grammar) {
         final @NotNull LinkedHashMap<Sym, Rule> res = new LinkedHashMap<>();
         for (final @NotNull var symRuleEntry : grammar.entrySet()) {
-            res.put(symRuleEntry.getKey(),
-                    symRuleEntry.getValue().unhideContent());
+            res.put(symRuleEntry.getKey(), symRuleEntry.getValue().unhideContent());
         }
         return new Grammar(grammar.getStartSym(), res);
     }

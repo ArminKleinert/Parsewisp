@@ -101,7 +101,7 @@ class VariableRepetitionTest {
                         S = 'a' 0*6 'a'
                         """,
                 creationOpts);
-        Assertions.assertEquals(treesPartial, new HashSet<>(Parsewisp.parses(repeated_a, text, partialOpts)));
+        Assertions.assertEquals(treesPartial, new HashSet<>(repeated_a.parses(text, partialOpts)));
     }
 
     @Test
@@ -124,7 +124,7 @@ class VariableRepetitionTest {
                         S = 1*6 'a'
                         """,
                 creationOpts);
-        Assertions.assertEquals(treesPartial, new HashSet<>(Parsewisp.parses(repeated_a, text, partialOpts)));
+        Assertions.assertEquals(treesPartial, new HashSet<>(repeated_a.parses(text, partialOpts)));
     }
 
     @Test
