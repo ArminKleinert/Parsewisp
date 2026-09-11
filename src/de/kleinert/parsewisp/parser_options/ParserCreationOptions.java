@@ -354,97 +354,97 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
                 defaultCheckCorrectness, null, null);
     }
 
-    /**
-     * ABNF settings: Strings are case-insensitive, redefinition of productions with {@code =/} creates a choice rule.
-     * <p>
-     * Characteristics:
-     * <ul>
-     *     <li>Rule definition operators: {@code "=", "=/"}</li>
-     *     <li>Case insensitivity: {@code true}</li>
-     *     <li>Redefinition option: {@link RedefinitionOption#CHOICE}</li>
-     *     <li>Epsilon equivalents: {@code "ε"}</li>
-     * </ul>
-     * <p>
-     * Available rules:
-     * <ul>
-     *     <li>{@link RulesAvailable#ABNF_CORE}</li>
-     *     <li>{@link RulesAvailable#ABNF_IDENTIFIERS}</li>
-     *     <li>{@link RulesAvailable#OPTIONAL}</li>
-     *     <li>{@link RulesAvailable#ORDERED_CHOICE}</li>
-     *     <li>{@link RulesAvailable#REGEX}</li>
-     *     <li>{@link RulesAvailable#STRING_CASE_SENSITIVITY_PREFIX}</li>
-     *     <li>{@link RulesAvailable#VALUE_RANGE}</li>
-     *     <li>{@link RulesAvailable#VARIABLE_REPEAT}</li>
-     * </ul>
-     *
-     * @return Options for ABNF parsers.
-     */
-    public static @NotNull ParserCreationOptions abnf() {
-        var rules = EnumSet.of(
-                RulesAvailable.ABNF_CORE,
-                RulesAvailable.ABNF_IDENTIFIERS,
-                RulesAvailable.OPTIONAL,
-                RulesAvailable.ORDERED_CHOICE,
-                RulesAvailable.REGEX,
-                RulesAvailable.STRING_CASE_SENSITIVITY_PREFIX,
-                RulesAvailable.VALUE_RANGE,
-                RulesAvailable.VARIABLE_REPEAT);
-        return ParserCreationOptions.create(
-                null, null, GlobalCaseInsensitivity.TRUE,
-                RedefinitionOption.CHOICE, rules, defaultCheckCorrectness,
-                List.of("=/", "="),
-                List.of("ε")
-        );
-    }
+//    /**
+//     * ABNF settings: Strings are case-insensitive, redefinition of productions with {@code =/} creates a choice rule.
+//     * <p>
+//     * Characteristics:
+//     * <ul>
+//     *     <li>Rule definition operators: {@code "=", "=/"}</li>
+//     *     <li>Case insensitivity: {@code true}</li>
+//     *     <li>Redefinition option: {@link RedefinitionOption#CHOICE}</li>
+//     *     <li>Epsilon equivalents: {@code "ε"}</li>
+//     * </ul>
+//     * <p>
+//     * Available rules:
+//     * <ul>
+//     *     <li>{@link RulesAvailable#ABNF_CORE}</li>
+//     *     <li>{@link RulesAvailable#ABNF_IDENTIFIERS}</li>
+//     *     <li>{@link RulesAvailable#OPTIONAL}</li>
+//     *     <li>{@link RulesAvailable#ORDERED_CHOICE}</li>
+//     *     <li>{@link RulesAvailable#REGEX}</li>
+//     *     <li>{@link RulesAvailable#STRING_CASE_SENSITIVITY_PREFIX}</li>
+//     *     <li>{@link RulesAvailable#VALUE_RANGE}</li>
+//     *     <li>{@link RulesAvailable#VARIABLE_REPEAT}</li>
+//     * </ul>
+//     *
+//     * @return Options for ABNF parsers.
+//     */
+//    public static @NotNull ParserCreationOptions abnf() {
+//        var rules = EnumSet.of(
+//                RulesAvailable.ABNF_CORE,
+//                RulesAvailable.ABNF_IDENTIFIERS,
+//                RulesAvailable.OPTIONAL,
+//                RulesAvailable.ORDERED_CHOICE,
+//                RulesAvailable.REGEX,
+//                RulesAvailable.STRING_CASE_SENSITIVITY_PREFIX,
+//                RulesAvailable.VALUE_RANGE,
+//                RulesAvailable.VARIABLE_REPEAT);
+//        return ParserCreationOptions.create(
+//                null, null, GlobalCaseInsensitivity.TRUE,
+//                RedefinitionOption.CHOICE, rules, defaultCheckCorrectness,
+//                List.of("=/", "="),
+//                List.of("ε")
+//        );
+//    }
 
-    /**
-     * EBNF settings.
-     * <p>
-     * Characteristics:
-     * <ul>
-     *     <li>Rule definition operators: {@code "=", "::=", "=", ":"}</li>
-     *     <li>Case insensitivity: {@code false}</li>
-     *     <li>Redefinition option: {@link RedefinitionOption#defaultOption}</li>
-     *     <li>Epsilon equivalents: {@code "ε"}</li>
-     * </ul>
-     * <p>
-     * Available rules:
-     * <ul>
-     *     <li>{@link RulesAvailable#ALTERNATION}</li>
-     *     <li>{@link RulesAvailable#EXCLUSION}</li>
-     *     <li>{@link RulesAvailable#LOOKAHEAD}</li>
-     *     <li>{@link RulesAvailable#NEGATIVE_LOOKAHEAD}</li>
-     *     <li>{@link RulesAvailable#OPTIONAL_QUERY},
-     *     <li>{@link RulesAvailable#OPTIONAL_REPETITION_STAR}</li>
-     *     <li>{@link RulesAvailable#OPTIONAL_REPETITION}</li>
-     *     <li>{@link RulesAvailable#OPTIONAL}</li>
-     *     <li>{@link RulesAvailable#PLUS}</li>
-     *     <li>{@link RulesAvailable#REGEX}</li>
-     *     <li>{@link RulesAvailable#SINGLY_QUOTED}</li>
-     * </ul>
-     *
-     * @return Options for EBNF parsers.
-     */
-    public static @NotNull ParserCreationOptions ebnf() {
-        var rules = EnumSet.of(
-                RulesAvailable.ALTERNATION,
-                RulesAvailable.EXCLUSION,
-                RulesAvailable.LOOKAHEAD,
-                RulesAvailable.NEGATIVE_LOOKAHEAD,
-                RulesAvailable.OPTIONAL,
-                RulesAvailable.OPTIONAL_QUERY,
-                RulesAvailable.OPTIONAL_REPETITION,
-                RulesAvailable.OPTIONAL_REPETITION_STAR,
-                RulesAvailable.PLUS,
-                RulesAvailable.REGEX,
-                RulesAvailable.SINGLY_QUOTED);
-        return ParserCreationOptions.create(
-                null, null, GlobalCaseInsensitivity.FALSE,
-                RedefinitionOption.defaultOption, rules, defaultCheckCorrectness,
-                List.of("="),
-                List.of("ε")
-        );
-    }
+//    /**
+//     * EBNF settings.
+//     * <p>
+//     * Characteristics:
+//     * <ul>
+//     *     <li>Rule definition operators: {@code "=", "::=", "=", ":"}</li>
+//     *     <li>Case insensitivity: {@code false}</li>
+//     *     <li>Redefinition option: {@link RedefinitionOption#defaultOption}</li>
+//     *     <li>Epsilon equivalents: {@code "ε"}</li>
+//     * </ul>
+//     * <p>
+//     * Available rules:
+//     * <ul>
+//     *     <li>{@link RulesAvailable#ALTERNATION}</li>
+//     *     <li>{@link RulesAvailable#EXCLUSION}</li>
+//     *     <li>{@link RulesAvailable#LOOKAHEAD}</li>
+//     *     <li>{@link RulesAvailable#NEGATIVE_LOOKAHEAD}</li>
+//     *     <li>{@link RulesAvailable#OPTIONAL_QUERY},
+//     *     <li>{@link RulesAvailable#OPTIONAL_REPETITION_STAR}</li>
+//     *     <li>{@link RulesAvailable#OPTIONAL_REPETITION}</li>
+//     *     <li>{@link RulesAvailable#OPTIONAL}</li>
+//     *     <li>{@link RulesAvailable#PLUS}</li>
+//     *     <li>{@link RulesAvailable#REGEX}</li>
+//     *     <li>{@link RulesAvailable#SINGLY_QUOTED}</li>
+//     * </ul>
+//     *
+//     * @return Options for EBNF parsers.
+//     */
+//    public static @NotNull ParserCreationOptions ebnf() {
+//        var rules = EnumSet.of(
+//                RulesAvailable.ALTERNATION,
+//                RulesAvailable.EXCLUSION,
+//                RulesAvailable.LOOKAHEAD,
+//                RulesAvailable.NEGATIVE_LOOKAHEAD,
+//                RulesAvailable.OPTIONAL,
+//                RulesAvailable.OPTIONAL_QUERY,
+//                RulesAvailable.OPTIONAL_REPETITION,
+//                RulesAvailable.OPTIONAL_REPETITION_STAR,
+//                RulesAvailable.PLUS,
+//                RulesAvailable.REGEX,
+//                RulesAvailable.SINGLY_QUOTED);
+//        return ParserCreationOptions.create(
+//                null, null, GlobalCaseInsensitivity.FALSE,
+//                RedefinitionOption.defaultOption, rules, defaultCheckCorrectness,
+//                List.of("="),
+//                List.of("ε")
+//        );
+//    }
 
 //    /**
 //     * PEG settings.

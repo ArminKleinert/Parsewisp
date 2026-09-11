@@ -51,9 +51,9 @@ public abstract class GrammarBuilder {
     private final BufferForRules buffer;
 
     protected GrammarBuilder(final @NotNull ParserCreationOptions options) {
-        productions = new LinkedHashMap<>();
+        this.productions = new LinkedHashMap<>();
         this.options = options;
-        buffer = new BufferForRules();
+        this.buffer = new BufferForRules();
     }
 
     /**

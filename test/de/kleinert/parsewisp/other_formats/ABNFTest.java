@@ -1,13 +1,150 @@
 package de.kleinert.parsewisp.other_formats;
 
-import de.kleinert.parsewisp.Parsewisp;
-import de.kleinert.parsewisp.parser.Parser;
-import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
-import de.kleinert.parsewisp.parser_options.ParsingOptions;
+import de.kleinert.parsewisp.error.ParserCreationFailure;
+import de.kleinert.parsewisp.testutil.PT;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class ABNFTest {
+    @Test
+    void look() {
+        var p = ABNF.parser(
+                "S = &\"a\" * ( \"a\" / \"b\" )",
+                new ABNF.ABNFOptions(null, null, true));
+        Assertions.assertEquals(PT.create("S", "a"), p.parse("a"));
+        Assertions.assertEquals(PT.create("S", "a", "a"), p.parse("aa"));
+        Assertions.assertEquals(PT.create("S", "a", "b"), p.parse("ab"));
+
+        Assertions.assertTrue(p.parse("").isFailure());
+        Assertions.assertTrue(p.parse("b").isFailure());
+        Assertions.assertTrue(p.parse("ba").isFailure());
+    }
+
+    @Test
+    void singleQuotesForStringTerminalsNotAllowed() {
+        Assertions.assertThrows(
+                ParserCreationFailure.class,
+                () -> ABNF.parser("S = 'abc'"));
+    }
+
+    @Test
+    void caseSensitivityTest() {
+        var p1 = ABNF.parser("S = \"abc\"");
+        Assertions.assertEquals(PT.create("S", "abc"), p1.parse("abc"));
+        Assertions.assertEquals(PT.create("S", "abc"), p1.parse("AbC"));
+        Assertions.assertEquals(PT.create("S", "abc"), p1.parse("ABC"));
+
+        var p2 = ABNF.parser("S = \"A\" \"B\"");
+        Assertions.assertEquals(PT.create("S", "A", "B"), p2.parse("ab"));
+        Assertions.assertEquals(PT.create("S", "A", "B"), p2.parse("Ab"));
+        Assertions.assertEquals(PT.create("S", "A", "B"), p2.parse("AB"));
+    }
+
+    @Test
+    void countedRepetitionTestExact() {
+        var p = ABNF.parser("S = 2 \"A\"");
+        Assertions.assertTrue(p.parse("").isFailure());
+        Assertions.assertTrue(p.parse("A").isFailure());
+        Assertions.assertEquals(PT.create("S", "A", "A"), p.parse("aa"));
+        Assertions.assertTrue(p.parse("AAA").isFailure());
+    }
+
+    @Test
+    void countedRepetitionTestSameSides() {
+        var p = ABNF.parser("S = 2*2 \"A\"");
+        Assertions.assertTrue(p.parse("").isFailure());
+        Assertions.assertTrue(p.parse("a").isFailure());
+        Assertions.assertEquals(PT.create("S", "A", "A"), p.parse("aa"));
+        Assertions.assertTrue(p.parse("aaa").isFailure());
+    }
+
+    @Test
+    void countedRepetitionTestRightOnly() {
+        var p = ABNF.parser("S = *2 \"A\"");
+        Assertions.assertEquals(PT.create("S"), p.parse(""));
+        Assertions.assertEquals(PT.create("S", "A"), p.parse("a"));
+        Assertions.assertEquals(PT.create("S", "A", "A"), p.parse("aa"));
+        Assertions.assertTrue(p.parse("aaa").isFailure());
+    }
+
+    @Test
+    void countedRepetitionTestLeftOnly() {
+        var p = ABNF.parser("S = 2* \"A\"");
+        Assertions.assertTrue(p.parse("").isFailure());
+        Assertions.assertTrue(p.parse("a").isFailure());
+        Assertions.assertEquals(PT.create("S", "A", "A"), p.parse("aa"));
+        Assertions.assertEquals(PT.create("S", "A", "A", "A"), p.parse("aaa"));
+    }
+
+    @Test
+    void countedRepetitionTestBoth() {
+        var p = ABNF.parser("S = 1*2 \"A\"");
+        Assertions.assertTrue(p.parse("").isFailure());
+        Assertions.assertEquals(PT.create("S", "A"), p.parse("a"));
+        Assertions.assertEquals(PT.create("S", "A", "A"), p.parse("aa"));
+        Assertions.assertTrue(p.parse("aaa").isFailure());
+    }
+
+    @Test
+    void countedRepetitionTestStarOnly() {
+        var p = ABNF.parser("S = * \"A\"");
+        Assertions.assertEquals(PT.create("S"), p.parse(""));
+        Assertions.assertEquals(PT.create("S", "A"), p.parse("a"));
+        Assertions.assertEquals(PT.create("S", "A", "A"), p.parse("aa"));
+        Assertions.assertEquals(PT.create("S", "A", "A", "A"), p.parse("aaa"));
+    }
+
+    @Test
+    void incrementalExtensionTest() {
+        var p = ABNF.parser("""
+                S =  "a" S
+                S =/ "b" S
+                S =/ ""
+                """);
+        var epsTree = PT.create("S");
+        Assertions.assertEquals(
+                PT.create("S", "a", epsTree),
+                p.parse("a")
+        );
+        Assertions.assertEquals(
+                PT.create("S", "a", PT.create("S", "b", epsTree)),
+                p.parse("ab")
+        );
+        Assertions.assertEquals(
+                PT.create("S", "a", PT.create("S", "a", epsTree)),
+                p.parse("aa")
+        );
+    }
+
+    @Test
+    void codepointsTest() {
+        Assertions.assertEquals(
+                PT.create("S", "A"),
+                ABNF.parser("S = %x41-43").parse("A")
+        );
+        Assertions.assertEquals(
+                PT.create("S", "A"),
+                ABNF.parser("S = %d65-67").parse("A")
+        );
+        Assertions.assertEquals(
+                PT.create("S", "B"),
+                ABNF.parser("S = 1* A\n<A> = %d66").parse("B")
+        );
+        Assertions.assertEquals(
+                PT.create("S", "B", "B", "B"),
+                ABNF.parser("S = 1* (%d65-67)").parse("BBB")
+        );
+    }
+
+    @Test
+    void codepointFailureTest() {
+        var p = ABNF.parser("S = 1* (%d65-67)");
+        Assertions.assertEquals(
+                PT.create("S", "B"),
+                p.parse("B")
+        );
+    }
+
     // Basic literal matching
     @Test
     void testLiteral() {
@@ -363,9 +500,10 @@ public class ABNFTest {
                 digit = %d48-57
                 """);
 
-        Assertions.assertTrue(parser.parse("http://example.com").isSuccess());
         Assertions.assertTrue(parser.parse("https://example.com").isSuccess());
         Assertions.assertTrue(parser.parse("ftp://example.com").isFailure());
+        //noinspection HttpUrlsUsage
+        Assertions.assertTrue(parser.parse("http://example.com").isSuccess());
     }
 
 
@@ -458,9 +596,9 @@ public class ABNFTest {
     @Test
     void testGrammarComments() {
         var parser = ABNF.parser("""
-        ; This is a comment
-        start = "hello"
-        """);
+                ; This is a comment
+                start = "hello"
+                """);
 
         Assertions.assertTrue(parser.parse("hello").isSuccess());
     }

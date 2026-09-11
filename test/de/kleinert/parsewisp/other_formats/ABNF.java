@@ -7,6 +7,7 @@ import de.kleinert.parsewisp.grammar.Grammar;
 import de.kleinert.parsewisp.grammar.GrammarBuilder;
 import de.kleinert.parsewisp.parser.Parser;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
+import de.kleinert.parsewisp.parser_options.RedefinitionOption;
 import de.kleinert.parsewisp.parsing.*;
 import de.kleinert.parsewisp.result.Node;
 import de.kleinert.parsewisp.result.ParseTree;
@@ -17,44 +18,62 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.regex.Pattern;
 
+/**
+ * See <a href="https://www.rfc-editor.org/info/rfc5234/">https://www.rfc-editor.org/info/rfc5234/</a>
+ * and <a href="https://www.rfc-editor.org/info/rfc7405/">https://www.rfc-editor.org/info/rfc7405/</a>
+ */
 public class ABNF {
     private ABNF() {
     }
 
-    public static @NotNull Parser parser(@NotNull String grammar) {
-        return parser(grammar, ParserCreationOptions.getDefault());
+    public record ABNFOptions(
+            @Nullable Parser whitespaceParser,
+            @Nullable Sym startProduction,
+            boolean allowLookaheadAndNegations) {
     }
 
-    public static @NotNull Parser parser(@NotNull String grammar, @Nullable ParserCreationOptions options) {
+    private static ParserCreationOptions parsewispOptsFromAbnfOpts(ABNFOptions options) {
+        return ParserCreationOptions.getDefault()
+                .withStartProduction(options.startProduction)
+                .withWhitespaceParser(options.whitespaceParser)
+                .withRedefinitionOption(RedefinitionOption.CHOICE);
+    }
+
+    public static @NotNull Parser parser(@NotNull String grammar) {
+        return parser(grammar, null);
+    }
+
+    public static @NotNull Parser parser(@NotNull String grammar, @Nullable ABNFOptions options) {
         if (options == null) {
-            options = ParserCreationOptions.getDefault();
+            options = new ABNFOptions(null, null, false);
         }
 
-        var abnfGrammarParser = Parsewisp.parser(baseGrammar(), ParserCreationOptions.getDefault());
+        var abnfGrammarParser = Parsewisp.parser(baseGrammar(options), ParserCreationOptions.getDefault());
         var tree = abnfGrammarParser.parse(grammar);
 
         if (tree.isFailure()) {
             throw new ParserCreationFailure(tree.castToParseFailure().toString());
         }
 
-        return Parsewisp.parser(new ABNF().transform(tree.castToParseSuccess(), options), ParserCreationOptions.getDefault());
+        return Parsewisp.parser(new ABNF().transform(tree.castToParseSuccess(), options), null);
     }
 
-    public static @NotNull Grammar baseGrammar() {
-        return new AbnfBuilder(ParserCreationOptions.getDefault()).build();
+    public static @NotNull Grammar baseGrammar(ABNFOptions options) {
+        return new AbnfGrammarParserGrammarBuilder(ParserCreationOptions.getDefault(), options).build();
     }
 
 
-    private @NotNull Grammar transform(@NotNull ParseTree parsedAbnfGrammar, @NotNull ParserCreationOptions options) {
-        return new Transformer(parsedAbnfGrammar, options).build();
+    private @NotNull Grammar transform(final @NotNull ParseTree parsedAbnfGrammar, ABNFOptions abnfOptions) {
+        return new Transformer(parsedAbnfGrammar,  abnfOptions).build();
     }
 
     private static class Transformer extends GrammarBuilder {
         private final @NotNull StrParser strParser = new StrParser();
         private final @NotNull ParseTree parsedAbnfGrammar;
 
-        protected Transformer(@NotNull ParseTree parsedAbnfGrammar, @NotNull ParserCreationOptions options) {
-            super(options);
+        protected Transformer(final @NotNull ParseTree parsedAbnfGrammar,
+                              final @NotNull ABNFOptions abnfOptions) {
+            super(parsewispOptsFromAbnfOpts(abnfOptions));
             this.parsedAbnfGrammar = parsedAbnfGrammar;
         }
 
@@ -65,28 +84,28 @@ public class ABNF {
                     continue;
                 }
                 var prod = rule(node.tree());
-                var lhs = (prod.getKey().isHidden()) ? prod.getValue().enableHideTag() : prod.getValue();
+                var lhs = prod.getKey().isHidden() ? prod.getValue().hideTag() : prod.getValue();
                 addProduction(prod.getKey().getKeyword(), lhs);
             }
 
             {
-                var CRLF = StringTerm.create("\r\n", false);
-                var WSP = RegexTerm.create(Pattern.compile("[\\u0020\\u0009]"));
-                addProduction(Sym.sym("ALPHA"), RegexTerm.create(Pattern.compile("[a-zA-Z]")));
-                addProduction(Sym.sym("BIT"), RegexTerm.create(Pattern.compile("[01]")));
-                addProduction(Sym.sym("CHAR"), RegexTerm.create(Pattern.compile("[\\u0001-\\u007F]")));
-                addProduction(Sym.sym("CR"), StringTerm.create("\r", false));
+                var CRLF = string("\r\n", false);
+                var WSP = regex(Pattern.compile("[\\u0020\\u0009]"));
+                addProduction(Sym.sym("ALPHA"), regex(Pattern.compile("[a-zA-Z]")));
+                addProduction(Sym.sym("BIT"), regex(Pattern.compile("[01]")));
+                addProduction(Sym.sym("CHAR"), regex(Pattern.compile("[\\u0001-\\u007F]")));
+                addProduction(Sym.sym("CR"), string("\r", false));
                 addProduction(Sym.sym("CRLF"), CRLF);
-                addProduction(Sym.sym("CTL"), RegexTerm.create(Pattern.compile("[\\u0000-\\u001F|\\u007F]")));
-                addProduction(Sym.sym("DIGIT"), RegexTerm.create(Pattern.compile("[0-9]")));
-                addProduction(Sym.sym("DQUOTE"), StringTerm.create("\"", false));
-                addProduction(Sym.sym("HEXDIG"), RegexTerm.create(Pattern.compile("[0-9a-fA-F]")));
-                addProduction(Sym.sym("HTAB"), RegexTerm.create(Pattern.compile("\t")));
-                addProduction(Sym.sym("LF"), RegexTerm.create(Pattern.compile("\n")));
-                addProduction(Sym.sym("LWSP"), ZeroOrMoreRule.create(alt(WSP, cat(CRLF, WSP))));
-                addProduction(Sym.sym("OCTET"), RegexTerm.create(Pattern.compile("[\\u0000-\\u00FF]")));
-                addProduction(Sym.sym("SP"), StringTerm.create(" ", false));
-                addProduction(Sym.sym("VCHAR"), RegexTerm.create(Pattern.compile("[\\u0021-\\u007E]")));
+                addProduction(Sym.sym("CTL"), regex(Pattern.compile("[\\u0000-\\u001F|\\u007F]")));
+                addProduction(Sym.sym("DIGIT"), regex(Pattern.compile("[0-9]")));
+                addProduction(Sym.sym("DQUOTE"), string("\"", false));
+                addProduction(Sym.sym("HEXDIG"), regex(Pattern.compile("[0-9a-fA-F]")));
+                addProduction(Sym.sym("HTAB"), regex(Pattern.compile("\t")));
+                addProduction(Sym.sym("LF"), regex(Pattern.compile("\n")));
+                addProduction(Sym.sym("LWSP"), zeroOrMore(alt(WSP, cat(CRLF, WSP))));
+                addProduction(Sym.sym("OCTET"), regex(Pattern.compile("[\\u0000-\\u00FF]")));
+                addProduction(Sym.sym("SP"), string(" ", false));
+                addProduction(Sym.sym("VCHAR"), regex(Pattern.compile("[\\u0021-\\u007E]")));
                 addProduction(Sym.sym("WSP"), WSP);
             }
         }
@@ -94,22 +113,23 @@ public class ABNF {
         // Tree has format
         //    [:rule, [:nonterm, "A"], "=", [:alternation, ...]]
         //    [:rule, [:hide-nt, "<", "A", ">"], "=", [:alternation, ...]]
-        private @NotNull Map.Entry<NonTerminal, Rule> rule(@NotNull ParseTree tree) {
+        private @NotNull Map.Entry<NonTerminal, Rule> rule(
+                final @NotNull ParseTree tree) {
             var name = ntOrHideNt(tree.getNode(0).tree());
-            var rhs = alternation(tree.getNode(2).tree());
+            var rhs = makeAlternation(tree.getNode(2).tree());
             return Map.entry(name, rhs);
         }
 
-        private @NotNull NonTerminal ntOrHideNt(@NotNull ParseTree tree) {
+        private @NotNull NonTerminal ntOrHideNt(final @NotNull ParseTree tree) {
             if (Objects.equals(Sym.sym("hide-nt"), tree.getTag().content())) {
-                return (NonTerminal) NonTerminal.create(Sym.sym(tree.getNode(1).string())).hideTag();
+                return (NonTerminal) nt(Sym.sym(tree.getNode(1).string())).enableHideTag();
             }
-            return NonTerminal.create(Sym.sym(tree.getNode(0).string()));
+            return nt(Sym.sym(tree.getNode(0).string()));
         }
 
         // Format: [:alternation, [:concatenation, ...], ...]
-        private @NotNull Rule alternation(@NotNull ParseTree tree) {
-            return AlternationRule.create(
+        private @NotNull Rule makeAlternation(final @NotNull ParseTree tree) {
+            return altList(
                     tree.getContent().stream()
                             .filter(it -> it.content() instanceof ParseTree)
                             .map(Node::tree)
@@ -118,8 +138,8 @@ public class ABNF {
         }
 
         // Format: [:concatenation, [:repetition, ...], [:repetition, ...]]
-        private @NotNull Rule concatenation(@NotNull ParseTree tree) {
-            return ConcatRule.create(
+        private @NotNull Rule concatenation(final @NotNull ParseTree tree) {
+            return cat(
                     tree.getContent().stream()
                             .filter(it -> it.content() instanceof ParseTree)
                             .map(Node::tree)
@@ -132,7 +152,7 @@ public class ABNF {
         // [:repetition, "...*", [:element, ...]]
         // [:repetition, "*...", [:element, ...]]
         // [:repetition, "...*...", [:element, ...]]
-        private @NotNull Rule repetition(@NotNull ParseTree tree) {
+        private @NotNull Rule repetition(final @NotNull ParseTree tree) {
             if (tree.size() == 2) {
                 return element(tree.getNode(0).tree());
             }
@@ -164,19 +184,20 @@ public class ABNF {
                 }
             } else if (parts.length == 0) {
                 // No minimum, no maximum
-                return ZeroOrMoreRule.create(rule);
+                return zeroOrMore(rule);
             } else {
-                min = Integer.parseInt(parts[0]);
+                min = parts[0].isEmpty() ? 0 : Integer.parseInt(parts[0]);
                 max = Integer.parseInt(parts[1]);
             }
 
-            return VariableRepetitionRule.create(rule, min, max);
+            return rep(rule, min, max);
         }
 
-        private @NotNull ParseTree findAlternation(ParseTree pt) {
+        private @NotNull ParseTree findAlternationTreeInNodes(final @NotNull ParseTree pt) {
             var content = pt.getContent();
             for (var sub : content) {
-                if (sub.content() instanceof ParseTree && ((ParseTree) sub.content()).getTag().content().equals(Sym.sym("alternation"))) {
+                if (sub.content() instanceof ParseTree
+                        && ((ParseTree) sub.content()).getTag().content().equals(Sym.sym("alternation"))) {
                     return sub.tree();
                 }
             }
@@ -184,7 +205,7 @@ public class ABNF {
         }
 
         // element        =  nonterm / hide / group / option / char-val / num-val
-        private @NotNull Rule element(@NotNull ParseTree tree) {
+        private @NotNull Rule element(final @NotNull ParseTree tree) {
             var inner = tree.getNode(0).tree();
             var innerTag = inner.getTag().content();
             if (innerTag.equals(Sym.sym("nonterm"))) {
@@ -192,40 +213,46 @@ public class ABNF {
                 return nt(inner.getNode(0).string());
             } else if (innerTag.equals(Sym.sym("hide"))) {
                 // hide           =  "<" *c-wsp alternation *c-wsp ">"
-                return alternation(findAlternation(inner)).enableHideTag();
+                return makeAlternation(findAlternationTreeInNodes(inner)).enableHideTag();
             } else if (innerTag.equals(Sym.sym("group"))) {
                 // group          =  "(" *c-wsp alternation *c-wsp ")"
-                return alternation(findAlternation(inner));
+                return makeAlternation(findAlternationTreeInNodes(inner));
             } else if (innerTag.equals(Sym.sym("option"))) {
                 // option         =  "[" *c-wsp alternation *c-wsp "]"
-                return OptionalRule.create(alternation(findAlternation(inner)));
+                return opt(makeAlternation(findAlternationTreeInNodes(inner)));
             } else if (innerTag.equals(Sym.sym("char-val"))) {
                 // char-val       =  DQUOTE *(%x20-21 / %x23-7E) DQUOTE ; quoted string of SP and VCHAR without DQUOTE
-                return charVal(inner);
+                return makeCharVal(inner);
             } else if (innerTag.equals(Sym.sym("regexp"))) {
                 // regexp         = #'[^'\\\\]*(?:\\\\.[^'\\\\]*)*' / #\\\"[^\\\"\\\\]*(?:\\\\.[^\\\"\\\\]*)*\\\"
-                return regexp(inner);
+                return makeRegexp(inner);
             } else if (innerTag.equals(Sym.sym("num-val"))) {
                 // num-val        =  "%" (bin-val / dec-val / hex-val)
-                return numVal(inner);
+                return makeNumVal(inner);
+            } else if (innerTag.equals(Sym.sym("look"))) {
+                // look = <'&' opt-whitespace> element;
+                return look(element(inner.getNode(1).tree()));
+            } else if (innerTag.equals(Sym.sym("neg"))) {
+                // neg = <'!' opt-whitespace> element;
+                return neg(element(inner.getNode(1).tree()));
             }
             throw new IllegalStateException();
         }
 
         // Actual implementation: char-val       =  #"(%[is])?\\\"[^\\\"\\\\]*(?:\\\\.[^\\\"\\\\]*)*\\\"";
-        private @NotNull Rule charVal(@NotNull ParseTree tree) {
+        private @NotNull Rule makeCharVal(final @NotNull ParseTree tree) {
             var string = tree.getNode(0).string();
             if (string.startsWith("%")) {
-                return StringTerm.create(
+                return string(
                         strParser.processString(string.substring(2)), string.charAt(1) == 'i');
             }
-            return StringTerm.create(strParser.processString(string), true);
+            return string(strParser.processString(string), true);
 
         }
 
         // regexp         = #'[^'\\\\]*(?:\\\\.[^'\\\\]*)*' / #\\\"[^\\\"\\\\]*(?:\\\\.[^\\\"\\\\]*)*\\\"
-        private @NotNull Rule regexp(@NotNull ParseTree tree) {
-            return RegexTerm.create(
+        private @NotNull Rule makeRegexp(final @NotNull ParseTree tree) {
+            return regex(
                     strParser.processRegexp((String)
                             tree.getContent().get(0).content()));
         }
@@ -234,7 +261,7 @@ public class ABNF {
         // bin-val        =  "b" 1*BIT [ 1*("." 1*BIT) / ("-" 1*BIT) ] ; series of concatenated bit values or single ONEOF range
         // dec-val        =  "d" 1*DIGIT [ 1*("." 1*DIGIT) / ("-" 1*DIGIT) ]
         // hex-val        =  "x" 1*HEXDIG [ 1*("." 1*HEXDIG) / ("-" 1*HEXDIG) ]
-        private @NotNull Rule numVal(@NotNull ParseTree tree) {
+        private @NotNull Rule makeNumVal(final @NotNull ParseTree tree) {
             var sub = tree.getNode(1).tree();
             var prefix = sub.getNode(0).string();
 
@@ -258,39 +285,42 @@ public class ABNF {
             var parts = digitStr.split("-");
             var min = Integer.parseInt(parts[0], radix);
             var max = Integer.parseInt(parts[1], radix);
-            return ValueRangeTerm.create(min, max);
+            return numVal(min, max);
         }
     }
 
-    private static class AbnfBuilder extends GrammarBuilder {
-        protected AbnfBuilder(@NotNull ParserCreationOptions options) {
+    private static class AbnfGrammarParserGrammarBuilder extends GrammarBuilder {
+        private final ABNFOptions abnfOptions;
+
+        protected AbnfGrammarParserGrammarBuilder(final @NotNull ParserCreationOptions options, ABNFOptions abnfOptions) {
             super(options);
+            this.abnfOptions = abnfOptions;
         }
 
-        NonTerminal WSP = nt("WSP");
         NonTerminal alternation = nt("alternation");
         NonTerminal binVal = nt("bin-val");
         NonTerminal cNl = nt("c-nl");
         NonTerminal cWsp = nt("c-wsp");
         NonTerminal charVal = nt("char-val");
-        NonTerminal regexp = nt("regexp");
         NonTerminal comment = nt("comment");
         NonTerminal concatenation = nt("concatenation");
         NonTerminal decVal = nt("dec-val");
         NonTerminal element = nt("element");
         NonTerminal group = nt("group");
-        NonTerminal hide = nt("hide");
         NonTerminal hexVal = nt("hex-val");
+        NonTerminal hide = nt("hide");
+        NonTerminal hideNt = nt("hide-nt");
+        NonTerminal nonterm = nt("nonterm");
         NonTerminal numVal = nt("num-val");
         NonTerminal option = nt("option");
+        NonTerminal regexp = nt("regexp");
         NonTerminal repetition = nt("repetition");
         NonTerminal rule = nt("rule");
         NonTerminal rulelist = nt("rulelist");
-        NonTerminal nonterm = nt("nonterm");
-        NonTerminal hideNt = nt("hide-nt");
+        NonTerminal WSP = nt("WSP");
 
         Rule cWspRepeat = zeroOrMore(cWsp).enableHideTag();
-        Rule newline = regex(Pattern.compile("\\r?\\n")).enableHideTag();
+        Rule newline = regex(Pattern.compile("\\r?\\n"));
 
         @Override
         public void make() {
@@ -316,10 +346,10 @@ public class ABNF {
             // nonterm       =  ALPHA *(ALPHA / DIGIT / "-")
             addProduction(
                     nonterm.getKeyword(),
-                    regex("[a-zA-Z][a-zA-Z0-9\\-]*"));
+                    regex("[a-zA-Z][a-zA-Z0-9\\-]*(?x) # NonTerminal"));
             addProduction(
                     hideNt.getKeyword(),
-                    cat("<", regex("[a-zA-Z][a-zA-Z0-9\\-]*"), ">"));
+                    cat("<", regex("[a-zA-Z][a-zA-Z0-9\\-]*(?x) # Nonterminal"), ">"));
 
             // c-wsp          =  WSP / (c-nl WSP)
             addProduction(
@@ -334,7 +364,7 @@ public class ABNF {
             // comment        =  ";" *(WSP / VCHAR) CRLF
             addProduction(
                     comment.getKeyword(),
-                    cat(";", zeroOrMore(alt(WSP, regex(Pattern.compile("^\\S+")))), alt(newline, eof())));
+                    cat(";", zeroOrMore(alt(WSP, regex(Pattern.compile("^\\S+(?x) # Comment until newline/eof")))), alt(newline, eof())));
 
             // alternation    =  concatenation *(*c-wsp "/" *c-wsp concatenation)
             addProduction(
@@ -352,9 +382,14 @@ public class ABNF {
                     cat(opt(regex(Pattern.compile("[0-9]*(\\*[0-9]*)?"))), cWspRepeat, element));
 
             // element        =  nonterm / hide / group / option / char-val / num-val
+            var elementAlternatives = new ArrayList<Rule>(List.of(
+                    nonterm, hide, group, option, charVal, regexp, numVal));
+            if (abnfOptions.allowLookaheadAndNegations) {
+                elementAlternatives.addAll(List.of(nt("look"), nt("neg")));
+            }
             addProduction(
                     element.getKeyword(),
-                    alt(nonterm, hide, group, option, charVal, regexp, numVal));
+                    altList(elementAlternatives));
 
             // group          =  "(" *c-wsp alternation *c-wsp ")"
             addProduction(
@@ -371,17 +406,27 @@ public class ABNF {
                     option.getKeyword(),
                     cat("[", cWspRepeat, alternation, cWspRepeat, "]"));
 
+            // look = <'&' opt-whitespace> element;
+            addProduction(
+                    Sym.sym("look"),
+                    cat("&", cWspRepeat, element));
+
+            // neg = <'!' opt-whitespace> element;
+            addProduction(
+                    Sym.sym("neg"),
+                    cat("!", cWspRepeat, element));
+
             // char-val       =  [ "%i" / "%s" ] DQUOTE *(%x20-21 / %x23-7E) DQUOTE ; quoted string of SP and VCHAR without DQUOTE
             // char-val       =  #"(%[is])?\\\"[^\\\"\\\\]*(?:\\\\.[^\\\"\\\\]*)*\\\"";
             addProduction(
                     charVal.getKeyword(),
-                    regex(Pattern.compile("(%[is])?\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"")));
+                    regex(Pattern.compile("(%[is])?\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"(?x) # String")));
 
             // regexp         = #'[^'\\\\]*(?:\\\\.[^'\\\\]*)*' / #\\\"[^\\\"\\\\]*(?:\\\\.[^\\\"\\\\]*)*\\\"
             final @NotNull Rule rulesRule =
                     alternationGuaranteeDistinctAndNotEmpty(
-                            List.of(regex("#'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'"),
-                                    regex("#\\\"[^\\\"\\\\]*(?:\\\\.[^\\\"\\\\]*)*\\\"")));
+                            List.of(regex("#'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'(?x) # Regex"),
+                                    regex("#\\\"[^\\\"\\\\]*(?:\\\\.[^\\\"\\\\]*)*\\\"(?x) # Regex")));
             addProduction(
                     regexp.getKeyword(),
                     rulesRule);
@@ -397,19 +442,19 @@ public class ABNF {
             // b [0-1]+ "-" [0-1]+
             addProduction(
                     binVal.getKeyword(),
-                    cat("b", regex(Pattern.compile("[01]+([.01]*[01]|-[01]+)?"))));
+                    cat("b", regex(Pattern.compile("[01]+([.01]*[01]|-[01]+)?(?x) # Binary num-val"))));
 
             // dec-val        =  "d" 1*DIGIT [ 1*("." 1*DIGIT) / ("-" 1*DIGIT) ]
             addProduction(
                     decVal.getKeyword(),
-                    cat("d", regex(Pattern.compile("[0-9]+([.0-9]*[0-9]|-[0-9]+)?"))));
+                    cat("d", regex(Pattern.compile("[0-9]+([.0-9]*[0-9]|-[0-9]+)?(?x) # Decimal num-val"))));
 
             // hex-val        =  "x" 1*HEXDIG [ 1*("." 1*HEXDIG) / ("-" 1*HEXDIG) ]
             addProduction(
                     hexVal.getKeyword(),
-                    cat("x", regex(Pattern.compile("[a-zA-Z0-9]+([.a-zA-Z0-9]*[a-zA-Z0-9]|-[a-zA-Z0-9]+)?"))));
+                    cat("x", regex(Pattern.compile("[a-zA-Z0-9]+([.a-zA-Z0-9]*[a-zA-Z0-9]|-[a-zA-Z0-9]+)?(?x) # Hexadecimal num-val"))));
 
-            addProduction(WSP.getKeyword(), regex(Pattern.compile("[\\u0020\\u0009]")));
+            addProduction(WSP.getKeyword(), regex(Pattern.compile("[\\u0020\\u0009](?x) # Whitespace")));
         }
     }
 }

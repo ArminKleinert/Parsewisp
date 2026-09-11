@@ -66,7 +66,7 @@ class GrammarBuilderTest {
     @Test
     void testGrammarBuilderFeatures() {
         // A grammar which has 9 different ways to match at least one number/underscore.
-        var gFromGB = new GrammarBuilder(ParserCreationOptions.ebnf()) {
+        var gFromGB = new GrammarBuilder(ParserCreationOptions.getDefault()) {
             @Override
             public void make() {
                 addProduction("S", ordAlt(List.of(

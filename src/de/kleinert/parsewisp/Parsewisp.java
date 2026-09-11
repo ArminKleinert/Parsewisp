@@ -69,7 +69,10 @@ public final class Parsewisp {
      * @throws ParserCreationFailure If the start production is invalid.
      */
     public static @NotNull Parser parser(@NotNull Grammar grammar,
-                                         final @NotNull ParserCreationOptions options) {
+                                         @Nullable ParserCreationOptions options) {
+        if (options == null)
+            options = ParserCreationOptions.getDefault();
+
         if (options.startProduction() != null && !grammar.containsKey(options.startProduction()))
             throw new ParserCreationFailure("The start production " + options.startProduction() + " is not in the grammar.");
 

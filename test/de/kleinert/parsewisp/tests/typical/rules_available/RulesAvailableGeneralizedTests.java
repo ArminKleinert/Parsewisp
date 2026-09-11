@@ -502,8 +502,7 @@ class RulesAvailableGeneralizedTests {
     }
 
 
-    private static
-    void semicolonLineComment1(ParserCreationOptions opts, boolean run) {
+    private static void semicolonLineComment1(ParserCreationOptions opts, boolean run) {
         if (!run) return;
 
         Assertions.assertEquals(
