@@ -14,19 +14,17 @@ import java.util.stream.Stream;
 /**
  * This class provides options for creating {@link Parser} instances.
  *
- * @param whitespaceParser      A parser which is used to ignore whitespaces between words or characters. This parser is merged into the new parser when the creation options are used.
- * @param startProduction       The starting production name of the parser.
- * @param stringCaseInsensitive Set to make all string terminals case-insensitive or case-sensitive. Individual string terminals can override this by using explicit case-sensitivity prefixes (see {@link RulesAvailable#STRING_CASE_SENSITIVITY_PREFIX}).
- * @param redefinitionOption    Sets what to do when a production appears twice in the definition.
- * @param usableRules           A Set of rules that can be used when building the parser. See {@link RulesAvailable}.
- * @param checkCorrectness      Whether to check the correctness of the grammar when creating the parser.
- * @param ruleDefinitionOpts    A collection of possible "definition operators" for rules.
- * @param epsilonNames          A collection of possible epsilon names. If null, use {@link #defaultEpsilonNames()}.
+ * @param whitespaceParser   A parser which is used to ignore whitespaces between words or characters. This parser is merged into the new parser when the creation options are used.
+ * @param startProduction    The starting production name of the parser.
+ * @param redefinitionOption Sets what to do when a production appears twice in the definition.
+ * @param usableRules        A Set of rules that can be used when building the parser. See {@link RulesAvailable}.
+ * @param checkCorrectness   Whether to check the correctness of the grammar when creating the parser.
+ * @param ruleDefinitionOpts A collection of possible "definition operators" for rules.
+ * @param epsilonNames       A collection of possible epsilon names. If null, use {@link #defaultEpsilonNames()}.
  */
 @Unmodifiable
 public record ParserCreationOptions(@Nullable Parser whitespaceParser,
                                     @Nullable Sym startProduction,
-                                    @NotNull GlobalCaseInsensitivity stringCaseInsensitive,
                                     @NotNull RedefinitionOption redefinitionOption,
                                     @NotNull Set<RulesAvailable> usableRules,
                                     boolean checkCorrectness,
@@ -105,28 +103,23 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
     /**
      * Constructor.
      *
-     * @param whitespaceParser      A parser which is used to ignore whitespaces between words or characters. This parser is merged into the new parser when the creation options are used. If null, no such parser is used.
-     * @param startProduction       The starting production name of the parser. If null, the first defined production is used.
-     * @param stringCaseInsensitive Set to make all string terminals case-insensitive or case-sensitive. If null, {@link GlobalCaseInsensitivity#DEFAULT} is used.
-     * @param redefinitionOption    Sets what to do when a production appears twice in the definition.
-     * @param usableRules           A Set of rules that can be used when building the parser. If null, use {@link #defaultRulesAvailable()}. See {@link RulesAvailable}.
-     * @param checkCorrectness      Whether to check the correctness of the grammar when creating the parser.
-     * @param ruleDefinitionOpts    A collection of possible "definition operators" for rules. If null, use {@link #defaultRuleDefinitionOps()}. Example: {@code List.of(":=", "::=", "=", ":")}
-     * @param epsilonNames          A collection of possible epsilon names. If null, use {@link #defaultEpsilonNames()}. Example: {@code List.of("epsilon", "ε")}
+     * @param whitespaceParser   A parser which is used to ignore whitespaces between words or characters. This parser is merged into the new parser when the creation options are used. If null, no such parser is used.
+     * @param startProduction    The starting production name of the parser. If null, the first defined production is used.
+     * @param redefinitionOption Sets what to do when a production appears twice in the definition.
+     * @param usableRules        A Set of rules that can be used when building the parser. If null, use {@link #defaultRulesAvailable()}. See {@link RulesAvailable}.
+     * @param checkCorrectness   Whether to check the correctness of the grammar when creating the parser.
+     * @param ruleDefinitionOpts A collection of possible "definition operators" for rules. If null, use {@link #defaultRuleDefinitionOps()}. Example: {@code List.of(":=", "::=", "=", ":")}
+     * @param epsilonNames       A collection of possible epsilon names. If null, use {@link #defaultEpsilonNames()}. Example: {@code List.of("epsilon", "ε")}
      * @return A new instance.
      */
     public static @NotNull ParserCreationOptions create(
             final @Nullable Parser whitespaceParser,
             final @Nullable Sym startProduction,
-            final @Nullable GlobalCaseInsensitivity stringCaseInsensitive,
             final @Nullable RedefinitionOption redefinitionOption,
             final @Nullable Set<RulesAvailable> usableRules,
             final boolean checkCorrectness,
             final @Nullable Collection<String> ruleDefinitionOpts,
             final @Nullable Collection<String> epsilonNames) {
-        var stringCaseInsensitive1 = stringCaseInsensitive == null
-                ? GlobalCaseInsensitivity.DEFAULT
-                : stringCaseInsensitive;
         var redefinitionOption1 = redefinitionOption == null
                 ? RedefinitionOption.defaultOption
                 : redefinitionOption;
@@ -144,7 +137,9 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
                 ? defaultEpsilonNames()
                 : epsilonNames.stream().sorted(Comparator.comparingInt(String::length)).toList();
 
-        return new ParserCreationOptions(whitespaceParser, startProduction, stringCaseInsensitive1, redefinitionOption1, usableRules1, checkCorrectness, ruleDefinitionOpts1, epsilonNames1);
+        return new ParserCreationOptions(
+                whitespaceParser, startProduction, redefinitionOption1, usableRules1,
+                checkCorrectness, ruleDefinitionOpts1, epsilonNames1);
     }
 
     /**
@@ -158,7 +153,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         if (Objects.equals(this.whitespaceParser(), whitespaceParser))
             return this;
         return ParserCreationOptions.create(
-                whitespaceParser, startProduction, stringCaseInsensitive,
+                whitespaceParser, startProduction,
                 redefinitionOption, usableRules,
                 checkCorrectness, ruleDefinitionOpts, epsilonNames);
     }
@@ -174,7 +169,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         if (Objects.equals(this.startProduction(), startProduction))
             return this;
         return ParserCreationOptions.create(
-                whitespaceParser, startProduction, stringCaseInsensitive,
+                whitespaceParser, startProduction,
                 redefinitionOption, usableRules,
                 checkCorrectness, ruleDefinitionOpts, epsilonNames);
     }
@@ -190,7 +185,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
 //        if (Objects.equals(this.stringCaseInsensitive(), stringCaseInsensitive))
 //            return this;
 //        return ParserCreationOptions.create(
-//                whitespaceParser, startProduction, stringCaseInsensitive,
+//                whitespaceParser, startProduction,
 //                redefinitionOption, usableRules,
 //                checkCorrectness, ruleDefinitionOpts, epsilonNames);
 //    }
@@ -218,7 +213,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
     public @NotNull ParserCreationOptions withRedefinitionOption(
             final RedefinitionOption redefinitionOption) {
         return ParserCreationOptions.create(
-                whitespaceParser, startProduction, stringCaseInsensitive,
+                whitespaceParser, startProduction,
                 redefinitionOption, usableRules,
                 checkCorrectness, ruleDefinitionOpts, epsilonNames);
     }
@@ -232,7 +227,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
     public @NotNull ParserCreationOptions withRulesAvailable(
             final @Nullable Set<RulesAvailable> usableRules) {
         return ParserCreationOptions.create(
-                whitespaceParser, startProduction, stringCaseInsensitive,
+                whitespaceParser, startProduction,
                 redefinitionOption, usableRules,
                 checkCorrectness, ruleDefinitionOpts, epsilonNames);
     }
@@ -276,7 +271,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
     public @NotNull ParserCreationOptions withCorrectnessCheck(
             final boolean checkCorrectness) {
         return ParserCreationOptions.create(
-                whitespaceParser, startProduction, stringCaseInsensitive,
+                whitespaceParser, startProduction,
                 redefinitionOption, usableRules,
                 checkCorrectness, ruleDefinitionOpts, epsilonNames);
     }
@@ -290,7 +285,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
     public @NotNull ParserCreationOptions withRuleDefinitionOps(
             final @Nullable Collection<String> ruleDefinitionOps) {
         return ParserCreationOptions.create(
-                whitespaceParser, startProduction, stringCaseInsensitive,
+                whitespaceParser, startProduction,
                 redefinitionOption, usableRules,
                 checkCorrectness, ruleDefinitionOps, epsilonNames);
     }
@@ -304,7 +299,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
     public @NotNull ParserCreationOptions withEpsilonNames(
             final @Nullable Collection<String> epsilonNames) {
         return ParserCreationOptions.create(
-                whitespaceParser, startProduction, stringCaseInsensitive,
+                whitespaceParser, startProduction,
                 redefinitionOption, usableRules,
                 checkCorrectness, ruleDefinitionOpts, epsilonNames);
     }
@@ -333,13 +328,12 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
     }
 
     /**
-     * The default settings. Equivalent to {@link ParserCreationOptions#ParserCreationOptions(Parser, Sym, GlobalCaseInsensitivity, RedefinitionOption, Set, boolean, Collection, Collection)} with using {@code null} or whichever defaults this class provides.
+     * The default settings. Equivalent to {@link ParserCreationOptions#ParserCreationOptions(Parser, Sym, RedefinitionOption, Set, boolean, Collection, Collection)} with using {@code null} or whichever defaults this class provides.
      *
      * <p>
      * Characteristics:
      * <ul>
      *     <li>Rule definition operators: See {@link #defaultRuleDefinitionOps}</li>
-     *     <li>Case insensitivity: {@link GlobalCaseInsensitivity#DEFAULT}</li>
      *     <li>Redefinition option: {@link RedefinitionOption#defaultOption}</li>
      *     <li>Epsilon equivalents: {@link #defaultEpsilonNames()}</li>
      * </ul>
@@ -349,7 +343,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
      */
     public static @NotNull ParserCreationOptions getDefault() {
         return ParserCreationOptions.create(
-                null, null, null,
+                null, null,
                 null, null,
                 defaultCheckCorrectness, null, null);
     }

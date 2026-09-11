@@ -3,7 +3,6 @@ package de.kleinert.parsewisp.tests.typical;
 import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.parser.Parser;
-import de.kleinert.parsewisp.parser_options.GlobalCaseInsensitivity;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
 import de.kleinert.parsewisp.parser_options.ParsingOptions;
 import de.kleinert.parsewisp.parser_options.Unhide;

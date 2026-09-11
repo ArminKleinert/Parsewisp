@@ -4,7 +4,6 @@ import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.error.IllegalGrammarException;
 import de.kleinert.parsewisp.error.ParserCreationFailure;
-import de.kleinert.parsewisp.parser_options.GlobalCaseInsensitivity;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
@@ -117,7 +116,6 @@ class ParsewispParserCreationTest {
             final @NotNull var grammar = "S = 'abc'";
             final @NotNull var options = ParserCreationOptions.create(
                     null, Sym.sym("C"),
-                    GlobalCaseInsensitivity.DEFAULT,
                     null,
                     null,
                     true,

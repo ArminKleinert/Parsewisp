@@ -80,7 +80,7 @@ class GrammarBuilderTest {
                 addProduction("C", cat(repMin(regex("[0-9_]"), 1)));
                 addProduction("D", cat(regex("[0-9_]"), zeroOrMore(regex("[0-9_]"))));
                 addProduction("E", cat(rep(regex("[0-9_]"), 1), zeroOrMore(regex("[0-9_]"))));
-                addProduction("F", repMin(alt(numVal('0', '9'), numVal(0x5F)), 1));
+                addProduction("F", repMin(alt(numVal('0', '9'), numVal(0x5F), numVal(0x60)), 1));
                 addProduction("G", onceOrMore(altList(
                                 Stream.concat(
                                                 IntStream.range('0', '9'+1).boxed(),
