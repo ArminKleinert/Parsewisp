@@ -9,33 +9,33 @@ import de.kleinert.parsewisp.parsing.*;
  * Check the source code of {@code RuleAlternativesTests} (cannot link here because that file is in the "test" folder).
  */
 public enum RulesAvailable {
-    /**
-     * Various ABNF rules.
-     *
-     * <pre>
-     * {@code
-     * ALPHA  = #"[a-zA-Z]"
-     * BIT    = #"[01]"
-     * CHAR   = #"[\\u0001-\\u007F]"        // 7-bit ascii, excloding NULL
-     * CR     = "\r"                        // Carriage return
-     * CRLF   = "\r\n"                      // Carriage return + line feed
-     * CTL    = #"[\\u0000-\\u001F|\\u007F]"
-     * DIGIT  = #"[0-9]"
-     * DQUOTE = "\""                        // Double quote character
-     * HEXDIG = #"[0-9a-fA-F]"
-     * HTAB   = #"\t"                       // Horizontal tab
-     * LF     = #"\n"                       // Line feed
-     * LWSP   = *(WSP / CRLF WSP)
-     * OCTET  = #"[\\u0000-\\u00FF]"
-     * SP     = " "                         // Space
-     * VCHAR  = #"[\\u0021-\\u007E]"
-     * WSP    = SP / HTAB                   // Space or horizontal tag
-     * }
-     * </pre>
-     * <p>
-     * Possible replacements through other rule types: See above.
-     */
-    ABNF_CORE,
+//    /**
+//     * Various ABNF rules.
+//     *
+//     * <pre>
+//     * {@code
+//     * ALPHA  = #"[a-zA-Z]"
+//     * BIT    = #"[01]"
+//     * CHAR   = #"[\\u0001-\\u007F]"        // 7-bit ascii, excloding NULL
+//     * CR     = "\r"                        // Carriage return
+//     * CRLF   = "\r\n"                      // Carriage return + line feed
+//     * CTL    = #"[\\u0000-\\u001F|\\u007F]"
+//     * DIGIT  = #"[0-9]"
+//     * DQUOTE = "\""                        // Double quote character
+//     * HEXDIG = #"[0-9a-fA-F]"
+//     * HTAB   = #"\t"                       // Horizontal tab
+//     * LF     = #"\n"                       // Line feed
+//     * LWSP   = *(WSP / CRLF WSP)
+//     * OCTET  = #"[\\u0000-\\u00FF]"
+//     * SP     = " "                         // Space
+//     * VCHAR  = #"[\\u0021-\\u007E]"
+//     * WSP    = SP / HTAB                   // Space or horizontal tag
+//     * }
+//     * </pre>
+//     * <p>
+//     * Possible replacements through other rule types: See above.
+//     */
+//    ABNF_CORE,
 
     /**
      * "Alternation" or "choice" rule.

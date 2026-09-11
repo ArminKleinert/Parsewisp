@@ -596,7 +596,7 @@ public final class CfgGrammar extends GrammarBuilder {
             addProduction("alt", makeCfgAltRhs());
 
         if (rulesAvailable.contains(RulesAvailable.ORDERED_CHOICE))
-            addProduction("ord", makeCfgOrdRhs()); // Technically ABNF, but should be included without it as a PAKRAT extension.
+            addProduction("ord", makeCfgOrdRhs()); // Technically ABNF, but should be included without it as a PEG extension.
 
         if (rulesAvailable.contains(RulesAvailable.VARIABLE_REPEAT))
             addProduction("rep", makeCfgRepRhs()); // ABNF

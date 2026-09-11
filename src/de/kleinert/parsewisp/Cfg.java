@@ -35,10 +35,11 @@ final class Cfg {
 
         private @NotNull Rule stringOrStringCaseInsensitiveRule(
                 final @NotNull String s) {
-            return switch (options.stringCaseInsensitive()) {
-                case TRUE -> string(s, true);
-                case FALSE, DEFAULT -> string(s, false);
-            };
+//            return switch (options.stringCaseInsensitive()) {
+//                case TRUE -> string(s, true);
+//                case FALSE, DEFAULT -> string(s, false);
+//            };
+            return string(s);
         }
 
         private @NotNull Rule buildRepRule(final @NotNull ParseTree tree) {
@@ -151,7 +152,8 @@ final class Cfg {
                                 default -> throw new IllegalStateException();
                             };
                             return string(
-                                    strParser.processString(s.substring(2)), caseInsensitive);
+                                    strParser.processString(s.substring(2)),
+                                    caseInsensitive);
                         }
                         return stringOrStringCaseInsensitiveRule(
                                 strParser.processString(s));
@@ -249,10 +251,10 @@ final class Cfg {
                 var sc = buildRuleRule((ParseTree) rule.content());
                 addProduction(sc.getKey(), sc.getValue());
             }
-            if (options.usableRules().contains(RulesAvailable.ABNF_CORE)) {
-                var abnfCore = CfgGrammar.makeAbnfCoreRules();
-                addAllProductions(abnfCore);
-            }
+//            if (options.usableRules().contains(RulesAvailable.ABNF_CORE)) {
+//                var abnfCore = CfgGrammar.makeAbnfCoreRules();
+//                addAllProductions(abnfCore);
+//            }
         }
     }
 

@@ -179,35 +179,35 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
                 checkCorrectness, ruleDefinitionOpts, epsilonNames);
     }
 
-    /**
-     * Creates a new instance with string case-insensitivity set to the parameter.
-     *
-     * @param stringCaseInsensitive The setting for the case-insensitivity.
-     * @return A new instance.
-     */
-    public @NotNull ParserCreationOptions withStringCaseInsensitive(
-            final @Nullable GlobalCaseInsensitivity stringCaseInsensitive) {
-        if (Objects.equals(this.stringCaseInsensitive(), stringCaseInsensitive))
-            return this;
-        return ParserCreationOptions.create(
-                whitespaceParser, startProduction, stringCaseInsensitive,
-                redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOpts, epsilonNames);
-    }
-
-    /**
-     * Creates a new instance with string case-insensitivity set to the parameter. The parameter here is a boolean.
-     * {@code true} becomes {@link GlobalCaseInsensitivity#TRUE}. {@link GlobalCaseInsensitivity#FALSE}
-     *
-     * @param stringCaseInsensitive The setting for the case-insensitivity.
-     * @return A new instance.
-     */
-    public @NotNull ParserCreationOptions withStringCaseInsensitive(
-            final boolean stringCaseInsensitive) {
-        return withStringCaseInsensitive(stringCaseInsensitive
-                ? GlobalCaseInsensitivity.TRUE
-                : GlobalCaseInsensitivity.FALSE);
-    }
+//    /**
+//     * Creates a new instance with string case-insensitivity set to the parameter.
+//     *
+//     * @param stringCaseInsensitive The setting for the case-insensitivity.
+//     * @return A new instance.
+//     */
+//    public @NotNull ParserCreationOptions withStringCaseInsensitive(
+//            final @Nullable GlobalCaseInsensitivity stringCaseInsensitive) {
+//        if (Objects.equals(this.stringCaseInsensitive(), stringCaseInsensitive))
+//            return this;
+//        return ParserCreationOptions.create(
+//                whitespaceParser, startProduction, stringCaseInsensitive,
+//                redefinitionOption, usableRules,
+//                checkCorrectness, ruleDefinitionOpts, epsilonNames);
+//    }
+//
+//    /**
+//     * Creates a new instance with string case-insensitivity set to the parameter. The parameter here is a boolean.
+//     * {@code true} becomes {@link GlobalCaseInsensitivity#TRUE}. {@link GlobalCaseInsensitivity#FALSE}
+//     *
+//     * @param stringCaseInsensitive The setting for the case-insensitivity.
+//     * @return A new instance.
+//     */
+//    public @NotNull ParserCreationOptions withStringCaseInsensitive(
+//            final boolean stringCaseInsensitive) {
+//        return withStringCaseInsensitive(stringCaseInsensitive
+//                ? GlobalCaseInsensitivity.TRUE
+//                : GlobalCaseInsensitivity.FALSE);
+//    }
 
     /**
      * Sets what to do when a production appears twice in the definition.

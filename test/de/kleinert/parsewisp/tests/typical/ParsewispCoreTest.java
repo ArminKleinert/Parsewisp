@@ -907,60 +907,14 @@ class ParsewispCoreTest {
 
     @Test
     void testStringVsStringCi() {
-        var grammar = "S = 'a'+";
         var text = "AaaAaa";
 
-        var pStandard1 = Parsewisp.parser(grammar);
+        var pStandard1 = Parsewisp.parser("S = %s'a'+");
         Assertions.assertTrue(pStandard1.parse(text).isFailure());
 
         var tree = PT.create("S", "a", "a", "a", "a", "a", "a");
-
-        var pCaseInsensitive = Parsewisp.parser(grammar,
-                ParserCreationOptions
-                        .getDefault()
-                        .withStringCaseInsensitive(true));
+        var pCaseInsensitive = Parsewisp.parser("S = %i'a'+");
         Assertions.assertEquals(tree, pCaseInsensitive.parse(text));
-    }
-
-    @Test
-    void testStringExplicitCiFalse() {
-        var grammar = "S = 'a'+";
-        var text = "AaaAaa";
-
-        var pStandard1 = Parsewisp.parser(grammar);
-        Assertions.assertTrue(pStandard1.parse(text).isFailure());
-
-        var pStandard2 = Parsewisp.parser(grammar,
-                ParserCreationOptions
-                        .getDefault()
-                        .withStringCaseInsensitive(GlobalCaseInsensitivity.FALSE));
-        Assertions.assertTrue(pStandard2.parse(text).isFailure());
-
-        var pStandard3 = Parsewisp.parser(grammar,
-                ParserCreationOptions
-                        .getDefault()
-                        .withStringCaseInsensitive(false));
-        Assertions.assertTrue(pStandard3.parse(text).isFailure());
-    }
-
-    @Test
-    void testStringExplicitCiTrue() {
-        var grammar = "S = 'a'+";
-        var text = "AaaAaa";
-
-        var tree = PT.create("S", "a", "a", "a", "a", "a", "a");
-
-        var pCaseInsensitive = Parsewisp.parser(grammar,
-                ParserCreationOptions
-                        .getDefault()
-                        .withStringCaseInsensitive(GlobalCaseInsensitivity.TRUE));
-        Assertions.assertEquals(tree, pCaseInsensitive.parse(text));
-
-        var pCaseInsensitive2 = Parsewisp.parser(grammar,
-                ParserCreationOptions
-                        .getDefault()
-                        .withStringCaseInsensitive(true));
-        Assertions.assertEquals(tree, pCaseInsensitive2.parse(text));
     }
 
     @Test

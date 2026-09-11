@@ -358,10 +358,11 @@ public abstract class GrammarBuilder {
      * @return The new rule.
      */
     protected final @NotNull Rule string(final @NotNull String string) {
-        return switch (options.stringCaseInsensitive()) {
-            case TRUE -> buffer.getOrAddString(string, true);
-            case FALSE, DEFAULT -> buffer.getOrAddString(string, false);
-        };
+//        return switch (options.stringCaseInsensitive()) {
+//            case TRUE -> buffer.getOrAddString(string, true);
+//            case FALSE, DEFAULT -> buffer.getOrAddString(string, false);
+//        };
+        return string(string, false);
     }
 
     /**

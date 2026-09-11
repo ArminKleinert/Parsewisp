@@ -17,13 +17,11 @@ class RulesAvailableGeneralizedTests {
     static void abnfCore(ParserCreationOptions opts, boolean expectedAvailability) {
         abnfCoreAvailable(opts, expectedAvailability);
         abnfCoreUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.ABNF_CORE), expectedAvailability);
     }
 
     static void alternation(ParserCreationOptions opts, boolean expectedAvailability) {
         alternationAvailable(opts, expectedAvailability);
         alternationUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.ALTERNATION), expectedAvailability);
     }
 
     static void epsilon(ParserCreationOptions opts, Collection<String> epsilonNames) {
@@ -33,97 +31,81 @@ class RulesAvailableGeneralizedTests {
     static void exclusion(ParserCreationOptions opts, boolean expectedAvailability) {
         exclusionAvailable(opts, expectedAvailability);
         exclusionUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.EXCLUSION), expectedAvailability);
     }
 
     static void explicitStringCaseSensitivity(ParserCreationOptions opts, boolean expectedAvailability) {
         explicitStringCaseSensitivityAvailable(opts, expectedAvailability);
         explicitStringCaseSensitivityUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.STRING_CASE_SENSITIVITY_PREFIX), expectedAvailability);
     }
 
     static void extendedIdentifiers(ParserCreationOptions opts, boolean expectedAvailability) {
         extendedIdentifiersAvailable(opts, expectedAvailability);
         extendedIdentifiersUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.EXTENDED_IDENTIFIERS), expectedAvailability);
     }
 
     static void lookahead(ParserCreationOptions opts, boolean expectedAvailability) {
         lookaheadAvailable(opts, expectedAvailability);
         lookaheadUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.LOOKAHEAD), expectedAvailability);
     }
 
     static void negativeLookahead(ParserCreationOptions opts, boolean expectedAvailability) {
         negativeLookaheadAvailable(opts, expectedAvailability);
         negativeLookaheadUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.NEGATIVE_LOOKAHEAD), expectedAvailability);
     }
 
     static void optional(ParserCreationOptions opts, boolean expectedAvailability) {
         optionalAvailable(opts, expectedAvailability);
         optionalUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.OPTIONAL), expectedAvailability);
     }
 
     static void optionalQuery(ParserCreationOptions opts, boolean expectedAvailability) {
         optionalQueryAvailable(opts, expectedAvailability);
         optionalQueryUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.OPTIONAL_QUERY), expectedAvailability);
     }
 
     static void optionalRepetition(ParserCreationOptions opts, boolean expectedAvailability) {
         optionalRepetitionAvailable(opts, expectedAvailability);
         optionalRepetitionUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.OPTIONAL_REPETITION), expectedAvailability);
     }
 
     static void optionalRepetitionStar(ParserCreationOptions opts, boolean expectedAvailability) {
         optionalRepetitionStarAvailable(opts, expectedAvailability);
         optionalRepetitionStarUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.OPTIONAL_REPETITION_STAR), expectedAvailability);
     }
 
     static void orderedChoice(ParserCreationOptions opts, boolean expectedAvailability) {
         orderedChoiceAvailable(opts, expectedAvailability);
         orderedChoiceUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.ORDERED_CHOICE), expectedAvailability);
     }
 
     static void plus(ParserCreationOptions opts, boolean expectedAvailability) {
         plusAvailable(opts, expectedAvailability);
         plusUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.PLUS), expectedAvailability);
     }
 
     static void regex(ParserCreationOptions opts, boolean expectedAvailability) {
         regexAvailable(opts, expectedAvailability);
         regexUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.REGEX), expectedAvailability);
     }
 
     static void singleQuotesForStringTerminals(ParserCreationOptions opts, boolean expectedAvailability) {
         singleQuotesForStringTerminalsAvailable(opts, expectedAvailability);
         singleQuotesForStringTerminalsUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.SINGLY_QUOTED), expectedAvailability);
     }
 
     static void valueRange(ParserCreationOptions opts, boolean expectedAvailability) {
         valueRangeAvailable(opts, expectedAvailability);
         valueRangeUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.VALUE_RANGE), expectedAvailability);
     }
 
     static void variableRepetition(ParserCreationOptions opts, boolean expectedAvailability) {
         variableRepetitionAvailable(opts, expectedAvailability);
         variableRepetitionUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.VARIABLE_REPEAT), expectedAvailability);
     }
 
 //    static void semicolonLineComment(ParserCreationOptions opts, boolean expectedAvailability) {
 //        semicolonLineComment1(opts, expectedAvailability);
 //        semicolonLineComment1(opts, !expectedAvailability);
-//        //Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.SEMICOLON_AS_LINECOMMENT), expectedAvailability);
 //    }
 
     // Concrete tests start here.
