@@ -98,7 +98,7 @@ public class AbnfBuilder extends GrammarBuilder {
         // repetition     =  [repeat] element
         addProduction(
                 repetition.getKeyword(),
-                concat(optional(regex(Pattern.compile("[0-9]*(\\*[0-9]*)?"))), element));
+                concat(optional(regex(Pattern.compile("[0-9]*(\\*[0-9]*)?"))),cWspRepeat, element));
 
         // element        =  nonterm / hide / group / option / char-val / num-val
         addProduction(
