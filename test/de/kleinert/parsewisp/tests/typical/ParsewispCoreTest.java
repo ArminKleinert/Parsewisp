@@ -13,9 +13,9 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 class ParsewispCoreTest {
 
@@ -516,8 +516,10 @@ class ParsewispCoreTest {
                 PT.create("sentence", PT.create("identifier", "defn"), PT.create("identifier", "my"), PT.create("keyword", "cond")),
                 PT.create("sentence", PT.create("keyword", "defn"), PT.create("identifier", "my"), PT.create("keyword", "cond"))
         );
-
-        Assertions.assertEquals(trees, new HashSet<>(ambiguous_tokenizer.parses(text, ParsingOptions.getDefault())));
+        var parses = ambiguous_tokenizer.parses(
+                text,
+                ParsingOptions.getDefault()).stream().collect(Collectors.toSet());
+        Assertions.assertEquals(trees, parses);
     }
 
     @Test
@@ -542,8 +544,10 @@ class ParsewispCoreTest {
 
                 PT.create("sentence", PT.create("identifier", "defn"), PT.create("identifier", "my"), PT.create("identifier", "cond"))
         );
-
-        Assertions.assertEquals(trees, new HashSet<>(preferential_tokenizer.parses(text, ParsingOptions.getDefault())));
+        var parses = preferential_tokenizer.parses(
+                text,
+                ParsingOptions.getDefault()).stream().collect(Collectors.toSet());
+        Assertions.assertEquals(trees, parses);
     }
 
     @Test
