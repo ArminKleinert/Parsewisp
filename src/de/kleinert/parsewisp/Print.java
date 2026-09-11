@@ -108,8 +108,8 @@ public final class Print {
             var valueRangeTerm = (ValueRangeTerm) parser;
             final int lo = valueRangeTerm.getLo();
             final int hi = valueRangeTerm.getHi();
-            //return lo == hi ? String.format("%%x%04x", lo) : String.format("%%x%04x-%04x", lo, hi);
-            return new StringBuilder().appendCodePoint(lo).append('-').appendCodePoint(hi).toString();
+            return lo == hi ? String.format("%%x%04x", lo) : String.format("%%x%04x-%04x", lo, hi);
+            //return new StringBuilder().appendCodePoint(lo).append('-').appendCodePoint(hi).toString();
         } else if (parser instanceof RegexTerm) {
             return "#\"" + ((RegexTerm) parser).getRegexp().pattern() + '"';
         } else if (parser instanceof NonTerminal) {

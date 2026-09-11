@@ -59,7 +59,7 @@ public abstract class GrammarBuilder {
     /**
      * Override this to create a grammar. Used in {@link #build()}.
      */
-    public abstract void make();
+    protected abstract void make();
 
     /**
      * Use this to construct the grammar.
@@ -130,7 +130,7 @@ public abstract class GrammarBuilder {
      * @param entries The entries.
      * @see #addProduction(Sym, Rule)
      */
-    public final void addAllProductions(
+    protected final void addAllProductions(
             final @NotNull Collection<Map.Entry<Sym, Rule>> entries) {
         for (final @NotNull var entry : entries) {
             addProduction(entry.getKey(), entry.getValue());
@@ -143,7 +143,7 @@ public abstract class GrammarBuilder {
      * @param lhs The production's key. (left-hand-side)
      * @param rhs The production's right-hand-side.
      */
-    public final void addProduction(
+    protected final void addProduction(
             final @NotNull Sym lhs, final @NotNull Rule rhs) {
         var existing = productions.putIfAbsent(lhs, rhs);
         if (existing == null)
@@ -166,7 +166,7 @@ public abstract class GrammarBuilder {
      * @param rhs The production's right-hand-side.
      * @see #addProduction(Sym, Rule)
      */
-    public final void addProduction(
+    protected final void addProduction(
             final @NotNull String lhs, final @NotNull Rule rhs) {
         addProduction(Sym.sym(lhs), rhs);
     }
@@ -186,26 +186,29 @@ public abstract class GrammarBuilder {
      * @param c Input object.
      * @return A rule depending on the input's type.
      */
-    public final @NotNull Rule of(final @Nullable Object c) {
-if (c == null) {return EpsilonTerm.getDefault();}
-        if (c instanceof Rule){return (Rule) c;}
-        if (c instanceof String){return string((String) c);}
-        if (c instanceof Pattern){return regex((Pattern)c);}
-        if (c instanceof Sym){return nt((Sym)c);}
-        if (c instanceof List<?>){return concat(((List<?>)c).stream().map(this::of).toList());}
-        if (c instanceof Set<?>){return alternationC(((Set<?>)c).stream().distinct().map(this::of).toList());}
+    protected final @NotNull Rule of(final @Nullable Object c) {
+        if (c == null) {
+            return EpsilonTerm.getDefault();
+        }
+        if (c instanceof Rule) {
+            return (Rule) c;
+        }
+        if (c instanceof String) {
+            return string((String) c);
+        }
+        if (c instanceof Pattern) {
+            return regex((Pattern) c);
+        }
+        if (c instanceof Sym) {
+            return nt((Sym) c);
+        }
+        if (c instanceof List<?>) {
+            return concat(((List<?>) c).stream().map(this::of).toList());
+        }
+        if (c instanceof Set<?>) {
+            return alternationC(((Set<?>) c).stream().distinct().map(this::of).toList());
+        }
         throw new IllegalArgumentException(c.getClass().getName());
-//        return switch (c) {
-//            case null -> EpsilonTerm.getDefault();
-//            case Rule r -> r;
-//            case String s -> string(s);
-//            case Pattern p -> regex(p);
-//            case Sym s -> nt(s);
-//            case List<?> l -> concat(l.stream().map(this::of).toList());
-//            case Set<?> s -> alternationC(s.stream().distinct().map(this::of).toList());
-//            default -> throw new IllegalArgumentException(
-//                    String.valueOf(c.getClass()));
-//        };
     }
 
     /**
@@ -215,7 +218,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param p The input regex.
      * @return A {@link RegexTerm} or something that returns equivalent outputs when parsing.
      */
-    public final @NotNull Rule regex(final @NotNull Pattern p) {
+    protected final @NotNull Rule regex(final @NotNull Pattern p) {
         return buffer.getOrAddRegex(p);
     }
 
@@ -225,7 +228,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param s The input regex.
      * @return A {@link RegexTerm} or something that returns equivalent outputs when parsing.
      */
-    public final @NotNull Rule regex(final @NotNull String s) {
+    protected final @NotNull Rule regex(final @NotNull String s) {
         return buffer.getOrAddRegex(Pattern.compile(s));
     }
 
@@ -236,7 +239,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param input The rule to look for.
      * @return The new rule.
      */
-    public final @NotNull Rule lookahead(final @NotNull Object input) {
+    protected final @NotNull Rule lookahead(final @NotNull Object input) {
         var rule = of(input);
         return LookaheadRule.create(rule);
     }
@@ -248,7 +251,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param input The rule to avoid.
      * @return The new rule.
      */
-    public final @NotNull Rule negate(final @NotNull Object input) {
+    protected final @NotNull Rule negate(final @NotNull Object input) {
         var rule = of(input);
         return NegativeLookaheadRule.create(rule);
     }
@@ -261,7 +264,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param hi The maximum codepoint.
      * @return The new rule.
      */
-    public @NotNull Rule unicodeChar(final int lo, final int hi) {
+    protected @NotNull Rule unicodeChar(final int lo, final int hi) {
         return ValueRangeTerm.create(lo, hi);
     }
 
@@ -272,7 +275,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param loHi The codepoint.
      * @return The new rule.
      */
-    public @NotNull Rule unicodeChar(final int loHi) {
+    protected @NotNull Rule unicodeChar(final int loHi) {
         return ValueRangeTerm.create(loHi, loHi);
     }
 
@@ -287,7 +290,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param inputRules The parsers for the output.
      * @return A rule.
      */
-    public final @NotNull Rule orderedChoice(final @NotNull List<Object> inputRules) {
+    protected final @NotNull Rule orderedChoice(final @NotNull List<Object> inputRules) {
         final @NotNull var result = OrderedChoiceRule.create(inputRules.stream().map(this::of).toList());
         return result;
     }
@@ -298,7 +301,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param name The name symbol of the output rule.
      * @return A {@link NonTerminal}.
      */
-    public @NotNull NonTerminal nt(final @NotNull Sym name) {
+    protected @NotNull NonTerminal nt(final @NotNull Sym name) {
         return buffer.getOrAddNt(name);
     }
 
@@ -308,7 +311,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param name The name symbol of the output rule.
      * @return A {@link NonTerminal}.
      */
-    public @NotNull NonTerminal nt(final @NotNull String name) {
+    protected @NotNull NonTerminal nt(final @NotNull String name) {
         return buffer.getOrAddNt(Sym.sym(name));
     }
 
@@ -320,7 +323,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param caseInsensitive Whether the Terminal will match case-insensitive.
      * @return The new rule.
      */
-    public @NotNull Rule string(final @NotNull String string, final boolean caseInsensitive) {
+    protected @NotNull Rule string(final @NotNull String string, final boolean caseInsensitive) {
         return buffer.getOrAddString(string, caseInsensitive);
     }
 
@@ -331,7 +334,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param string The string to match.
      * @return The new rule.
      */
-    public final @NotNull Rule stringCS(final @NotNull String string) {
+    protected final @NotNull Rule stringCS(final @NotNull String string) {
         return string(string, false);
     }
 
@@ -342,7 +345,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param string The string to match.
      * @return The new rule.
      */
-    public final @NotNull Rule stringCI(final @NotNull String string) {
+    protected final @NotNull Rule stringCI(final @NotNull String string) {
         return string(string, true);
     }
 
@@ -354,7 +357,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param string The string to match.
      * @return The new rule.
      */
-    public final @NotNull Rule string(final @NotNull String string) {
+    protected final @NotNull Rule string(final @NotNull String string) {
         return switch (options.stringCaseInsensitive()) {
             case TRUE -> buffer.getOrAddString(string, true);
             case FALSE, DEFAULT -> buffer.getOrAddString(string, false);
@@ -367,7 +370,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param o The input.
      * @return A copy of the input for which {@link Rule#isHidden} returns true.
      */
-    public final @NotNull Rule hide(final @NotNull Object o) {
+    protected final @NotNull Rule hide(final @NotNull Object o) {
         return of(o).enableHideTag();
     }
 
@@ -376,7 +379,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      *
      * @return An {@link EpsilonTerm}.
      */
-    public final @NotNull Rule epsilon() {
+    protected final @NotNull Rule epsilon() {
         return EpsilonTerm.getDefault();
     }
 
@@ -385,7 +388,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      *
      * @return A rule.
      */
-    public final @NotNull Rule eof() {
+    protected final @NotNull Rule eof() {
         return EOFTerm.getDefault();
     }
 
@@ -403,7 +406,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @return A rule.
      */
     @SafeVarargs
-    public final <T> @NotNull Rule concat(
+    protected final <T> @NotNull Rule concat(
             final @Nullable T rule, final @Nullable T... rules) {
         return concat(Stream.concat(
                         Stream.of(rule),
@@ -423,7 +426,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param rules The rules for the output.
      * @return A rule.
      */
-    public final @NotNull Rule concat(
+    protected final @NotNull Rule concat(
             final @NotNull List<@NotNull Rule> rules) {
         return ConcatRule.create(rules);
     }
@@ -434,7 +437,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param rules The rules.
      * @return A {@link ConcatRule}.
      */
-    public @NotNull ConcatRule concatNoEpsilonMoreThan1(
+    protected @NotNull ConcatRule concatNoEpsilonMoreThan1(
             final @NotNull List<Rule> rules) {
         return ConcatRule.createNoEpsilonMoreThan1(rules);
     }
@@ -451,7 +454,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param rules More elements.
      * @return A rule.
      */
-    public final @NotNull Rule alternation(
+    protected final @NotNull Rule alternation(
             final @NotNull Object rule, final @NotNull Object... rules) {
         final @NotNull List<@NotNull Rule> result = Stream
                 .concat(Stream.of(rule), Arrays.stream(rules))
@@ -472,7 +475,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param rules The rules for the output.
      * @return A rule.
      */
-    public final @NotNull Rule alternationC(final @NotNull List<Rule> rules) {
+    protected final @NotNull Rule alternationC(final @NotNull List<Rule> rules) {
         return AlternationRule.create(rules);
     }
 
@@ -484,7 +487,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param rules The rules.
      * @return A rule.
      */
-    public final @NotNull AlternationRule alternationGuaranteeDistinctAndNotEmpty(
+    protected final @NotNull AlternationRule alternationGuaranteeDistinctAndNotEmpty(
             final @NotNull List<Rule> rules) {
         return AlternationRule.createGuaranteeDistinctAndNotEmpty(rules);
     }
@@ -500,7 +503,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param function    The function which does what the description says.
      * @return A {@link SpecialSequenceRule}.
      */
-    public @NotNull Rule specialSequence(
+    protected @NotNull Rule specialSequence(
             final @NotNull String description,
             final @NotNull Function<@NotNull String, Optional<String>> function) {
         return SpecialSequenceRule.create(description, function);
@@ -520,7 +523,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param rule The rule.
      * @return A rule, as described.
      */
-    public final @NotNull Rule repeat(
+    protected final @NotNull Rule repeat(
             final @NotNull Rule rule, final int min, final int max) {
         var r = of(rule);
         return VariableRepetitionRule.create(r, min, max);
@@ -533,7 +536,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param ruleExcluded The rule that must not be matched.
      * @return A {@link ExclusionRule}.
      */
-    public final @NotNull Rule exclude(
+    protected final @NotNull Rule exclude(
             final @NotNull Rule ruleExpected, final @NotNull Rule ruleExcluded) {
         final @NotNull var r1 = ruleExpected;
         final @NotNull var r2 = ruleExcluded;
@@ -548,7 +551,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @return A repetition rule.
      * @see #repeat(Rule, int, int)
      */
-    public final @NotNull Rule repeat(
+    protected final @NotNull Rule repeat(
             final @NotNull Rule rule, final int exact) {
         return repeat(rule, exact, exact);
     }
@@ -561,7 +564,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @return A repetition rule.
      * @see #repeat(Rule, int, int)
      */
-    public final @NotNull Rule repeatMin(
+    protected final @NotNull Rule repeatMin(
             final @NotNull Rule rule, final int min) {
         return repeat(rule, min, Integer.MAX_VALUE);
     }
@@ -574,7 +577,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @return A repetition rule.
      * @see #repeat(Rule, int, int)
      */
-    public final @NotNull Rule repeatMax(
+    protected final @NotNull Rule repeatMax(
             final @NotNull Rule rule, final int max) {
         return repeat(rule, 0, max);
     }
@@ -585,7 +588,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param rule The rule to match repeatedly.
      * @return A rule.
      */
-    public final @NotNull Rule zeroOrMore(final @NotNull Rule rule) {
+    protected final @NotNull Rule zeroOrMore(final @NotNull Rule rule) {
         return repeat(rule, 0, Integer.MAX_VALUE);
     }
 
@@ -595,7 +598,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param rule The rule to match repeatedly.
      * @return A rule.
      */
-    public final @NotNull Rule onceOrMore(final @NotNull Rule rule) {
+    protected final @NotNull Rule onceOrMore(final @NotNull Rule rule) {
         return repeat(rule, 1, Integer.MAX_VALUE);
     }
 
@@ -605,7 +608,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
      * @param rule The rule to maybe match.
      * @return A rule.
      */
-    public final @NotNull Rule optional(final @NotNull Rule rule) {
+    protected final @NotNull Rule optional(final @NotNull Rule rule) {
         return OptionalRule.create(rule);
     }
 
@@ -642,7 +645,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
                     .withReduction(variableRepetitionRule.getReduction());
         }
         if (originalRule instanceof RuleWithManyChildren) {
-            var ruleWithManyChildren = (RuleWithManyChildren)originalRule;
+            var ruleWithManyChildren = (RuleWithManyChildren) originalRule;
             return ruleWithManyChildren
                     .withRules(ruleWithManyChildren
                             .getRules()
@@ -651,7 +654,7 @@ if (c == null) {return EpsilonTerm.getDefault();}
                             .toList());
         }
         if (originalRule instanceof RuleWithChild) {
-            var ruleWithChild = (RuleWithChild)originalRule;
+            var ruleWithChild = (RuleWithChild) originalRule;
             return ruleWithChild.withRule(compressRule(ruleWithChild.getRule()));
         }
         return originalRule;
@@ -667,18 +670,18 @@ if (c == null) {return EpsilonTerm.getDefault();}
             return originalRule;
         }
         if (originalRule instanceof RuleWithChild) {
-            var rule = (RuleWithChild)originalRule;
+            var rule = (RuleWithChild) originalRule;
             return rule.withRule(
                     autoWhitespaceHelper(rule.getRule(), whitespaceRule));
         }
         if (originalRule instanceof RuleWithManyChildren) {
-            var combWithParsers = (RuleWithManyChildren)originalRule;
+            var combWithParsers = (RuleWithManyChildren) originalRule;
             final @NotNull List<@NotNull Rule> rules = combWithParsers
                     .getRules()
                     .stream()
                     .map(p -> autoWhitespaceHelper(p, whitespaceRule))
                     .toList();
-            return  combWithParsers.withRules(rules);
+            return combWithParsers.withRules(rules);
         }
         if (originalRule instanceof Terminal) {
             final @NotNull List<Rule> rules = new ArrayList<>();
@@ -697,7 +700,9 @@ if (c == null) {return EpsilonTerm.getDefault();}
             }
             return result;
         }
-        if (originalRule instanceof SpecialSequenceRule) {return originalRule;}
+        if (originalRule instanceof SpecialSequenceRule) {
+            return originalRule;
+        }
         throw new IllegalArgumentException(originalRule.getClass().getName());
 //        return switch (originalRule) {
 //            case NonTerminal ignored -> originalRule;
@@ -762,16 +767,15 @@ if (c == null) {return EpsilonTerm.getDefault();}
     }
 
     protected <T extends Rule> T buffer(T rule) {
-        if (rule instanceof StringTerm) {buffer.getOrAdd((StringTerm)rule);}
-        if (rule instanceof RegexTerm) {buffer.getOrAdd((RegexTerm)rule);}
-        if (rule instanceof NonTerminal) {buffer.getOrAdd((NonTerminal)rule);}
-        return (T) rule;
-//        //noinspection unchecked
-//        return (T) switch (rule) {
-//            case StringTerm stringTerm -> buffer.getOrAdd(stringTerm);
-//            case RegexTerm regexTerm -> buffer.getOrAdd(regexTerm);
-//            case NonTerminal nonTerminal -> buffer.getOrAdd(nonTerminal);
-//            default -> rule;
-//        };
+        if (rule instanceof StringTerm) {
+            buffer.getOrAdd((StringTerm) rule);
+        }
+        if (rule instanceof RegexTerm) {
+            buffer.getOrAdd((RegexTerm) rule);
+        }
+        if (rule instanceof NonTerminal) {
+            buffer.getOrAdd((NonTerminal) rule);
+        }
+        return rule;
     }
 }
