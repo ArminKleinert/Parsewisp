@@ -3,7 +3,6 @@ package de.kleinert.parsewisp;
 import de.kleinert.parsewisp.grammar.*;
 import de.kleinert.parsewisp.parsing.*;
 import de.kleinert.parsewisp.parser_options.*;
-import de.kleinert.parsewisp.parsing.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -189,7 +188,7 @@ public final class CfgGrammar extends GrammarBuilder {
      * @return A {@link Rule}.
      */
     private @NotNull Rule makeCfgRuleSeparatorRhs() {
-        return alternationC(
+        return altList(
                 options.ruleDefinitionOpts()
                         .stream()
                         .map(it -> string(it, false))
@@ -245,7 +244,7 @@ public final class CfgGrammar extends GrammarBuilder {
                 ? regexDoc(singleQuoteStringPrefixed, "Prefixed single-quoted string")
                 : regexDoc(singleQuoteString, "Single-quoted string");
 
-        return alternationC(List.of(
+        return altList(List.of(
                 doubleQuoteStringRegexRule,
                 regex(singleQuotedString)));
     }

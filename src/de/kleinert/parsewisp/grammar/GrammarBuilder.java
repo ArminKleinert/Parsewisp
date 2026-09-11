@@ -153,7 +153,7 @@ public abstract class GrammarBuilder {
             case OVERRIDE -> productions.put(lhs, rhs);
             case ERROR -> throw new IllegalArgumentException(
                     "Production already in grammar: " + lhs);
-            case CHOICE -> productions.put(lhs, alternation(existing, rhs));
+            case CHOICE -> productions.put(lhs, alt(existing, rhs));
             case KEEP -> {
             }
         }
@@ -174,13 +174,13 @@ public abstract class GrammarBuilder {
     /**
      * Creates a rule depending on the input's specific type.
      * <ul>
-     * <li>For {@code null}, use {@link #epsilon()}.</li>
+     * <li>For {@code null}, use {@link #eps()}.</li>
      * <li>For {@code Rule}, return the input.</li>
      * <li>For {@code String}, use {@link #string(String)}.</li>
      * <li>For {@code Pattern}, use {@link #regex(Pattern)}.</li>
      * <li>For {@code Sym}, use {@link #nt(Sym)}.</li>
-     * <li>For {@code List}, use {@link #concat(List)}.</li>
-     * <li>For {@code Set}, use {@link #alternation(Object, Object...)}.</li>
+     * <li>For {@code List}, use {@link #cat(List)}.</li>
+     * <li>For {@code Set}, use {@link #alt(Object, Object...)}.</li>
      * </ul>
      *
      * @param c Input object.
@@ -203,10 +203,10 @@ public abstract class GrammarBuilder {
             return nt((Sym) c);
         }
         if (c instanceof List<?>) {
-            return concat(((List<?>) c).stream().map(this::of).toList());
+            return cat(((List<?>) c).stream().map(this::of).toList());
         }
         if (c instanceof Set<?>) {
-            return alternationC(((Set<?>) c).stream().distinct().map(this::of).toList());
+            return altList(((Set<?>) c).stream().distinct().map(this::of).toList());
         }
         throw new IllegalArgumentException(c.getClass().getName());
     }
@@ -239,7 +239,7 @@ public abstract class GrammarBuilder {
      * @param input The rule to look for.
      * @return The new rule.
      */
-    protected final @NotNull Rule lookahead(final @NotNull Object input) {
+    protected final @NotNull Rule look(final @NotNull Object input) {
         var rule = of(input);
         return LookaheadRule.create(rule);
     }
@@ -251,7 +251,7 @@ public abstract class GrammarBuilder {
      * @param input The rule to avoid.
      * @return The new rule.
      */
-    protected final @NotNull Rule negate(final @NotNull Object input) {
+    protected final @NotNull Rule neg(final @NotNull Object input) {
         var rule = of(input);
         return NegativeLookaheadRule.create(rule);
     }
@@ -264,7 +264,7 @@ public abstract class GrammarBuilder {
      * @param hi The maximum codepoint.
      * @return The new rule.
      */
-    protected @NotNull Rule unicodeChar(final int lo, final int hi) {
+    protected @NotNull Rule numVal(final int lo, final int hi) {
         return ValueRangeTerm.create(lo, hi);
     }
 
@@ -275,7 +275,7 @@ public abstract class GrammarBuilder {
      * @param loHi The codepoint.
      * @return The new rule.
      */
-    protected @NotNull Rule unicodeChar(final int loHi) {
+    protected @NotNull Rule numVal(final int loHi) {
         return ValueRangeTerm.create(loHi, loHi);
     }
 
@@ -290,7 +290,7 @@ public abstract class GrammarBuilder {
      * @param inputRules The parsers for the output.
      * @return A rule.
      */
-    protected final @NotNull Rule orderedChoice(final @NotNull List<Object> inputRules) {
+    protected final @NotNull Rule ordAlt(final @NotNull List<Object> inputRules) {
         final @NotNull var result = OrderedChoiceRule.create(inputRules.stream().map(this::of).toList());
         return result;
     }
@@ -379,7 +379,7 @@ public abstract class GrammarBuilder {
      *
      * @return An {@link EpsilonTerm}.
      */
-    protected final @NotNull Rule epsilon() {
+    protected final @NotNull Rule eps() {
         return EpsilonTerm.getDefault();
     }
 
@@ -406,9 +406,9 @@ public abstract class GrammarBuilder {
      * @return A rule.
      */
     @SafeVarargs
-    protected final <T> @NotNull Rule concat(
+    protected final <T> @NotNull Rule cat(
             final @Nullable T rule, final @Nullable T... rules) {
-        return concat(Stream.concat(
+        return cat(Stream.concat(
                         Stream.of(rule),
                         Arrays.stream(rules))
                 .map(this::of)
@@ -426,13 +426,13 @@ public abstract class GrammarBuilder {
      * @param rules The rules for the output.
      * @return A rule.
      */
-    protected final @NotNull Rule concat(
+    protected final @NotNull Rule cat(
             final @NotNull List<@NotNull Rule> rules) {
         return ConcatRule.create(rules);
     }
 
     /**
-     * Like {@link #concat(List)}, except it assumes that (1) the input is not empty and (2) the input does not include epsilons.
+     * Like {@link #cat(List)}, except it assumes that (1) the input is not empty and (2) the input does not include epsilons.
      *
      * @param rules The rules.
      * @return A {@link ConcatRule}.
@@ -454,14 +454,14 @@ public abstract class GrammarBuilder {
      * @param rules More elements.
      * @return A rule.
      */
-    protected final @NotNull Rule alternation(
+    protected final @NotNull Rule alt(
             final @NotNull Object rule, final @NotNull Object... rules) {
         final @NotNull List<@NotNull Rule> result = Stream
                 .concat(Stream.of(rule), Arrays.stream(rules))
                 .map(this::of)
                 .distinct()
                 .toList();
-        return alternationC(result);
+        return altList(result);
     }
 
     /**
@@ -475,12 +475,12 @@ public abstract class GrammarBuilder {
      * @param rules The rules for the output.
      * @return A rule.
      */
-    protected final @NotNull Rule alternationC(final @NotNull List<Rule> rules) {
+    protected final @NotNull Rule altList(final @NotNull List<Rule> rules) {
         return AlternationRule.create(rules);
     }
 
     /**
-     * Like {@link #alternationC(List)} except the input list is assumed to be distinct
+     * Like {@link #altList(List)} except the input list is assumed to be distinct
      * (each rule in the list occurs exactly once) and not empty.
      * Use this method only if you are sure that the rules are distinct.
      *
@@ -523,10 +523,23 @@ public abstract class GrammarBuilder {
      * @param rule The rule.
      * @return A rule, as described.
      */
-    protected final @NotNull Rule repeat(
+    protected final @NotNull Rule rep(
             final @NotNull Rule rule, final int min, final int max) {
         var r = of(rule);
         return VariableRepetitionRule.create(r, min, max);
+    }
+
+    /**
+     * Equivalent to {@code repeat(rule, exact, exact)}.
+     *
+     * @param rule  The rule.
+     * @param exact Minimum and maximum number of repetitions.
+     * @return A repetition rule.
+     * @see #rep(Rule, int, int)
+     */
+    protected final @NotNull Rule rep(
+            final @NotNull Rule rule, final int exact) {
+        return rep(rule, exact, exact);
     }
 
     /**
@@ -544,29 +557,16 @@ public abstract class GrammarBuilder {
     }
 
     /**
-     * Equivalent to {@code repeat(rule, exact, exact)}.
-     *
-     * @param rule  The rule.
-     * @param exact Minimum and maximum number of repetitions.
-     * @return A repetition rule.
-     * @see #repeat(Rule, int, int)
-     */
-    protected final @NotNull Rule repeat(
-            final @NotNull Rule rule, final int exact) {
-        return repeat(rule, exact, exact);
-    }
-
-    /**
      * Equivalent to {@code repeat(rule, min, Integer.MAX_VALUE)}.
      *
      * @param rule The rule.
      * @param min  Minimum number of repetitions.
      * @return A repetition rule.
-     * @see #repeat(Rule, int, int)
+     * @see #rep(Rule, int, int)
      */
-    protected final @NotNull Rule repeatMin(
+    protected final @NotNull Rule repMin(
             final @NotNull Rule rule, final int min) {
-        return repeat(rule, min, Integer.MAX_VALUE);
+        return rep(rule, min, Integer.MAX_VALUE);
     }
 
     /**
@@ -575,11 +575,11 @@ public abstract class GrammarBuilder {
      * @param rule The rule.
      * @param max  Maximum number of repetitions.
      * @return A repetition rule.
-     * @see #repeat(Rule, int, int)
+     * @see #rep(Rule, int, int)
      */
-    protected final @NotNull Rule repeatMax(
+    protected final @NotNull Rule repMax(
             final @NotNull Rule rule, final int max) {
-        return repeat(rule, 0, max);
+        return rep(rule, 0, max);
     }
 
     /**
@@ -589,7 +589,7 @@ public abstract class GrammarBuilder {
      * @return A rule.
      */
     protected final @NotNull Rule zeroOrMore(final @NotNull Rule rule) {
-        return repeat(rule, 0, Integer.MAX_VALUE);
+        return rep(rule, 0, Integer.MAX_VALUE);
     }
 
     /**
@@ -599,7 +599,7 @@ public abstract class GrammarBuilder {
      * @return A rule.
      */
     protected final @NotNull Rule onceOrMore(final @NotNull Rule rule) {
-        return repeat(rule, 1, Integer.MAX_VALUE);
+        return rep(rule, 1, Integer.MAX_VALUE);
     }
 
     /**
@@ -608,7 +608,7 @@ public abstract class GrammarBuilder {
      * @param rule The rule to maybe match.
      * @return A rule.
      */
-    protected final @NotNull Rule optional(final @NotNull Rule rule) {
+    protected final @NotNull Rule opt(final @NotNull Rule rule) {
         return OptionalRule.create(rule);
     }
 
@@ -692,11 +692,11 @@ public abstract class GrammarBuilder {
                 // It still appears in the tree, but is flattened into the concatenation.
                 rules.add(originalRule.withReduction(ReductionType.
                         standardIntermediateReduction()));
-                result = concat(rules).withReduction(
+                result = cat(rules).withReduction(
                         originalRule.getReduction());
             } else {
                 rules.add(originalRule);
-                result = concat(rules);
+                result = cat(rules);
             }
             return result;
         }
@@ -742,7 +742,7 @@ public abstract class GrammarBuilder {
                                 final @NotNull Grammar grammarWS,
                                 final @NotNull Sym startWS) {
         final @NotNull Rule wsParser =
-                optional(nt(startWS)).enableHideTag();
+                opt(nt(startWS)).enableHideTag();
 
         final @NotNull LinkedHashMap<@NotNull Sym, @NotNull Rule> finalGrammar =
                 new LinkedHashMap<>(productions);
@@ -755,7 +755,7 @@ public abstract class GrammarBuilder {
                 finalGrammar.get(start)
                         .withReduction(ReductionType.standardInitialReduction()));
         final @NotNull Rule newStartComb =
-                concat(List.of(startWithoutReduction, wsParser))
+                cat(List.of(startWithoutReduction, wsParser))
                         .withReduction(finalGrammar.get(start).getReduction());
 
         finalGrammar.put(start, newStartComb);

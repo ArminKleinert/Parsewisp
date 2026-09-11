@@ -16,10 +16,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
-public class Abnf {
-    private Abnf() {
+public class ABNF {
+    private ABNF() {
+    }
+
+    public static @NotNull Parser parser(@NotNull String grammar) {
+        return parser(grammar, ParserCreationOptions.getDefault());
     }
 
     public static @NotNull Parser parser(@NotNull String grammar, @Nullable ParserCreationOptions options) {
@@ -34,7 +37,7 @@ public class Abnf {
             throw new ParserCreationFailure(tree.castToParseFailure().toString());
         }
 
-        return Parsewisp.parser(new Abnf().transform(tree.castToParseSuccess(), options), ParserCreationOptions.getDefault());
+        return Parsewisp.parser(new ABNF().transform(tree.castToParseSuccess(), options), ParserCreationOptions.getDefault());
     }
 
     public static @NotNull Grammar baseGrammar() {
@@ -58,6 +61,9 @@ public class Abnf {
         @Override
         protected void make() {
             for (@NotNull Node node : parsedAbnfGrammar.getContent()) {
+                if (!Objects.equals(node.tree().getTag().content(), Sym.sym("rule"))) {
+                    continue;
+                }
                 var prod = rule(node.tree());
                 var lhs = (prod.getKey().isHidden()) ? prod.getValue().enableHideTag() : prod.getValue();
                 addProduction(prod.getKey().getKeyword(), lhs);
@@ -77,7 +83,7 @@ public class Abnf {
                 addProduction(Sym.sym("HEXDIG"), RegexTerm.create(Pattern.compile("[0-9a-fA-F]")));
                 addProduction(Sym.sym("HTAB"), RegexTerm.create(Pattern.compile("\t")));
                 addProduction(Sym.sym("LF"), RegexTerm.create(Pattern.compile("\n")));
-                addProduction(Sym.sym("LWSP"), ZeroOrMoreRule.create(AlternationRule.create(List.of(WSP, ConcatRule.create(List.of(CRLF, WSP))))));
+                addProduction(Sym.sym("LWSP"), ZeroOrMoreRule.create(alt(WSP, cat(CRLF, WSP))));
                 addProduction(Sym.sym("OCTET"), RegexTerm.create(Pattern.compile("[\\u0000-\\u00FF]")));
                 addProduction(Sym.sym("SP"), StringTerm.create(" ", false));
                 addProduction(Sym.sym("VCHAR"), RegexTerm.create(Pattern.compile("[\\u0021-\\u007E]")));
@@ -209,7 +215,6 @@ public class Abnf {
         // Actual implementation: char-val       =  #"(%[is])?\\\"[^\\\"\\\\]*(?:\\\\.[^\\\"\\\\]*)*\\\"";
         private @NotNull Rule charVal(@NotNull ParseTree tree) {
             var string = tree.getNode(0).string();
-            System.out.println(string);
             if (string.startsWith("%")) {
                 return StringTerm.create(
                         strParser.processString(string.substring(2)), string.charAt(1) == 'i');
@@ -240,15 +245,14 @@ public class Abnf {
                 default -> throw new IllegalStateException();
             };
 
-            System.out.println(sub);
-
             var digitStr = sub.getNode(1).string();
             var minusIndex = digitStr.indexOf('-');
             if (minusIndex < 0) {
-                var s = digitStr.chars().filter(c -> c != '.').mapToObj(it -> String.valueOf((char) it)).collect(Collectors.joining());
-                System.out.println(s);
-                var minMax = Integer.parseInt(s, radix);
-                return ValueRangeTerm.create(minMax, minMax);
+                var sb = new StringBuilder();
+                for (String part : digitStr.split("\\.")) {
+                    sb.appendCodePoint(Integer.parseInt(part, radix));
+                }
+                return string(sb.toString());
             }
 
             var parts = digitStr.split("-");

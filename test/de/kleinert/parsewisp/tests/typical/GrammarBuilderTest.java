@@ -28,8 +28,8 @@ class GrammarBuilderTest {
         var gFromGB = new GrammarBuilder(ParserCreationOptions.getDefault()) {
             @Override
             public void make() {
-                addProduction("S", concat(Sym.sym("NUMBER"), repeatMin(nt(Sym.sym("NUMBER")), 0)));
-                addProduction("NUMBER", alternation("0", "1", "2", "3", "4", "5", "6", "7", "8", "9"));
+                addProduction("S", cat(Sym.sym("NUMBER"), repMin(nt(Sym.sym("NUMBER")), 0)));
+                addProduction("NUMBER", alt("0", "1", "2", "3", "4", "5", "6", "7", "8", "9"));
             }
         }.build();
 
@@ -55,8 +55,8 @@ class GrammarBuilderTest {
         var pFromGB = new GrammarBuilder(ParserCreationOptions.getDefault()) {
             @Override
             public void make() {
-                addProduction("S", concat(Sym.sym("NUMBER"), zeroOrMore(nt(Sym.sym("NUMBER")))));
-                addProduction("NUMBER", alternation("0", "1", "2", "3", "4", "5", "6", "7", "8", "9"));
+                addProduction("S", cat(Sym.sym("NUMBER"), zeroOrMore(nt(Sym.sym("NUMBER")))));
+                addProduction("NUMBER", alt("0", "1", "2", "3", "4", "5", "6", "7", "8", "9"));
             }
         }.build();
 
@@ -69,33 +69,33 @@ class GrammarBuilderTest {
         var gFromGB = new GrammarBuilder(ParserCreationOptions.ebnf()) {
             @Override
             public void make() {
-                addProduction("S", orderedChoice(List.of(
+                addProduction("S", ordAlt(List.of(
                         Sym.sym("A"), Sym.sym("B"), Sym.sym("C"), Sym.sym("D"),
                         Sym.sym("E"), Sym.sym("F"), Sym.sym("G"), Sym.sym("H"),
                         Sym.sym("I"),
                         eof())
                 ));
-                addProduction("A", concat(repeat(regex("[0-9_]"), 1, Integer.MAX_VALUE)));
-                addProduction("B", concat(regex("[0-9_]"), repeatMax(regex("[0-9_]"), Integer.MAX_VALUE)));
-                addProduction("C", concat(repeatMin(regex("[0-9_]"), 1)));
-                addProduction("D", concat(regex("[0-9_]"), zeroOrMore(regex("[0-9_]"))));
-                addProduction("E", concat(repeat(regex("[0-9_]"), 1), zeroOrMore(regex("[0-9_]"))));
-                addProduction("F", repeatMin(alternation(unicodeChar('0', '9'), unicodeChar(0x5F)), 1));
-                addProduction("G", onceOrMore(alternationC(
+                addProduction("A", cat(rep(regex("[0-9_]"), 1, Integer.MAX_VALUE)));
+                addProduction("B", cat(regex("[0-9_]"), repMax(regex("[0-9_]"), Integer.MAX_VALUE)));
+                addProduction("C", cat(repMin(regex("[0-9_]"), 1)));
+                addProduction("D", cat(regex("[0-9_]"), zeroOrMore(regex("[0-9_]"))));
+                addProduction("E", cat(rep(regex("[0-9_]"), 1), zeroOrMore(regex("[0-9_]"))));
+                addProduction("F", repMin(alt(numVal('0', '9'), numVal(0x5F)), 1));
+                addProduction("G", onceOrMore(altList(
                                 Stream.concat(
                                                 IntStream.range('0', '9'+1).boxed(),
                                                 Stream.of((int) '_'))
                                         .map(i -> String.valueOf((char) i.intValue()))
                                         .map(this::of)
                                         .collect(Collectors.toList()))));
-                addProduction("H", onceOrMore(alternationC(
+                addProduction("H", onceOrMore(altList(
                                 Stream.concat(
                                                 IntStream.range('0', '9'+1).boxed(),
                                                 Stream.of((int) '_'))
                                         .map(i -> String.valueOf((char) i.intValue()))
                                         .map(this::of)
                                         .collect(Collectors.toList()))));
-                addProduction("I", concat(regex("[0-9_]"), optional(onceOrMore(regex("[0-9_]")))));
+                addProduction("I", cat(regex("[0-9_]"), opt(onceOrMore(regex("[0-9_]")))));
             }
         }.build();
         var p = Parsewisp.parser(gFromGB, ParserCreationOptions.getDefault());

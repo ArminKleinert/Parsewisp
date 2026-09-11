@@ -68,7 +68,7 @@ final class Cfg {
             final int max = parts[1].isBlank() ? Integer.MAX_VALUE : Integer.parseInt(parts[1]);
             final @NotNull var repeatedRule =
                     (Rule) buildRule((ParseTree) tree.getContent().get(1).content());
-            return repeat(repeatedRule, min, max);
+            return rep(repeatedRule, min, max);
         }
 
         private @NotNull Map.Entry<@NotNull Sym, @NotNull Rule> buildRuleRule(
@@ -118,14 +118,14 @@ final class Cfg {
                         continue; // Open up the grouping and take it to the top.
                     }
                     case "alt" -> {
-                        return alternationC(tree
+                        return altList(tree
                                 .getContent()
                                 .stream()
                                 .map((c) -> (Rule) buildRule((ParseTree) c.content()))
                                 .toList());
                     }
                     case "ord" -> {
-                        return orderedChoice(tree
+                        return ordAlt(tree
                                 .getContent()
                                 .stream()
                                 .map((c) -> buildRule((ParseTree) c.content()))
@@ -136,7 +136,7 @@ final class Cfg {
                                 ((Node.NodeParseTree) tree.getContent().get(0)).content())).enableHideTag();
                     }
                     case "cat" -> {
-                        return concat(tree
+                        return cat(tree
                                 .getContent()
                                 .stream()
                                 .map((c) -> (Rule) buildRule((ParseTree) c.content()))
@@ -171,11 +171,11 @@ final class Cfg {
                                         tree.getContent().get(0).content()));
                     }
                     case "neg" -> {
-                        return negate(buildRule(
+                        return neg(buildRule(
                                 (ParseTree) tree.getContent().get(0).content()));
                     }
                     case "opt", "opt_query" -> {
-                        return optional((Rule) buildRule(
+                        return opt((Rule) buildRule(
                                 (ParseTree) tree.getContent().get(0).content()));
                     }
                     case "star", "opt_rep" -> {
@@ -187,7 +187,7 @@ final class Cfg {
                                 (ParseTree) tree.getContent().get(0).content()));
                     }
                     case "look" -> {
-                        return lookahead(buildRule(
+                        return look(buildRule(
                                 (ParseTree) tree.getContent().get(0).content()));
                     }
                     case "rep" -> {
@@ -213,7 +213,7 @@ final class Cfg {
                         var rangeLast = parts.length == 1
                                 ? rangeFirst
                                 : Integer.parseInt(parts[1], radix);
-                        return unicodeChar(rangeFirst, rangeLast);
+                        return numVal(rangeFirst, rangeLast);
                     }
                     case "epsilon" -> {
                         return EpsilonTerm.getDefault();
