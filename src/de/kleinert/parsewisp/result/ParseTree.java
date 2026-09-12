@@ -192,7 +192,7 @@ public final class ParseTree implements List<@NotNull Node>, ParseResult {
             if (subTree.tag.equals(NULL_TAG)) {
                 entries.addAll(subTree.getContent());
             } else {
-                entries.add(Node.of(subTree));
+                entries.add(new Node.NodeParseTree(subTree));
             }
         }
 

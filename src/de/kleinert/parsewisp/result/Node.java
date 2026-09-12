@@ -32,36 +32,6 @@ public sealed interface Node permits Node.NodeFail, Node.NodeParseTree, Node.Nod
     }
 
     /**
-     * Takes an object and returns a node representing that object.
-     *
-     * @param o The object.
-     * @return A node.
-     */
-    static @NotNull Node of(final @NotNull ParseTree o) {
-        return new NodeParseTree(o);
-    }
-
-    /**
-     * Takes an object and returns a node representing that object.
-     *
-     * @param o The object.
-     * @return A node.
-     */
-    static @NotNull Node of(final @NotNull String o) {
-        return new NodeString(o);
-    }
-
-    /**
-     * Takes an object and returns a node representing that object.
-     *
-     * @param o The object.
-     * @return A node.
-     */
-    static @NotNull Node of(final @NotNull ParseFailureNode o) {
-        return new NodeFail(o);
-    }
-
-    /**
      * The inner object.
      *
      * @return The inner object.

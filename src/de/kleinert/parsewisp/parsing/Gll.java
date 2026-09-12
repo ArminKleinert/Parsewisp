@@ -1,6 +1,5 @@
 package de.kleinert.parsewisp.parsing;
 
-import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.collections.FlatResultSeq;
 import de.kleinert.parsewisp.grammar.Grammar;
 import de.kleinert.parsewisp.parser.Parser;
