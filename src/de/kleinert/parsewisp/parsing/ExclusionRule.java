@@ -30,15 +30,15 @@ import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.Trampoline
  * See also: <a href="https://www.iso.org/standard/26153.html">ISO/IEC 14977:1996</a> and <a href="https://stackoverflow.com/a/35138946">an explanation on StackOverflow</a>.
  */
 public final class ExclusionRule extends RuleWithManyChildren {
-    private final @NotNull Rule parserExpected;
-    private final @NotNull Rule parserExcluded;
+    private final @NotNull Rule expected;
+    private final @NotNull Rule excluded;
 
     private ExclusionRule(final boolean hide, final @NotNull ReductionType red,
-                          final @NotNull Rule parserExpected,
-                          final @NotNull Rule parserExcluded) {
-        super(hide, red, List.of(parserExpected, parserExcluded));
-        this.parserExpected = parserExpected;
-        this.parserExcluded = parserExcluded;
+                          final @NotNull Rule expected,
+                          final @NotNull Rule excluded) {
+        super(hide, red, List.of(expected, excluded));
+        this.expected = expected;
+        this.excluded = excluded;
     }
 
     /**
@@ -59,7 +59,7 @@ public final class ExclusionRule extends RuleWithManyChildren {
     @Override
     public void parse(final int index, final @NotNull Gll runner) {
         final @NotNull TrampolineListenerKey nodeKeyForThis = new TrampolineListenerKey(index, this);
-        final @NotNull TrampolineListenerKey nodeKeyForExpect = new TrampolineListenerKey(index, parserExpected);
+        final @NotNull TrampolineListenerKey nodeKeyForExpect = new TrampolineListenerKey(index, expected);
 
         runner.pushListener(
                 nodeKeyForExpect,
@@ -78,7 +78,7 @@ public final class ExclusionRule extends RuleWithManyChildren {
     @Override
     public void fullParse(final int index, final @NotNull Gll runner) {
         final @NotNull TrampolineListenerKey nodeKeyForThis = new TrampolineListenerKey(index, this);
-        final @NotNull TrampolineListenerKey nodeKeyForExpect = new TrampolineListenerKey(index, parserExpected);
+        final @NotNull TrampolineListenerKey nodeKeyForExpect = new TrampolineListenerKey(index, expected);
 
         runner.pushListener(
                 nodeKeyForExpect,
@@ -99,9 +99,9 @@ public final class ExclusionRule extends RuleWithManyChildren {
         final @NotNull Sym startSymbol;
         final @NotNull Grammar grammar;
 
-        if (parserExcluded instanceof NonTerminal) {
+        if (excluded instanceof NonTerminal) {
             // The rule was already a non-terminal. Simply change starting production.
-            startSymbol = ((NonTerminal) parserExcluded).getKeyword();
+            startSymbol = ((NonTerminal) excluded).getKeyword();
             grammar = oldGrammar;
         } else {
             // Find a new start production name which is not in the grammar yet.
@@ -116,7 +116,7 @@ public final class ExclusionRule extends RuleWithManyChildren {
             var tempG = new LinkedHashMap<>(oldGrammar);
             tempG.put(
                     startSymbol,
-                    ConcatRule.create(List.of(parserExcluded, EOFTerm.getDefault())));
+                    ConcatRule.create(List.of(excluded, EOFTerm.getDefault())));
             ReductionType.applyStandardReductionToProductions(tempG);
 
             grammar = new Grammar(startSymbol, tempG);
@@ -129,8 +129,8 @@ public final class ExclusionRule extends RuleWithManyChildren {
      *
      * @return The expected rule.
      */
-    public @NotNull Rule getParserExpected() {
-        return parserExpected;
+    public @NotNull Rule getExpected() {
+        return expected;
     }
 
     /**
@@ -138,18 +138,18 @@ public final class ExclusionRule extends RuleWithManyChildren {
      *
      * @return The excluded rule.
      */
-    public @NotNull Rule getParserExcluded() {
-        return parserExcluded;
+    public @NotNull Rule getExcluded() {
+        return excluded;
     }
 
     @Override
     public @NotNull ExclusionRule withHideTag(final boolean hide) {
-        return isHidden() == hide ? this : new ExclusionRule(hide, this.getReduction(), parserExpected, parserExcluded);
+        return isHidden() == hide ? this : new ExclusionRule(hide, this.getReduction(), expected, excluded);
     }
 
     @Override
     public @NotNull ExclusionRule withReduction(final @NotNull ReductionType red) {
-        return getReduction() == red ? this : new ExclusionRule(isHidden(), red, parserExpected, parserExcluded);
+        return getReduction() == red ? this : new ExclusionRule(isHidden(), red, expected, excluded);
     }
 
     @Override

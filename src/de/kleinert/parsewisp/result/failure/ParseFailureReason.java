@@ -117,7 +117,7 @@ public record ParseFailureReason(
      */
     public static @NotNull ParseFailureReason ofExclusion(final @NotNull ExclusionRule rule, final boolean untilEndOfInput) {
         return new ParseFailureReason(rule,
-                Print.ruleToString(rule.getParserExpected()) + " but NOT " + Print.ruleToString(rule.getParserExcluded()),
+                Print.ruleToString(rule.getExpected()) + " but NOT " + Print.ruleToString(rule.getExcluded()),
                 untilEndOfInput, "exclude");
     }
 

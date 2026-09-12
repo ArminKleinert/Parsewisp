@@ -30,6 +30,6 @@ class TestGrammarLyra {
     @Test
     void helloWorld() {
         var text = "(println! \"Hello World!\")";
-        //System.out.println(parser().parse(text));
+        //System.out.println(rule().parse(text));
     }
 }

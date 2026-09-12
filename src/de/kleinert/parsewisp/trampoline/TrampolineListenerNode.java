@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 /**
- * These objects save listeners and results for a specific index and parser to ensure that no productions are ever repeated for a specific index.
+ * These objects save listeners and results for a specific index and rule to ensure that no productions are ever repeated for a specific index.
  *
  * @param listeners     Listener objects for parses.
  * @param fullListeners Listeners that expect to be parsed to the end of the input text.
@@ -29,9 +29,9 @@ public record TrampolineListenerNode(@NotNull List<Listener> listeners,
     /**
      * These objects are used to index {@link TrampolineListenerNode} objects in a {@link Tramp}. They ensure that no productions are ever repeated at a specified index.
      *
-     * @param index  The index.
-     * @param parser The production.
+     * @param index The index.
+     * @param rule  The production.
      */
-    public record TrampolineListenerKey(int index, @NotNull Rule parser) {
+    public record TrampolineListenerKey(int index, @NotNull Rule rule) {
     }
 }

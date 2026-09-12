@@ -47,7 +47,7 @@ class TestGrammarYail {
     @Test
     void verifyFunctionDef() {
         var text = "//: (int32_t, int32_t) -> int64_t\nfun f(a, b) { return host(\"((int64_t)a) + b\"); }";
-        //System.out.println(parser().parse(text));
+        //System.out.println(rule().parse(text));
         Assertions.assertTrue(parser().parse(text, ParsingOptions.getDefault()).isSuccess());
     }
 

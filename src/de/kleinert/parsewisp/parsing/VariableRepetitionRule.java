@@ -27,9 +27,9 @@ public final class VariableRepetitionRule extends RuleWithChild {
 
     private VariableRepetitionRule(final boolean hide,
                                    final @NotNull ReductionType red,
-                                   final @NotNull Rule parser,
+                                   final @NotNull Rule rule,
                                    final int min, final int max) {
-        super(hide, red, parser);
+        super(hide, red, rule);
         this.min = min;
         this.max = max;
     }
@@ -80,9 +80,9 @@ public final class VariableRepetitionRule extends RuleWithChild {
 
     @Override
     public void fullParse(final int index, final @NotNull Gll runner) {
-        final @NotNull Rule parser = getRule();
+        final @NotNull Rule rule = getRule();
         final @NotNull TrampolineListenerKey nodeKeyForThis = new TrampolineListenerKey(index, this);
-        final @NotNull TrampolineListenerKey nodeKeyForInnerRule = new TrampolineListenerKey(index, parser);
+        final @NotNull TrampolineListenerKey nodeKeyForInnerRule = new TrampolineListenerKey(index, rule);
         final @NotNull var emptyResults = FlatResultSeq.make();
         if (getMin() == 0) {
             runner.pushSuccessMessageWithoutValue(new TrampolineListenerKey(index, this), index);
@@ -92,12 +92,12 @@ public final class VariableRepetitionRule extends RuleWithChild {
         }
         runner.pushListener(
                 nodeKeyForInnerRule,
-                repFullListener(emptyResults, 0, parser, getMin(), getMax(), nodeKeyForThis, runner));
+                repFullListener(emptyResults, 0, rule, getMin(), getMax(), nodeKeyForThis, runner));
     }
 
     private @NotNull Listener repListener(final @NotNull FlatResultSeq resultsSoFar,
                                           final int nResultsSoFar,
-                                          final @NotNull VariableRepetitionRule parser,
+                                          final @NotNull VariableRepetitionRule repRule,
                                           final @NotNull TrampolineListenerKey nodeKey,
                                           final @NotNull Gll runner) {
         return result -> {
@@ -108,14 +108,14 @@ public final class VariableRepetitionRule extends RuleWithChild {
 
             final int newNResultsSoFar = nResultsSoFar + 1;
 
-            if (parser.getMin() <= newNResultsSoFar && newNResultsSoFar <= parser.getMax()) {
+            if (repRule.getMin() <= newNResultsSoFar && newNResultsSoFar <= repRule.getMax()) {
                 runner.pushSuccessMessage(nodeKey, newResultsSoFar, continueIndex);
             }
 
-            if (newNResultsSoFar < parser.getMax()) {
+            if (newNResultsSoFar < repRule.getMax()) {
                 runner.pushListener(
-                        new TrampolineListenerKey(continueIndex, parser.getRule()),
-                        repListener(newResultsSoFar, newNResultsSoFar, parser, nodeKey, runner)
+                        new TrampolineListenerKey(continueIndex, repRule.getRule()),
+                        repListener(newResultsSoFar, newNResultsSoFar, repRule, nodeKey, runner)
                 );
             }
         };
@@ -123,7 +123,7 @@ public final class VariableRepetitionRule extends RuleWithChild {
 
     private @NotNull Listener repFullListener(final @NotNull FlatResultSeq resultsSoFar,
                                               final int nResultsSoFar,
-                                              final @NotNull Rule parser,
+                                              final @NotNull Rule rule,
                                               final int minimum,
                                               final int maximum,
                                               final @NotNull TrampolineListenerKey nodeKey,
@@ -144,8 +144,8 @@ public final class VariableRepetitionRule extends RuleWithChild {
                 if (newNResultsSoFar < maximum) {
                     final @NotNull var listener = repFullListener(
                             newResultsSoFar, newNResultsSoFar,
-                            parser, minimum, maximum, nodeKey, runner);
-                    runner.pushListener(new TrampolineListenerKey(continueIndex, parser), listener);
+                            rule, minimum, maximum, nodeKey, runner);
+                    runner.pushListener(new TrampolineListenerKey(continueIndex, rule), listener);
                 } else {
                     runner.fail(nodeKey, continueIndex,
                             ParseFailureReason.ofRepetition(this, false));

@@ -12,14 +12,14 @@ import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.Trampoline
 public final class LookaheadRule extends RuleWithChild {
     private LookaheadRule(final boolean hide,
                           final @NotNull ReductionType red,
-                          final @NotNull Rule parser) {
-        super(hide, red, parser);
+                          final @NotNull Rule rule) {
+        super(hide, red, rule);
     }
 
     /**
      * Create a new instance. Depending on the implementation, allows for buffering or create a different type of rule.
      *
-     * @param rule The inner parser.
+     * @param rule The inner rule.
      * @return A rule.
      */
     public static @NotNull Rule create(final @NotNull Rule rule) {

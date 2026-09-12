@@ -32,7 +32,7 @@ public abstract sealed class Rule
     }
 
     /**
-     * Runs the parser from the provided index. The text is in the arguments.
+     * Runs the rule from the provided index. The text is in the arguments.
      * <p>
      * Results (successes and failures) are saved using {@link Gll#pushSuccessMessage(TrampolineListenerKey, FlatResultSeq, int)} or {@link Gll#fail(TrampolineListenerKey, int, ParseFailureReason)} or some similar function.
      *
@@ -42,7 +42,7 @@ public abstract sealed class Rule
     public abstract void parse(final int index, final @NotNull Gll runner);
 
     /**
-     * Runs the parser from the provided index. The text is in the arguments. Unlike {@link Rule#parse(int, Gll)}, this method tries to parse the text from the index until the end. If the string can't be matched to the end, results in a failure.
+     * Runs the rule from the provided index. The text is in the arguments. Unlike {@link Rule#parse(int, Gll)}, this method tries to parse the text from the index until the end. If the string can't be matched to the end, results in a failure.
      * <p>
      * Results (successes and failures) are saved using {@link Gll#pushSuccessMessage(TrampolineListenerKey, String, int)} or {@link Gll#fail(TrampolineListenerKey, int, ParseFailureReason)} or some similar function.
      *

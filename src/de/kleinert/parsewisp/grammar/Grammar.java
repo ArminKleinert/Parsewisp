@@ -332,8 +332,8 @@ public final class Grammar extends LinkedHashMap<@NotNull Sym, Rule> {
             } else if (rule instanceof OnceOrMoreRule || rule instanceof LookaheadRule || rule instanceof NegativeLookaheadRule) {
                 return productiveRule(((RuleWithChild) rule).getRule(), productive);
             } else if (rule instanceof ExclusionRule) {
-                return productiveRule(((ExclusionRule) rule).getParserExpected(), productive)
-                        && productiveRule(((ExclusionRule) rule).getParserExcluded(), productive);
+                return productiveRule(((ExclusionRule) rule).getExpected(), productive)
+                        && productiveRule(((ExclusionRule) rule).getExcluded(), productive);
             } else if (rule instanceof VariableRepetitionRule) {
                 return ((VariableRepetitionRule) rule).getMin() == 0 || productiveRule(rule, productive);
             } else {

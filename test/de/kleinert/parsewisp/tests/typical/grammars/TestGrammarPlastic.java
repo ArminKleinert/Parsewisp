@@ -130,7 +130,7 @@ class TestGrammarPlastic {
                     q
                 }
                 """;
-        //System.out.println(parser().parse(text, ParsingOptions.getDefault()));
+        //System.out.println(rule().parse(text, ParsingOptions.getDefault()));
         Assertions.assertTrue(parser().parse(text).isSuccess());
     }
 
@@ -277,7 +277,7 @@ class TestGrammarPlastic {
                 code = 'print("I am eval!!")'
                 eval(code)
                 """;
-        //System.out.println(parser().parse(text));
+        //System.out.println(rule().parse(text));
         Assertions.assertTrue(parser().parse(text).isSuccess());
     }
 
@@ -289,7 +289,7 @@ class TestGrammarPlastic {
                 "Quote '\\""
                 'Quote \\'"'
                 """;
-        //System.out.println(parser().parse(text));
+        //System.out.println(rule().parse(text));
         Assertions.assertTrue(parser().parse(text).isSuccess());
     }
 }

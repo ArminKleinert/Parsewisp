@@ -154,7 +154,7 @@ public final class Gll {
             pushMessage(listener, fullResult);
         }
         if (!listenerAlreadyExists) {
-            pushStack(() -> nodeKey.parser().parse(nodeKey.index(), this));
+            pushStack(() -> nodeKey.rule().parse(nodeKey.index(), this));
         }
     }
 
@@ -170,7 +170,7 @@ public final class Gll {
             pushMessage(listener, fullResult);
         }
         if (!fullListenerAlreadyExists) {
-            pushStack(() -> nodeKey.parser().fullParse(nodeKey.index(), this));
+            pushStack(() -> nodeKey.rule().fullParse(nodeKey.index(), this));
         }
     }
 
@@ -184,13 +184,13 @@ public final class Gll {
             final @NotNull TrampolineListenerNode.TrampolineListenerKey nodeKey,
             @NotNull ParseMessage result) {
         final @NotNull TrampolineListenerNode node = getOrCreateListenerNode(nodeKey);
-        final @NotNull Rule parser = nodeKey.parser();
-        if (parser.isHidden()) {
+        final @NotNull Rule rule = nodeKey.rule();
+        if (rule.isHidden()) {
             result = result.reset();
         }
-        if (parser.getReduction().getReductionType() != ReductionType.ReductionTypesAvailable.INITIAL) {
+        if (rule.getReduction().getReductionType() != ReductionType.ReductionTypesAvailable.INITIAL) {
             final ParseTree tree = ParseTree.create(
-                    parser.getReduction().getKey(), result.getResult(),
+                    rule.getReduction().getKey(), result.getResult(),
                     nodeKey.index(), result.index());
             result = ParseMessage.create(result.index(), tree);
         }
@@ -219,12 +219,12 @@ public final class Gll {
 
     private void startParser(
             final @NotNull Tramp tramp,
-            final @NotNull Rule parser,
+            final @NotNull Rule rule,
             final boolean partial) {
         if (partial) {
-            pushListener(new TrampolineListenerKey(0, parser), tramp::setSuccess);
+            pushListener(new TrampolineListenerKey(0, rule), tramp::setSuccess);
         } else {
-            pushFullListener(new TrampolineListenerKey(0, parser), tramp::setSuccess);
+            pushFullListener(new TrampolineListenerKey(0, rule), tramp::setSuccess);
         }
     }
 

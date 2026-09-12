@@ -35,8 +35,8 @@ class TestGrammarC99Scannerless {
     @Test
     void verifySimpleProgram1() throws IOException {
         var text = "int i;";
-        //System.out.println(parser().parses(text).stream().map(ParseTree::toString).collect(Collectors.joining("\n")));
-        //System.out.println(parser().parses(text).size());
+        //System.out.println(rule().parses(text).stream().map(ParseTree::toString).collect(Collectors.joining("\n")));
+        //System.out.println(rule().parses(text).size());
     }
 }
 

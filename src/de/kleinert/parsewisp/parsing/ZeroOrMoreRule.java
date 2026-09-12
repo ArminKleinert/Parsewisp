@@ -14,8 +14,8 @@ import org.jetbrains.annotations.NotNull;
 public final class ZeroOrMoreRule extends RuleWithChild {
     private ZeroOrMoreRule(final boolean hide,
                            final @NotNull ReductionType red,
-                           final @NotNull Rule parser) {
-        super(hide, red, parser);
+                           final @NotNull Rule rule) {
+        super(hide, red, rule);
     }
 
     /**
