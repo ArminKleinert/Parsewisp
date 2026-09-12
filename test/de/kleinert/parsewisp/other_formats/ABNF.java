@@ -27,14 +27,12 @@ public class ABNF {
     }
 
     public static class ABNFOptions extends ParserCreationOptions {
-        @Nullable Parser whitespaceParser;
-        @Nullable Sym startProduction;
         boolean allowLookaheadAndNegations;
 
         public ABNFOptions(@Nullable Parser whitespaceParser,
                            @Nullable Sym startProduction,
                            boolean allowLookaheadAndNegations) {
-            super(whitespaceParser, startProduction, RedefinitionOption.CHOICE, true, List.of("="));
+            super(whitespaceParser, startProduction, RedefinitionOption.CHOICE, true);
             this.allowLookaheadAndNegations = allowLookaheadAndNegations;
         }
     }

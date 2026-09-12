@@ -33,22 +33,11 @@ final class Cfg {
             this.grammarGrammar = grammarGrammar;
         }
 
-        private @NotNull Rule stringOrStringCaseInsensitiveRule(
-                final @NotNull String s) {
-//            return switch (options.stringCaseInsensitive()) {
-//                case TRUE -> string(s, true);
-//                case FALSE, DEFAULT -> string(s, false);
-//            };
-            return string(s);
-        }
-
         private @NotNull Rule buildRepRule(final @NotNull ParseTree tree) {
             final @NotNull var partsUncut = (String) tree.getContent().get(0).content();
             @NotNull var parts = partsUncut.split("\\*");
             if (parts.length == 1) {
-            /*
-            Format at this point is [0-9]+\\* or \\*[0-9]+ or [0-9]+
-             */
+                // Format at this point is [0-9]+\\* or \\*[0-9]+ or [0-9]+
                 final @NotNull var temp = new String[]{"", ""};
                 if (partsUncut.charAt(0) == '*') { // Only maximum provided (e.g. `*n p`)
                     temp[1] = parts[0];
@@ -155,8 +144,7 @@ final class Cfg {
                                     strParser.processString(s.substring(2)),
                                     caseInsensitive);
                         }
-                        return stringOrStringCaseInsensitiveRule(
-                                strParser.processString(s));
+                        return string(strParser.processString(s));
                     }
                     case "string-cs" -> {
                         return stringCS(
@@ -251,10 +239,6 @@ final class Cfg {
                 var sc = buildRuleRule((ParseTree) rule.content());
                 addProduction(sc.getKey(), sc.getValue());
             }
-//            if (options.usableRules().contains(RulesAvailable.ABNF_CORE)) {
-//                var abnfCore = CfgGrammar.makeAbnfCoreRules();
-//                addAllProductions(abnfCore);
-//            }
         }
     }
 

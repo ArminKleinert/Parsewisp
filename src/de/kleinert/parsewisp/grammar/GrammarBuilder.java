@@ -91,9 +91,12 @@ public abstract class GrammarBuilder {
 
             make();
 
-            start = options.startProduction() != null
-                    ? options.startProduction()
-                    : productions.keySet().iterator().next();
+            var optStart = options.startProduction();
+            if (optStart ==null) {
+                start = productions.keySet().iterator().next();
+            } else {
+                start = optStart;
+            }
 
             compress();
 
@@ -358,10 +361,6 @@ public abstract class GrammarBuilder {
      * @return The new rule.
      */
     protected final @NotNull Rule string(final @NotNull String string) {
-//        return switch (options.stringCaseInsensitive()) {
-//            case TRUE -> buffer.getOrAddString(string, true);
-//            case FALSE, DEFAULT -> buffer.getOrAddString(string, false);
-//        };
         return string(string, false);
     }
 
@@ -705,38 +704,6 @@ public abstract class GrammarBuilder {
             return originalRule;
         }
         throw new IllegalArgumentException(originalRule.getClass().getName());
-//        return switch (originalRule) {
-//            case NonTerminal ignored -> originalRule;
-//            case EpsilonTerm ignored2 -> originalRule;
-//            case RuleWithChild rule -> (rule.withRule(
-//                    autoWhitespaceHelper(rule.getRule(), whitespaceRule)));
-//            case RuleWithManyChildren combWithParsers -> {
-//                final @NotNull List<@NotNull Rule> rules = combWithParsers
-//                        .getRules()
-//                        .stream()
-//                        .map(p -> autoWhitespaceHelper(p, whitespaceRule))
-//                        .toList();
-//                yield (combWithParsers.withRules(rules));
-//            }
-//            case Terminal ignored -> {
-//                final @NotNull List<Rule> rules = new ArrayList<>();
-//                rules.add(whitespaceRule);
-//                final @NotNull Rule result;
-//                if (!originalRule.getReduction().isHiddenOrRaw()) {
-//                    // Hide the terminal in the output.
-//                    // It still appears in the tree, but is flattened into the concatenation.
-//                    rules.add(originalRule.withReduction(ReductionType.
-//                            standardIntermediateReduction()));
-//                    result = concat(rules).withReduction(
-//                            originalRule.getReduction());
-//                } else {
-//                    rules.add(originalRule);
-//                    result = concat(rules);
-//                }
-//                yield result;
-//            }
-//            case SpecialSequenceRule specialSequenceRule -> specialSequenceRule;
-//        };
     }
 
     private void autoWhitespace(final @NotNull Sym start,
@@ -769,13 +736,16 @@ public abstract class GrammarBuilder {
 
     protected <T extends Rule> T buffer(T rule) {
         if (rule instanceof StringTerm) {
-            buffer.getOrAdd((StringTerm) rule);
+            //noinspection unchecked
+            return (T) buffer.getOrAdd((StringTerm) rule);
         }
         if (rule instanceof RegexTerm) {
-            buffer.getOrAdd((RegexTerm) rule);
+            //noinspection unchecked
+            return (T) buffer.getOrAdd((RegexTerm) rule);
         }
         if (rule instanceof NonTerminal) {
-            buffer.getOrAdd((NonTerminal) rule);
+            //noinspection unchecked
+            return (T) buffer.getOrAdd((NonTerminal) rule);
         }
         return rule;
     }

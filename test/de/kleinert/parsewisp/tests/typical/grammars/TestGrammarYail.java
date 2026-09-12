@@ -16,8 +16,7 @@ import java.util.Set;
 class TestGrammarYail {
     private @NotNull Parser parser() {
         try {
-            var opts = ParserCreationOptions.getDefault()
-                    .withRuleDefinitionOps(Set.of(":="));
+            var opts = ParserCreationOptions.getDefault();
             return Parsewisp.parser(
                     Files.readString(Path.of("testres/grammars/yail.g")),
                     opts

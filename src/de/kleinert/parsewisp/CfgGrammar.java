@@ -92,7 +92,7 @@ public final class CfgGrammar extends GrammarBuilder {
      *
      * @return A {@link Rule}.
      */
-    private Rule makeCfgEpsilonRhs() {
+    private @NotNull Rule makeCfgEpsilonRhs() {
         return specialSequence(
                 "One of " + epsilonNames,
                 text -> epsilonNames.stream().filter(text::startsWith).max(Comparator.comparingInt(String::length))
@@ -141,11 +141,9 @@ public final class CfgGrammar extends GrammarBuilder {
      * @return A {@link Rule}.
      */
     private @NotNull Rule makeCfgRuleSeparatorRhs() {
-        return altList(
-                options.ruleDefinitionOpts()
-                        .stream()
-                        .map(it -> string(it, false))
-                        .toList());
+        return altList(List.of(
+                stringCS(":="), stringCS("::="), stringCS("=/"),
+                stringCS("="), stringCS(":")));
     }
 
     private @NotNull Rule makeCfgParenRhs() {

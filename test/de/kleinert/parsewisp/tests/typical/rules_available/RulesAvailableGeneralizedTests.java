@@ -105,7 +105,7 @@ class RulesAvailableGeneralizedTests {
     // Concrete tests start here.
 
     private static Parser ParsewispParser(String gr, ParserCreationOptions opts) {
-        return Parsewisp.parser(gr.replace("=", opts.ruleDefinitionOpts().iterator().next()), opts);
+        return Parsewisp.parser(gr, opts);
     }
 
     private static void alternationAvailable(ParserCreationOptions opts, boolean run) {

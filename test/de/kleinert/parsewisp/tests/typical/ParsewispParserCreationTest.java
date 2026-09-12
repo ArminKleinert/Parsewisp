@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.List;
 
 class ParsewispParserCreationTest {
 
@@ -111,51 +110,14 @@ class ParsewispParserCreationTest {
 
     @Test
     void parserCreationFail() {
-        {
-            // Error: Starting symbol not in grammar
-            final @NotNull var grammar = "S = 'abc'";
-            final @NotNull var options = ParserCreationOptions.create(
-                    null, Sym.sym("C"),
-                    null,
-                    true,
-                    null);
-            Assertions.assertThrows(
-                    ParserCreationFailure.class,
-                    () -> Parsewisp.parser(grammar, options));
-        }
-    }
-
-    @Test
-    void withRuleDefinitionOps() {
-        var dOpts = ParserCreationOptions.getDefault().withRuleDefinitionOps(List.of("::=", ":=", "=", ":", "→", "->", "-->"));
-
-        Assertions.assertThrows(
-                IllegalArgumentException.class,
-                () -> Parsewisp.parser("S = \"a\"", dOpts.withRuleDefinitionOps(List.of())));
-
-        // Using an operator that can't be used leads to an error.
+        // Error: Starting symbol not in grammar
+        final @NotNull var grammar = "S = 'abc'";
+        final @NotNull var options = ParserCreationOptions.create(
+                null, Sym.sym("C"),
+                null,
+                true);
         Assertions.assertThrows(
                 ParserCreationFailure.class,
-                () -> Parsewisp.parser("S = \"a\"", dOpts.withRuleDefinitionOps(List.of("→"))));
-
-        // Using an operator that is okay is valid.
-        Assertions.assertDoesNotThrow(() -> Parsewisp.parser("S = \"a\"", dOpts.withRuleDefinitionOps(List.of("="))));
-
-        // Define a bunch of equal parsers and extract the grammars.
-        var g1 = Parsewisp.parser("S ::= \"a\"", dOpts).grammar();
-        var g2 = Parsewisp.parser("S := \"a\"", dOpts).grammar();
-        var g3 = Parsewisp.parser("S = \"a\"", dOpts).grammar();
-        var g4 = Parsewisp.parser("S : \"a\"", dOpts).grammar();
-        var g5 = Parsewisp.parser("S → \"a\"", dOpts).grammar();
-        var g6 = Parsewisp.parser("S -> \"a\"", dOpts).grammar();
-        var g7 = Parsewisp.parser("S --> \"a\"", dOpts).grammar();
-
-        // Check equivalences of the grammars.
-        Assertions.assertEquals(g1, g2);
-        Assertions.assertEquals(g1, g3);
-        Assertions.assertEquals(g1, g4);
-        Assertions.assertEquals(g1, g5);
-        Assertions.assertEquals(g1, g6);
-        Assertions.assertEquals(g1, g7);
+                () -> Parsewisp.parser(grammar, options));
     }
 }
