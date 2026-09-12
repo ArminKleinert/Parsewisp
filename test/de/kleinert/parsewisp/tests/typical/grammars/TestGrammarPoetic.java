@@ -4,7 +4,6 @@ import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.parser.Parser;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
-import de.kleinert.parsewisp.parser_options.RulesAvailable;
 import de.kleinert.parsewisp.result.ParseResult;
 import de.kleinert.parsewisp.util.Transform;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +22,7 @@ import java.util.stream.Collectors;
 /**
  * Test(s) for the Poetic (esolang) grammar.
  * <p>
- * Example from <a https://esolangs.org/wiki/Poetic_(esolang)#Cat_program">esolangs.org/wiki/Poetic_(esolang)</a>.
+ * Example from <a href="https://esolangs.org/wiki/Poetic_(esolang)#Cat_program">esolangs.org/wiki/Poetic_(esolang)</a>.
  * Grammar self-written based on
  */
 class TestGrammarPoetic {
@@ -31,7 +30,7 @@ class TestGrammarPoetic {
         try {
             return Parsewisp.parser(
                     Files.readString(Path.of("testres/grammars/poetic.g")),
-                    ParserCreationOptions.getDefault().addAvailableRule(RulesAvailable.VARIABLE_REPEAT).addAvailableRule(RulesAvailable.EXPLICIT_EOF)
+                    ParserCreationOptions.getDefault()
             );
         } catch (IOException e) {
             throw new RuntimeException(e);

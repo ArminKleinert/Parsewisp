@@ -1,12 +1,12 @@
 (* Grammar from https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form#BNF_representation_of_itself *)
 
 syntax         ::= rule | rule syntax
-rule           ::= opt-whitespace "<" rule-name ">" opt-whitespace "::=" opt-whitespace expression line-end
-opt-whitespace ::= " " opt-whitespace | ""
-expression     ::= list | list opt-whitespace "|" opt-whitespace expression
-line-end       ::= opt-whitespace "\n" | opt-whitespace "\n" line-end
-list           ::= term | term opt-whitespace list
-term           ::= literal | "<" rule-name ">"
+rule           ::= opt_whitespace "<" rule_name ">" opt_whitespace "::=" opt_whitespace expression line_end
+opt_whitespace ::= " " opt_whitespace | ""
+expression     ::= list | list opt_whitespace "|" opt_whitespace expression
+line_end       ::= opt_whitespace "\n" | opt_whitespace "\n" line_end
+list           ::= term | term opt_whitespace list
+term           ::= literal | "<" rule_name ">"
 literal        ::= '"' text1 '"' | "'" text2 "'"
 text1          ::= "" | character1 text1
 text2          ::= "" | character2 text2
@@ -16,5 +16,5 @@ digit          ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 symbol         ::= "\n" | "\r" | "\t" | "|" | " " | "!" | "#" | "$" | "%" | "&" | "(" | ")" | "*" | "+" | "," | "-" | "." | "/" | ":" | ";" | ">" | "=" | "<" | "?" | "@" | "[" | "\\" | "]" | "^" | "_" | "`" | "{" | "}" | "~"
 character1     ::= character | "'"
 character2     ::= character | '"'
-rule-name      ::= letter | rule-name rule-char
-rule-char      ::= letter | digit | "-"
+rule_name      ::= letter | rule_name rule_char
+rule_char      ::= letter | digit | "-"

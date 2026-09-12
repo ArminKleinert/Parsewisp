@@ -5,11 +5,9 @@ import de.kleinert.parsewisp.error.IllegalGrammarException;
 import de.kleinert.parsewisp.error.ParserCreationFailure;
 import de.kleinert.parsewisp.parser.Parser;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
-import de.kleinert.parsewisp.parser_options.RulesAvailable;
 import de.kleinert.parsewisp.testutil.PT;
 import org.junit.jupiter.api.Assertions;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,119 +15,97 @@ class RulesAvailableGeneralizedTests {
     static void abnfCore(ParserCreationOptions opts, boolean expectedAvailability) {
         abnfCoreAvailable(opts, expectedAvailability);
         abnfCoreUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.ABNF_CORE), expectedAvailability);
     }
 
     static void alternation(ParserCreationOptions opts, boolean expectedAvailability) {
         alternationAvailable(opts, expectedAvailability);
         alternationUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.ALTERNATION), expectedAvailability);
-    }
-
-    static void epsilon(ParserCreationOptions opts, Collection<String> epsilonNames) {
-        Assertions.assertEquals(new HashSet<>(opts.epsilonNames()), new HashSet<>(epsilonNames));
     }
 
     static void exclusion(ParserCreationOptions opts, boolean expectedAvailability) {
         exclusionAvailable(opts, expectedAvailability);
         exclusionUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.EXCLUSION), expectedAvailability);
     }
 
     static void explicitStringCaseSensitivity(ParserCreationOptions opts, boolean expectedAvailability) {
         explicitStringCaseSensitivityAvailable(opts, expectedAvailability);
         explicitStringCaseSensitivityUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.STRING_CASE_SENSITIVITY_PREFIX), expectedAvailability);
     }
 
     static void extendedIdentifiers(ParserCreationOptions opts, boolean expectedAvailability) {
         extendedIdentifiersAvailable(opts, expectedAvailability);
         extendedIdentifiersUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.EXTENDED_IDENTIFIERS), expectedAvailability);
     }
 
     static void lookahead(ParserCreationOptions opts, boolean expectedAvailability) {
         lookaheadAvailable(opts, expectedAvailability);
         lookaheadUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.LOOKAHEAD), expectedAvailability);
     }
 
     static void negativeLookahead(ParserCreationOptions opts, boolean expectedAvailability) {
         negativeLookaheadAvailable(opts, expectedAvailability);
         negativeLookaheadUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.NEGATIVE_LOOKAHEAD), expectedAvailability);
     }
 
     static void optional(ParserCreationOptions opts, boolean expectedAvailability) {
         optionalAvailable(opts, expectedAvailability);
         optionalUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.OPTIONAL), expectedAvailability);
     }
 
     static void optionalQuery(ParserCreationOptions opts, boolean expectedAvailability) {
         optionalQueryAvailable(opts, expectedAvailability);
         optionalQueryUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.OPTIONAL_QUERY), expectedAvailability);
     }
 
     static void optionalRepetition(ParserCreationOptions opts, boolean expectedAvailability) {
         optionalRepetitionAvailable(opts, expectedAvailability);
         optionalRepetitionUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.OPTIONAL_REPETITION), expectedAvailability);
     }
 
     static void optionalRepetitionStar(ParserCreationOptions opts, boolean expectedAvailability) {
         optionalRepetitionStarAvailable(opts, expectedAvailability);
         optionalRepetitionStarUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.OPTIONAL_REPETITION_STAR), expectedAvailability);
     }
 
     static void orderedChoice(ParserCreationOptions opts, boolean expectedAvailability) {
         orderedChoiceAvailable(opts, expectedAvailability);
         orderedChoiceUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.ORDERED_CHOICE), expectedAvailability);
     }
 
     static void plus(ParserCreationOptions opts, boolean expectedAvailability) {
         plusAvailable(opts, expectedAvailability);
         plusUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.PLUS), expectedAvailability);
     }
 
     static void regex(ParserCreationOptions opts, boolean expectedAvailability) {
         regexAvailable(opts, expectedAvailability);
         regexUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.REGEX), expectedAvailability);
     }
 
     static void singleQuotesForStringTerminals(ParserCreationOptions opts, boolean expectedAvailability) {
         singleQuotesForStringTerminalsAvailable(opts, expectedAvailability);
         singleQuotesForStringTerminalsUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.SINGLY_QUOTED), expectedAvailability);
     }
 
     static void valueRange(ParserCreationOptions opts, boolean expectedAvailability) {
         valueRangeAvailable(opts, expectedAvailability);
         valueRangeUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.VALUE_RANGE), expectedAvailability);
     }
 
     static void variableRepetition(ParserCreationOptions opts, boolean expectedAvailability) {
         variableRepetitionAvailable(opts, expectedAvailability);
         variableRepetitionUnavailable(opts, !expectedAvailability);
-        Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.VARIABLE_REPEAT), expectedAvailability);
     }
 
 //    static void semicolonLineComment(ParserCreationOptions opts, boolean expectedAvailability) {
 //        semicolonLineComment1(opts, expectedAvailability);
 //        semicolonLineComment1(opts, !expectedAvailability);
-//        //Assertions.assertEquals(opts.usableRules().contains(RulesAvailable.SEMICOLON_AS_LINECOMMENT), expectedAvailability);
 //    }
 
     // Concrete tests start here.
 
     private static Parser ParsewispParser(String gr, ParserCreationOptions opts) {
-        return Parsewisp.parser(gr.replace("=", opts.ruleDefinitionOpts().iterator().next()), opts);
+        return Parsewisp.parser(gr, opts);
     }
 
     private static void alternationAvailable(ParserCreationOptions opts, boolean run) {
@@ -373,11 +349,7 @@ class RulesAvailableGeneralizedTests {
         Assertions.assertDoesNotThrow(() -> ParsewispParser("S = 1* \"a\"", opts));
         Assertions.assertDoesNotThrow(() -> ParsewispParser("S = *5 \"a\"", opts));
 
-        var optsWithStar = opts.addAvailableRule(RulesAvailable.OPTIONAL_REPETITION_STAR);
-        Assertions.assertThrows(ParserCreationFailure.class, () -> ParsewispParser("S = * \"a\"", optsWithStar));
-
-        var optsWithoutStar = opts.removeAvailableRule(RulesAvailable.OPTIONAL_REPETITION_STAR);
-        Assertions.assertDoesNotThrow(() -> ParsewispParser("S = * \"a\"", optsWithoutStar));
+        Assertions.assertThrows(ParserCreationFailure.class, () -> ParsewispParser("S = * \"a\"", opts));
 
         var p = ParsewispParser("S = 1*3 \"a\" \"b\"", opts);
         Assertions.assertTrue(p.parse("a").isFailure());
@@ -400,25 +372,23 @@ class RulesAvailableGeneralizedTests {
     private static void exclusionAvailable(ParserCreationOptions opts, boolean run) {
         if (!run) return;
 
-        var optsAndRegex = opts.addAvailableRule(RulesAvailable.REGEX);
+        Assertions.assertDoesNotThrow(() -> ParsewispParser("S = #'[0-9]+' - '1'", opts));
+        Assertions.assertDoesNotThrow(() -> ParsewispParser("S = #'[0-9]+' - ('1' | '11' | '111')", opts));
+        Assertions.assertDoesNotThrow(() -> ParsewispParser("S = #'[0-9]+' - (#'[1]+' - '11')", opts));
 
-        Assertions.assertDoesNotThrow(() -> ParsewispParser("S = #'[0-9]+' - '1'", optsAndRegex));
-        Assertions.assertDoesNotThrow(() -> ParsewispParser("S = #'[0-9]+' - ('1' | '11' | '111')", optsAndRegex));
-        Assertions.assertDoesNotThrow(() -> ParsewispParser("S = #'[0-9]+' - (#'[1]+' - '11')", optsAndRegex));
-
-        var p = ParsewispParser("S = #'[0-9]+' - '1'", optsAndRegex);
+        var p = ParsewispParser("S = #'[0-9]+' - '1'", opts);
         Assertions.assertTrue(p.parse("1").isFailure());
         Assertions.assertEquals(PT.create("S", "11"), p.parse("11"));
         Assertions.assertEquals(PT.create("S", "1111"), p.parse("1111"));
         Assertions.assertEquals(PT.create("S", "2"), p.parse("2"));
 
-        p = ParsewispParser("S = #'[0-9]+' - ('1' | '11' | '111')", optsAndRegex);
+        p = ParsewispParser("S = #'[0-9]+' - ('1' | '11' | '111')", opts);
         Assertions.assertTrue(p.parse("1").isFailure());
         Assertions.assertTrue(p.parse("11").isFailure());
         Assertions.assertEquals(PT.create("S", "1111"), p.parse("1111"));
         Assertions.assertEquals(PT.create("S", "2"), p.parse("2"));
 
-        p = ParsewispParser("S = #'[0-9]+' - (#'[1]+' - '11')", optsAndRegex);
+        p = ParsewispParser("S = #'[0-9]+' - (#'[1]+' - '11')", opts);
         Assertions.assertTrue(p.parse("1").isFailure());
         Assertions.assertEquals(PT.create("S", "11"), p.parse("11"));
         Assertions.assertTrue(p.parse("1111").isFailure());
@@ -428,13 +398,12 @@ class RulesAvailableGeneralizedTests {
     private static void exclusionUnavailable(ParserCreationOptions opts, boolean run) {
         if (!run) return;
 
-        var optsAndRegex = opts.addAvailableRule(RulesAvailable.REGEX);
         Assertions.assertThrows(ParserCreationFailure.class, () ->
-                ParsewispParser("S = #'[0-9]+' - '1'", optsAndRegex));
+                ParsewispParser("S = #'[0-9]+' - '1'", opts));
         Assertions.assertThrows(ParserCreationFailure.class, () ->
-                ParsewispParser("S = #'[0-9]+' - ('1' | '11' | '111')", optsAndRegex));
+                ParsewispParser("S = #'[0-9]+' - ('1' | '11' | '111')", opts));
         Assertions.assertThrows(ParserCreationFailure.class, () ->
-                ParsewispParser("S = #'[0-9]+' - (#'[1]+' - '11')", optsAndRegex));
+                ParsewispParser("S = #'[0-9]+' - (#'[1]+' - '11')", opts));
     }
 
     private static void abnfCoreAvailable(ParserCreationOptions opts, boolean run) {
@@ -502,8 +471,7 @@ class RulesAvailableGeneralizedTests {
     }
 
 
-    private static
-    void semicolonLineComment1(ParserCreationOptions opts, boolean run) {
+    private static void semicolonLineComment1(ParserCreationOptions opts, boolean run) {
         if (!run) return;
 
         Assertions.assertEquals(

@@ -24,11 +24,6 @@ class RulesAvailableDefaultTest {
     }
 
     @Test
-    void epsilon() {
-        RulesAvailableGeneralizedTests.epsilon(opts, Set.of("epsilon", "ε", "Epsilon", "eps", "EPSILON"));
-    }
-
-    @Test
     void exclusion() {
         RulesAvailableGeneralizedTests.exclusion(opts, true);
     }

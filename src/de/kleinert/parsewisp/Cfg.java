@@ -33,21 +33,11 @@ final class Cfg {
             this.grammarGrammar = grammarGrammar;
         }
 
-        private @NotNull Rule stringOrStringCaseInsensitiveRule(
-                final @NotNull String s) {
-            return switch (options.stringCaseInsensitive()) {
-                case TRUE -> string(s, true);
-                case FALSE, DEFAULT -> string(s, false);
-            };
-        }
-
         private @NotNull Rule buildRepRule(final @NotNull ParseTree tree) {
             final @NotNull var partsUncut = (String) tree.getContent().get(0).content();
             @NotNull var parts = partsUncut.split("\\*");
             if (parts.length == 1) {
-            /*
-            Format at this point is [0-9]+\\* or \\*[0-9]+ or [0-9]+
-             */
+                // Format at this point is [0-9]+\\* or \\*[0-9]+ or [0-9]+
                 final @NotNull var temp = new String[]{"", ""};
                 if (partsUncut.charAt(0) == '*') { // Only maximum provided (e.g. `*n p`)
                     temp[1] = parts[0];
@@ -68,7 +58,7 @@ final class Cfg {
             final int max = parts[1].isBlank() ? Integer.MAX_VALUE : Integer.parseInt(parts[1]);
             final @NotNull var repeatedRule =
                     (Rule) buildRule((ParseTree) tree.getContent().get(1).content());
-            return repeat(repeatedRule, min, max);
+            return rep(repeatedRule, min, max);
         }
 
         private @NotNull Map.Entry<@NotNull Sym, @NotNull Rule> buildRuleRule(
@@ -118,14 +108,14 @@ final class Cfg {
                         continue; // Open up the grouping and take it to the top.
                     }
                     case "alt" -> {
-                        return alternationC(tree
+                        return altList(tree
                                 .getContent()
                                 .stream()
                                 .map((c) -> (Rule) buildRule((ParseTree) c.content()))
                                 .toList());
                     }
                     case "ord" -> {
-                        return orderedChoice(tree
+                        return ordAlt(tree
                                 .getContent()
                                 .stream()
                                 .map((c) -> buildRule((ParseTree) c.content()))
@@ -136,7 +126,7 @@ final class Cfg {
                                 ((Node.NodeParseTree) tree.getContent().get(0)).content())).enableHideTag();
                     }
                     case "cat" -> {
-                        return concat(tree
+                        return cat(tree
                                 .getContent()
                                 .stream()
                                 .map((c) -> (Rule) buildRule((ParseTree) c.content()))
@@ -151,10 +141,10 @@ final class Cfg {
                                 default -> throw new IllegalStateException();
                             };
                             return string(
-                                    strParser.processString(s.substring(2)), caseInsensitive);
+                                    strParser.processString(s.substring(2)),
+                                    caseInsensitive);
                         }
-                        return stringOrStringCaseInsensitiveRule(
-                                strParser.processString(s));
+                        return string(strParser.processString(s));
                     }
                     case "string-cs" -> {
                         return stringCS(
@@ -171,11 +161,11 @@ final class Cfg {
                                         tree.getContent().get(0).content()));
                     }
                     case "neg" -> {
-                        return negate(buildRule(
+                        return neg(buildRule(
                                 (ParseTree) tree.getContent().get(0).content()));
                     }
                     case "opt", "opt_query" -> {
-                        return optional((Rule) buildRule(
+                        return opt((Rule) buildRule(
                                 (ParseTree) tree.getContent().get(0).content()));
                     }
                     case "star", "opt_rep" -> {
@@ -187,7 +177,7 @@ final class Cfg {
                                 (ParseTree) tree.getContent().get(0).content()));
                     }
                     case "look" -> {
-                        return lookahead(buildRule(
+                        return look(buildRule(
                                 (ParseTree) tree.getContent().get(0).content()));
                     }
                     case "rep" -> {
@@ -213,7 +203,7 @@ final class Cfg {
                         var rangeLast = parts.length == 1
                                 ? rangeFirst
                                 : Integer.parseInt(parts[1], radix);
-                        return unicodeChar(rangeFirst, rangeLast);
+                        return numVal(rangeFirst, rangeLast);
                     }
                     case "epsilon" -> {
                         return EpsilonTerm.getDefault();
@@ -234,7 +224,7 @@ final class Cfg {
         }
 
         @Override
-        public void make() {
+        protected void make() {
             final @NotNull ParseResult rules = Gll.parse(
                     grammarGrammar,
                     Sym.sym("rules"),
@@ -248,10 +238,6 @@ final class Cfg {
             for (final Node rule : rules.castToParseSuccess().getContent()) {
                 var sc = buildRuleRule((ParseTree) rule.content());
                 addProduction(sc.getKey(), sc.getValue());
-            }
-            if (options.usableRules().contains(RulesAvailable.ABNF_CORE)) {
-                var abnfCore = CfgGrammar.makeAbnfCoreRules();
-                addAllProductions(abnfCore);
             }
         }
     }

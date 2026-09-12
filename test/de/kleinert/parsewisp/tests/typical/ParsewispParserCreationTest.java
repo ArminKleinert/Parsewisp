@@ -4,7 +4,6 @@ import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.error.IllegalGrammarException;
 import de.kleinert.parsewisp.error.ParserCreationFailure;
-import de.kleinert.parsewisp.parser_options.GlobalCaseInsensitivity;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.List;
 
 class ParsewispParserCreationTest {
 
@@ -112,80 +110,14 @@ class ParsewispParserCreationTest {
 
     @Test
     void parserCreationFail() {
-        {
-            // Error: Starting symbol not in grammar
-            final @NotNull var grammar = "S = 'abc'";
-            final @NotNull var options = ParserCreationOptions.create(
-                    null, Sym.sym("C"),
-                    GlobalCaseInsensitivity.DEFAULT,
-                    null,
-                    null,
-                    true,
-                    null,
-                    null);
-            Assertions.assertThrows(
-                    ParserCreationFailure.class,
-                    () -> Parsewisp.parser(grammar, options));
-        }
-    }
-
-    @Test
-    void withRuleDefinitionOps() {
-        var dOpts = ParserCreationOptions.getDefault().withRuleDefinitionOps(List.of("::=", ":=", "=", ":", "→", "->", "-->"));
-
-        Assertions.assertThrows(
-                IllegalArgumentException.class,
-                () -> Parsewisp.parser("S = \"a\"", dOpts.withRuleDefinitionOps(List.of())));
-
-        // Using an operator that can't be used leads to an error.
+        // Error: Starting symbol not in grammar
+        final @NotNull var grammar = "S = 'abc'";
+        final @NotNull var options = ParserCreationOptions.create(
+                null, Sym.sym("C"),
+                null,
+                true);
         Assertions.assertThrows(
                 ParserCreationFailure.class,
-                () -> Parsewisp.parser("S = \"a\"", dOpts.withRuleDefinitionOps(List.of("→"))));
-
-        // Using an operator that is okay is valid.
-        Assertions.assertDoesNotThrow(() -> Parsewisp.parser("S = \"a\"", dOpts.withRuleDefinitionOps(List.of("="))));
-
-        // Define a bunch of equal parsers and extract the grammars.
-        var g1 = Parsewisp.parser("S ::= \"a\"", dOpts).grammar();
-        var g2 = Parsewisp.parser("S := \"a\"", dOpts).grammar();
-        var g3 = Parsewisp.parser("S = \"a\"", dOpts).grammar();
-        var g4 = Parsewisp.parser("S : \"a\"", dOpts).grammar();
-        var g5 = Parsewisp.parser("S → \"a\"", dOpts).grammar();
-        var g6 = Parsewisp.parser("S -> \"a\"", dOpts).grammar();
-        var g7 = Parsewisp.parser("S --> \"a\"", dOpts).grammar();
-
-        // Check equivalences of the grammars.
-        Assertions.assertEquals(g1, g2);
-        Assertions.assertEquals(g1, g3);
-        Assertions.assertEquals(g1, g4);
-        Assertions.assertEquals(g1, g5);
-        Assertions.assertEquals(g1, g6);
-        Assertions.assertEquals(g1, g7);
-    }
-
-    @Test
-    void withEpsilonNames() {
-        var dOpts = ParserCreationOptions.getDefault().withEpsilonNames(List.of("Epsilon", "epsilon", "EPSILON", "eps", "ε"));
-
-        // Using an epsilon that can't be used leads to an error.
-        Assertions.assertThrows(
-                IllegalGrammarException.class,
-                () -> Parsewisp.parser("S = Epsilon", dOpts.withEpsilonNames(List.of("ε"))));
-
-        // Using an epsilon that is okay is valid.
-        Assertions.assertDoesNotThrow(() -> Parsewisp.parser("S = ε", dOpts.withEpsilonNames(List.of("ε"))));
-
-        // Define a bunch of equal parsers and extract the grammars.
-        var g1 = Parsewisp.parser("S = ε", dOpts).grammar();
-        var g2 = Parsewisp.parser("S = eps", dOpts).grammar();
-        var g3 = Parsewisp.parser("S = EPSILON", dOpts).grammar();
-        var g4 = Parsewisp.parser("S = epsilon", dOpts).grammar();
-        var g5 = Parsewisp.parser("S = Epsilon", dOpts).grammar();
-
-        // Check equivalences of the grammars.
-        Assertions.assertEquals(g1, g2);
-        Assertions.assertEquals(g1, g3);
-        Assertions.assertEquals(g1, g4);
-        Assertions.assertEquals(g1, g5);
+                () -> Parsewisp.parser(grammar, options));
     }
 }

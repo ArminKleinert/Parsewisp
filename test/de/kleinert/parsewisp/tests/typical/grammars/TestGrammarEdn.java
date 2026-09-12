@@ -2,8 +2,6 @@ package de.kleinert.parsewisp.tests.typical.grammars;
 
 import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.parser.Parser;
-import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
-import de.kleinert.parsewisp.parser_options.RulesAvailable;
 import de.kleinert.parsewisp.testutil.PT;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
@@ -18,8 +16,7 @@ class TestGrammarEdn {
     private @NotNull Parser parser() {
         try {
             return Parsewisp.parser(
-                    Files.readString(Path.of("testres/grammars/edn.g")),
-                    ParserCreationOptions.getDefault().addAvailableRule(RulesAvailable.EXPLICIT_EOF)
+                    Files.readString(Path.of("testres/grammars/edn.g"))
             );
         } catch (IOException e) {
             throw new RuntimeException(e);

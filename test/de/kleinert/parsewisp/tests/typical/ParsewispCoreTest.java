@@ -3,7 +3,6 @@ package de.kleinert.parsewisp.tests.typical;
 import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.parser.Parser;
-import de.kleinert.parsewisp.parser_options.GlobalCaseInsensitivity;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
 import de.kleinert.parsewisp.parser_options.ParsingOptions;
 import de.kleinert.parsewisp.parser_options.Unhide;
@@ -14,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -517,8 +515,8 @@ class ParsewispCoreTest {
                 PT.create("sentence", PT.create("identifier", "defn"), PT.create("identifier", "my"), PT.create("keyword", "cond")),
                 PT.create("sentence", PT.create("keyword", "defn"), PT.create("identifier", "my"), PT.create("keyword", "cond"))
         );
-
-        Assertions.assertEquals(trees, new HashSet<>(ambiguous_tokenizer.parses(text, ParsingOptions.getDefault())));
+        var parses = Set.of(ambiguous_tokenizer.parses(text, ParsingOptions.getDefault()).toArray());
+        Assertions.assertEquals(trees, parses);
     }
 
     @Test
@@ -543,8 +541,8 @@ class ParsewispCoreTest {
 
                 PT.create("sentence", PT.create("identifier", "defn"), PT.create("identifier", "my"), PT.create("identifier", "cond"))
         );
-
-        Assertions.assertEquals(trees, new HashSet<>(preferential_tokenizer.parses(text, ParsingOptions.getDefault())));
+        var parses = Set.of(preferential_tokenizer.parses(text, ParsingOptions.getDefault()).toArray());
+        Assertions.assertEquals(trees, parses);
     }
 
     @Test
@@ -699,9 +697,7 @@ class ParsewispCoreTest {
 
     @Test
     void testEpsEquivalence() {
-        var opts = ParserCreationOptions
-                .getDefault()
-                .withEpsilonNames(List.of("Epsilon", "epsilon", "EPSILON", "eps", "ε"));
+        var opts = ParserCreationOptions.getDefault();
         Assertions.assertEquals(
                 PT.create("S"),
                 Parsewisp.parser("S = eps", opts).parse(""));
@@ -721,9 +717,7 @@ class ParsewispCoreTest {
 
     @Test
     void testEpsFail() {
-        var opts = ParserCreationOptions
-                .getDefault()
-                .withEpsilonNames(List.of("Epsilon", "epsilon", "EPSILON", "eps", "ε"));
+        var opts = ParserCreationOptions.getDefault();
         Assertions.assertTrue(
                 Parsewisp.parser("S = eps", opts)
                         .parse("a")
@@ -907,60 +901,14 @@ class ParsewispCoreTest {
 
     @Test
     void testStringVsStringCi() {
-        var grammar = "S = 'a'+";
         var text = "AaaAaa";
 
-        var pStandard1 = Parsewisp.parser(grammar);
+        var pStandard1 = Parsewisp.parser("S = %s'a'+");
         Assertions.assertTrue(pStandard1.parse(text).isFailure());
 
         var tree = PT.create("S", "a", "a", "a", "a", "a", "a");
-
-        var pCaseInsensitive = Parsewisp.parser(grammar,
-                ParserCreationOptions
-                        .getDefault()
-                        .withStringCaseInsensitive(true));
+        var pCaseInsensitive = Parsewisp.parser("S = %i'a'+");
         Assertions.assertEquals(tree, pCaseInsensitive.parse(text));
-    }
-
-    @Test
-    void testStringExplicitCiFalse() {
-        var grammar = "S = 'a'+";
-        var text = "AaaAaa";
-
-        var pStandard1 = Parsewisp.parser(grammar);
-        Assertions.assertTrue(pStandard1.parse(text).isFailure());
-
-        var pStandard2 = Parsewisp.parser(grammar,
-                ParserCreationOptions
-                        .getDefault()
-                        .withStringCaseInsensitive(GlobalCaseInsensitivity.FALSE));
-        Assertions.assertTrue(pStandard2.parse(text).isFailure());
-
-        var pStandard3 = Parsewisp.parser(grammar,
-                ParserCreationOptions
-                        .getDefault()
-                        .withStringCaseInsensitive(false));
-        Assertions.assertTrue(pStandard3.parse(text).isFailure());
-    }
-
-    @Test
-    void testStringExplicitCiTrue() {
-        var grammar = "S = 'a'+";
-        var text = "AaaAaa";
-
-        var tree = PT.create("S", "a", "a", "a", "a", "a", "a");
-
-        var pCaseInsensitive = Parsewisp.parser(grammar,
-                ParserCreationOptions
-                        .getDefault()
-                        .withStringCaseInsensitive(GlobalCaseInsensitivity.TRUE));
-        Assertions.assertEquals(tree, pCaseInsensitive.parse(text));
-
-        var pCaseInsensitive2 = Parsewisp.parser(grammar,
-                ParserCreationOptions
-                        .getDefault()
-                        .withStringCaseInsensitive(true));
-        Assertions.assertEquals(tree, pCaseInsensitive2.parse(text));
     }
 
     @Test

@@ -4,7 +4,6 @@ import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.error.ParserCreationFailure;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
 import de.kleinert.parsewisp.parser_options.ParsingOptions;
-import de.kleinert.parsewisp.parser_options.RulesAvailable;
 import de.kleinert.parsewisp.testutil.PT;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
@@ -94,9 +93,7 @@ class VariableRepetitionTest {
         );
         var partialOpts = ParsingOptions.getDefault().withPartial(true);
 
-        var creationOpts = ParserCreationOptions
-                .getDefault()
-                .addAvailableRule(RulesAvailable.VARIABLE_REPEAT);
+        var creationOpts = ParserCreationOptions.getDefault();
         var repeated_a = Parsewisp.parser("""
                         S = 'a' 0*6 'a'
                         """,
@@ -117,9 +114,7 @@ class VariableRepetitionTest {
         );
         var partialOpts = ParsingOptions.getDefault().withPartial(true);
 
-        var creationOpts = ParserCreationOptions
-                .getDefault()
-                .addAvailableRule(RulesAvailable.VARIABLE_REPEAT);
+        var creationOpts = ParserCreationOptions.getDefault();
         var repeated_a = Parsewisp.parser("""
                         S = 1*6 'a'
                         """,

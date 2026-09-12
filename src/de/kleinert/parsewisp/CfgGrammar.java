@@ -3,9 +3,7 @@ package de.kleinert.parsewisp;
 import de.kleinert.parsewisp.grammar.*;
 import de.kleinert.parsewisp.parsing.*;
 import de.kleinert.parsewisp.parser_options.*;
-import de.kleinert.parsewisp.parsing.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -15,59 +13,22 @@ import java.util.regex.Pattern;
  * A builder for grammars for parsing context free grammars (CFGs).
  */
 public final class CfgGrammar extends GrammarBuilder {
-    final @NotNull Set<RulesAvailable> rulesAvailable;
     final @NotNull ParserCreationOptions options;
 
     private CfgGrammar(final @NotNull ParserCreationOptions options) {
         super(options);
         this.options = options;
-        this.rulesAvailable = options.usableRules();
     }
 
     private final @NotNull Rule optWhitespace =
             makeCfgOptWhitespaceRhs().enableHideTag();
 
-    private @NotNull List<@NotNull Rule> cListOf(Rule... elements) {
-        return Arrays.stream(elements).filter(Objects::nonNull).toList();
-    }
-
-    private @Nullable NonTerminal makeNT(
-            final @NotNull String symString, final @NotNull RulesAvailable ra) {
-        return rulesAvailable.contains(ra) ? nt(symString) : null;
-    }
+    private final Set<String> epsilonNames = Set.of("Epsilon", "epsilon", "EPSILON", "eps", "ε");
 
     private final @NotNull NonTerminal factorNt = nt("factor");
 
     private final @NotNull NonTerminal ntNt = nt("nt");
     private final @NotNull NonTerminal altOrOrdNt = nt("alt-or-ord");
-
-    /*
-     * These rules are added later if {@link RulesAvailable.ABNF_CORE} is in the Set of available rules when creating a parser.
-     */
-    static @NotNull List<Map.Entry<Sym, Rule>> makeAbnfCoreRules() {
-        var CRLF = StringTerm.create("\r\n", false);
-        var WSP = RegexTerm.create(Pattern.compile("[\\u0020\\u0009]"));
-
-        final @NotNull List<Map.Entry<Sym, Rule>> m = List.of(
-                Map.entry(Sym.sym("ALPHA"), RegexTerm.create(Pattern.compile("[a-zA-Z]"))),
-                Map.entry(Sym.sym("BIT"), RegexTerm.create(Pattern.compile("[01]"))),
-                Map.entry(Sym.sym("CHAR"), RegexTerm.create(Pattern.compile("[\\u0001-\\u007F]"))),
-                Map.entry(Sym.sym("CR"), StringTerm.create("\r", false)),
-                Map.entry(Sym.sym("CRLF"), CRLF),
-                Map.entry(Sym.sym("CTL"), RegexTerm.create(Pattern.compile("[\\u0000-\\u001F|\\u007F]"))),
-                Map.entry(Sym.sym("DIGIT"), RegexTerm.create(Pattern.compile("[0-9]"))),
-                Map.entry(Sym.sym("DQUOTE"), StringTerm.create("\"", false)),
-                Map.entry(Sym.sym("HEXDIG"), RegexTerm.create(Pattern.compile("[0-9a-fA-F]"))),
-                Map.entry(Sym.sym("HTAB"), RegexTerm.create(Pattern.compile("\t"))),
-                Map.entry(Sym.sym("LF"), RegexTerm.create(Pattern.compile("\n"))),
-                Map.entry(Sym.sym("LWSP"), ZeroOrMoreRule.create(AlternationRule.create(List.of(WSP, ConcatRule.create(List.of(CRLF, WSP)))))),
-                Map.entry(Sym.sym("OCTET"), RegexTerm.create(Pattern.compile("[\\u0000-\\u00FF]"))),
-                Map.entry(Sym.sym("SP"), StringTerm.create(" ", false)),
-                Map.entry(Sym.sym("VCHAR"), RegexTerm.create(Pattern.compile("[\\u0021-\\u007E]"))),
-                Map.entry(Sym.sym("WSP"), WSP)
-        );
-        return m;
-    }
 
     private @NotNull Pattern regexDoc(final @NotNull String patternString, final @NotNull String comment) {
         return Pattern.compile(patternString + "(?x) #" + comment);
@@ -131,14 +92,7 @@ public final class CfgGrammar extends GrammarBuilder {
      *
      * @return A {@link Rule}.
      */
-    private Rule makeCfgEpsilonRhs() {
-        var epsilonNames = options.epsilonNames();
-
-        // If no epsilon names are provided, use string terminal which matches the empty string `""`.
-        // Empty string terminals are simplified to Epsilon later.
-        if (epsilonNames.isEmpty())
-            return string("\"\"");
-
+    private @NotNull Rule makeCfgEpsilonRhs() {
         return specialSequence(
                 "One of " + epsilonNames,
                 text -> epsilonNames.stream().filter(text::startsWith).max(Comparator.comparingInt(String::length))
@@ -148,22 +102,20 @@ public final class CfgGrammar extends GrammarBuilder {
     private @NotNull Rule makeCfgFactorRhs() {
         final @NotNull Rule rulesRule =
                 alternationGuaranteeDistinctAndNotEmpty(
-                        cListOf(
-                                nt("string"), /// {@link #makeCfgStringRhs}
-                                makeNT("regexp", RulesAvailable.REGEX), /// {@link #makeCfgRegexRhs}
-                                makeNT("opt", RulesAvailable.OPTIONAL), /// {@link #makeCfgOptRhs}
-                                makeNT("opt_query", RulesAvailable.OPTIONAL_QUERY), /// {@link #makeCfgOptQueryRhs}
-                                makeNT("star", RulesAvailable.OPTIONAL_REPETITION_STAR), /// {@link #makeCfgZeroOrMoreStarRhs}
-                                makeNT("opt_rep", RulesAvailable.OPTIONAL_REPETITION), /// {@link #makeCfgZeroOrMoreStdRhs}
-                                makeNT("plus", RulesAvailable.PLUS), /// {@link #makeCfgPlusRhs}
+                        List.of(nt("string"), /// {@link #makeCfgStringRhs}
+                                nt("regexp"), /// {@link #makeCfgRegexRhs}
+                                nt("opt"), /// {@link #makeCfgOptRhs}
+                                nt("opt_query"), /// {@link #makeCfgOptQueryRhs}
+                                nt("star"), /// {@link #makeCfgZeroOrMoreStarRhs}
+                                nt("opt_rep"), /// {@link #makeCfgZeroOrMoreStdRhs}
+                                nt("plus"), /// {@link #makeCfgPlusRhs}
                                 nt("paren"), /// {@link #makeCfgParenRhs}
                                 nt("hide"), /// {@link #makeCfgHideRhs}
                                 nt("epsilon"), /// {@link #makeCfgEpsilonRhs}
-                                makeNT("rep", RulesAvailable.VARIABLE_REPEAT), /// ABNF feature {@link #makeCfgRepRhs}
-                                makeNT("abnf-range", RulesAvailable.VALUE_RANGE), /// ABNF feature {@link #makeABNFValueRange}
-                                makeNT("eof", RulesAvailable.EXPLICIT_EOF), /// {@link #makeEofRhs}
-                                ntNt, /// {@link #makeCfgNtRhs}
-                                null
+                                nt("rep"), /// ABNF feature {@link #makeCfgRepRhs}
+                                nt("abnf-range"), /// ABNF feature {@link #makeABNFValueRange}
+                                nt("eof"), /// {@link #makeEofRhs}
+                                ntNt /// {@link #makeCfgNtRhs}
                         ))
                         .hideTag();
         return rulesRule;
@@ -189,11 +141,9 @@ public final class CfgGrammar extends GrammarBuilder {
      * @return A {@link Rule}.
      */
     private @NotNull Rule makeCfgRuleSeparatorRhs() {
-        return alternationC(
-                options.ruleDefinitionOpts()
-                        .stream()
-                        .map(it -> string(it, false))
-                        .toList());
+        return altList(List.of(
+                stringCS(":="), stringCS("::="), stringCS("=/"),
+                stringCS("="), stringCS(":")));
     }
 
     private @NotNull Rule makeCfgParenRhs() {
@@ -225,27 +175,19 @@ public final class CfgGrammar extends GrammarBuilder {
      * @return A {@link Rule}.
      */
     private @NotNull Rule makeCfgStringRhs() {
-        final boolean hasCiPrefixAvailable =
-                options.usableRules().contains(RulesAvailable.STRING_CASE_SENSITIVITY_PREFIX);
+        final @NotNull String doubleQuoteStringPrefixed =
+                "(%[is])?\\\"[^\\\"\\\\]*(?:\\\\.[^\\\"\\\\]*)*\\\"";
+        final @NotNull String singleQuoteStringPrefixed =
+                "(%[is])?'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'";
 
-        final @NotNull String doubleQuoteString = "\\\"[^\\\"\\\\]*(?:\\\\.[^\\\"\\\\]*)*\\\"";
-        final @NotNull String doubleQuoteStringPrefixed = "(%[is])?" + doubleQuoteString;
-        final @NotNull String singleQuoteString = "'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'";
-        final @NotNull String singleQuoteStringPrefixed = "(%[is])?" + singleQuoteString;
-
-        final @NotNull Pattern doubleQuotedString = hasCiPrefixAvailable
-                ? regexDoc(doubleQuoteStringPrefixed, "Prefixed double-quoted string")
-                : regexDoc(doubleQuoteString, "Double-quoted string");
+        final @NotNull Pattern doubleQuotedString = regexDoc(
+                doubleQuoteStringPrefixed, "Prefixed double-quoted string");
         var doubleQuoteStringRegexRule = regex(doubleQuotedString);
 
-        if (!options.usableRules().contains(RulesAvailable.SINGLY_QUOTED))
-            return doubleQuoteStringRegexRule;
+        final @NotNull Pattern singleQuotedString = regexDoc(
+                singleQuoteStringPrefixed, "Prefixed single-quoted string");
 
-        final @NotNull Pattern singleQuotedString = hasCiPrefixAvailable
-                ? regexDoc(singleQuoteStringPrefixed, "Prefixed single-quoted string")
-                : regexDoc(singleQuoteString, "Single-quoted string");
-
-        return alternationC(List.of(
+        return altList(List.of(
                 doubleQuoteStringRegexRule,
                 regex(singleQuotedString)));
     }
@@ -283,15 +225,8 @@ public final class CfgGrammar extends GrammarBuilder {
      * @return A {@link Rule}.
      */
     private @NotNull Rule makeCfgNtRhs() {
-        final Pattern regex;
-        if (rulesAvailable.contains(RulesAvailable.EXTENDED_IDENTIFIERS))
-            regex = Pattern.compile("[^, \\r\\t\\n<>(){}\\[\\]+*?:=|'\"#&!;./%\\-0-9][^, \\r\\t\\n<>(){}\\[\\]+*?:=|'\"#&!;./%]*");
-        else if (rulesAvailable.contains(RulesAvailable.ABNF_IDENTIFIERS))
-            regex = Pattern.compile("[a-zA-Z][a-zA-Z0-9\\-]*");
-        else
-            regex = Pattern.compile("[a-zA-Z][a-zA-Z0-9_]*");
-
-        final boolean eofPossible = options.usableRules().contains(RulesAvailable.EXPLICIT_EOF);
+        final Pattern regex = Pattern.compile("[^, \\r\\t\\n<>(){}\\[\\]+*?:=|'\"#&!;./%\\-0-9][^, \\r\\t\\n<>(){}\\[\\]+*?:=|'\"#&!;./%]*");
+        //final Pattern regex = Pattern.compile("[a-zA-Z][a-zA-Z0-9_]*");
 
         return specialSequence(
                 "matches " + regex + " but is not reserved for other purposes",
@@ -301,10 +236,10 @@ public final class CfgGrammar extends GrammarBuilder {
                         return Optional.empty();
                     }
                     final String matched = matcher.group();
-                    if (options.epsilonNames().contains(matched)) {
+                    if (epsilonNames.contains(matched)) {
                         return Optional.empty();
                     }
-                    if (eofPossible && EOFTerm.text().equals(matched)) {
+                    if (EOFTerm.text().equals(matched)) {
                         return Optional.empty();
                     }
                     return Optional.of(matched);
@@ -317,14 +252,8 @@ public final class CfgGrammar extends GrammarBuilder {
      * @return A {@link Rule}.
      */
     private @NotNull Rule makeCfgRepRhs() {
-        final @NotNull Rule repRegexChoice;
-        if (!rulesAvailable.contains(RulesAvailable.OPTIONAL_REPETITION_STAR)) {
-            repRegexChoice =
-                    regex(Pattern.compile("\\d*\\*?\\d*"));
-        } else {
-            repRegexChoice =
-                    regex(Pattern.compile("\\d+(?:\\*\\d*)?|\\*\\d+"));
-        }
+        final @NotNull Rule repRegexChoice =
+                regex(Pattern.compile("\\d+(?:\\*\\d*)?|\\*\\d+"));
         final @NotNull Rule rulesRule =
                 concatNoEpsilonMoreThan1(List.of(
                         repRegexChoice,
@@ -425,19 +354,10 @@ public final class CfgGrammar extends GrammarBuilder {
     }
 
     private @NotNull Rule makeCfgAltOrOrdRhs() {
-        int i = 0;
-        Rule[] l = new Rule[2];
-
-        if (options.usableRules().contains(RulesAvailable.ALTERNATION))
-            l[i++] = nt("alt"); /// {@link #makeCfgAltRhs}
-        if (options.usableRules().contains(RulesAvailable.ORDERED_CHOICE))
-            l[i++] = nt("ord"); /// {@link #makeCfgOrdRhs}
-
-        if (i == 0) return onceOrMore(nt("cat")).hideTag(); /// {@link #makeCfgCatRhs}
-
-        if (i == 1) return buffer(l[0].hideTag());
-
-        final @NotNull Rule rulesRule = alternationGuaranteeDistinctAndNotEmpty(Arrays.asList(l)).hideTag();
+        final @NotNull Rule rulesRule = alternationGuaranteeDistinctAndNotEmpty(
+                List.of(nt("alt"), /// {@link #makeCfgAltRhs}
+                        nt("ord") /// {@link #makeCfgOrdRhs}
+                )).hideTag();
         return rulesRule;
     }
 
@@ -520,11 +440,11 @@ public final class CfgGrammar extends GrammarBuilder {
      * @return A {@link Rule}.
      */
     private @NotNull Rule makeCfgCatRhs() {
-        final @NotNull Rule factorLookNeg = alternationGuaranteeDistinctAndNotEmpty(cListOf(
+        final @NotNull Rule factorLookNeg = alternationGuaranteeDistinctAndNotEmpty(List.of(
                 factorNt, /// {@link #makeCfgFactorRhs}
-                makeNT("look", RulesAvailable.LOOKAHEAD), /// {@link #makeCfgLookRhs}
-                makeNT("neg", RulesAvailable.NEGATIVE_LOOKAHEAD), /// {@link #makeCfgNegRhs}
-                makeNT("exclude", RulesAvailable.EXCLUSION) /// {@link #makeCfgExclude}
+                nt("look"), /// {@link #makeCfgLookRhs}
+                nt("neg"), /// {@link #makeCfgNegRhs}
+                nt("exclude") /// {@link #makeCfgExclude}
         ));
         final @NotNull Rule rulesRule =
                 onceOrMore(
@@ -575,7 +495,7 @@ public final class CfgGrammar extends GrammarBuilder {
     }
 
     @Override
-    public void make() {
+    protected void make() {
         addProduction("rules", makeCfgRulesRhs());
         addProduction("comment", makeCfgCommentRhs());
         //addProduction("inside-comment"), g.makeCfgInsideCommentRhs());
@@ -592,48 +512,20 @@ public final class CfgGrammar extends GrammarBuilder {
         addProduction("factor", makeCfgFactorRhs());
         addProduction("rules-or-parser", makeCfgRulesOrParserRhs());
         addProduction("alt-or-ord", makeCfgAltOrOrdRhs());
-
-        if (rulesAvailable.contains(RulesAvailable.ALTERNATION))
-            addProduction("alt", makeCfgAltRhs());
-
-        if (rulesAvailable.contains(RulesAvailable.ORDERED_CHOICE))
-            addProduction("ord", makeCfgOrdRhs()); // Technically ABNF, but should be included without it as a PAKRAT extension.
-
-        if (rulesAvailable.contains(RulesAvailable.VARIABLE_REPEAT))
-            addProduction("rep", makeCfgRepRhs()); // ABNF
-
-        if (rulesAvailable.contains(RulesAvailable.REGEX))
-            addProduction("regexp", makeCfgRegexRhs());
-
-        if (rulesAvailable.contains(RulesAvailable.OPTIONAL))
-            addProduction("opt", makeCfgOptRhs());
-
-        if (rulesAvailable.contains(RulesAvailable.OPTIONAL_QUERY))
-            addProduction("opt_query", makeCfgOptQueryRhs());
-
-        if (rulesAvailable.contains(RulesAvailable.OPTIONAL_REPETITION_STAR))
-            addProduction("star", makeCfgZeroOrMoreStarRhs());
-
-        if (rulesAvailable.contains(RulesAvailable.OPTIONAL_REPETITION))
-            addProduction("opt_rep", makeCfgZeroOrMoreStdRhs());
-
-        if (rulesAvailable.contains(RulesAvailable.PLUS))
-            addProduction("plus", makeCfgPlusRhs());
-
-        if (rulesAvailable.contains(RulesAvailable.LOOKAHEAD))
-            addProduction("look", makeCfgLookRhs());
-
-        if (rulesAvailable.contains(RulesAvailable.NEGATIVE_LOOKAHEAD))
-            addProduction("neg", makeCfgNegRhs());
-
-        if (rulesAvailable.contains(RulesAvailable.VALUE_RANGE))
-            addProduction("abnf-range", makeABNFValueRange()); // ABNF
-
-        if (rulesAvailable.contains(RulesAvailable.EXCLUSION))
-            addProduction("exclude", makeCfgExclude());
-
-        if (rulesAvailable.contains(RulesAvailable.EXPLICIT_EOF))
-            addProduction("eof", makeEofRhs());
+        addProduction("alt", makeCfgAltRhs());
+        addProduction("ord", makeCfgOrdRhs()); // PEG extension.
+        addProduction("rep", makeCfgRepRhs()); // ABNF
+        addProduction("regexp", makeCfgRegexRhs());
+        addProduction("opt", makeCfgOptRhs());
+        addProduction("opt_query", makeCfgOptQueryRhs());
+        addProduction("star", makeCfgZeroOrMoreStarRhs());
+        addProduction("opt_rep", makeCfgZeroOrMoreStdRhs());
+        addProduction("plus", makeCfgPlusRhs());
+        addProduction("look", makeCfgLookRhs());
+        addProduction("neg", makeCfgNegRhs());
+        addProduction("abnf-range", makeABNFValueRange()); // ABNF
+        addProduction("exclude", makeCfgExclude());
+        addProduction("eof", makeEofRhs());
     }
 
     /**

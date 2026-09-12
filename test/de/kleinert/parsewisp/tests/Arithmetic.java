@@ -3,7 +3,6 @@ package de.kleinert.parsewisp.tests;
 import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
 import de.kleinert.parsewisp.parser_options.ParsingOptions;
-import de.kleinert.parsewisp.parser_options.RulesAvailable;
 import de.kleinert.parsewisp.result.ParseResult;
 import org.jetbrains.annotations.NotNull;
 
@@ -207,9 +206,7 @@ public class Arithmetic {
                 Number     = ('+' | '-')? Digit+
                 <Digit>    = %d48-57 (* same as %x30-39 *)
                 """;
-        var options = ParserCreationOptions
-                .newWithStandardWhitespace()
-                .addAvailableRule(RulesAvailable.VALUE_RANGE);
+        var options = ParserCreationOptions.newWithStandardWhitespace();
         var p = Parsewisp.parser(g, options);
 
         return p.parse("(8 - 9) * -20 / 18 + 1", ParsingOptions.getDefault());

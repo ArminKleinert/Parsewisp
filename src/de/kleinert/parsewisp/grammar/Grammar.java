@@ -341,63 +341,6 @@ public final class Grammar extends LinkedHashMap<@NotNull Sym, Rule> {
             }
         }
 
-//        /**
-//         * Check whether a grammar can create an infinite number of empty matches through recursion or repetition.
-//         * <p>
-//         * Algorithm outline:
-//         * - {@link AlternationRule}: If any branch can result in an infinite number of trees.
-//         * - {@link ConcatRule}:
-//         *
-//         * @param start
-//         * @return
-//         */
-//        public boolean infiniteEmptyRecursionPossible(final Sym start) {
-//            return infiniteEmptyRecursionPossible(grammar.getProduction(start), new HashMap<>());
-//        }
-//
-//        public boolean infiniteEmptyRecursionPossible(final Rule start, Map<Rule, Boolean> searched) {
-//            if (searched.containsKey(start)) {
-//                return searched.get(start);
-//            }
-//
-//            final boolean res;
-//
-//            if (start instanceof OrderedChoiceRule) {
-//                var children = ((RuleWithManyChildren) start).getRules();
-//                res = children.stream().anyMatch(it -> infiniteEmptyRecursionPossible(it, searched));
-//            } else if (start instanceof AlternationRule) {
-//                var children = ((RuleWithManyChildren) start).getRules();
-//                res = children.stream().anyMatch(it -> infiniteEmptyRecursionPossible(it, searched));
-//            } else if (start instanceof ConcatRule) {
-//                res = ((ConcatRule) start).getRules().stream().allMatch(it -> infiniteEmptyRecursionPossible(it, searched));
-//            } else if (start instanceof EpsilonTerm || start instanceof OptionalRule || start instanceof ZeroOrMoreRule) {
-//                res = true;
-//            } else if (start instanceof VariableRepetitionRule) {
-//                res = ((VariableRepetitionRule) start).getMin() == 0;
-//            } else if (start instanceof RegexTerm) {
-//                res = ((RegexTerm) start).getRegexp().matcher("").matches();
-//            } else if (start instanceof NonTerminal) {
-//                res = infiniteEmptyRecursionPossible(grammar.getProduction(((NonTerminal) start).getKeyword()), searched);
-//            } else if (start instanceof ExclusionRule) {
-//                res = infiniteEmptyRecursionPossible(((ExclusionRule) start).getParserExpected(), searched)
-//                        && !infiniteEmptyRecursionPossible(((ExclusionRule) start).getParserExcluded(), searched);
-//            } else if (start instanceof StringTerm) {
-//                res = ((StringTerm) start).getString().isEmpty();
-//            } else if (start instanceof ValueRangeTerm) {
-//                res = ((ValueRangeTerm) start).getLo() == 0;
-//            } else if (start instanceof LookaheadRule) {
-//                res = infiniteEmptyRecursionPossible(((LookaheadRule) start).getRule(), searched);
-//            } else if (start instanceof NegativeLookaheadRule) {
-//                res = !infiniteEmptyRecursionPossible(((NegativeLookaheadRule) start).getRule(), searched);
-//            } else {
-//                res = false;
-//            }
-//
-//
-//            searched.put(start, res);
-//            return res;
-//        }
-
         @Override
         public @NotNull String toString() {
             return "GrammarInfo[" +

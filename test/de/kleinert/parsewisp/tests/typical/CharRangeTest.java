@@ -2,7 +2,6 @@ package de.kleinert.parsewisp.tests.typical;
 
 import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.Sym;
-import de.kleinert.parsewisp.parser_options.RulesAvailable;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
 import de.kleinert.parsewisp.testutil.PT;
 import org.junit.jupiter.api.Assertions;
@@ -11,7 +10,7 @@ import org.junit.jupiter.api.Test;
 class CharRangeTest {
 
     private final ParserCreationOptions options =
-            ParserCreationOptions.getDefault().addAvailableRule(RulesAvailable.VALUE_RANGE);
+            ParserCreationOptions.getDefault();
 
     @Test
     void unicodeCodepointSingleParse() {
