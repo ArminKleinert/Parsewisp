@@ -4,7 +4,6 @@ import de.kleinert.parsewisp.error.*;
 import de.kleinert.parsewisp.grammar.*;
 import de.kleinert.parsewisp.parser.Parser;
 import de.kleinert.parsewisp.parser_options.*;
-import de.kleinert.parsewisp.result.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -73,8 +72,8 @@ public final class Parsewisp {
         if (options == null)
             options = ParserCreationOptions.getDefault();
 
-        if (options.startProduction() != null && !grammar.containsKey(options.startProduction()))
-            throw new ParserCreationFailure("The start production " + options.startProduction() + " is not in the grammar.");
+        if (options.getStartProduction() != null && !grammar.containsKey(options.getStartProduction()))
+            throw new ParserCreationFailure("The start production " + options.getStartProduction() + " is not in the grammar.");
 
         try {
             var builder = new GrammarBuilder(options) {
@@ -83,10 +82,10 @@ public final class Parsewisp {
                 }
             };
 
-            var g = builder.buildWithWhitespace(grammar, options.whitespaceParser());
+            var g = builder.buildWithWhitespace(grammar, options.getWhitespaceParser());
 
-            var start = options.startProduction() != null
-                    ? options.startProduction()
+            var start = options.getStartProduction() != null
+                    ? options.getStartProduction()
                     : grammar.getStartSym();
             return new Parser(g, start);
         } catch (IllegalGrammarException exception) {

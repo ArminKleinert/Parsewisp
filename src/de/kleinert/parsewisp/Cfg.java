@@ -118,7 +118,7 @@ final class Cfg {
                         return ordAlt(tree
                                 .getContent()
                                 .stream()
-                                .map((c) -> buildRule((ParseTree) c.content()))
+                                .map((c) -> (Rule) buildRule((ParseTree) c.content()))
                                 .toList());
                     }
                     case "hide" -> {
@@ -161,7 +161,7 @@ final class Cfg {
                                         tree.getContent().get(0).content()));
                     }
                     case "neg" -> {
-                        return neg(buildRule(
+                        return neg((Rule) buildRule(
                                 (ParseTree) tree.getContent().get(0).content()));
                     }
                     case "opt", "opt_query" -> {
@@ -177,7 +177,7 @@ final class Cfg {
                                 (ParseTree) tree.getContent().get(0).content()));
                     }
                     case "look" -> {
-                        return look(buildRule(
+                        return look((Rule) buildRule(
                                 (ParseTree) tree.getContent().get(0).content()));
                     }
                     case "rep" -> {

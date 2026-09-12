@@ -28,8 +28,8 @@ class GrammarBuilderTest {
         var gFromGB = new GrammarBuilder(ParserCreationOptions.getDefault()) {
             @Override
             protected void make() {
-                addProduction("S", cat(Sym.sym("NUMBER"), repMin(nt(Sym.sym("NUMBER")), 0)));
-                addProduction("NUMBER", alt("0", "1", "2", "3", "4", "5", "6", "7", "8", "9"));
+                addProduction("S", cat(nt("NUMBER"), repMin(nt(Sym.sym("NUMBER")), 0)));
+                addProduction("NUMBER", altList(Stream.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9").map(this::stringCS).toList()));
             }
         }.build();
 
@@ -55,8 +55,8 @@ class GrammarBuilderTest {
         var pFromGB = new GrammarBuilder(ParserCreationOptions.getDefault()) {
             @Override
             protected void make() {
-                addProduction("S", cat(Sym.sym("NUMBER"), zeroOrMore(nt(Sym.sym("NUMBER")))));
-                addProduction("NUMBER", alt("0", "1", "2", "3", "4", "5", "6", "7", "8", "9"));
+                addProduction("S", cat(nt("NUMBER"), zeroOrMore(nt(Sym.sym("NUMBER")))));
+                addProduction("NUMBER", altList(Stream.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9").map(this::stringCS).toList()));
             }
         }.build();
 
@@ -70,10 +70,9 @@ class GrammarBuilderTest {
             @Override
             protected void make() {
                 addProduction("S", ordAlt(List.of(
-                        Sym.sym("A"), Sym.sym("B"), Sym.sym("C"), Sym.sym("D"),
-                        Sym.sym("E"), Sym.sym("F"), Sym.sym("G"), Sym.sym("H"),
-                        Sym.sym("I"),
-                        eof())
+                        nt("A"), nt("B"), nt("C"), nt("D"),
+                        nt("E"), nt("F"), nt("G"), nt("H"),
+                        nt("I"), eof())
                 ));
                 addProduction("A", cat(rep(regex("[0-9_]"), 1, Integer.MAX_VALUE)));
                 addProduction("B", cat(regex("[0-9_]"), repMax(regex("[0-9_]"), Integer.MAX_VALUE)));

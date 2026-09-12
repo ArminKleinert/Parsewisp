@@ -3,7 +3,6 @@ package de.kleinert.parsewisp.tests.typical;
 import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.testutil.PT;
-import de.kleinert.parsewisp.result.ParseTree;
 import de.kleinert.parsewisp.util.Transform;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -99,10 +98,10 @@ class TransformTest {
         );
 
         Assertions.assertEquals(
-                PT.create("S", "6"),
+                List.of(Sym.sym("S"), "6"),
                 Transform.transform(tree, transformMap));
         Assertions.assertEquals(
-                PT.create("S", "6"),
-                Transform.transform(tree, transformMap, (o) -> (ParseTree) o));
+                List.of(Sym.sym("S"), "6"),
+                Transform.transform(tree, transformMap, (o) -> (List<?>) o));
     }
 }

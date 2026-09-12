@@ -175,7 +175,7 @@ class ParsewispTest {
             final var opts = ParserCreationOptions.getDefault().withStartProduction(Sym.sym("B"));
             final @NotNull var p = Parsewisp.parser("A = 'a'\nB = 'b'", opts);
 
-            Assertions.assertEquals(p.startProduction(), opts.startProduction());
+            Assertions.assertEquals(p.startProduction(), opts.getStartProduction());
 
             Assertions.assertTrue(p.parse("a", ParsingOptions.getDefault()).isFailure());
             Assertions.assertEquals(PT.create("B", "b"), p.parse("b", ParsingOptions.getDefault()));

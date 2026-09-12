@@ -9,17 +9,9 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.*;
 
-/// **
-// * This class provides options for creating {@link Parser} instances.
-// *
-// * @param whitespaceParser   A parser which is used to ignore whitespaces between words or characters. This parser is merged into the new parser when the creation options are used.
-// * @param startProduction    The starting production name of the parser.
-// * @param redefinitionOption Sets what to do when a production appears twice in the definition.
-// * @param usableRules        A Set of rules that can be used when building the parser. See {@link RulesAvailable}.
-// * @param checkCorrectness   Whether to check the correctness of the grammar when creating the parser.
-// * @param ruleDefinitionOpts A collection of possible "definition operators" for rules.
-// * @param epsilonNames       A collection of possible epsilon names. If null, use {@link #defaultEpsilonNames()}.
-// */
+/**
+ * This class provides options for creating {@link Parser} instances.
+ */
 @Unmodifiable
 public class ParserCreationOptions {
     private final @Nullable Parser whitespaceParser;
@@ -27,6 +19,14 @@ public class ParserCreationOptions {
     private final @NotNull RedefinitionOption redefinitionOption;
     private final boolean checkCorrectness;
 
+    /**
+     * Constructor.
+     *
+     * @param whitespaceParser   A parser which is used to ignore whitespaces between words or characters. This parser is merged into the new parser when the creation options are used. If null, no such parser is used.
+     * @param startProduction    The starting production name of the parser. If null, the first defined production is used.
+     * @param redefinitionOption Sets what to do when a production appears twice in the definition.
+     * @param checkCorrectness   Whether to check the correctness of the grammar when creating the parser.
+     */
     public ParserCreationOptions(@Nullable Parser whitespaceParser,
                                  @Nullable Sym startProduction,
                                  @NotNull RedefinitionOption redefinitionOption,
@@ -37,19 +37,40 @@ public class ParserCreationOptions {
         this.checkCorrectness = checkCorrectness;
     }
 
-    public @Nullable Parser whitespaceParser() {
+    /**
+     * A parser which is used to ignore whitespaces between words or characters. This parser is merged into the new parser when the creation options are used. If null, no such parser is used.
+     *
+     * @return A {@link Parser} or null.
+     */
+    public @Nullable Parser getWhitespaceParser() {
         return whitespaceParser;
     }
 
-    public @Nullable Sym startProduction() {
+    /**
+     * The starting production name of the parser. If null, the first defined production is used.
+     *
+     * @return A symbol which should be the left-hand side of a production in the grammar.
+     */
+    public @Nullable Sym getStartProduction() {
         return startProduction;
     }
 
-    public @NotNull RedefinitionOption redefinitionOption() {
+    /**
+     * What to do when a production appears twice or more often in the definition.
+     *
+     * @return A {@link RedefinitionOption}
+     * @see RedefinitionOption
+     */
+    public @NotNull RedefinitionOption getRedefinitionOption() {
         return redefinitionOption;
     }
 
-    public boolean checkCorrectness() {
+    /**
+     * Whether to check the correctness of the grammar when creating the parser.
+     *
+     * @return true or false
+     */
+    public boolean doCheckCorrectness() {
         return checkCorrectness;
     }
 
@@ -69,12 +90,10 @@ public class ParserCreationOptions {
             final @Nullable Sym startProduction,
             final @Nullable RedefinitionOption redefinitionOption,
             final boolean checkCorrectness) {
-        var redefinitionOption1 = redefinitionOption == null
-                ? RedefinitionOption.defaultOption
-                : redefinitionOption;
-
         return new ParserCreationOptions(
-                whitespaceParser, startProduction, redefinitionOption1,
+                whitespaceParser, startProduction, redefinitionOption == null
+                ? RedefinitionOption.defaultOption
+                : redefinitionOption,
                 checkCorrectness);
     }
 
@@ -86,7 +105,7 @@ public class ParserCreationOptions {
      */
     public @NotNull ParserCreationOptions withWhitespaceParser(
             final @Nullable Parser whitespaceParser) {
-        if (Objects.equals(this.whitespaceParser(), whitespaceParser))
+        if (Objects.equals(this.getWhitespaceParser(), whitespaceParser))
             return this;
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction,
@@ -102,7 +121,7 @@ public class ParserCreationOptions {
      */
     public @NotNull ParserCreationOptions withStartProduction(
             final @Nullable Sym startProduction) {
-        if (Objects.equals(this.startProduction(), startProduction))
+        if (Objects.equals(this.getStartProduction(), startProduction))
             return this;
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction,
@@ -125,9 +144,9 @@ public class ParserCreationOptions {
     }
 
     /**
-     * Creates a new instance with {@link ParserCreationOptions#checkCorrectness()} set to the parameter.
+     * Creates a new instance with {@link ParserCreationOptions#doCheckCorrectness()} set to the parameter.
      *
-     * @param checkCorrectness The new setting for {@link ParserCreationOptions#checkCorrectness()}.
+     * @param checkCorrectness The new setting for {@link ParserCreationOptions#doCheckCorrectness()}.
      * @return A new instance.
      */
     public @NotNull ParserCreationOptions withCorrectnessCheck(

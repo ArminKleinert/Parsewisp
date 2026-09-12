@@ -4,6 +4,7 @@ import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.result.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -153,7 +154,10 @@ public final class Transform {
         if (transformFn != null) {
             result = transformFn.apply(transformedNodes);
         } else {
-            result = ParseTree.create(parseTree.getTag().content(), transformedNodes);
+            var resultL = new ArrayList<>();
+            resultL.add(tagSym);
+            resultL.addAll(transformedNodes);
+            result = resultL;
         }
         return result;
     }

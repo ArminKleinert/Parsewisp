@@ -49,7 +49,7 @@ public final class TimeUtil {
      * @param f Code to run.
      * @return The average time in milliseconds. Outlier times are removed.
      */
-    public static @NotNull double measureTimeMillisMean(final int n, final @NotNull Procedure f) {
+    public static double measureTimeMillisMean(final int n, final @NotNull Procedure f) {
         if (n < 1)
             throw new IllegalArgumentException();
 

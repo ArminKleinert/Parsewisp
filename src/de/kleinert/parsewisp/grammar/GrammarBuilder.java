@@ -91,7 +91,7 @@ public abstract class GrammarBuilder {
 
             make();
 
-            var optStart = options.startProduction();
+            var optStart = options.getStartProduction();
             if (optStart ==null) {
                 start = productions.keySet().iterator().next();
             } else {
@@ -108,7 +108,7 @@ public abstract class GrammarBuilder {
 
         var g = new Grammar(start, productions);
 
-        if (options.checkCorrectness()) {
+        if (options.doCheckCorrectness()) {
             final @NotNull var analysisResult = g.analyze();
             if (!analysisResult.isValid())
                 throw new IllegalGrammarException(
@@ -141,7 +141,7 @@ public abstract class GrammarBuilder {
     }
 
     /**
-     * Adds a production to the output. The specific behavior depends on the {@link ParserCreationOptions#redefinitionOption()} used.
+     * Adds a production to the output. The specific behavior depends on the {@link ParserCreationOptions#getRedefinitionOption()} used.
      *
      * @param lhs The production's key. (left-hand-side)
      * @param rhs The production's right-hand-side.
@@ -152,7 +152,7 @@ public abstract class GrammarBuilder {
         if (existing == null)
             return;
 
-        switch (options.redefinitionOption()) {
+        switch (options.getRedefinitionOption()) {
             case OVERRIDE -> productions.put(lhs, rhs);
             case ERROR -> throw new IllegalArgumentException(
                     "Production already in grammar: " + lhs);
@@ -183,7 +183,7 @@ public abstract class GrammarBuilder {
      * <li>For {@code Pattern}, use {@link #regex(Pattern)}.</li>
      * <li>For {@code Sym}, use {@link #nt(Sym)}.</li>
      * <li>For {@code List}, use {@link #cat(List)}.</li>
-     * <li>For {@code Set}, use {@link #alt(Object, Object...)}.</li>
+     * <li>For {@code Set}, use {@link #alt(Rule, Rule...)}.</li>
      * </ul>
      *
      * @param c Input object.
@@ -242,9 +242,8 @@ public abstract class GrammarBuilder {
      * @param input The rule to look for.
      * @return The new rule.
      */
-    protected final @NotNull Rule look(final @NotNull Object input) {
-        var rule = of(input);
-        return LookaheadRule.create(rule);
+    protected final @NotNull Rule look(final @NotNull Rule input) {
+        return LookaheadRule.create(input);
     }
 
     /**
@@ -254,9 +253,8 @@ public abstract class GrammarBuilder {
      * @param input The rule to avoid.
      * @return The new rule.
      */
-    protected final @NotNull Rule neg(final @NotNull Object input) {
-        var rule = of(input);
-        return NegativeLookaheadRule.create(rule);
+    protected final @NotNull Rule neg(final @NotNull Rule input) {
+        return NegativeLookaheadRule.create(input);
     }
 
     /**
@@ -293,9 +291,8 @@ public abstract class GrammarBuilder {
      * @param inputRules The parsers for the output.
      * @return A rule.
      */
-    protected final @NotNull Rule ordAlt(final @NotNull List<Object> inputRules) {
-        final @NotNull var result = OrderedChoiceRule.create(inputRules.stream().map(this::of).toList());
-        return result;
+    protected final @NotNull Rule ordAlt(final @NotNull List<Rule> inputRules) {
+        return OrderedChoiceRule.create(inputRules);
     }
 
     /**
@@ -370,8 +367,8 @@ public abstract class GrammarBuilder {
      * @param o The input.
      * @return A copy of the input for which {@link Rule#isHidden} returns true.
      */
-    protected final @NotNull Rule hide(final @NotNull Object o) {
-        return of(o).enableHideTag();
+    protected final @NotNull Rule hide(final @NotNull Rule o) {
+        return o.enableHideTag();
     }
 
     /**
@@ -402,17 +399,11 @@ public abstract class GrammarBuilder {
      *
      * @param rule  First rule for the output.
      * @param rules More rules for the output.
-     * @param <T>   Type for the rules.
      * @return A rule.
      */
-    @SafeVarargs
-    protected final <T> @NotNull Rule cat(
-            final @Nullable T rule, final @Nullable T... rules) {
-        return cat(Stream.concat(
-                        Stream.of(rule),
-                        Arrays.stream(rules))
-                .map(this::of)
-                .toList());
+    protected final @NotNull Rule cat(
+            final @NotNull Rule rule, final @NotNull Rule... rules) {
+        return cat(Stream.concat(Stream.of(rule), Arrays.stream(rules)).toList());
     }
 
     /**
@@ -455,13 +446,27 @@ public abstract class GrammarBuilder {
      * @return A rule.
      */
     protected final @NotNull Rule alt(
-            final @NotNull Object rule, final @NotNull Object... rules) {
+            final @NotNull Rule rule, final @NotNull Rule... rules) {
         final @NotNull List<@NotNull Rule> result = Stream
                 .concat(Stream.of(rule), Arrays.stream(rules))
-                .map(this::of)
                 .distinct()
                 .toList();
         return altList(result);
+    }
+
+    /**
+     * Creates a {@link AlternationRule}.
+     * <ul>
+     * <li>If the argument List is empty, a {@link EpsilonTerm} is returned instead.</li>
+     * <li>If there is only one element in the list, it is returned.</li>
+     * <li>Otherwise, returns a {@link AlternationRule}, as expected.</li>
+     * </ul>
+     *
+     * @param rules The rules for the output.
+     * @return A rule.
+     */
+    protected final @NotNull Rule alt(final @NotNull List<Rule> rules) {
+        return altList(rules);
     }
 
     /**
