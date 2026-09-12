@@ -27,7 +27,7 @@ class GrammarBuilderTest {
                 .grammar();
         var gFromGB = new GrammarBuilder(ParserCreationOptions.getDefault()) {
             @Override
-            public void make() {
+            protected void make() {
                 addProduction("S", cat(Sym.sym("NUMBER"), repMin(nt(Sym.sym("NUMBER")), 0)));
                 addProduction("NUMBER", alt("0", "1", "2", "3", "4", "5", "6", "7", "8", "9"));
             }
@@ -54,7 +54,7 @@ class GrammarBuilderTest {
 
         var pFromGB = new GrammarBuilder(ParserCreationOptions.getDefault()) {
             @Override
-            public void make() {
+            protected void make() {
                 addProduction("S", cat(Sym.sym("NUMBER"), zeroOrMore(nt(Sym.sym("NUMBER")))));
                 addProduction("NUMBER", alt("0", "1", "2", "3", "4", "5", "6", "7", "8", "9"));
             }
@@ -68,7 +68,7 @@ class GrammarBuilderTest {
         // A grammar which has 9 different ways to match at least one number/underscore.
         var gFromGB = new GrammarBuilder(ParserCreationOptions.getDefault()) {
             @Override
-            public void make() {
+            protected void make() {
                 addProduction("S", ordAlt(List.of(
                         Sym.sym("A"), Sym.sym("B"), Sym.sym("C"), Sym.sym("D"),
                         Sym.sym("E"), Sym.sym("F"), Sym.sym("G"), Sym.sym("H"),

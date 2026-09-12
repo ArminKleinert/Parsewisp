@@ -79,7 +79,7 @@ public final class Parsewisp {
         try {
             var builder = new GrammarBuilder(options) {
                 @Override
-                public void make() {
+                protected void make() {
                 }
             };
 

@@ -236,7 +236,7 @@ final class Cfg {
         }
 
         @Override
-        public void make() {
+        protected void make() {
             final @NotNull ParseResult rules = Gll.parse(
                     grammarGrammar,
                     Sym.sym("rules"),

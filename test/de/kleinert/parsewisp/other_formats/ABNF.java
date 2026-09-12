@@ -27,16 +27,16 @@ public class ABNF {
     }
 
     public static class ABNFOptions extends ParserCreationOptions {
-            @Nullable Parser whitespaceParser;
-            @Nullable Sym startProduction;
-            boolean allowLookaheadAndNegations;
+        @Nullable Parser whitespaceParser;
+        @Nullable Sym startProduction;
+        boolean allowLookaheadAndNegations;
 
-                    public ABNFOptions(            @Nullable Parser whitespaceParser,
-                                                   @Nullable Sym startProduction,
-                                                   boolean allowLookaheadAndNegations) {
-                        super(whitespaceParser,startProduction,RedefinitionOption.CHOICE, true, List.of("="));
-                this. allowLookaheadAndNegations= allowLookaheadAndNegations;
-                    }
+        public ABNFOptions(@Nullable Parser whitespaceParser,
+                           @Nullable Sym startProduction,
+                           boolean allowLookaheadAndNegations) {
+            super(whitespaceParser, startProduction, RedefinitionOption.CHOICE, true, List.of("="));
+            this.allowLookaheadAndNegations = allowLookaheadAndNegations;
+        }
     }
 
     public static @NotNull Parser parser(@NotNull String grammar) {
@@ -64,7 +64,7 @@ public class ABNF {
 
 
     private @NotNull Grammar transform(final @NotNull ParseTree parsedAbnfGrammar, ABNFOptions abnfOptions) {
-        return new Transformer(parsedAbnfGrammar,  abnfOptions).build();
+        return new Transformer(parsedAbnfGrammar, abnfOptions).build();
     }
 
     private static class Transformer extends GrammarBuilder {
@@ -323,7 +323,7 @@ public class ABNF {
         Rule newline = regex(Pattern.compile("\\r?\\n"));
 
         @Override
-        public void make() {
+        protected void make() {
             // rulelist       =  1*( rule / (*WSP c-nl) )
             addProduction(
                     rulelist.getKeyword(),

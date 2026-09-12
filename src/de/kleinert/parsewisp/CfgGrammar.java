@@ -177,22 +177,17 @@ public final class CfgGrammar extends GrammarBuilder {
      * @return A {@link Rule}.
      */
     private @NotNull Rule makeCfgStringRhs() {
-        final boolean hasCiPrefixAvailable =
-                true;
+        final @NotNull String doubleQuoteStringPrefixed =
+                "(%[is])?\\\"[^\\\"\\\\]*(?:\\\\.[^\\\"\\\\]*)*\\\"";
+        final @NotNull String singleQuoteStringPrefixed =
+                "(%[is])?'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'";
 
-        final @NotNull String doubleQuoteString = "\\\"[^\\\"\\\\]*(?:\\\\.[^\\\"\\\\]*)*\\\"";
-        final @NotNull String doubleQuoteStringPrefixed = "(%[is])?" + doubleQuoteString;
-        final @NotNull String singleQuoteString = "'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'";
-        final @NotNull String singleQuoteStringPrefixed = "(%[is])?" + singleQuoteString;
-
-        final @NotNull Pattern doubleQuotedString = hasCiPrefixAvailable
-                ? regexDoc(doubleQuoteStringPrefixed, "Prefixed double-quoted string")
-                : regexDoc(doubleQuoteString, "Double-quoted string");
+        final @NotNull Pattern doubleQuotedString = regexDoc(
+                doubleQuoteStringPrefixed, "Prefixed double-quoted string");
         var doubleQuoteStringRegexRule = regex(doubleQuotedString);
 
-        final @NotNull Pattern singleQuotedString = hasCiPrefixAvailable
-                ? regexDoc(singleQuoteStringPrefixed, "Prefixed single-quoted string")
-                : regexDoc(singleQuoteString, "Single-quoted string");
+        final @NotNull Pattern singleQuotedString = regexDoc(
+                singleQuoteStringPrefixed, "Prefixed single-quoted string");
 
         return altList(List.of(
                 doubleQuoteStringRegexRule,
@@ -502,7 +497,7 @@ public final class CfgGrammar extends GrammarBuilder {
     }
 
     @Override
-    public void make() {
+    protected void make() {
         addProduction("rules", makeCfgRulesRhs());
         addProduction("comment", makeCfgCommentRhs());
         //addProduction("inside-comment"), g.makeCfgInsideCommentRhs());
