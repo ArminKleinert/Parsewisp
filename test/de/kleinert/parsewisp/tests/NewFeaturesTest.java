@@ -4,7 +4,6 @@ import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.parser.Parser;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
 import de.kleinert.parsewisp.parser_options.ParsingOptions;
-import de.kleinert.parsewisp.parser_options.RulesAvailable;
 import de.kleinert.parsewisp.testutil.PT;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
@@ -187,9 +186,7 @@ class NewFeaturesTest {
 
     @Test
     void exclusionFullTest1() {
-        var p6 = Parsewisp.parser(
-                "S := #'[0-9]+' - ('11' | '13')",
-                ParserCreationOptions.getDefault().addAvailableRule(RulesAvailable.EXCLUSION));
+        var p6 = Parsewisp.parser("S := #'[0-9]+' - ('11' | '13')");
         System.out.println(p6);
         System.out.println("---");
         System.out.println(p6.parse("12"));
@@ -199,9 +196,7 @@ class NewFeaturesTest {
 
     @Test
     void exclusionFullTest() {
-        var p6 = Parsewisp.parser(
-                "S := #'[0-9]+' - '11'",
-                ParserCreationOptions.getDefault().addAvailableRule(RulesAvailable.EXCLUSION));
+        var p6 = Parsewisp.parser("S := #'[0-9]+' - '11'");
         System.out.println(p6);
         System.out.println("---");
         System.out.println(p6.parse("12"));
@@ -211,9 +206,7 @@ class NewFeaturesTest {
 
     @Test
     void exclusionTest() {
-        var p6 = Parsewisp.parser(
-                "S := #'[0-9]+' - '11' 'a'",
-                ParserCreationOptions.getDefault().addAvailableRule(RulesAvailable.EXCLUSION));
+        var p6 = Parsewisp.parser("S := #'[0-9]+' - '11' 'a'");
         System.out.println(p6);
         System.out.println("---");
         System.out.println(p6.parse("12a"));

@@ -117,7 +117,6 @@ class ParsewispParserCreationTest {
             final @NotNull var options = ParserCreationOptions.create(
                     null, Sym.sym("C"),
                     null,
-                    null,
                     true,
                     null);
             Assertions.assertThrows(

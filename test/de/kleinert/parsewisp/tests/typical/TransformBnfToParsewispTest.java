@@ -5,7 +5,6 @@ import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.grammar.Grammar;
 import de.kleinert.parsewisp.parser.Parser;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
-import de.kleinert.parsewisp.parser_options.RulesAvailable;
 import de.kleinert.parsewisp.parsing.*;
 import de.kleinert.parsewisp.result.ParseResult;
 import de.kleinert.parsewisp.testutil.PT;
@@ -26,9 +25,7 @@ import java.util.stream.Stream;
 class TransformBnfToParsewispTest {
     private @NotNull Parser parser() {
         try {
-            var opts = ParserCreationOptions.getDefault()
-                    .addAvailableRule(RulesAvailable.EXPLICIT_EOF)
-                    .withRuleDefinitionOps(Set.of("::="));
+            var opts = ParserCreationOptions.getDefault();
             return Parsewisp.parser(
                     Files.readString(Path.of("testres/grammars/bnf.g")),
                     opts

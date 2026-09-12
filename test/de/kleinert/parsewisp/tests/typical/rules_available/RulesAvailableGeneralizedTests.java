@@ -5,11 +5,9 @@ import de.kleinert.parsewisp.error.IllegalGrammarException;
 import de.kleinert.parsewisp.error.ParserCreationFailure;
 import de.kleinert.parsewisp.parser.Parser;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
-import de.kleinert.parsewisp.parser_options.RulesAvailable;
 import de.kleinert.parsewisp.testutil.PT;
 import org.junit.jupiter.api.Assertions;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -351,11 +349,7 @@ class RulesAvailableGeneralizedTests {
         Assertions.assertDoesNotThrow(() -> ParsewispParser("S = 1* \"a\"", opts));
         Assertions.assertDoesNotThrow(() -> ParsewispParser("S = *5 \"a\"", opts));
 
-        var optsWithStar = opts.addAvailableRule(RulesAvailable.OPTIONAL_REPETITION_STAR);
-        Assertions.assertThrows(ParserCreationFailure.class, () -> ParsewispParser("S = * \"a\"", optsWithStar));
-
-        var optsWithoutStar = opts.removeAvailableRule(RulesAvailable.OPTIONAL_REPETITION_STAR);
-        Assertions.assertDoesNotThrow(() -> ParsewispParser("S = * \"a\"", optsWithoutStar));
+        Assertions.assertThrows(ParserCreationFailure.class, () -> ParsewispParser("S = * \"a\"", opts));
 
         var p = ParsewispParser("S = 1*3 \"a\" \"b\"", opts);
         Assertions.assertTrue(p.parse("a").isFailure());
@@ -378,25 +372,23 @@ class RulesAvailableGeneralizedTests {
     private static void exclusionAvailable(ParserCreationOptions opts, boolean run) {
         if (!run) return;
 
-        var optsAndRegex = opts.addAvailableRule(RulesAvailable.REGEX);
+        Assertions.assertDoesNotThrow(() -> ParsewispParser("S = #'[0-9]+' - '1'", opts));
+        Assertions.assertDoesNotThrow(() -> ParsewispParser("S = #'[0-9]+' - ('1' | '11' | '111')", opts));
+        Assertions.assertDoesNotThrow(() -> ParsewispParser("S = #'[0-9]+' - (#'[1]+' - '11')", opts));
 
-        Assertions.assertDoesNotThrow(() -> ParsewispParser("S = #'[0-9]+' - '1'", optsAndRegex));
-        Assertions.assertDoesNotThrow(() -> ParsewispParser("S = #'[0-9]+' - ('1' | '11' | '111')", optsAndRegex));
-        Assertions.assertDoesNotThrow(() -> ParsewispParser("S = #'[0-9]+' - (#'[1]+' - '11')", optsAndRegex));
-
-        var p = ParsewispParser("S = #'[0-9]+' - '1'", optsAndRegex);
+        var p = ParsewispParser("S = #'[0-9]+' - '1'", opts);
         Assertions.assertTrue(p.parse("1").isFailure());
         Assertions.assertEquals(PT.create("S", "11"), p.parse("11"));
         Assertions.assertEquals(PT.create("S", "1111"), p.parse("1111"));
         Assertions.assertEquals(PT.create("S", "2"), p.parse("2"));
 
-        p = ParsewispParser("S = #'[0-9]+' - ('1' | '11' | '111')", optsAndRegex);
+        p = ParsewispParser("S = #'[0-9]+' - ('1' | '11' | '111')", opts);
         Assertions.assertTrue(p.parse("1").isFailure());
         Assertions.assertTrue(p.parse("11").isFailure());
         Assertions.assertEquals(PT.create("S", "1111"), p.parse("1111"));
         Assertions.assertEquals(PT.create("S", "2"), p.parse("2"));
 
-        p = ParsewispParser("S = #'[0-9]+' - (#'[1]+' - '11')", optsAndRegex);
+        p = ParsewispParser("S = #'[0-9]+' - (#'[1]+' - '11')", opts);
         Assertions.assertTrue(p.parse("1").isFailure());
         Assertions.assertEquals(PT.create("S", "11"), p.parse("11"));
         Assertions.assertTrue(p.parse("1111").isFailure());
@@ -406,13 +398,12 @@ class RulesAvailableGeneralizedTests {
     private static void exclusionUnavailable(ParserCreationOptions opts, boolean run) {
         if (!run) return;
 
-        var optsAndRegex = opts.addAvailableRule(RulesAvailable.REGEX);
         Assertions.assertThrows(ParserCreationFailure.class, () ->
-                ParsewispParser("S = #'[0-9]+' - '1'", optsAndRegex));
+                ParsewispParser("S = #'[0-9]+' - '1'", opts));
         Assertions.assertThrows(ParserCreationFailure.class, () ->
-                ParsewispParser("S = #'[0-9]+' - ('1' | '11' | '111')", optsAndRegex));
+                ParsewispParser("S = #'[0-9]+' - ('1' | '11' | '111')", opts));
         Assertions.assertThrows(ParserCreationFailure.class, () ->
-                ParsewispParser("S = #'[0-9]+' - (#'[1]+' - '11')", optsAndRegex));
+                ParsewispParser("S = #'[0-9]+' - (#'[1]+' - '11')", opts));
     }
 
     private static void abnfCoreAvailable(ParserCreationOptions opts, boolean run) {

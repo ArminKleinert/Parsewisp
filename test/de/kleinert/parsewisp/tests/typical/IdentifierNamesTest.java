@@ -2,7 +2,6 @@ package de.kleinert.parsewisp.tests.typical;
 
 import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
-import de.kleinert.parsewisp.parser_options.RulesAvailable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

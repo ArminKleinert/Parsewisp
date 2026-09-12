@@ -4,7 +4,6 @@ import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.parser.Parser;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
 import de.kleinert.parsewisp.parser_options.ParsingOptions;
-import de.kleinert.parsewisp.parser_options.RulesAvailable;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,9 +17,6 @@ class TestGrammarYail {
     private @NotNull Parser parser() {
         try {
             var opts = ParserCreationOptions.getDefault()
-                    .addAvailableRule(RulesAvailable.NEGATIVE_LOOKAHEAD)
-                    .addAvailableRule(RulesAvailable.VARIABLE_REPEAT)
-                    .addAvailableRule(RulesAvailable.EXPLICIT_EOF)
                     .withRuleDefinitionOps(Set.of(":="));
             return Parsewisp.parser(
                     Files.readString(Path.of("testres/grammars/yail.g")),

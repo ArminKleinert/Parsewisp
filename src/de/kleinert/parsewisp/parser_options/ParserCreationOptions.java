@@ -8,8 +8,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 ///**
 // * This class provides options for creating {@link Parser} instances.
@@ -27,20 +25,17 @@ public class ParserCreationOptions {
     @Nullable Parser whitespaceParser;
     @Nullable Sym startProduction;
     @NotNull RedefinitionOption redefinitionOption;
-    @NotNull Set<RulesAvailable> usableRules;
     boolean checkCorrectness;
     @NotNull Collection<@NotNull String> ruleDefinitionOpts;
 
     public ParserCreationOptions(@Nullable Parser whitespaceParser,
     @Nullable Sym startProduction,
     @NotNull RedefinitionOption redefinitionOption,
-    @NotNull Set<RulesAvailable> usableRules,
     boolean checkCorrectness,
     @NotNull Collection<@NotNull String> ruleDefinitionOpts){
         this.  whitespaceParser   =     whitespaceParser     ;
         this. startProduction    =  startProduction        ;
         this.  redefinitionOption   =     redefinitionOption     ;
-        this.  usableRules   =     usableRules     ;
         this. checkCorrectness    =     checkCorrectness     ;
         this.   ruleDefinitionOpts  =       ruleDefinitionOpts   ;
     }
@@ -48,7 +43,7 @@ public class ParserCreationOptions {
     public @Nullable Parser whitespaceParser(){return  whitespaceParser       ;}
     public @Nullable Sym startProduction(){return        startProduction ;}
     public @NotNull RedefinitionOption redefinitionOption(){return         redefinitionOption;}
-    public @NotNull Set<RulesAvailable> usableRules(){return usableRules        ;}
+
     public boolean checkCorrectness(){return         checkCorrectness;}
     public @NotNull Collection<@NotNull String> ruleDefinitionOpts(){return   ruleDefinitionOpts      ;}
 
@@ -66,84 +61,11 @@ public class ParserCreationOptions {
     }
 
     /**
-     * Default set of rules the parser can use.
-     * <ul>
-     *     <li>{@link RulesAvailable#ALTERNATION}</li>
-     *     <li>{@link RulesAvailable#EXCLUSION}</li>
-     *     <li>{@link RulesAvailable#EXPLICIT_EOF}</li>
-     *     <li>{@link RulesAvailable#EXTENDED_IDENTIFIERS}</li>
-     *     <li>{@link RulesAvailable#LOOKAHEAD}</li>
-     *     <li>{@link RulesAvailable#NEGATIVE_LOOKAHEAD}</li>
-     *     <li>{@link RulesAvailable#OPTIONAL_QUERY}</li>
-     *     <li>{@link RulesAvailable#OPTIONAL_REPETITION_STAR}</li>
-     *     <li>{@link RulesAvailable#OPTIONAL_REPETITION}</li>
-     *     <li>{@link RulesAvailable#OPTIONAL}</li>
-     *     <li>{@link RulesAvailable#ORDERED_CHOICE}</li>
-     *     <li>{@link RulesAvailable#PLUS}</li>
-     *     <li>{@link RulesAvailable#REGEX}</li>
-     *     <li>{@link RulesAvailable#SINGLY_QUOTED}</li>
-     *     <li>{@link RulesAvailable#STRING_CASE_SENSITIVITY_PREFIX}</li>
-     *     <li>{@link RulesAvailable#VALUE_RANGE}</li>
-     *     <li>{@link RulesAvailable#VARIABLE_REPEAT}</li>
-     * </ul>
-     *
-     * @return Set.
-     */
-    public static @NotNull @Unmodifiable Set<RulesAvailable> defaultRulesAvailable() {
-        return EnumSet.of(
-                RulesAvailable.ALTERNATION,
-                RulesAvailable.EXCLUSION,
-                RulesAvailable.EXPLICIT_EOF,
-                RulesAvailable.EXTENDED_IDENTIFIERS,
-                RulesAvailable.LOOKAHEAD,
-                RulesAvailable.NEGATIVE_LOOKAHEAD,
-                RulesAvailable.OPTIONAL,
-                RulesAvailable.OPTIONAL_QUERY,
-                RulesAvailable.OPTIONAL_REPETITION,
-                RulesAvailable.OPTIONAL_REPETITION_STAR,
-                RulesAvailable.ORDERED_CHOICE,
-                RulesAvailable.PLUS,
-                RulesAvailable.REGEX,
-                RulesAvailable.SINGLY_QUOTED,
-                RulesAvailable.STRING_CASE_SENSITIVITY_PREFIX,
-                RulesAvailable.VALUE_RANGE,
-                RulesAvailable.VARIABLE_REPEAT
-        );
-    }/**
-     {@link RulesAvailable#EXTENDED_IDENTIFIERS}
-     {@link RulesAvailable#PLUS}
-     {@link RulesAvailable#REGEX}
-     {@link RulesAvailable#SINGLY_QUOTED}
-     {@link RulesAvailable#SPECIAL_SEQUENCE}
-     {@link RulesAvailable#STRING_CASE_SENSITIVITY_PREFIX}
-     {@link RulesAvailable#VALUE_RANGE}
-     /
-     /**
-     {@link RulesAvailable#EXCLUSION}
-     {@link RulesAvailable#EXPLICIT_EOF}
-     {@link RulesAvailable#EXTENDED_IDENTIFIERS}
-     {@link RulesAvailable#LOOKAHEAD}
-     {@link RulesAvailable#NEGATIVE_LOOKAHEAD}
-     {@link RulesAvailable#OPTIONAL}
-     {@link RulesAvailable#OPTIONAL_QUERY}
-     {@link RulesAvailable#OPTIONAL_REPETITION}
-     {@link RulesAvailable#OPTIONAL_REPETITION_STAR}
-     {@link RulesAvailable#ORDERED_CHOICE}
-     {@link RulesAvailable#PLUS}
-     {@link RulesAvailable#REGEX}
-     {@link RulesAvailable#SINGLY_QUOTED}
-     {@link RulesAvailable#SPECIAL_SEQUENCE}
-     {@link RulesAvailable#STRING_CASE_SENSITIVITY_PREFIX}
-     {@link RulesAvailable#VALUE_RANGE}
-     /
-
-    /**
      * Constructor.
      *
      * @param whitespaceParser   A parser which is used to ignore whitespaces between words or characters. This parser is merged into the new parser when the creation options are used. If null, no such parser is used.
      * @param startProduction    The starting production name of the parser. If null, the first defined production is used.
      * @param redefinitionOption Sets what to do when a production appears twice in the definition.
-     * @param usableRules        A Set of rules that can be used when building the parser. If null, use {@link #defaultRulesAvailable()}. See {@link RulesAvailable}.
      * @param checkCorrectness   Whether to check the correctness of the grammar when creating the parser.
      * @param ruleDefinitionOpts A collection of possible "definition operators" for rules. If null, use {@link #defaultRuleDefinitionOps()}. Example: {@code List.of(":=", "::=", "=", ":")}
      * @return A new instance.
@@ -152,15 +74,11 @@ public class ParserCreationOptions {
             final @Nullable Parser whitespaceParser,
             final @Nullable Sym startProduction,
             final @Nullable RedefinitionOption redefinitionOption,
-            final @Nullable Set<RulesAvailable> usableRules,
             final boolean checkCorrectness,
             final @Nullable Collection<String> ruleDefinitionOpts) {
         var redefinitionOption1 = redefinitionOption == null
                 ? RedefinitionOption.defaultOption
                 : redefinitionOption;
-        var usableRules1 = usableRules == null
-                ? defaultRulesAvailable()
-                : (usableRules.isEmpty() ? EnumSet.noneOf(RulesAvailable.class) : EnumSet.copyOf(usableRules));
         var ruleDefinitionOpts1 = ruleDefinitionOpts == null
                 ? defaultRuleDefinitionOps()
                 : ruleDefinitionOpts;
@@ -169,7 +87,7 @@ public class ParserCreationOptions {
             throw new IllegalArgumentException("Empty rule definition operator list.");
 
         return new ParserCreationOptions(
-                whitespaceParser, startProduction, redefinitionOption1, usableRules1,
+                whitespaceParser, startProduction, redefinitionOption1,
                 checkCorrectness, ruleDefinitionOpts1);
     }
 
@@ -185,7 +103,7 @@ public class ParserCreationOptions {
             return this;
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction,
-                redefinitionOption, usableRules,
+                redefinitionOption,
                 checkCorrectness, ruleDefinitionOpts);
     }
 
@@ -201,7 +119,7 @@ public class ParserCreationOptions {
             return this;
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction,
-                redefinitionOption, usableRules,
+                redefinitionOption,
                 checkCorrectness, ruleDefinitionOpts);
     }
 
@@ -245,53 +163,23 @@ public class ParserCreationOptions {
             final RedefinitionOption redefinitionOption) {
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction,
-                redefinitionOption, usableRules,
+                redefinitionOption,
                 checkCorrectness, ruleDefinitionOpts);
     }
 
-    /**
-     * Creates a new instance with {@link ParserCreationOptions#usableRules()} set to the parameter.
-     *
-     * @param usableRules The new setting for {@link ParserCreationOptions#usableRules()}.
-     * @return A new instance.
-     */
-    public @NotNull ParserCreationOptions withRulesAvailable(
-            final @Nullable Set<RulesAvailable> usableRules) {
-        return ParserCreationOptions.create(
-                whitespaceParser, startProduction,
-                redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOpts);
-    }
-
-    /**
-     * Creates a new instance with the parameter added to {@link ParserCreationOptions#usableRules()}.
-     *
-     * @param usableRule The new rule type.
-     * @return A new instance.
-     * @see #withRulesAvailable(Set)
-     */
-    public @NotNull ParserCreationOptions addAvailableRule(
-            final @NotNull RulesAvailable usableRule) {
-        return withRulesAvailable(
-                Stream.of(Set.of(usableRule), usableRules)
-                        .flatMap(Collection::stream)
-                        .collect(Collectors.toUnmodifiableSet()));
-    }
-
-    /**
-     * Creates a new instance with the parameter removed from {@link ParserCreationOptions#usableRules()}.
-     *
-     * @param usableRule The rule type.
-     * @return A new instance.
-     * @see #withRulesAvailable(Set)
-     */
-    public @NotNull ParserCreationOptions removeAvailableRule(
-            final @NotNull RulesAvailable usableRule) {
-        return withRulesAvailable(
-                usableRules.stream()
-                        .filter(it -> !it.equals(usableRule))
-                        .collect(Collectors.toUnmodifiableSet()));
-    }
+//    /**
+//     * Creates a new instance with {@link ParserCreationOptions#usableRules()} set to the parameter.
+//     *
+//     * @param usableRules The new setting for {@link ParserCreationOptions#usableRules()}.
+//     * @return A new instance.
+//     */
+//    public @NotNull ParserCreationOptions withRulesAvailable(
+//            final @Nullable Set<RulesAvailable> usableRules) {
+//        return ParserCreationOptions.create(
+//                whitespaceParser, startProduction,
+//                redefinitionOption,
+//                checkCorrectness, ruleDefinitionOpts);
+//    }
 
     /**
      * Creates a new instance with {@link ParserCreationOptions#checkCorrectness()} set to the parameter.
@@ -303,7 +191,7 @@ public class ParserCreationOptions {
             final boolean checkCorrectness) {
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction,
-                redefinitionOption, usableRules,
+                redefinitionOption,
                 checkCorrectness, ruleDefinitionOpts);
     }
 
@@ -317,7 +205,7 @@ public class ParserCreationOptions {
             final @Nullable Collection<String> ruleDefinitionOps) {
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction,
-                redefinitionOption, usableRules,
+                redefinitionOption,
                 checkCorrectness, ruleDefinitionOps);
     }
 
@@ -359,23 +247,21 @@ public class ParserCreationOptions {
     }
 
     /**
-     * The default settings. Equivalent to {@link #ParserCreationOptions(Parser, Sym, RedefinitionOption, Set, boolean, Collection)} with using {@code null} or whichever defaults this class provides.
+     * The default settings. Equivalent to {@link #ParserCreationOptions(Parser, Sym, RedefinitionOption, boolean, Collection)} with using {@code null} or whichever defaults this class provides.
      *
      * <p>
      * Characteristics:
      * <ul>
      *     <li>Rule definition operators: See {@link #defaultRuleDefinitionOps}</li>
      *     <li>Redefinition option: {@link RedefinitionOption#defaultOption}</li>
-     *     <li>Epsilon equivalents: {@link #defaultEpsilonNames()}</li>
      * </ul>
-     * Available rules: See {@link #defaultRulesAvailable()}
      *
      * @return default settings.
      */
     public static @NotNull ParserCreationOptions getDefault() {
         return ParserCreationOptions.create(
                 null, null,
-                null, null,
+                null,
                 defaultCheckCorrectness, null);
     }
 

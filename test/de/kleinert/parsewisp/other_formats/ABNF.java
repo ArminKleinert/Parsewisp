@@ -34,7 +34,7 @@ public class ABNF {
                     public ABNFOptions(            @Nullable Parser whitespaceParser,
                                                    @Nullable Sym startProduction,
                                                    boolean allowLookaheadAndNegations) {
-                        super(whitespaceParser,startProduction,RedefinitionOption.CHOICE, Set.of(), true, List.of("="));
+                        super(whitespaceParser,startProduction,RedefinitionOption.CHOICE, true, List.of("="));
                 this. allowLookaheadAndNegations= allowLookaheadAndNegations;
                     }
     }
