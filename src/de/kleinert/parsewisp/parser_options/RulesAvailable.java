@@ -70,12 +70,12 @@ public enum RulesAvailable {
      */
     EXPLICIT_EOF,
 
-    /**
-     * EBNF identifiers normally must have the following form: {@code letter (letter|digit|_)+}. ABNF and BNF use the "-" character in place of the "_".
-     * <p>
-     * Possible replacements through other rule types: N.A.
-     */
-    ABNF_IDENTIFIERS,
+//    /**
+//     * EBNF identifiers normally must have the following form: {@code letter (letter|digit|_)+}. ABNF and BNF use the "-" character in place of the "_".
+//     * <p>
+//     * Possible replacements through other rule types: N.A.
+//     */
+//    ABNF_IDENTIFIERS,
 
     /**
      * EBNF identifiers normally must have the following form: {@code letter (letter|digit|_)+}. ABNF and BNF also allow the "-" character.

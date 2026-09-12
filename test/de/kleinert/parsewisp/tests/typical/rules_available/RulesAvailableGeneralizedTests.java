@@ -24,10 +24,6 @@ class RulesAvailableGeneralizedTests {
         alternationUnavailable(opts, !expectedAvailability);
     }
 
-    static void epsilon(ParserCreationOptions opts, Collection<String> epsilonNames) {
-        Assertions.assertEquals(new HashSet<>(opts.epsilonNames()), new HashSet<>(epsilonNames));
-    }
-
     static void exclusion(ParserCreationOptions opts, boolean expectedAvailability) {
         exclusionAvailable(opts, expectedAvailability);
         exclusionUnavailable(opts, !expectedAvailability);

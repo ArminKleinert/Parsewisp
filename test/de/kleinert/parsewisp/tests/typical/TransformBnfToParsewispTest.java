@@ -28,7 +28,6 @@ class TransformBnfToParsewispTest {
         try {
             var opts = ParserCreationOptions.getDefault()
                     .addAvailableRule(RulesAvailable.EXPLICIT_EOF)
-                    .addAvailableRule(RulesAvailable.ABNF_IDENTIFIERS)
                     .withRuleDefinitionOps(Set.of("::="));
             return Parsewisp.parser(
                     Files.readString(Path.of("testres/grammars/bnf.g")),
@@ -46,9 +45,9 @@ class TransformBnfToParsewispTest {
         transform.put(Sym.sym("S"), this::firstNode);
         transform.put(Sym.sym("syntax"), this::syntax);
         transform.put(Sym.sym("rule"), this::rule);
-        transform.put(Sym.sym("opt-whitespace"), this::optWhitespace);
+        transform.put(Sym.sym("opt_whitespace"), this::optWhitespace);
         transform.put(Sym.sym("expression"), this::expression);
-        transform.put(Sym.sym("line-end"), this::lineEnd);
+        transform.put(Sym.sym("line_end"), this::lineEnd);
         transform.put(Sym.sym("list"), this::list);
         transform.put(Sym.sym("term"), this::term);
         transform.put(Sym.sym("literal"), this::literal);
@@ -60,8 +59,8 @@ class TransformBnfToParsewispTest {
         transform.put(Sym.sym("symbol"), this::symbol);
         transform.put(Sym.sym("character1"), this::firstNode);
         transform.put(Sym.sym("character2"), this::firstNode);
-        transform.put(Sym.sym("rule-name"), this::ruleName);
-        transform.put(Sym.sym("rule-char"), this::firstNode);
+        transform.put(Sym.sym("rule_name"), this::ruleName);
+        transform.put(Sym.sym("rule_char"), this::firstNode);
 
         Function<Object, Parser> finalizer = (prodList) -> {
             //noinspection unchecked

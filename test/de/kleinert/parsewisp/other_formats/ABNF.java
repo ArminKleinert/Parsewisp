@@ -26,17 +26,17 @@ public class ABNF {
     private ABNF() {
     }
 
-    public record ABNFOptions(
-            @Nullable Parser whitespaceParser,
-            @Nullable Sym startProduction,
-            boolean allowLookaheadAndNegations) {
-    }
+    public static class ABNFOptions extends ParserCreationOptions {
+            @Nullable Parser whitespaceParser;
+            @Nullable Sym startProduction;
+            boolean allowLookaheadAndNegations;
 
-    private static ParserCreationOptions parsewispOptsFromAbnfOpts(ABNFOptions options) {
-        return ParserCreationOptions.getDefault()
-                .withStartProduction(options.startProduction)
-                .withWhitespaceParser(options.whitespaceParser)
-                .withRedefinitionOption(RedefinitionOption.CHOICE);
+                    public ABNFOptions(            @Nullable Parser whitespaceParser,
+                                                   @Nullable Sym startProduction,
+                                                   boolean allowLookaheadAndNegations) {
+                        super(whitespaceParser,startProduction,RedefinitionOption.CHOICE, Set.of(), true, List.of("="));
+                this. allowLookaheadAndNegations= allowLookaheadAndNegations;
+                    }
     }
 
     public static @NotNull Parser parser(@NotNull String grammar) {
@@ -72,8 +72,8 @@ public class ABNF {
         private final @NotNull ParseTree parsedAbnfGrammar;
 
         protected Transformer(final @NotNull ParseTree parsedAbnfGrammar,
-                              final @NotNull ABNFOptions abnfOptions) {
-            super(parsewispOptsFromAbnfOpts(abnfOptions));
+                              final @NotNull ABNFOptions options) {
+            super(options);
             this.parsedAbnfGrammar = parsedAbnfGrammar;
         }
 

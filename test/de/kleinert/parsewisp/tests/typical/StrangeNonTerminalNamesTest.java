@@ -13,7 +13,7 @@ import java.util.List;
 class StrangeNonTerminalNamesTest {
     @Test
     void nonTerminalStartsWithEpsilonName() {
-        var opts = ParserCreationOptions.getDefault().withEpsilonNames(List.of("Eps"));
+        var opts = ParserCreationOptions.getDefault();
 
         Assertions.assertDoesNotThrow(()-> Parsewisp.parser("S = EpsNT\nEpsNT = \"1\"", opts));
 

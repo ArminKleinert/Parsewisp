@@ -104,12 +104,12 @@ class RuleAlternativesTests {
     void epsilon() {
         {
             var p1 = Parsewisp.parser("S = \"a\" ε");
-            var p2 = Parsewisp.parser("S = \"a\" \"\"", ParserCreationOptions.getDefault().withEpsilonNames(List.of()));
+            var p2 = Parsewisp.parser("S = \"a\" \"\"", ParserCreationOptions.getDefault());
             Assertions.assertEquals(p1.parse("a"), p2.parse("a"));
         }
         {
             var p1 = Parsewisp.parser("S = ε");
-            var p2 = Parsewisp.parser("S = \"\"", ParserCreationOptions.getDefault().withEpsilonNames(List.of()));
+            var p2 = Parsewisp.parser("S = \"\"", ParserCreationOptions.getDefault());
             Assertions.assertEquals(p1.parse(""), p2.parse(""));
         }
     }

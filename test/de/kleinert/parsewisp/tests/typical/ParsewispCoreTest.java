@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 class ParsewispCoreTest {
 
@@ -516,9 +515,7 @@ class ParsewispCoreTest {
                 PT.create("sentence", PT.create("identifier", "defn"), PT.create("identifier", "my"), PT.create("keyword", "cond")),
                 PT.create("sentence", PT.create("keyword", "defn"), PT.create("identifier", "my"), PT.create("keyword", "cond"))
         );
-        var parses = ambiguous_tokenizer.parses(
-                text,
-                ParsingOptions.getDefault()).stream().collect(Collectors.toSet());
+        var parses = Set.of(ambiguous_tokenizer.parses(text, ParsingOptions.getDefault()).toArray());
         Assertions.assertEquals(trees, parses);
     }
 
@@ -544,9 +541,7 @@ class ParsewispCoreTest {
 
                 PT.create("sentence", PT.create("identifier", "defn"), PT.create("identifier", "my"), PT.create("identifier", "cond"))
         );
-        var parses = preferential_tokenizer.parses(
-                text,
-                ParsingOptions.getDefault()).stream().collect(Collectors.toSet());
+        var parses = Set.of(preferential_tokenizer.parses(text, ParsingOptions.getDefault()).toArray());
         Assertions.assertEquals(trees, parses);
     }
 
@@ -702,9 +697,7 @@ class ParsewispCoreTest {
 
     @Test
     void testEpsEquivalence() {
-        var opts = ParserCreationOptions
-                .getDefault()
-                .withEpsilonNames(List.of("Epsilon", "epsilon", "EPSILON", "eps", "ε"));
+        var opts = ParserCreationOptions.getDefault();
         Assertions.assertEquals(
                 PT.create("S"),
                 Parsewisp.parser("S = eps", opts).parse(""));
@@ -724,9 +717,7 @@ class ParsewispCoreTest {
 
     @Test
     void testEpsFail() {
-        var opts = ParserCreationOptions
-                .getDefault()
-                .withEpsilonNames(List.of("Epsilon", "epsilon", "EPSILON", "eps", "ε"));
+        var opts = ParserCreationOptions.getDefault();
         Assertions.assertTrue(
                 Parsewisp.parser("S = eps", opts)
                         .parse("a")

@@ -35,6 +35,8 @@ public final class CfgGrammar extends GrammarBuilder {
         return rulesAvailable.contains(ra) ? nt(symString) : null;
     }
 
+    private Set<String> epsilonNames = Set.of("Epsilon", "epsilon", "EPSILON", "eps", "ε");
+
     private final @NotNull NonTerminal factorNt = nt("factor");
 
     private final @NotNull NonTerminal ntNt = nt("nt");
@@ -131,8 +133,6 @@ public final class CfgGrammar extends GrammarBuilder {
      * @return A {@link Rule}.
      */
     private Rule makeCfgEpsilonRhs() {
-        var epsilonNames = options.epsilonNames();
-
         // If no epsilon names are provided, use string terminal which matches the empty string `""`.
         // Empty string terminals are simplified to Epsilon later.
         if (epsilonNames.isEmpty())
@@ -282,13 +282,8 @@ public final class CfgGrammar extends GrammarBuilder {
      * @return A {@link Rule}.
      */
     private @NotNull Rule makeCfgNtRhs() {
-        final Pattern regex;
-        if (rulesAvailable.contains(RulesAvailable.EXTENDED_IDENTIFIERS))
-            regex = Pattern.compile("[^, \\r\\t\\n<>(){}\\[\\]+*?:=|'\"#&!;./%\\-0-9][^, \\r\\t\\n<>(){}\\[\\]+*?:=|'\"#&!;./%]*");
-        else if (rulesAvailable.contains(RulesAvailable.ABNF_IDENTIFIERS))
-            regex = Pattern.compile("[a-zA-Z][a-zA-Z0-9\\-]*");
-        else
-            regex = Pattern.compile("[a-zA-Z][a-zA-Z0-9_]*");
+        final Pattern regex = Pattern.compile("[^, \\r\\t\\n<>(){}\\[\\]+*?:=|'\"#&!;./%\\-0-9][^, \\r\\t\\n<>(){}\\[\\]+*?:=|'\"#&!;./%]*");
+        //final Pattern regex = Pattern.compile("[a-zA-Z][a-zA-Z0-9_]*");
 
         final boolean eofPossible = options.usableRules().contains(RulesAvailable.EXPLICIT_EOF);
 
@@ -300,10 +295,10 @@ public final class CfgGrammar extends GrammarBuilder {
                         return Optional.empty();
                     }
                     final String matched = matcher.group();
-                    if (options.epsilonNames().contains(matched)) {
+                    if (epsilonNames.contains(matched)) {
                         return Optional.empty();
                     }
-                    if (eofPossible && EOFTerm.text().equals(matched)) {
+                    if (EOFTerm.text().equals(matched)) {
                         return Optional.empty();
                     }
                     return Optional.of(matched);

@@ -11,25 +11,47 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * This class provides options for creating {@link Parser} instances.
- *
- * @param whitespaceParser   A parser which is used to ignore whitespaces between words or characters. This parser is merged into the new parser when the creation options are used.
- * @param startProduction    The starting production name of the parser.
- * @param redefinitionOption Sets what to do when a production appears twice in the definition.
- * @param usableRules        A Set of rules that can be used when building the parser. See {@link RulesAvailable}.
- * @param checkCorrectness   Whether to check the correctness of the grammar when creating the parser.
- * @param ruleDefinitionOpts A collection of possible "definition operators" for rules.
- * @param epsilonNames       A collection of possible epsilon names. If null, use {@link #defaultEpsilonNames()}.
- */
+///**
+// * This class provides options for creating {@link Parser} instances.
+// *
+// * @param whitespaceParser   A parser which is used to ignore whitespaces between words or characters. This parser is merged into the new parser when the creation options are used.
+// * @param startProduction    The starting production name of the parser.
+// * @param redefinitionOption Sets what to do when a production appears twice in the definition.
+// * @param usableRules        A Set of rules that can be used when building the parser. See {@link RulesAvailable}.
+// * @param checkCorrectness   Whether to check the correctness of the grammar when creating the parser.
+// * @param ruleDefinitionOpts A collection of possible "definition operators" for rules.
+// * @param epsilonNames       A collection of possible epsilon names. If null, use {@link #defaultEpsilonNames()}.
+// */
 @Unmodifiable
-public record ParserCreationOptions(@Nullable Parser whitespaceParser,
-                                    @Nullable Sym startProduction,
-                                    @NotNull RedefinitionOption redefinitionOption,
-                                    @NotNull Set<RulesAvailable> usableRules,
-                                    boolean checkCorrectness,
-                                    @NotNull Collection<@NotNull String> ruleDefinitionOpts,
-                                    @NotNull Collection<@NotNull String> epsilonNames) {
+public class ParserCreationOptions {
+    @Nullable Parser whitespaceParser;
+    @Nullable Sym startProduction;
+    @NotNull RedefinitionOption redefinitionOption;
+    @NotNull Set<RulesAvailable> usableRules;
+    boolean checkCorrectness;
+    @NotNull Collection<@NotNull String> ruleDefinitionOpts;
+
+    public ParserCreationOptions(@Nullable Parser whitespaceParser,
+    @Nullable Sym startProduction,
+    @NotNull RedefinitionOption redefinitionOption,
+    @NotNull Set<RulesAvailable> usableRules,
+    boolean checkCorrectness,
+    @NotNull Collection<@NotNull String> ruleDefinitionOpts){
+        this.  whitespaceParser   =     whitespaceParser     ;
+        this. startProduction    =  startProduction        ;
+        this.  redefinitionOption   =     redefinitionOption     ;
+        this.  usableRules   =     usableRules     ;
+        this. checkCorrectness    =     checkCorrectness     ;
+        this.   ruleDefinitionOpts  =       ruleDefinitionOpts   ;
+    }
+
+    public @Nullable Parser whitespaceParser(){return  whitespaceParser       ;}
+    public @Nullable Sym startProduction(){return        startProduction ;}
+    public @NotNull RedefinitionOption redefinitionOption(){return         redefinitionOption;}
+    public @NotNull Set<RulesAvailable> usableRules(){return usableRules        ;}
+    public boolean checkCorrectness(){return         checkCorrectness;}
+    public @NotNull Collection<@NotNull String> ruleDefinitionOpts(){return   ruleDefinitionOpts      ;}
+
     private static final boolean defaultCheckCorrectness = true;
 
     /**
@@ -41,17 +63,6 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
      */
     public static @NotNull @Unmodifiable List<String> defaultRuleDefinitionOps() {
         return List.of(":=", "::=", "=", ":", "←", "<-");
-    }
-
-    /**
-     * Default for {@link ParserCreationOptions#epsilonNames()}.
-     * <p>
-     * Value (might not be up to date): {@code List.of("Epsilon", "epsilon", "EPSILON", "eps", "ε")}
-     *
-     * @return List of strings.
-     */
-    public static @NotNull @Unmodifiable List<String> defaultEpsilonNames() {
-        return List.of("Epsilon", "epsilon", "EPSILON", "eps", "ε");
     }
 
     /**
@@ -98,7 +109,33 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
                 RulesAvailable.VALUE_RANGE,
                 RulesAvailable.VARIABLE_REPEAT
         );
-    }
+    }/**
+     {@link RulesAvailable#EXTENDED_IDENTIFIERS}
+     {@link RulesAvailable#PLUS}
+     {@link RulesAvailable#REGEX}
+     {@link RulesAvailable#SINGLY_QUOTED}
+     {@link RulesAvailable#SPECIAL_SEQUENCE}
+     {@link RulesAvailable#STRING_CASE_SENSITIVITY_PREFIX}
+     {@link RulesAvailable#VALUE_RANGE}
+     /
+     /**
+     {@link RulesAvailable#EXCLUSION}
+     {@link RulesAvailable#EXPLICIT_EOF}
+     {@link RulesAvailable#EXTENDED_IDENTIFIERS}
+     {@link RulesAvailable#LOOKAHEAD}
+     {@link RulesAvailable#NEGATIVE_LOOKAHEAD}
+     {@link RulesAvailable#OPTIONAL}
+     {@link RulesAvailable#OPTIONAL_QUERY}
+     {@link RulesAvailable#OPTIONAL_REPETITION}
+     {@link RulesAvailable#OPTIONAL_REPETITION_STAR}
+     {@link RulesAvailable#ORDERED_CHOICE}
+     {@link RulesAvailable#PLUS}
+     {@link RulesAvailable#REGEX}
+     {@link RulesAvailable#SINGLY_QUOTED}
+     {@link RulesAvailable#SPECIAL_SEQUENCE}
+     {@link RulesAvailable#STRING_CASE_SENSITIVITY_PREFIX}
+     {@link RulesAvailable#VALUE_RANGE}
+     /
 
     /**
      * Constructor.
@@ -109,7 +146,6 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
      * @param usableRules        A Set of rules that can be used when building the parser. If null, use {@link #defaultRulesAvailable()}. See {@link RulesAvailable}.
      * @param checkCorrectness   Whether to check the correctness of the grammar when creating the parser.
      * @param ruleDefinitionOpts A collection of possible "definition operators" for rules. If null, use {@link #defaultRuleDefinitionOps()}. Example: {@code List.of(":=", "::=", "=", ":")}
-     * @param epsilonNames       A collection of possible epsilon names. If null, use {@link #defaultEpsilonNames()}. Example: {@code List.of("epsilon", "ε")}
      * @return A new instance.
      */
     public static @NotNull ParserCreationOptions create(
@@ -118,8 +154,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
             final @Nullable RedefinitionOption redefinitionOption,
             final @Nullable Set<RulesAvailable> usableRules,
             final boolean checkCorrectness,
-            final @Nullable Collection<String> ruleDefinitionOpts,
-            final @Nullable Collection<String> epsilonNames) {
+            final @Nullable Collection<String> ruleDefinitionOpts) {
         var redefinitionOption1 = redefinitionOption == null
                 ? RedefinitionOption.defaultOption
                 : redefinitionOption;
@@ -133,13 +168,9 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         if (ruleDefinitionOpts1.isEmpty())
             throw new IllegalArgumentException("Empty rule definition operator list.");
 
-        var epsilonNames1 = epsilonNames == null
-                ? defaultEpsilonNames()
-                : epsilonNames.stream().sorted(Comparator.comparingInt(String::length)).toList();
-
         return new ParserCreationOptions(
                 whitespaceParser, startProduction, redefinitionOption1, usableRules1,
-                checkCorrectness, ruleDefinitionOpts1, epsilonNames1);
+                checkCorrectness, ruleDefinitionOpts1);
     }
 
     /**
@@ -155,7 +186,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction,
                 redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOpts, epsilonNames);
+                checkCorrectness, ruleDefinitionOpts);
     }
 
     /**
@@ -171,7 +202,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction,
                 redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOpts, epsilonNames);
+                checkCorrectness, ruleDefinitionOpts);
     }
 
 //    /**
@@ -187,7 +218,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
 //        return ParserCreationOptions.create(
 //                whitespaceParser, startProduction,
 //                redefinitionOption, usableRules,
-//                checkCorrectness, ruleDefinitionOpts, epsilonNames);
+//                checkCorrectness, ruleDefinitionOpts);
 //    }
 //
 //    /**
@@ -215,7 +246,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction,
                 redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOpts, epsilonNames);
+                checkCorrectness, ruleDefinitionOpts);
     }
 
     /**
@@ -229,7 +260,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction,
                 redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOpts, epsilonNames);
+                checkCorrectness, ruleDefinitionOpts);
     }
 
     /**
@@ -273,7 +304,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction,
                 redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOpts, epsilonNames);
+                checkCorrectness, ruleDefinitionOpts);
     }
 
     /**
@@ -287,22 +318,22 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction,
                 redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOps, epsilonNames);
+                checkCorrectness, ruleDefinitionOps);
     }
 
-    /**
-     * Creates a new instance with {@link ParserCreationOptions#epsilonNames()} set to the parameter.
-     *
-     * @param epsilonNames The new setting for {@link ParserCreationOptions#epsilonNames()}.
-     * @return A new instance.
-     */
-    public @NotNull ParserCreationOptions withEpsilonNames(
-            final @Nullable Collection<String> epsilonNames) {
-        return ParserCreationOptions.create(
-                whitespaceParser, startProduction,
-                redefinitionOption, usableRules,
-                checkCorrectness, ruleDefinitionOpts, epsilonNames);
-    }
+//    /**
+//     * Creates a new instance with {@link ParserCreationOptions#epsilonNames()} set to the parameter.
+//     *
+//     * @param epsilonNames The new setting for {@link ParserCreationOptions#epsilonNames()}.
+//     * @return A new instance.
+//     */
+//    public @NotNull ParserCreationOptions withEpsilonNames(
+//            final @Nullable Collection<String> epsilonNames) {
+//        return ParserCreationOptions.create(
+//                whitespaceParser, startProduction,
+//                redefinitionOption, usableRules,
+//                checkCorrectness, ruleDefinitionOpts, epsilonNames);
+//    }
 
     /**
      * Creates a new instance using the most common whitespace parser.
@@ -328,7 +359,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
     }
 
     /**
-     * The default settings. Equivalent to {@link ParserCreationOptions#ParserCreationOptions(Parser, Sym, RedefinitionOption, Set, boolean, Collection, Collection)} with using {@code null} or whichever defaults this class provides.
+     * The default settings. Equivalent to {@link #ParserCreationOptions(Parser, Sym, RedefinitionOption, Set, boolean, Collection)} with using {@code null} or whichever defaults this class provides.
      *
      * <p>
      * Characteristics:
@@ -345,7 +376,7 @@ public record ParserCreationOptions(@Nullable Parser whitespaceParser,
         return ParserCreationOptions.create(
                 null, null,
                 null, null,
-                defaultCheckCorrectness, null, null);
+                defaultCheckCorrectness, null);
     }
 
 //    /**

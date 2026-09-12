@@ -10,9 +10,7 @@ import java.util.Objects;
 import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.TrampolineListenerKey;
 
 /**
- * This class represents the empty parse epsilon. It can typically be written in the following ways: "ε"
- * <br/>
- * Which specific formats are valid can be dictated by using {@link ParserCreationOptions#epsilonNames()} appropriately. See also: {@link ParserCreationOptions#defaultEpsilonNames()}
+ * This class represents the empty parse epsilon. It can typically be written in the following ways: "Epsilon", "epsilon", "EPSILON", "eps", "ε"
  * <br/>
  * When parsing, the process depends on whether a full parse is being done (matching to the end of the input):
  * If yes, success if the end of input has been reached, fail otherwise. If no, always success.
