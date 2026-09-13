@@ -18,8 +18,8 @@ class NewFeaturesTest {
 
     @Test void test0 () {
         {
-            var p = Parsewisp.parser("S = 'a' epsilon* 'b'");
-            System.out.println(p.parse("bc"));
+            var p = Parsewisp.parser("S = 'a' (* comment*)'b'");
+            System.out.println(p.parse("ab"));
         }
     }
     @Test

@@ -64,7 +64,7 @@ public final class CfgGrammar extends GrammarBuilder {
     }
 
     private @NotNull Rule makeCfgInsideCommentRhs() {
-        final @NotNull Pattern insideComment = Pattern.compile("(?s)(?:(?!\\(\\*|\\*\\)).)* (?x) # Comment text");
+        final @NotNull Pattern insideComment = Pattern.compile("(?s)(?:(?!\\(\\*|\\*\\)).)*(?x) # Comment text");
         final @NotNull Rule rulesRule =
                 concatNoEpsilonMoreThan1(
                         List.of(regex(insideComment),
