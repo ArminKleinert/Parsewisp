@@ -91,9 +91,9 @@ public class ParserCreationOptions {
             final @Nullable RedefinitionOption redefinitionOption,
             final boolean checkCorrectness) {
         return new ParserCreationOptions(
-                whitespaceParser, startProduction, redefinitionOption == null
-                ? RedefinitionOption.defaultOption
-                : redefinitionOption,
+                whitespaceParser,
+                startProduction,
+                redefinitionOption == null ? RedefinitionOption.defaultOption : redefinitionOption,
                 checkCorrectness);
     }
 
@@ -136,7 +136,7 @@ public class ParserCreationOptions {
      * @return A new instance.
      */
     public @NotNull ParserCreationOptions withRedefinitionOption(
-            final RedefinitionOption redefinitionOption) {
+            final @Nullable RedefinitionOption redefinitionOption) {
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction,
                 redefinitionOption,

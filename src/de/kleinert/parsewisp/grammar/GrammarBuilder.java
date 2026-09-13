@@ -4,6 +4,7 @@ import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.error.IllegalGrammarException;
 import de.kleinert.parsewisp.parser.Parser;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
+import de.kleinert.parsewisp.parser_options.RedefinitionOption;
 import de.kleinert.parsewisp.parsing.*;
 import de.kleinert.parsewisp.reduction.ReductionType;
 import org.jetbrains.annotations.NotNull;
@@ -47,12 +48,15 @@ import java.util.stream.Stream;
  */
 public abstract class GrammarBuilder {
     protected @NotNull LinkedHashMap<Sym, Rule> productions;
-    protected final @NotNull ParserCreationOptions options;
     private final BufferForRules buffer;
+    private final RedefinitionOption redefinitionOpt;
+    protected @Nullable Sym startProduction;
 
-    protected GrammarBuilder(final @NotNull ParserCreationOptions options) {
+    protected GrammarBuilder(@Nullable RedefinitionOption redefinitionOption) {
         this.productions = new LinkedHashMap<>();
-        this.options = options;
+        this.redefinitionOpt = redefinitionOption == null
+                ? RedefinitionOption.ERROR
+                : redefinitionOption;
         this.buffer = new BufferForRules();
     }
 
@@ -67,19 +71,22 @@ public abstract class GrammarBuilder {
      * @return The grammar.
      */
     public final @NotNull Grammar build() {
-        return buildWithWhitespace(null, null);
+        return buildWithWhitespace(null, null, null, true);
     }
 
     /**
      * Use this to construct the grammar. Productions can be added before starting the builder.
-     *
+     * @param startProduction    Starting production. Set to null to use the first production that was added.
      * @param initialProductions Productions to add in the beginning.
      * @param wsParser           Whitespace parser to include.
+     * @param checkCorrectness   Whether to check the grammar for validity.
      * @return The grammar.
      */
     public final @NotNull Grammar buildWithWhitespace(
+            final @Nullable Sym startProduction,
             final @Nullable LinkedHashMap<Sym, Rule> initialProductions,
-            final @Nullable Parser wsParser) {
+            final @Nullable Parser wsParser,
+            boolean checkCorrectness) {
         final @NotNull Sym start;
 
         synchronized (this) {
@@ -91,11 +98,10 @@ public abstract class GrammarBuilder {
 
             make();
 
-            var optStart = options.getStartProduction();
-            if (optStart ==null) {
+            if (startProduction == null) {
                 start = productions.keySet().iterator().next();
             } else {
-                start = optStart;
+                start = startProduction;
             }
 
             compress();
@@ -108,7 +114,7 @@ public abstract class GrammarBuilder {
 
         var g = new Grammar(start, productions);
 
-        if (options.doCheckCorrectness()) {
+        if (checkCorrectness) {
             final @NotNull var analysisResult = g.analyze();
             if (!analysisResult.isValid())
                 throw new IllegalGrammarException(
@@ -125,6 +131,10 @@ public abstract class GrammarBuilder {
                         + "; number of terminals: "
                         + analysisResult.definedTerminals().size()
                         + " (a valid grammar has at least one terminal)");
+    }
+
+    protected void setStartProduction(@Nullable Sym startProduction) {
+        this.startProduction = startProduction;
     }
 
     /**
@@ -152,7 +162,7 @@ public abstract class GrammarBuilder {
         if (existing == null)
             return;
 
-        switch (options.getRedefinitionOption()) {
+        switch (redefinitionOpt) {
             case OVERRIDE -> productions.put(lhs, rhs);
             case ERROR -> throw new IllegalArgumentException(
                     "Production already in grammar: " + lhs);

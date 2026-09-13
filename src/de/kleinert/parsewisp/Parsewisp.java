@@ -76,18 +76,19 @@ public final class Parsewisp {
             throw new ParserCreationFailure("The start production " + options.getStartProduction() + " is not in the grammar.");
 
         try {
-            var builder = new GrammarBuilder(options) {
+            var builder = new GrammarBuilder(null) {
                 @Override
                 protected void make() {
                 }
             };
 
-            var g = builder.buildWithWhitespace(grammar, options.getWhitespaceParser());
+            var g = builder.buildWithWhitespace(
+                    options.getStartProduction(),
+                    grammar,
+                    options.getWhitespaceParser(),
+                    options.doCheckCorrectness());
 
-            var start = options.getStartProduction() != null
-                    ? options.getStartProduction()
-                    : grammar.getStartSym();
-            return new Parser(g, start);
+            return new Parser(g, g.getStartSym());
         } catch (IllegalGrammarException exception) {
             throw new ParserCreationFailure(exception);
         }

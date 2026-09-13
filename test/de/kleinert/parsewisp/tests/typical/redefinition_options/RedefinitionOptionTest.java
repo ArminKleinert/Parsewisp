@@ -18,6 +18,7 @@ class RedefinitionOptionTest {
         Assertions.assertTrue(p.parse("B").isFailure());
         Assertions.assertEquals(PT.create("S", "C"), p.parse("C"));
     }
+
     @Test
     void optionErrorTest() {
         var redefinitionOpts = ParserCreationOptions
@@ -32,13 +33,14 @@ class RedefinitionOptionTest {
         // Duplicate name, different lhs -> Problem
         Assertions.assertThrows(
                 IllegalArgumentException.class,
-                ()-> Parsewisp.parser("S = 'A'\nS = 'B'\nS = 'C'", redefinitionOpts));
+                () -> Parsewisp.parser("S = 'A'\nS = 'B'\nS = 'C'", redefinitionOpts));
 
         // Fails even if the production does not change
         Assertions.assertThrows(
                 IllegalArgumentException.class,
-                ()-> Parsewisp.parser("S = 'A'\nS = 'A'\nS = 'A'", redefinitionOpts));
+                () -> Parsewisp.parser("S = 'A'\nS = 'A'\nS = 'A'", redefinitionOpts));
     }
+
     @Test
     void optionChoiceTest() {
         var redefinitionOpts = ParserCreationOptions
@@ -49,6 +51,7 @@ class RedefinitionOptionTest {
         Assertions.assertEquals(PT.create("S", "B"), p.parse("B"));
         Assertions.assertEquals(PT.create("S", "C"), p.parse("C"));
     }
+
     @Test
     void optionKeepTest() {
         var redefinitionOpts = ParserCreationOptions

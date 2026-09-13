@@ -16,7 +16,7 @@ public final class CfgGrammar extends GrammarBuilder {
     final @NotNull ParserCreationOptions options;
 
     private CfgGrammar(final @NotNull ParserCreationOptions options) {
-        super(options);
+        super(RedefinitionOption.ERROR);
         this.options = options;
     }
 

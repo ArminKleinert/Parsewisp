@@ -28,7 +28,7 @@ final class Cfg {
         GrammarBuild(final @NotNull ParserCreationOptions options,
                      final @NotNull String spec,
                      final @NotNull Grammar grammarGrammar) {
-            super(options);
+            super(options.getRedefinitionOption());
             this.spec = spec;
             this.grammarGrammar = grammarGrammar;
         }
@@ -244,6 +244,8 @@ final class Cfg {
 
     @NotNull Grammar buildGrammar(final @NotNull String spec,
                                   final @NotNull Grammar grammarGrammar) {
-        return new GrammarBuild(options, spec, grammarGrammar).build();
+        return new GrammarBuild(options, spec, grammarGrammar).buildWithWhitespace(
+                null, null, null,
+                options.doCheckCorrectness());
     }
 }
