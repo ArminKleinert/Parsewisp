@@ -47,31 +47,12 @@ public final class CfgGrammar extends GrammarBuilder {
         final @NotNull Rule rulesRule =
                 concatNoEpsilonMoreThan1(
                         List.of(string("(*"),
-                                makeCfgInsideCommentRhs(),
+                                onceOrMore(alt(
+                                        regex("(?s)(?:(?!\\(\\*|\\*\\)).)*(?x) # Comment text"),
+                                        nt("comment") /// {@link #makeCfgCommentRhs}
+                                )),
                                 string("*)")))
                         .hideTag();
-
-//        if (!options.lineCommentIndicators().isEmpty()) {
-//            return specialSequence("Linecomment: One of " + options.lineCommentIndicators() + " until end of line.",
-//                    string -> {
-//                        if (!options.lineCommentIndicators().stream().anyMatch(it -> string.startsWith(it)))
-//                            return Optional.empty();
-//                var index
-//                    });
-//        }
-
-        return rulesRule;
-    }
-
-    private @NotNull Rule makeCfgInsideCommentRhs() {
-        final @NotNull Pattern insideComment = Pattern.compile("(?s)(?:(?!\\(\\*|\\*\\)).)*(?x) # Comment text");
-        final @NotNull Rule rulesRule =
-                concatNoEpsilonMoreThan1(
-                        List.of(regex(insideComment),
-                                zeroOrMore(concatNoEpsilonMoreThan1(
-                                        List.of(nt("comment"), /// {@link #makeCfgCommentRhs}
-                                                regex(insideComment)))
-                                )));
         return rulesRule;
     }
 
