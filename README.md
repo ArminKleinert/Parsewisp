@@ -8,51 +8,49 @@ but has grown beyond it.
 ## Features
 
 - [x] Handles any kind of context-free grammar (left-recursive, right-recursive, ambiguous). For caveats see below.
-- [x] Works for EBNF and ABNF.
 - [x] Supports PEG-like syntax for lookahead and negative lookahead.
 - [x] Detailed reporting of parse errors.
 - [x] Can produce lazy sequences of all parses. This is useful for ambiguous grammars.
 - [x] Grammars can be built using combinators.
 - [x] Heavily optimized, with some tradeoffs where good style demanded it.
 - [x] Many options for customizing the parser-construction and parsing-process.
-
-Missing features and problems:
-
-- [ ] ABNFand PEG line comments are not implemented yet.
+- [x] Besides the default syntax, additional grammar formats are available in the
+  sister-project [ParsewispFormats](https://github.com/ArminKleinert/ParsewispFormats).
 
 ## First parser
 
-To create a parser, you'll typically want to use the `Parsewisp.parser` static method. It takes a string as its first argument.
+To create a parser, you'll typically want to use the `Parsewisp.parser` static method. It takes a string as its first
+argument.
 
 ```java
 import de.kleinert.parsewisp.Parsewisp;
 import parser_options.de.kleinert.parsewisp.ParserCreationOptions;
 
 class MyFirstParser {
-  public static void main(String[] args) {
-    // Using multiline strings can be helpful. This grammar defines  arithmetic expressions
-    var grammar = """
-            sum          = product ('+'|'-') sum   | product
-            product      = power ('*'|'/') product | power
-            power        = paren-or-val '^' power  | paren-or-val
-            paren-or-val = '(' sum ')'             | number
-            number       = ('+'|'-')? ('0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9')+
-            """;
-    var p = Parsewisp.parser(grammar);
+    public static void main(String[] args) {
+        // Using multiline strings can be helpful. This grammar defines  arithmetic expressions
+        var grammar = """
+                sum          = product ('+'|'-') sum   | product
+                product      = power ('*'|'/') product | power
+                power        = paren-or-val '^' power  | paren-or-val
+                paren-or-val = '(' sum ')'             | number
+                number       = ('+'|'-')? ('0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9')+
+                """;
+        var p = Parsewisp.parser(grammar);
 
-    // Start the parser by using its parse(String) method.
-    // The parser will output the parse tree.
-    System.out.println(p.parse("1")); // [:sum, [:product, [:power, [:paren-or-val, [:number, "1"]]]]]
+        // Start the parser by using its parse(String) method.
+        // The parser will output the parse tree.
+        System.out.println(p.parse("1")); // [:sum, [:product, [:power, [:paren-or-val, [:number, "1"]]]]]
 
-    // The grammar can not yet handle whitespace.
-    // The following returns an error:
-    System.out.println(p.parse("1 + 2"));
+        // The grammar can not yet handle whitespace.
+        // The following returns an error:
+        System.out.println(p.parse("1 + 2"));
 
-    // You can manually add support for whitespace to the grammar or use the optional argument for the Parsewisp.parser method:
-    p = Parsewisp.parser(grammar, ParserCreationOptions.newWithStandardWhitespace());
-    // Now, the parse works. Go on, try it. :)
-    System.out.println(p.parse("1 + 2"));
-  }
+        // You can manually add support for whitespace to the grammar or use the optional argument for the Parsewisp.parser method:
+        p = Parsewisp.parser(grammar, ParserCreationOptions.newWithStandardWhitespace());
+        // Now, the parse works. Go on, try it. :)
+        System.out.println(p.parse("1 + 2"));
+    }
 }
 ```
 
@@ -112,7 +110,6 @@ These are priorities that directly impact the usage.
 
 - For available value range formats, see [the specification](https://datatracker.ietf.org/doc/html/rfc5234#autoid-11).
 - For available ABNF core rules, see [the specification](https://datatracker.ietf.org/doc/html/rfc5234#autoid-25).
-
 
 ## Design goals
 

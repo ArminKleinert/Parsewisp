@@ -1,25 +1,27 @@
 ## Problems
 
 - Non-productive Grammars, like `S = S` or `S = A S\nA = epsilon`, will terminate, but produce no output and also not
-  log a failure. The "productivity" of a grammar can be checked by using the analysis algorithm `isProductive(Sym)` on the grammar. (See example below.)
+  log a failure. The "productivity" of a grammar can be checked by using the analysis algorithm `isProductive(Sym)` on
+  the grammar. (See example below.)
 - Grammars like `S = epsilon | S` produce an infinite number of results if the input is empty. This is technically
-  correct behavior, but very confusing to users. This corner case can be checked for my using the `infiniteEmptyRecursionPossible(Sym)` analysis. (See example below.)
+  correct behavior, but very confusing to users. This corner case can be checked for my using the
+  `infiniteEmptyRecursionPossible(Sym)` analysis. (See example below.)
 
 ```java
 import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.Sym;
 
 class VerySpecificGrammarProblems {
-  void test() {
-    var parser1 = Parsewisp.parser("S = A S ; A = epsilon ;");
-    var analysis1 = parser1.grammar().analyze();
-    System.out.println(analysis1.isProductive(Sym.sym("S"))); // True if the grammar can produce a result
+    void test() {
+        var parser1 = Parsewisp.parser("S = A S ; A = epsilon ;");
+        var analysis1 = parser1.grammar().analyze();
+        System.out.println(analysis1.isProductive(Sym.sym("S"))); // True if the grammar can produce a result
 
-    var parser2 = Parsewisp.parser("S = S | epsilon");
-    var analysis2 = parser2.grammar().analyze();
-    // TODO: Does not work yet.
-    System.out.println(analysis2.infiniteEmptyRecursionPossible(Sym.sym("S"))); // True if the problem is possible.
-  }
+        var parser2 = Parsewisp.parser("S = S | epsilon");
+        var analysis2 = parser2.grammar().analyze();
+        // TODO: Does not work yet.
+        System.out.println(analysis2.infiniteEmptyRecursionPossible(Sym.sym("S"))); // True if the problem is possible.
+    }
 }
 ```
 
@@ -27,6 +29,10 @@ class VerySpecificGrammarProblems {
 
 The biggest difference to Instaparse is that Parsewisp does not require Clojure. Jokes aside, there are a few important
 internal differences.
+
+### ABNF is in a separate project
+
+Normal EBNF and ABNF are available in the [ParsewispFormats](https://github.com/ArminKleinert/ParsewispFormats) project.
 
 ### Smaller things
 
@@ -45,43 +51,44 @@ Instaparse chooses to override the previous definitions silently. Parsewisp allo
 
 ```java
 import de.kleinert.parsewisp.Parsewisp;
-import parser_options.de.kleinert.parsewisp.RedefinitionOption;
-import parser.de.kleinert.parsewisp.Parser;
-import parser_options.de.kleinert.parsewisp.ParserCreationOptions;
+import de.kleinert.parsewisp.parser_options.RedefinitionOption;
+import de.kleinert.parsewisp.parser.Parser;
+import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
 
 class RedefTest {
-  static void main(String[] args) {
-    String grammar = """
-            S = 'A' ;
-            S = 'B' ;
-            S = 'C' ;
-            """; // Three different definitions for "S".
-    Parser p;
-    var opts = ParserCreationOptions.getDefault();
+    static void main(String[] args) {
+        String grammar = """
+                S = 'A' ;
+                S = 'B' ;
+                S = 'C' ;
+                """; // Three different definitions for "S".
+        Parser p;
+        var opts = ParserCreationOptions.getDefault();
 
-    // Override: The grammar is equal to `S = 'C'`
-    p = Parsewisp.parser(grammar, opts.withRedefinitionOption(RedefinitionOption.OVERRIDE));
-    System.out.println(p.parse("A").isSuccess()); // false
-    System.out.println(p.parse("B").isSuccess()); // false
-    System.out.println(p.parse("C").isSuccess()); // true
+        // Override: The grammar is equal to `S = 'C'`
+        p = Parsewisp.parser(grammar, opts.withRedefinitionOption(RedefinitionOption.OVERRIDE));
+        System.out.println(p.parse("A").isSuccess()); // false
+        System.out.println(p.parse("B").isSuccess()); // false
+        System.out.println(p.parse("C").isSuccess()); // true
 
-    // Choice: The grammar is equal to `S = 'A' | 'B' | 'C'`
-    p = Parsewisp.parser(grammar, opts.withRedefinitionOption(RedefinitionOption.CHOICE));
-    System.out.println(p.parse("A").isSuccess()); // true
-    System.out.println(p.parse("B").isSuccess()); // true
-    System.out.println(p.parse("C").isSuccess()); // true
+        // Choice: The grammar is equal to `S = 'A' | 'B' | 'C'`
+        p = Parsewisp.parser(grammar, opts.withRedefinitionOption(RedefinitionOption.CHOICE));
+        System.out.println(p.parse("A").isSuccess()); // true
+        System.out.println(p.parse("B").isSuccess()); // true
+        System.out.println(p.parse("C").isSuccess()); // true
 
-    // Keep first: The grammar is equal to `S = 'A'`
-    p = Parsewisp.parser(grammar, opts.withRedefinitionOption(RedefinitionOption.KEEP));
-    System.out.println(p.parse("A").isSuccess()); // true
-    System.out.println(p.parse("B").isSuccess()); // false
-    System.out.println(p.parse("C").isSuccess()); // false
+        // Keep first: The grammar is equal to `S = 'A'`
+        p = Parsewisp.parser(grammar, opts.withRedefinitionOption(RedefinitionOption.KEEP));
+        System.out.println(p.parse("A").isSuccess()); // true
+        System.out.println(p.parse("B").isSuccess()); // false
+        System.out.println(p.parse("C").isSuccess()); // false
 
-    // Error: The grammar is considered invalid and will throw an exception.
-    p = Parsewisp.parser(grammar, opts.withRedefinitionOption(RedefinitionOption.ERROR)); // Fails
-  }
+        // Error: The grammar is considered invalid and will throw an exception.
+        p = Parsewisp.parser(grammar, opts.withRedefinitionOption(RedefinitionOption.ERROR)); // Fails
+    }
 }
 ```
+
 ## Style considerations
 
 When starting this project, I made a few decisions that are all over the code.
@@ -133,9 +140,9 @@ import de.kleinert.parsewisp.functions.Procedure;
 // Could be java.util.function.Consumer<ParsewispMessage>. New type for clarity.
 de.kleinert.parsewisp.functions.Listener listener = (ParsewispMessage o) -> System.out.println("Listener");
 
-// Could be java.lang.Runnable. New type because Runnable is associated with Threads.
-de.kleinert.parsewisp.functions.NegativeListener negativeListener = () -> System.out.println("NegativeListener");
-de.kleinert.parsewisp.functions.Procedure procedure = () -> System.out.println("Procedure");
+        // Could be java.lang.Runnable. New type because Runnable is associated with Threads.
+        de.kleinert.parsewisp.functions.NegativeListener negativeListener = () -> System.out.println("NegativeListener");
+        de.kleinert.parsewisp.functions.Procedure procedure = () -> System.out.println("Procedure");
 ```
 
 ### New collection types
