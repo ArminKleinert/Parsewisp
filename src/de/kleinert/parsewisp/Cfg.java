@@ -245,7 +245,7 @@ final class Cfg {
     @NotNull Grammar buildGrammar(final @NotNull String spec,
                                   final @NotNull Grammar grammarGrammar) {
         return new GrammarBuild(options, spec, grammarGrammar).buildWithWhitespace(
-                null, null, null,
+                null, null,
                 options.doCheckCorrectness());
     }
 }

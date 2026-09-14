@@ -64,7 +64,7 @@ public final class Print {
 
     private static @NotNull String ruleToString(final @NotNull Rule rule, final boolean hidden) {
         if (!hidden && rule.isHidden()) {
-            return "< " + ruleToString(rule, true) + " >";
+            return "<" + ruleToString(rule, true) + ">";
         } else if (rule instanceof EpsilonTerm) {
             return "ε";
         } else if (rule instanceof OptionalRule) {

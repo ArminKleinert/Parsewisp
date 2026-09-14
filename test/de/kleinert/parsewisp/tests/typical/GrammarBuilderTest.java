@@ -25,7 +25,7 @@ class GrammarBuilderTest {
                                 NUMBER = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
                                 """)
                 .grammar();
-        var gFromGB = new GrammarBuilder(null) {
+        var gFromGB = new GrammarBuilder() {
             @Override
             protected void make() {
                 addProduction("S", cat(nt("NUMBER"), repMin(nt(Sym.sym("NUMBER")), 0)));
@@ -52,7 +52,7 @@ class GrammarBuilderTest {
                         ParserCreationOptions.getDefault().withStartProduction(Sym.sym("S")))
                 .grammar();
 
-        var pFromGB = new GrammarBuilder(null) {
+        var pFromGB = new GrammarBuilder() {
             @Override
             protected void make() {
                 addProduction("S", cat(nt("NUMBER"), zeroOrMore(nt(Sym.sym("NUMBER")))));
@@ -66,7 +66,7 @@ class GrammarBuilderTest {
     @Test
     void testGrammarBuilderFeatures() {
         // A grammar which has 9 different ways to match at least one number/underscore.
-        var gFromGB = new GrammarBuilder(null) {
+        var gFromGB = new GrammarBuilder() {
             @Override
             protected void make() {
                 addProduction("S", ordAlt(List.of(
@@ -80,20 +80,18 @@ class GrammarBuilderTest {
                 addProduction("D", cat(regex("[0-9_]"), zeroOrMore(regex("[0-9_]"))));
                 addProduction("E", cat(rep(regex("[0-9_]"), 1), zeroOrMore(regex("[0-9_]"))));
                 addProduction("F", repMin(alt(numVal('0', '9'), numVal(0x5F), numVal(0x60)), 1));
-                addProduction("G", onceOrMore(altList(
-                                Stream.concat(
-                                                IntStream.range('0', '9'+1).boxed(),
-                                                Stream.of((int) '_'))
-                                        .map(i -> String.valueOf((char) i.intValue()))
-                                        .map(this::of)
-                                        .collect(Collectors.toList()))));
-                addProduction("H", onceOrMore(altList(
-                                Stream.concat(
-                                                IntStream.range('0', '9'+1).boxed(),
-                                                Stream.of((int) '_'))
-                                        .map(i -> String.valueOf((char) i.intValue()))
-                                        .map(this::of)
-                                        .collect(Collectors.toList()))));
+                addProduction("G", onceOrMore(altList(Stream.concat(
+                                IntStream.range('0', '9' + 1).boxed(),
+                                Stream.of((int) '_'))
+                        .map(i -> String.valueOf((char) i.intValue()))
+                        .map(this::of)
+                        .collect(Collectors.toList()))));
+                addProduction("H", onceOrMore(altList(Stream.concat(
+                                IntStream.range('0', '9' + 1).boxed(),
+                                Stream.of((int) '_'))
+                        .map(i -> String.valueOf((char) i.intValue()))
+                        .map(this::of)
+                        .collect(Collectors.toList()))));
                 addProduction("I", cat(regex("[0-9_]"), opt(onceOrMore(regex("[0-9_]")))));
             }
         }.build();

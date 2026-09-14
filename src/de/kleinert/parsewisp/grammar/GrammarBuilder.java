@@ -51,19 +51,23 @@ public abstract class GrammarBuilder {
     private final BufferForRules buffer;
     private final RedefinitionOption redefinitionOpt;
     protected @Nullable Sym startProduction;
+    private boolean wasMakeCalled = false;
 
-    protected GrammarBuilder(@Nullable RedefinitionOption redefinitionOption) {
+    protected GrammarBuilder() {
+        this(RedefinitionOption.ERROR);
+    }
+
+    protected GrammarBuilder(final @NotNull RedefinitionOption redefinitionOption) {
         this.productions = new LinkedHashMap<>();
-        this.redefinitionOpt = redefinitionOption == null
-                ? RedefinitionOption.ERROR
-                : redefinitionOption;
+        this.redefinitionOpt = redefinitionOption;
         this.buffer = new BufferForRules();
     }
 
     /**
      * Override this to create a grammar. Used in {@link #build()}.
      */
-    protected abstract void make();
+    protected void make() {
+    }
 
     /**
      * Use this to construct the grammar.
@@ -71,48 +75,44 @@ public abstract class GrammarBuilder {
      * @return The grammar.
      */
     public final @NotNull Grammar build() {
-        return buildWithWhitespace(null, null, null, true);
+        return buildWithWhitespace(null, null, true);
     }
 
     /**
      * Use this to construct the grammar. Productions can be added before starting the builder.
-     * @param startProduction    Starting production. Set to null to use the first production that was added.
-     * @param initialProductions Productions to add in the beginning.
-     * @param wsParser           Whitespace parser to include.
-     * @param checkCorrectness   Whether to check the grammar for validity.
+     *
+     * @param startProduction  Starting production. Set to null to use the first production that was added.
+     * @param wsParser         Whitespace parser to include.
+     * @param checkCorrectness Whether to check the grammar for validity.
      * @return The grammar.
      */
     public final @NotNull Grammar buildWithWhitespace(
             final @Nullable Sym startProduction,
-            final @Nullable LinkedHashMap<Sym, Rule> initialProductions,
             final @Nullable Parser wsParser,
             boolean checkCorrectness) {
         final @NotNull Sym start;
 
-        synchronized (this) {
-            if (initialProductions != null) {
-                for (final @NotNull var entry : initialProductions.entrySet()) {
-                    addProduction(entry.getKey(), entry.getValue());
-                }
-            }
-
+        if (!wasMakeCalled) {
             make();
-
-            if (startProduction == null) {
-                start = productions.keySet().iterator().next();
-            } else {
-                start = startProduction;
-            }
-
-            compress();
-
-            ReductionType.applyStandardReductionToProductions(productions);
-            if (wsParser != null) {
-                autoWhitespace(start, wsParser.grammar(), wsParser.startProduction());
-            }
+            wasMakeCalled = true;
         }
 
-        var g = new Grammar(start, productions);
+        var resultProductions = new LinkedHashMap<>(productions);
+
+        if (startProduction == null) {
+            start = resultProductions.keySet().iterator().next();
+        } else {
+            start = startProduction;
+        }
+
+        compress(resultProductions);
+
+        ReductionType.applyStandardReductionToProductions(resultProductions);
+        if (wsParser != null) {
+            autoWhitespace(resultProductions, start, wsParser.grammar(), wsParser.startProduction());
+        }
+
+        var g = new Grammar(start, resultProductions);
 
         if (checkCorrectness) {
             final @NotNull var analysisResult = g.analyze();
@@ -627,7 +627,7 @@ public abstract class GrammarBuilder {
         return OptionalRule.create(rule);
     }
 
-    private void compress() {
+    private void compress(final @NotNull LinkedHashMap<Sym, Rule> productions) {
         for (final @NotNull var symRuleEntry : productions.entrySet()) {
             final @NotNull var value = symRuleEntry.getValue();
             final @NotNull var compressedRule = compressRule(value);
@@ -721,14 +721,15 @@ public abstract class GrammarBuilder {
         throw new IllegalArgumentException(originalRule.getClass().getName());
     }
 
-    private void autoWhitespace(final @NotNull Sym start,
+    private void autoWhitespace(final @NotNull LinkedHashMap<@NotNull Sym, @NotNull Rule> productions,
+                                final @NotNull Sym start,
                                 final @NotNull Grammar grammarWS,
                                 final @NotNull Sym startWS) {
         final @NotNull Rule wsParser =
                 opt(nt(startWS)).enableHideTag();
 
         final @NotNull LinkedHashMap<@NotNull Sym, @NotNull Rule> finalGrammar =
-                new LinkedHashMap<>(productions);
+                productions;
         for (final @NotNull var symRuleEntry : finalGrammar.entrySet()) {
             symRuleEntry.setValue(autoWhitespaceHelper(
                     symRuleEntry.getValue(), wsParser));
@@ -745,8 +746,6 @@ public abstract class GrammarBuilder {
         finalGrammar.putAll(grammarWS);
         finalGrammar.put(startWS,
                 Objects.requireNonNull(grammarWS.getProduction(startWS)).hideTag());
-
-        productions = finalGrammar;
     }
 
     protected <T extends Rule> T buffer(T rule) {
