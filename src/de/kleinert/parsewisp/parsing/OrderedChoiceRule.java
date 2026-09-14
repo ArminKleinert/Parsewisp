@@ -80,12 +80,14 @@ public final class OrderedChoiceRule extends RuleWithManyChildren {
         final @NotNull Rule rule2 = this.rule2;
         final @NotNull TrampolineListenerKey nodeKeyForComb1 =
                 new TrampolineListenerKey(index, rule1);
+        final @NotNull TrampolineListenerKey nodeKeyForComb2 =
+                new TrampolineListenerKey(index, rule2);
         final @NotNull Listener listener =
                 runner.nodeListener(new TrampolineListenerKey(index, this));
         runner.pushListener(nodeKeyForComb1, listener);
         runner.pushNegativeListener(
                 nodeKeyForComb1,
-                () -> runner.pushListener(new TrampolineListenerKey(index, rule2), listener));
+                () -> runner.pushListener(nodeKeyForComb2, listener));
     }
 
     @Override
@@ -94,6 +96,8 @@ public final class OrderedChoiceRule extends RuleWithManyChildren {
         final @NotNull Rule rule2 = this.rule2;
         final @NotNull TrampolineListenerKey nodeKeyForComb1 =
                 new TrampolineListenerKey(index, rule1);
+        final @NotNull TrampolineListenerKey nodeKeyForComb2 =
+                new TrampolineListenerKey(index, rule2);
         final @NotNull Listener listener =
                 runner.nodeListener(new TrampolineListenerKey(index, this));
         runner.pushFullListener(nodeKeyForComb1, listener);

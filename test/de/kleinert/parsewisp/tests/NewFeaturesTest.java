@@ -17,10 +17,9 @@ import java.util.List;
 class NewFeaturesTest {
 
     @Test void test0 () {
-        {
-            var p = Parsewisp.parser("S = 'a' (* comment*)'b'");
-            System.out.println(p.parse("ab"));
-        }
+        var p = Parsewisp.parser(
+                "S = number (\"+\" | \"-\") S / number\nnumber = [ \"+\" / \"-\" ] digits\n<digits> = #'[0-9]'+");
+        System.out.println(p.parse("123"));
     }
     @Test
     void test1() {
