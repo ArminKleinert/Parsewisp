@@ -16,4 +16,12 @@ class RegexTest {
                 p.parse("7F")
         );
     }
+
+    @Test
+    void testUnicodeSequence() {
+        // This used to cause a bug where "\\u" consumed one character too far.
+        // E.g. "\\u0041-" would consume the minus as if it was part of the number sequence.
+        var p = Parsewisp.parser("S = #'[\\u0041-\\u005A]+'");
+        Assertions.assertEquals(PT.create("S", "ABC"), p.parse("ABC"));
+    }
 }

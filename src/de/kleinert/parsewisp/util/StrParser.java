@@ -43,8 +43,8 @@ public final class StrParser {
                         case 'r' -> sb.append('\r');
                         case 't' -> sb.append('\t');
                         case 'u' -> {
-                            i += 5;
-                            sb.appendCodePoint(Integer.parseInt(s, i - 4, i, 16));
+                            i += 4;
+                            sb.appendCodePoint(Integer.parseInt(s, i - 3, i+1, 16));
                         }
                         case '\\' -> sb.append('\\');
                         default -> sb.append('\\').append(c2);
