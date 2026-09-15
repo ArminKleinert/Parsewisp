@@ -436,6 +436,21 @@ class ParsewispTest {
         }
     }
 
+    /**
+     * There used to be a bug where the following made the parse fail.
+     */
+    @Test void orderedChoiceAtSameIndex () {
+        var p = Parsewisp.parser(
+                """
+                        S = number ("+" | "-") S / number
+                        number = [ "+" / "-" ] digits
+                        <digits> = #'[0-9]'+
+                        """);
+        Assertions.assertEquals(
+                List.of(PT.create("S", PT.create("number","1","2","3"))),
+                p.parses("123"));
+    }
+
     private @NotNull @Unmodifiable List<ParseTree> r1r2r3Results() {
         return List.of(
                 PT.create("S", PT.create("r1", "a"), PT.create("r1", "a")),

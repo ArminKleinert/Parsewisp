@@ -11,6 +11,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.TreeMap;
 
 import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.TrampolineListenerKey;
 
@@ -24,8 +26,8 @@ public final class Tramp {
     private final @NotNull ArrayList<@NotNull Procedure> stack;
     private final @NotNull ArrayList<@NotNull Procedure> nextStack;
     private int generation;
-    //private final @NotNull TreeMap<@NotNull Integer, @NotNull NegativeListener> negativeListeners;
-    private final @NotNull IntMap<@NotNull NegativeListener> negativeListeners;
+    private final @NotNull TreeMap<@NotNull Integer, @NotNull ArrayList<NegativeListener>> negativeListeners;
+    //private final @NotNull IntMap<@NotNull NegativeListener> negativeListeners;
     private final @NotNull LinkedHashMap<@NotNull TrampolineMsgCacheKey, @NotNull Integer> msgCache;
     private final @NotNull LinkedHashMap<@NotNull TrampolineListenerKey, @NotNull TrampolineListenerNode> nodes;
     private @Nullable ParseMessage success;
@@ -55,8 +57,8 @@ public final class Tramp {
         this.stack = new ArrayList<>();
         this.nextStack = new ArrayList<>();
         this.generation = 0;
-        this.negativeListeners = new IntMap<>(1024);
-        //this.negativeListeners = new LinkedHashMap<>();
+        //this.negativeListeners = new IntMap<>(1024);
+        this.negativeListeners = new TreeMap<>();
         this.msgCache = new LinkedHashMap<>();
         this.nodes = new LinkedHashMap<>();
         this.success = null;
@@ -113,17 +115,26 @@ public final class Tramp {
      *
      * @return Sequential map of negative lookaheads.
      */
-    public @NotNull IntMap<@NotNull NegativeListener> getNegativeListeners() {
+    public @NotNull TreeMap<@NotNull Integer, @NotNull ArrayList<NegativeListener>> getNegativeListeners() {
         return negativeListeners;
     }
 
     /**
-     * Removes and returns the last negative listener.
+     * Adds a new listener at the key's index.
      *
-     * @return The last negative listener or null if there were none.
+     * @param creator          The key.
+     * @param negativeListener The listener procedure.
      */
-    public @Nullable NegativeListener pollAndRemovePreviousNegativeListener() {
-        return negativeListeners.intMapPoll();
+    public void pushNegativeListener(final @NotNull TrampolineListenerNode.TrampolineListenerKey creator,
+                                     final @NotNull NegativeListener negativeListener) {
+        var present = negativeListeners.get(creator.index());
+        if (present == null) {
+            var listeners = new ArrayList<NegativeListener>();
+            listeners.add(negativeListener);
+            negativeListeners.put(creator.index(), listeners);
+        } else {
+            present.add(negativeListener);
+        }
     }
 
     /**

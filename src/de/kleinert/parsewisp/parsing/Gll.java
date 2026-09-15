@@ -71,7 +71,7 @@ public final class Gll {
     void pushNegativeListener(
             final @NotNull TrampolineListenerNode.TrampolineListenerKey creator,
             final @NotNull NegativeListener negativeListener) {
-        tramp.getNegativeListeners().put(creator.index(), negativeListener);
+        tramp.pushNegativeListener(creator, negativeListener);
     }
 
     private void pushMessage(
@@ -126,11 +126,22 @@ public final class Gll {
                 step();
                 continue; // Take it to the top.
             }
-            var lastNegativeListener = tramp.pollAndRemovePreviousNegativeListener();
-            if (lastNegativeListener != null) {
-                lastNegativeListener.execute();
+
+            var negativeListeners = tramp.getNegativeListeners();
+            if (!negativeListeners.isEmpty()) {
+                var latestIndexAndNegListeners = negativeListeners.lastEntry();
+                var latestNegListeners = latestIndexAndNegListeners.getValue();
+                var latestListener = latestNegListeners.remove(latestNegListeners.size() - 1);
+
+                latestListener.execute();
+
+                if (latestNegListeners.isEmpty()) {
+                    tramp.getNegativeListeners().remove(latestIndexAndNegListeners.getKey());
+                }
+
                 continue; // Take it to the top.
             }
+
             if (foundResult.get()) {
                 tramp.nextGeneration();
                 foundResult.set(false);

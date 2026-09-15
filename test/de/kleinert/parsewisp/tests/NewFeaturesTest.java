@@ -16,11 +16,6 @@ import java.util.List;
 
 class NewFeaturesTest {
 
-    @Test void test0 () {
-        var p = Parsewisp.parser(
-                "S = number (\"+\" | \"-\") S / number\nnumber = [ \"+\" / \"-\" ] digits\n<digits> = #'[0-9]'+");
-        System.out.println(p.parse("123"));
-    }
     @Test
     void test1() {
         var grammar = """
