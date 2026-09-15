@@ -148,17 +148,19 @@ final class Cfg {
                     }
                     case "string-cs" -> {
                         return stringCS(
-                                strParser.processString((String) tree.getContent().get(0).content()));
+                                strParser.processString(
+                                        (String) tree.getContent().get(0).content()));
                     }
                     case "string-ci" -> {
                         return stringCI(
-                                strParser.processString((String)
-                                        tree.getContent().get(0).content()));
+                                strParser.processString(
+                                        (String) tree.getContent().get(0).content()));
                     }
                     case "regexp" -> {
                         return regex(
-                                strParser.processRegexp((String)
-                                        tree.getContent().get(0).content()));
+                                strParser.processRegexp(
+                                        (String) tree.getContent().get(0).content(),
+                                        2));
                     }
                     case "neg" -> {
                         return neg((Rule) buildRule(

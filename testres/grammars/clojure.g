@@ -28,7 +28,7 @@ readerMacro     = ( "`" | "'"| "@" | "~" ) sexpr
 
 number          = #'[+-]*[0-9]+(N|(\.[0-9]+)?([eE][+-]?))?'
 
-string          = #'\"([^"\\]|\\(.|\\n))*\"'
+string          = #'"([^"\\]|\\(.|\\n))*"'
 regex_literal   = '#' string
 
 char            = !multiChar #'\\.' | multiChar

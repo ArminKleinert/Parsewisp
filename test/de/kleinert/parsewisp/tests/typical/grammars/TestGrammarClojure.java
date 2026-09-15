@@ -2,6 +2,7 @@ package de.kleinert.parsewisp.tests.typical.grammars;
 
 import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.parser.Parser;
+import de.kleinert.parsewisp.testutil.PT;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -9,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.stream.Stream;
 
 class TestGrammarClojure {
     private @NotNull Parser parser() {
@@ -116,28 +116,39 @@ class TestGrammarClojure {
         Assertions.assertTrue(parser().parse(text).isSuccess());
     }
 
+    /**
+     * This testcase uses my local Instaparse sources. It likely won't work on other machines and is thus commented out.
+     *
+     * @throws IOException If the sources can't be read.
+     */
     @Test
     void testAllInstaparseCljSources() throws IOException {
-        try (var sources = Files.walk(Path.of("/home/tpk/Desktop/programming/instaparse-master/src"))) {
-            var files = sources
-                    .filter(it -> it.toFile().isFile())
-                    .filter(it -> it.toString().endsWith(".clj") || it.toString().endsWith(".cljs") || it.toString().endsWith(".cljc"))
-                    .toList();
-            for (Path file : files) {
-                System.out.println(file);
-                var s = Files.readString(file);
-                var res = parser().parse(s);
-                if (res.isFailure())
-                    System.out.println(res);
-                Assertions.assertTrue(res.isSuccess());
-            }
-        }
+//        try (var sources = Files.walk(Path.of("/home/tpk/Desktop/programming/instaparse-master/src"))) {
+//            var files = sources
+//                    .filter(it -> it.toFile().isFile())
+//                    .filter(it -> it.toString().endsWith(".clj") || it.toString().endsWith(".cljs") || it.toString().endsWith(".cljc"))
+//                    .toList();
+//            var p = parser();
+////            var start = System.nanoTime();
+//            for (Path file : files) {
+//                var s = Files.readString(file);
+//                var res = p.parse(s);
+//                if (res.isFailure())
+//                    System.out.println(res);
+//                Assertions.assertTrue(res.isSuccess());
+//            }
+////            var end = System.nanoTime();
+////            System.out.println((end - start) / 1000000.0);
+//        }
     }
 
     @Test
     void testComment() {
         var p = parser();
         var text = "\"\\\"\"";
-        System.out.println(p.parse(text));
+        Assertions.assertEquals(
+                PT.create("S", PT.create("sexpr", PT.create("string", "\"\\\"\""))),
+                p.parse(text)
+        );
     }
 }
