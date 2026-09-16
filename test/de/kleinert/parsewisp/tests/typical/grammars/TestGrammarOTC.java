@@ -20,7 +20,7 @@ class TestGrammarOTC {
     private @NotNull Parser parser() {
         try {
             return Parsewisp.parser(
-                    Files.readString(Path.of("testres/grammars/otc.g")),
+                    Files.readString(Path.of("testres/grammars/otc.grammar")),
                     ParserCreationOptions.newWithStandardWhitespace()
             );
         } catch (IOException e) {

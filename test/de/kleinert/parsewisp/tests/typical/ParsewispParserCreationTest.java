@@ -33,7 +33,7 @@ class ParsewispParserCreationTest {
         try {
 
             final @NotNull String text = "aaaaabbbaaaabb";
-            final @NotNull var grammarFile = new File("testres/grammars/as_and_bs.g");
+            final @NotNull var grammarFile = new File("testres/grammars/as_and_bs.grammar");
             final @NotNull var p = Parsewisp.parser(Files.readString(grammarFile.toPath()));
             final @NotNull var grammarText = Files.readString(grammarFile.toPath());
 
@@ -49,7 +49,7 @@ class ParsewispParserCreationTest {
             throw new RuntimeException(e);
         }
         try {
-            final @NotNull var grammarFile = new File("testres/grammars/as_and_bs.g");
+            final @NotNull var grammarFile = new File("testres/grammars/as_and_bs.grammar");
             final @NotNull var p = Parsewisp.parser(Files.readString(grammarFile.toPath()));
             Assertions.assertEquals(p, Parsewisp.parser(Files.readString(grammarFile.toPath())));
         } catch (IOException e) {
@@ -57,7 +57,7 @@ class ParsewispParserCreationTest {
         }
 
         try {
-            final @NotNull var grammarFile = new File("testres/grammars/c99.g");
+            final @NotNull var grammarFile = new File("testres/grammars/c99.grammar");
             final @NotNull var pFromString = Parsewisp.parser(
                     Files.readString(grammarFile.toPath()),
                     ParserCreationOptions.newWithStandardWhitespace());

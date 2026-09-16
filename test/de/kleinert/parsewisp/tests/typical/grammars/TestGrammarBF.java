@@ -19,7 +19,7 @@ class TestGrammarBF {
     private @NotNull Parser parser() {
         try {
             return Parsewisp.parser(
-                    Files.readString(Path.of("testres/grammars/bf.g"))
+                    Files.readString(Path.of("testres/grammars/bf.grammar"))
             );
         } catch (IOException e) {
             throw new RuntimeException(e);

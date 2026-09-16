@@ -20,7 +20,7 @@ class TestGrammarSASL {
     private @NotNull Parser parser() {
         try {
             return Parsewisp.parser(
-                    Files.readString(Path.of("testres/grammars/sasl.g")),
+                    Files.readString(Path.of("testres/grammars/sasl.grammar")),
                     ParserCreationOptions.newWithStandardWhitespace()
             );
         } catch (IOException e) {

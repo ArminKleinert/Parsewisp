@@ -18,7 +18,7 @@ class TestGrammarYail {
         try {
             var opts = ParserCreationOptions.getDefault();
             return Parsewisp.parser(
-                    Files.readString(Path.of("testres/grammars/yail.g")),
+                    Files.readString(Path.of("testres/grammars/yail.grammar")),
                     opts
             );
         } catch (IOException e) {

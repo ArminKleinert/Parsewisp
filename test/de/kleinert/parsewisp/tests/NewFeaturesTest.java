@@ -69,7 +69,7 @@ class NewFeaturesTest {
     @Test
     void bigTest() throws IOException {
         var p = Parsewisp.parser(
-                Files.readString(Path.of("testres/grammars/c99.g")),
+                Files.readString(Path.of("testres/grammars/c99.grammar")),
                 ParserCreationOptions.newWithStandardWhitespace()
         );
         var res = p.parse("""

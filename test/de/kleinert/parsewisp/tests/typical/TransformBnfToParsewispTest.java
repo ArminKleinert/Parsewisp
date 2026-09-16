@@ -27,7 +27,7 @@ class TransformBnfToParsewispTest {
         try {
             var opts = ParserCreationOptions.getDefault();
             return Parsewisp.parser(
-                    Files.readString(Path.of("testres/grammars/bnf.g")),
+                    Files.readString(Path.of("testres/grammars/bnf.grammar")),
                     opts
             );
         } catch (IOException e) {

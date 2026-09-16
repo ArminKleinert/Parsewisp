@@ -16,7 +16,7 @@ class TestGrammarEdn {
     private @NotNull Parser parser() {
         try {
             return Parsewisp.parser(
-                    Files.readString(Path.of("testres/grammars/edn.g"))
+                    Files.readString(Path.of("testres/grammars/edn.grammar"))
             );
         } catch (IOException e) {
             throw new RuntimeException(e);

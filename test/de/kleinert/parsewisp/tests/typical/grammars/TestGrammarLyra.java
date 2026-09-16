@@ -19,7 +19,7 @@ class TestGrammarLyra {
     private @NotNull Parser parser() {
         try {
             return Parsewisp.parser(
-                    Files.readString(Path.of("testres/grammars/lyra.g")),
+                    Files.readString(Path.of("testres/grammars/lyra.grammar")),
                             ParserCreationOptions.newWithStandardWhitespace()
             );
         } catch (IOException e) {

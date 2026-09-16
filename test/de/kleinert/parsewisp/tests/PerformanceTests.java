@@ -10,7 +10,7 @@ class PerformanceTests {
 //        final boolean doRun = true;
 //        final int testNumMultiplierForSlowTests = 100;
 //        final int testNumMultiplier = 1000;
-//        final @NotNull String c99GrammarText = Files.readString(Path.of("testres/grammars/c99.g"));
+//        final @NotNull String c99GrammarText = Files.readString(Path.of("testres/grammars/c99.grammar"));
 //
 //        /**/
 //        if (!doRun) {

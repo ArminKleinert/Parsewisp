@@ -15,7 +15,7 @@ class TestGrammarClojure {
     private @NotNull Parser parser() {
         try {
             return Parsewisp.parser(
-                    Files.readString(Path.of("testres/grammars/clojure.g"))
+                    Files.readString(Path.of("testres/grammars/clojure.grammar"))
             );
         } catch (IOException e) {
             throw new RuntimeException(e);

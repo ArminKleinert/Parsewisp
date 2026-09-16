@@ -18,7 +18,7 @@ class TestGrammarC99Scannerless {
     private @NotNull Parser parser() {
         try {
             return Parsewisp.parser(
-                    Files.readString(Path.of("testres/grammars/c99_sl.g")),
+                    Files.readString(Path.of("testres/grammars/c99_sl.grammar")),
                     ParserCreationOptions.newWithStandardWhitespace()
             );
         } catch (IOException e) {
