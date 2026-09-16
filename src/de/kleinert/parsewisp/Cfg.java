@@ -108,7 +108,7 @@ final class Cfg {
                         continue; // Open up the grouping and take it to the top.
                     }
                     case "alt" -> {
-                        return altList(tree
+                        return alt(tree
                                 .getContent()
                                 .stream()
                                 .map((c) -> (Rule) buildRule((ParseTree) c.content()))

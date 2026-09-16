@@ -122,7 +122,7 @@ public final class CfgGrammar extends GrammarBuilder {
      * @return A {@link Rule}.
      */
     private @NotNull Rule makeCfgRuleSeparatorRhs() {
-        return altList(List.of(
+        return alternationGuaranteeDistinctAndNotEmpty(List.of(
                 stringCS(":="), stringCS("::="), stringCS("=/"),
                 stringCS("="), stringCS(":")));
     }
@@ -168,7 +168,7 @@ public final class CfgGrammar extends GrammarBuilder {
         final @NotNull Pattern singleQuotedString = regexDoc(
                 singleQuoteStringPrefixed, "Prefixed single-quoted string");
 
-        return altList(List.of(
+        return alternationGuaranteeDistinctAndNotEmpty(List.of(
                 doubleQuoteStringRegexRule,
                 regex(singleQuotedString)));
     }

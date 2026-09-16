@@ -219,7 +219,7 @@ public abstract class GrammarBuilder {
             return cat(((List<?>) c).stream().map(this::of).toList());
         }
         if (c instanceof Set<?>) {
-            return altList(((Set<?>) c).stream().distinct().map(this::of).toList());
+            return alt(((Set<?>) c).stream().distinct().map(this::of).toList());
         }
         throw new IllegalArgumentException(c.getClass().getName());
     }
@@ -461,7 +461,7 @@ public abstract class GrammarBuilder {
                 .concat(Stream.of(rule), Arrays.stream(rules))
                 .distinct()
                 .toList();
-        return altList(result);
+        return alt(result);
     }
 
     /**
@@ -476,26 +476,27 @@ public abstract class GrammarBuilder {
      * @return A rule.
      */
     protected final @NotNull Rule alt(final @NotNull List<Rule> rules) {
-        return altList(rules);
-    }
-
-    /**
-     * Creates a {@link AlternationRule}.
-     * <ul>
-     * <li>If the argument List is empty, a {@link EpsilonTerm} is returned instead.</li>
-     * <li>If there is only one element in the list, it is returned.</li>
-     * <li>Otherwise, returns a {@link AlternationRule}, as expected.</li>
-     * </ul>
-     *
-     * @param rules The rules for the output.
-     * @return A rule.
-     */
-    protected final @NotNull Rule altList(final @NotNull List<Rule> rules) {
         return AlternationRule.create(rules);
     }
 
     /**
-     * Like {@link #altList(List)} except the input list is assumed to be distinct
+     * Takes a String and returns a rule which matches any char in it. If the input is empty, returns a rule which matches the empty string.
+     *
+     * @param chars A string of matchable chars.
+     * @return A rule.
+     */
+    protected final @NotNull Rule oneOf(final @NotNull String chars) {
+        if (chars.isEmpty())
+            return eps();
+        var split = new ArrayList<Rule>();
+        for (int i = 0; i < chars.length(); i++) {
+            split.add(string(String.valueOf(chars.charAt(i))));
+        }
+        return alt(split);
+    }
+
+    /**
+     * Like {@link #alt(List)} except the input list is assumed to be distinct
      * (each rule in the list occurs exactly once) and not empty.
      * Use this method only if you are sure that the rules are distinct.
      *
@@ -639,6 +640,7 @@ public abstract class GrammarBuilder {
 
     private @NotNull Rule compressRule(final @NotNull Rule originalRule) {
         if (originalRule instanceof VariableRepetitionRule) {
+            //noinspection PatternVariableCanBeUsed
             final var variableRepetitionRule = (VariableRepetitionRule) originalRule;
             final var min = variableRepetitionRule.getMin();
             final var max = variableRepetitionRule.getMax();
@@ -660,6 +662,7 @@ public abstract class GrammarBuilder {
                     .withReduction(variableRepetitionRule.getReduction());
         }
         if (originalRule instanceof RuleWithManyChildren) {
+            //noinspection PatternVariableCanBeUsed
             var ruleWithManyChildren = (RuleWithManyChildren) originalRule;
             return ruleWithManyChildren
                     .withRules(ruleWithManyChildren
@@ -669,6 +672,7 @@ public abstract class GrammarBuilder {
                             .toList());
         }
         if (originalRule instanceof RuleWithChild) {
+            //noinspection PatternVariableCanBeUsed
             var ruleWithChild = (RuleWithChild) originalRule;
             return ruleWithChild.withRule(compressRule(ruleWithChild.getRule()));
         }
@@ -685,11 +689,13 @@ public abstract class GrammarBuilder {
             return originalRule;
         }
         if (originalRule instanceof RuleWithChild) {
+            //noinspection PatternVariableCanBeUsed
             var rule = (RuleWithChild) originalRule;
             return rule.withRule(
                     autoWhitespaceHelper(rule.getRule(), whitespaceRule));
         }
         if (originalRule instanceof RuleWithManyChildren) {
+            //noinspection PatternVariableCanBeUsed
             var combWithParsers = (RuleWithManyChildren) originalRule;
             final @NotNull List<@NotNull Rule> rules = combWithParsers
                     .getRules()

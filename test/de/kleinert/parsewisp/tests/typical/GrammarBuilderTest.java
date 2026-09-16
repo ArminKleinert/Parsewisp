@@ -29,7 +29,7 @@ class GrammarBuilderTest {
             @Override
             protected void make() {
                 addProduction("S", cat(nt("NUMBER"), repMin(nt(Sym.sym("NUMBER")), 0)));
-                addProduction("NUMBER", altList(Stream.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9").map(this::stringCS).toList()));
+                addProduction("NUMBER", alternationGuaranteeDistinctAndNotEmpty(Stream.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9").map(this::stringCS).toList()));
             }
         }.build();
 
@@ -56,7 +56,7 @@ class GrammarBuilderTest {
             @Override
             protected void make() {
                 addProduction("S", cat(nt("NUMBER"), zeroOrMore(nt(Sym.sym("NUMBER")))));
-                addProduction("NUMBER", altList(Stream.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9").map(this::stringCS).toList()));
+                addProduction("NUMBER", alternationGuaranteeDistinctAndNotEmpty(Stream.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9").map(this::stringCS).toList()));
             }
         }.build();
 
@@ -72,27 +72,29 @@ class GrammarBuilderTest {
                 addProduction("S", ordAlt(List.of(
                         nt("A"), nt("B"), nt("C"), nt("D"),
                         nt("E"), nt("F"), nt("G"), nt("H"),
-                        nt("I"), eof())
+                        nt("I"), nt("J"), nt("K"), eof())
                 ));
                 addProduction("A", cat(rep(regex("[0-9_]"), 1, Integer.MAX_VALUE)));
-                addProduction("B", cat(regex("[0-9_]"), repMax(regex("[0-9_]"), Integer.MAX_VALUE)));
+                addProduction("B", cat(regex("[0-9_]"), repMax(string(""), 0), repMax(regex("[0-9_]"), Integer.MAX_VALUE)));
                 addProduction("C", cat(repMin(regex("[0-9_]"), 1)));
                 addProduction("D", cat(regex("[0-9_]"), zeroOrMore(regex("[0-9_]"))));
-                addProduction("E", cat(rep(regex("[0-9_]"), 1), zeroOrMore(regex("[0-9_]"))));
+                addProduction("E", cat(rep(regex("[0-9_]"), 1), rep(regex("[0-9_]"), 0), zeroOrMore(regex("[0-9_]"))));
                 addProduction("F", repMin(alt(numVal('0', '9'), numVal(0x5F), numVal(0x60)), 1));
-                addProduction("G", onceOrMore(altList(Stream.concat(
+                addProduction("G", onceOrMore(alternationGuaranteeDistinctAndNotEmpty(Stream.concat(
                                 IntStream.range('0', '9' + 1).boxed(),
                                 Stream.of((int) '_'))
                         .map(i -> String.valueOf((char) i.intValue()))
                         .map(this::of)
                         .collect(Collectors.toList()))));
-                addProduction("H", onceOrMore(altList(Stream.concat(
+                addProduction("H", onceOrMore(alternationGuaranteeDistinctAndNotEmpty(Stream.concat(
                                 IntStream.range('0', '9' + 1).boxed(),
                                 Stream.of((int) '_'))
                         .map(i -> String.valueOf((char) i.intValue()))
                         .map(this::of)
                         .collect(Collectors.toList()))));
                 addProduction("I", cat(regex("[0-9_]"), opt(onceOrMore(regex("[0-9_]")))));
+                addProduction("J", onceOrMore(oneOf("0123456789")));
+                addProduction("K", onceOrMore(oneOf("0123456789abcdefABCDEF")));
             }
         }.build();
         var p = Parsewisp.parser(gFromGB, ParserCreationOptions.getDefault());
@@ -102,7 +104,9 @@ class GrammarBuilderTest {
                         PT.create("S", PT.create("C", "9", "9")), PT.create("S", PT.create("D", "9", "9")),
                         PT.create("S", PT.create("E", "9", "9")), PT.create("S", PT.create("F", "9", "9")),
                         PT.create("S", PT.create("G", "9", "9")), PT.create("S", PT.create("H", "9", "9")),
-                        PT.create("S", PT.create("I", "9", "9"))),
+                        PT.create("S", PT.create("I", "9", "9")),
+                        PT.create("S", PT.create("J", "9", "9")),
+                        PT.create("S", PT.create("K", "9", "9"))),
                 Parsewisp.parser(gFromGB, ParserCreationOptions.getDefault()).parses("99"));
         Assertions.assertEquals(List.of(PT.create("S")), p.parses(""));
     }
