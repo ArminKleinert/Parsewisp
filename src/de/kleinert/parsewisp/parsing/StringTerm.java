@@ -1,7 +1,6 @@
 package de.kleinert.parsewisp.parsing;
 
 import de.kleinert.parsewisp.reduction.ReductionType;
-import de.kleinert.parsewisp.result.failure.ParseFailureReason;
 
 import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.TrampolineListenerKey;
 
@@ -51,7 +50,7 @@ public final class StringTerm extends Terminal {
         if (caseInsensitive ? string.equalsIgnoreCase(head) : string.equals(head)) {
             runner.pushSuccessMessage(nodeKey, string, end);
         } else {
-            runner.fail(nodeKey, index, ParseFailureReason.ofStringTerminal(this, false));
+            runner.fail(nodeKey, index, this, false);
         }
     }
 
@@ -65,7 +64,7 @@ public final class StringTerm extends Terminal {
         if (text.length() == end && (caseInsensitive ? string.equalsIgnoreCase(head) : string.equals(head))) {
             runner.pushSuccessMessage(nodeKey, string, end);
         } else {
-            runner.fail(nodeKey, index, ParseFailureReason.ofStringTerminal(this, true));
+            runner.fail(nodeKey, index, this, true);
         }
     }
 

@@ -2,6 +2,7 @@ package de.kleinert.parsewisp.parser_options;
 
 import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.Sym;
+import de.kleinert.parsewisp.grammar.GrammarPrinter;
 import de.kleinert.parsewisp.parser.Parser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +19,7 @@ public class ParserCreationOptions {
     private final @Nullable Sym startProduction;
     private final @NotNull RedefinitionOption redefinitionOption;
     private final boolean checkCorrectness;
+    private final @NotNull GrammarPrinter printer;
 
     /**
      * Constructor.
@@ -30,11 +32,13 @@ public class ParserCreationOptions {
     public ParserCreationOptions(@Nullable Parser whitespaceParser,
                                  @Nullable Sym startProduction,
                                  @NotNull RedefinitionOption redefinitionOption,
-                                 boolean checkCorrectness) {
+                                 boolean checkCorrectness,
+                                 @NotNull GrammarPrinter printer) {
         this.whitespaceParser = whitespaceParser;
         this.startProduction = startProduction;
         this.redefinitionOption = redefinitionOption;
         this.checkCorrectness = checkCorrectness;
+        this.printer = printer;
     }
 
     /**
@@ -74,6 +78,10 @@ public class ParserCreationOptions {
         return checkCorrectness;
     }
 
+    public @NotNull GrammarPrinter getPrinter() {
+        return printer;
+    }
+
     private static final boolean defaultCheckCorrectness = true;
 
     /**
@@ -89,12 +97,14 @@ public class ParserCreationOptions {
             final @Nullable Parser whitespaceParser,
             final @Nullable Sym startProduction,
             final @Nullable RedefinitionOption redefinitionOption,
-            final boolean checkCorrectness) {
+            final boolean checkCorrectness,
+            final @Nullable GrammarPrinter printer) {
         return new ParserCreationOptions(
                 whitespaceParser,
                 startProduction,
                 redefinitionOption == null ? RedefinitionOption.defaultOption : redefinitionOption,
-                checkCorrectness);
+                checkCorrectness,
+                printer == null ? new GrammarPrinter() : printer);
     }
 
     /**
@@ -110,7 +120,8 @@ public class ParserCreationOptions {
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction,
                 redefinitionOption,
-                checkCorrectness);
+                checkCorrectness,
+                printer);
     }
 
     /**
@@ -126,7 +137,8 @@ public class ParserCreationOptions {
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction,
                 redefinitionOption,
-                checkCorrectness);
+                checkCorrectness,
+                printer);
     }
 
     /**
@@ -140,7 +152,8 @@ public class ParserCreationOptions {
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction,
                 redefinitionOption,
-                checkCorrectness);
+                checkCorrectness,
+                printer);
     }
 
     /**
@@ -154,7 +167,23 @@ public class ParserCreationOptions {
         return ParserCreationOptions.create(
                 whitespaceParser, startProduction,
                 redefinitionOption,
-                checkCorrectness);
+                checkCorrectness,
+                printer);
+    }
+
+    /**
+     * Creates a new instance with the specified {@link GrammarPrinter}.
+     *
+     * @param printer The new grammar-printer.
+     * @return A new instance.
+     */
+    public @NotNull ParserCreationOptions withPrinter(
+            final @Nullable GrammarPrinter printer) {
+        return ParserCreationOptions.create(
+                whitespaceParser, startProduction,
+                redefinitionOption,
+                checkCorrectness,
+                printer);
     }
 
     /**
@@ -181,7 +210,7 @@ public class ParserCreationOptions {
     }
 
     /**
-     * The default settings. Equivalent to {@link #ParserCreationOptions(Parser, Sym, RedefinitionOption, boolean)} with using {@code null} or whichever defaults this class provides.
+     * The default settings. Equivalent to {@link #ParserCreationOptions(Parser, Sym, RedefinitionOption, boolean, GrammarPrinter)} with using {@code null} or whichever defaults this class provides.
      *
      * <p>
      * Characteristics:
@@ -193,6 +222,6 @@ public class ParserCreationOptions {
      */
     public static @NotNull ParserCreationOptions getDefault() {
         return ParserCreationOptions.create(
-                null, null, null, defaultCheckCorrectness);
+                null, null, null, defaultCheckCorrectness, null);
     }
 }

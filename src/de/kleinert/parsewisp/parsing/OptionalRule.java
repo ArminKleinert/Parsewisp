@@ -3,7 +3,6 @@ package de.kleinert.parsewisp.parsing;
 import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.TrampolineListenerKey;
 
 import de.kleinert.parsewisp.reduction.ReductionType;
-import de.kleinert.parsewisp.result.failure.ParseFailureReason;
 import de.kleinert.parsewisp.trampoline.TrampolineListenerNode;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,7 +49,7 @@ public final class OptionalRule extends RuleWithChild {
         if (index == runner.tramp().getText().length()) {
             runner.pushSuccessMessageWithoutValue(thisNodeKey, index);
         } else {
-            runner.fail(thisNodeKey, index, ParseFailureReason.ofOptional(this, true));
+            runner.fail(thisNodeKey, index, this, true);
         }
     }
 

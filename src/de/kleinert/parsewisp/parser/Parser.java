@@ -16,7 +16,8 @@ import org.jetbrains.annotations.NotNull;
  * @param startProduction The first production to try.
  */
 public record Parser(@NotNull Grammar grammar,
-                     @NotNull Sym startProduction) {
+                     @NotNull Sym startProduction,
+                     @NotNull GrammarPrinter printer) {
     /**
      * Creates a new Parser.
      *
@@ -38,7 +39,6 @@ public record Parser(@NotNull Grammar grammar,
             throw new ParserCreationFailure("Start production not in grammar: " + startProduction);
         return startProduction;
     }
-
 
     private @NotNull Parser unhideParser(final @NotNull Unhide.UnhideOptions unhide) {
         return switch (unhide) {
@@ -70,14 +70,16 @@ public record Parser(@NotNull Grammar grammar,
 
         final @NotNull ParseResult parsingResult;
         if (options.embedFailureInParseTree()) {
-            parsingResult = ParseResult.make(
-                    Gll.parseEmbedFailure(unhiddenParser.grammar(), startProduction, text, false, options.iterativeDeepening()));
+            parsingResult = Gll.parseEmbedFailure(
+                    unhiddenParser.grammar(), startProduction, text, false,
+                    options.iterativeDeepening(), printer);
         } else {
-            parsingResult = ParseResult.make(
-                    Gll.parse(unhiddenParser.grammar(), startProduction, text, false, options.iterativeDeepening()));
+            parsingResult = Gll.parse(
+                    unhiddenParser.grammar(), startProduction, text, false,
+                    options.iterativeDeepening(), printer);
         }
 
-        return parsingResult;
+        return ParseResult.make(parsingResult);
     }
 
     /**
@@ -116,9 +118,14 @@ public record Parser(@NotNull Grammar grammar,
 
         final var embedFailure = options.embedFailureInParseTree();
         if (embedFailure) {
-            return Gll.parsesEmbedFailure(unhiddenParser.grammar(), startProduction, text, usePartial, options.iterativeDeepening());
+            return Gll.parsesEmbedFailure(
+                    unhiddenParser.grammar(), startProduction, text,
+                    usePartial, options.iterativeDeepening(), printer);
         } else {
-            return Gll.parses(unhiddenParser.grammar(), startProduction, text, usePartial, options.iterativeDeepening(), options.failureIfEmpty());
+            return Gll.parses(
+                    unhiddenParser.grammar(), startProduction, text,
+                    usePartial, options.iterativeDeepening(),
+                    options.failureIfEmpty(), printer);
         }
     }
 
@@ -143,7 +150,7 @@ public record Parser(@NotNull Grammar grammar,
     public @NotNull Parser withGrammar(final @NotNull Grammar grammar) {
         if (this.grammar.equals(grammar))
             return this;
-        return new Parser(grammar, startProduction);
+        return new Parser(grammar, startProduction, printer);
     }
 
     /**
@@ -152,6 +159,6 @@ public record Parser(@NotNull Grammar grammar,
      * @return The string.
      */
     public @NotNull String show() {
-        return new GrammarPrinter().toString(this.grammar());
+        return printer.toString(this.grammar());
     }
 }

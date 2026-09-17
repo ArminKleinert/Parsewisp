@@ -1,8 +1,6 @@
 package de.kleinert.parsewisp.parsing;
 
-import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
 import de.kleinert.parsewisp.reduction.ReductionType;
-import de.kleinert.parsewisp.result.failure.ParseFailureReason;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -41,8 +39,7 @@ public final class EpsilonTerm extends Terminal {
         if (index == runner.tramp().getText().length())
             runner.pushSuccessMessageWithoutValue(new TrampolineListenerKey(index, this), index);
         else
-            runner.fail(new TrampolineListenerKey(index, this), index,
-                    ParseFailureReason.ofEpsilon(this, true));
+            runner.fail(new TrampolineListenerKey(index, this), index,this, true);
     }
 
     @Override

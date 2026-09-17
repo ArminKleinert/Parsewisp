@@ -137,8 +137,7 @@ public final class VariableRepetitionRule extends RuleWithChild {
                 if (minimum <= newNResultsSoFar && newNResultsSoFar <= maximum) {
                     runner.pushSuccessMessage(nodeKey, newResultsSoFar, continueIndex);
                 } else {
-                    runner.fail(nodeKey, continueIndex,
-                            ParseFailureReason.ofRepetition(this, false));
+                    runner.fail(nodeKey, continueIndex, this, true);
                 }
             } else {
                 if (newNResultsSoFar < maximum) {
@@ -147,8 +146,7 @@ public final class VariableRepetitionRule extends RuleWithChild {
                             rule, minimum, maximum, nodeKey, runner);
                     runner.pushListener(new TrampolineListenerKey(continueIndex, rule), listener);
                 } else {
-                    runner.fail(nodeKey, continueIndex,
-                            ParseFailureReason.ofRepetition(this, false));
+                    runner.fail(nodeKey, continueIndex, this, true);
                 }
             }
         };

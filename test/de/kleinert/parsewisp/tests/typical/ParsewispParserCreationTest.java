@@ -4,6 +4,7 @@ import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.error.IllegalGrammarException;
 import de.kleinert.parsewisp.error.ParserCreationFailure;
+import de.kleinert.parsewisp.grammar.GrammarPrinter;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
@@ -24,7 +25,7 @@ class ParsewispParserCreationTest {
         {
             final @NotNull var p = Parsewisp.parser("S = '1'");
             final @NotNull var p2 = Parsewisp.parser("S = '1'");
-            Assertions.assertEquals(p, p2);
+            Assertions.assertEquals(p.grammar(), p2.grammar());
         }
     }
 
@@ -39,19 +40,19 @@ class ParsewispParserCreationTest {
 
             Assertions.assertEquals(
                     Parsewisp.parser(grammarText).parse(text),
-                    p.parse(text)
-            );
+                    p.parse(text));
             Assertions.assertEquals(
-                    Parsewisp.parser(grammarText),
-                    p
-            );
+                    Parsewisp.parser(grammarText).grammar(),
+                    p.grammar());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         try {
             final @NotNull var grammarFile = new File("testres/grammars/as_and_bs.grammar");
             final @NotNull var p = Parsewisp.parser(Files.readString(grammarFile.toPath()));
-            Assertions.assertEquals(p, Parsewisp.parser(Files.readString(grammarFile.toPath())));
+            Assertions.assertEquals(
+                    p.grammar(),
+                    Parsewisp.parser(Files.readString(grammarFile.toPath())).grammar());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -66,7 +67,7 @@ class ParsewispParserCreationTest {
                     ParserCreationOptions.newWithStandardWhitespace());
             final @NotNull var text = "void a(){}";
             Assertions.assertEquals(pFromString.parses(text), pFromFile.parses(text));
-            Assertions.assertEquals(pFromString, pFromFile);
+            Assertions.assertEquals(pFromString.grammar(), pFromFile.grammar());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -115,7 +116,8 @@ class ParsewispParserCreationTest {
         final @NotNull var options = ParserCreationOptions.create(
                 null, Sym.sym("C"),
                 null,
-                true);
+                true,
+                new GrammarPrinter());
         Assertions.assertThrows(
                 ParserCreationFailure.class,
                 () -> Parsewisp.parser(grammar, options));

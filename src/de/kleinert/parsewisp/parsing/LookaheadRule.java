@@ -1,7 +1,6 @@
 package de.kleinert.parsewisp.parsing;
 
 import de.kleinert.parsewisp.reduction.ReductionType;
-import de.kleinert.parsewisp.result.failure.ParseFailureReason;
 import org.jetbrains.annotations.NotNull;
 
 import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.TrampolineListenerKey;
@@ -40,11 +39,10 @@ public final class LookaheadRule extends RuleWithChild {
     public void fullParse(final int index, final @NotNull Gll runner) {
         if (index == runner.tramp().getText().length()) {
             parse(index, runner);
-        } else {
+        } else if (!(rule instanceof EpsilonTerm || rule instanceof EOFTerm)) {
             runner.fail(
                     new TrampolineListenerKey(index, this),
-                    index,
-                    ParseFailureReason.ofLookahead(this, false));
+                    index, this, false);
         }
     }
 

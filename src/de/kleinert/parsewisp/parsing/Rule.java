@@ -5,7 +5,6 @@ import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.Trampoline
 import de.kleinert.parsewisp.collections.FlatResultSeq;
 import de.kleinert.parsewisp.grammar.GrammarPrinter;
 import de.kleinert.parsewisp.reduction.ReductionType;
-import de.kleinert.parsewisp.result.failure.ParseFailureReason;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -34,7 +33,7 @@ public abstract sealed class Rule
     /**
      * Runs the rule from the provided index. The text is in the arguments.
      * <p>
-     * Results (successes and failures) are saved using {@link Gll#pushSuccessMessage(TrampolineListenerKey, FlatResultSeq, int)} or {@link Gll#fail(TrampolineListenerKey, int, ParseFailureReason)} or some similar function.
+     * Results (successes and failures) are saved using {@link Gll#pushSuccessMessage(TrampolineListenerKey, FlatResultSeq, int)} or {@link Gll#fail(TrampolineListenerKey, int, Rule, boolean)} or some similar function.
      *
      * @param index  The start index.
      * @param runner Helper structure.
@@ -44,7 +43,7 @@ public abstract sealed class Rule
     /**
      * Runs the rule from the provided index. The text is in the arguments. Unlike {@link Rule#parse(int, Gll)}, this method tries to parse the text from the index until the end. If the string can't be matched to the end, results in a failure.
      * <p>
-     * Results (successes and failures) are saved using {@link Gll#pushSuccessMessage(TrampolineListenerKey, String, int)} or {@link Gll#fail(TrampolineListenerKey, int, ParseFailureReason)} or some similar function.
+     * Results (successes and failures) are saved using {@link Gll#pushSuccessMessage(TrampolineListenerKey, String, int)} or {@link Gll#fail(TrampolineListenerKey, int, Rule, boolean)} or some similar function.
      *
      * @param index  The start index.
      * @param runner Helper structure.

@@ -57,7 +57,7 @@ public final class ValueRangeTerm extends Terminal {
         final @NotNull TrampolineListenerKey nodeKey = new TrampolineListenerKey(index, this);
 
         if (index >= text.length()) {
-            runner.fail(nodeKey, index, ParseFailureReason.ofUnicodeChar(this, expectEnd));
+            runner.fail(nodeKey, index, this, expectEnd);
             return;
         }
 
@@ -68,7 +68,7 @@ public final class ValueRangeTerm extends Terminal {
         if (check && lo <= codePoint && codePoint <= hi) {
             runner.pushSuccessMessage(nodeKey, charString, index + charString.length());
         } else {
-            runner.fail(nodeKey, index, ParseFailureReason.ofUnicodeChar(this, expectEnd));
+            runner.fail(nodeKey, index, this, expectEnd);
         }
     }
 

@@ -230,7 +230,7 @@ final class Cfg {
             final @NotNull ParseResult rules = Gll.parse(
                     grammarGrammar,
                     Sym.sym("rules"),
-                    spec, false, false);
+                    spec, false, false, new GrammarPrinter());
 
             if (rules instanceof ParseFailure) {
                 throw new ParserCreationFailure(

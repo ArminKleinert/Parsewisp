@@ -1,7 +1,6 @@
 package de.kleinert.parsewisp.parsing;
 
 import de.kleinert.parsewisp.reduction.ReductionType;
-import de.kleinert.parsewisp.result.failure.ParseFailureReason;
 import org.jetbrains.annotations.NotNull;
 
 import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.TrampolineListenerKey;
@@ -50,13 +49,12 @@ public final class NegativeLookaheadRule extends RuleWithChild {
         final @NotNull var thisNodeKey = new TrampolineListenerKey(index, this);
 
         if (resultExists_Q(runner, nodeKey)) {
-            runner.fail(thisNodeKey, index, ParseFailureReason.ofNegated(this, false));
+            runner.fail(thisNodeKey, index, this, false);
             return;
         }
 
         runner.pushListener(nodeKey, ignored -> runner.fail(
-                thisNodeKey, index,
-                ParseFailureReason.ofNegated(this, false)));
+                thisNodeKey, index, this, false));
 
         runner.pushNegativeListener(nodeKey, () -> {
             if (!resultExists_Q(runner, nodeKey)) {

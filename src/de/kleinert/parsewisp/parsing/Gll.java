@@ -2,6 +2,7 @@ package de.kleinert.parsewisp.parsing;
 
 import de.kleinert.parsewisp.collections.FlatResultSeq;
 import de.kleinert.parsewisp.grammar.Grammar;
+import de.kleinert.parsewisp.grammar.GrammarPrinter;
 import de.kleinert.parsewisp.parser.Parser;
 import de.kleinert.parsewisp.parser_options.ParsingOptions;
 import de.kleinert.parsewisp.Sym;
@@ -28,6 +29,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public final class Gll {
     private final @NotNull Tramp tramp;
     private final boolean iterativeDeepening;
+    private final GrammarPrinter stringifier;
+
+    GrammarPrinter getStringifier() {
+        return stringifier;
+    }
 
     Tramp tramp() {
         return tramp;
@@ -37,9 +43,10 @@ public final class Gll {
         return iterativeDeepening;
     }
 
-    private Gll(final @NotNull Tramp tramp, final boolean iterativeDeepening) {
+    private Gll(final @NotNull Tramp tramp, final boolean iterativeDeepening, GrammarPrinter stringifier) {
         this.tramp = tramp;
         this.iterativeDeepening = iterativeDeepening;
+        this.stringifier = stringifier;
     }
 
     private @NotNull TrampolineListenerNode getOrCreateListenerNode(
@@ -278,9 +285,12 @@ public final class Gll {
     void fail(
             final @NotNull TrampolineListenerNode.TrampolineListenerKey nodeKey,
             final int index,
-            final @NotNull ParseFailureReason reason) {
-        //Objects.requireNonNull(tramp.getFailure());
-        tramp.setFailure(FailureUtil.modifyFailureByIndex(tramp.getFailure(), reason, index));
+            final @NotNull Rule rule,
+            final boolean untilEnd) {
+        tramp.setFailure(FailureUtil.modifyFailureByIndex(
+                tramp.getFailure(),
+                ParseFailureReason.creatureFailReason(rule, untilEnd, getStringifier()),
+                index));
         if (index == tramp.getFailIndex()) {
             final @NotNull String subSeq = tramp.getText().substring(index);
             final int textLen = tramp.getText().length();
@@ -290,6 +300,7 @@ public final class Gll {
                     textLen);
         }
     }
+
 
     private @NotNull ParseFailureNode buildFailureNode(
             final @NotNull Sym key,
@@ -304,10 +315,11 @@ public final class Gll {
             final @NotNull Sym start,
             final @NotNull String text,
             final boolean partial,
-            final boolean iterativeDeepening) {
+            final boolean iterativeDeepening,
+            final @NotNull GrammarPrinter printer) {
         final @NotNull var tramp = new Tramp(grammar, text, 0);
         final @NotNull var parser = NonTerminal.create(start);
-        var gll = new Gll(tramp, iterativeDeepening);
+        var gll = new Gll(tramp, iterativeDeepening, printer);
         gll.startParser(tramp, parser, partial);
         final @NotNull var allParses = gll.run();
         return ParsesResult.make(allParses);
@@ -337,10 +349,11 @@ public final class Gll {
             final @NotNull String text,
             final boolean partial,
             final boolean iterativeDeepening,
-            final boolean errorIfEmpty) {
+            final boolean errorIfEmpty,
+            final @NotNull GrammarPrinter printer) {
         final @NotNull var tramp = new Tramp(grammar, text);
         final @NotNull var parser = NonTerminal.create(start);
-        final @NotNull var gll = new Gll(tramp, iterativeDeepening);
+        final @NotNull var gll = new Gll(tramp, iterativeDeepening, printer);
         gll.startParser(tramp, parser, partial);
         final @NotNull var allParses = gll.run();
         if (errorIfEmpty && allParses.isEmpty()) {
@@ -369,9 +382,10 @@ public final class Gll {
             final @NotNull Sym start,
             final @NotNull String text,
             final boolean partial,
-            final boolean iterativeDeepening) {
+            final boolean iterativeDeepening,
+            final @NotNull GrammarPrinter printer) {
         final @NotNull var tramp = new Tramp(grammar, text);
-        final @NotNull var gll = new Gll(tramp, iterativeDeepening);
+        final @NotNull var gll = new Gll(tramp, iterativeDeepening, printer);
         final @NotNull var parser = NonTerminal.create(start);
         gll.startParser(tramp, parser, partial);
         final @NotNull var allParses = gll.run(1);
@@ -400,10 +414,11 @@ public final class Gll {
             final @NotNull Sym start,
             final @NotNull String text,
             final boolean partial,
-            final boolean iterativeDeepening) {
-        final @NotNull var allParses = parses(grammar, start, text, partial, iterativeDeepening, false);
+            final boolean iterativeDeepening,
+            final @NotNull GrammarPrinter printer) {
+        final @NotNull var allParses = parses(grammar, start, text, partial, iterativeDeepening, false, printer);
         if (!allParses.castToParsesSuccess().isEmpty()) return ParsesResult.make(allParses);
-        return parsesEmbedFailureAfterFail(grammar, start, text, partial, iterativeDeepening);
+        return parsesEmbedFailureAfterFail(grammar, start, text, partial, iterativeDeepening, printer);
     }
 
     private static @NotNull ParseResult parseEmbedFailureAfterFail(
@@ -412,10 +427,11 @@ public final class Gll {
             final @NotNull String text,
             final int failIndex,
             final boolean partial,
-            final boolean iterativeDeepening) {
+            final boolean iterativeDeepening,
+            final @NotNull GrammarPrinter printer) {
         final @NotNull var tramp = new Tramp(grammar, text, failIndex);
         final @NotNull var parser = NonTerminal.create(start);
-        final @NotNull var gll = new Gll(tramp, iterativeDeepening);
+        final @NotNull var gll = new Gll(tramp, iterativeDeepening, printer);
         gll.startParser(tramp, parser, partial);
         final @NotNull var allParses = gll.run(1);
         if (!allParses.isEmpty())
@@ -440,14 +456,14 @@ public final class Gll {
             final @NotNull Sym start,
             final @NotNull String text,
             final boolean partial,
-            final boolean iterativeDeepening) {
-        final @NotNull var result = parse(grammar, start, text, partial, iterativeDeepening);
+            final boolean iterativeDeepening,
+            final @NotNull GrammarPrinter printer) {
+        final @NotNull var result = parse(grammar, start, text, partial, iterativeDeepening, printer);
         if (!(result instanceof ParseFailure)) return result;
-        return parseEmbedFailureAfterFail(grammar, start, text, ((ParseFailure) result).index(), partial, iterativeDeepening);
+        return parseEmbedFailureAfterFail(grammar, start, text, ((ParseFailure) result).index(), partial, iterativeDeepening, printer);
     }
 
     private String getInstanceIdForDebug() {
-        //noinspection RedundantCast
-        return ((Object) this).toString();
+        return this.toString();
     }
 }

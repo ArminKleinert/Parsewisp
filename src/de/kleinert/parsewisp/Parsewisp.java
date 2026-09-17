@@ -88,7 +88,7 @@ public final class Parsewisp {
                     options.getWhitespaceParser(),
                     options.doCheckCorrectness());
 
-            return new Parser(g, g.getStartSym());
+            return new Parser(g, g.getStartSym(), options.getPrinter());
         } catch (IllegalGrammarException exception) {
             throw new ParserCreationFailure(exception);
         }

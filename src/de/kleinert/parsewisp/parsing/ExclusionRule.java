@@ -4,7 +4,6 @@ import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.grammar.Grammar;
 import de.kleinert.parsewisp.reduction.ReductionType;
 import de.kleinert.parsewisp.result.ParseResult;
-import de.kleinert.parsewisp.result.failure.ParseFailureReason;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
@@ -67,7 +66,7 @@ public final class ExclusionRule extends RuleWithManyChildren {
                     var substring = runner.tramp().getText().substring(index, expectedSuccess.index());
 
                     if (reparsePart(substring, runner).isSuccess()) {
-                        runner.fail(nodeKeyForThis, index, ParseFailureReason.ofExclusion(this, false));
+                        runner.fail(nodeKeyForThis, index, this, false);
                         return;
                     }
 
@@ -86,7 +85,7 @@ public final class ExclusionRule extends RuleWithManyChildren {
                     var substring = runner.tramp().getText().substring(index, expectedSuccess.index());
 
                     if (reparsePart(substring, runner).isSuccess()) {
-                        runner.fail(nodeKeyForThis, index, ParseFailureReason.ofExclusion(this, true));
+                        runner.fail(nodeKeyForThis, index, this, true);
                         return;
                     }
 
@@ -121,7 +120,7 @@ public final class ExclusionRule extends RuleWithManyChildren {
 
             grammar = new Grammar(startSymbol, tempG);
         }
-        return Gll.parse(grammar, startSymbol, subs, false, false);
+        return Gll.parse(grammar, startSymbol, subs, false, false, runner.getStringifier());
     }
 
     /**
@@ -156,6 +155,6 @@ public final class ExclusionRule extends RuleWithManyChildren {
     public @NotNull ExclusionRule withRules(final @NotNull List<@NotNull Rule> rules) {
         if (rules.size() != 2)
             throw new IllegalArgumentException("Must pass exactly 2 arguments.");
-        return new ExclusionRule(isHidden(), getReduction(), rules.get(0), rules.get(rules.size()-1));
+        return new ExclusionRule(isHidden(), getReduction(), rules.get(0), rules.get(rules.size() - 1));
     }
 }

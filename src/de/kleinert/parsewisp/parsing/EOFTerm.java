@@ -1,7 +1,6 @@
 package de.kleinert.parsewisp.parsing;
 
 import de.kleinert.parsewisp.reduction.ReductionType;
-import de.kleinert.parsewisp.result.failure.ParseFailureReason;
 import de.kleinert.parsewisp.trampoline.TrampolineListenerNode;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,8 +43,7 @@ public final class EOFTerm extends Terminal {
         if (index == runner.tramp().getText().length())
             runner.pushSuccessMessageWithoutValue(new TrampolineListenerNode.TrampolineListenerKey(index, this), index);
         else
-            runner.fail(new TrampolineListenerNode.TrampolineListenerKey(index, this), index,
-                    ParseFailureReason.ofEpsilon(EpsilonTerm.getDefault(), true));
+            runner.fail(new TrampolineListenerNode.TrampolineListenerKey(index, this), index, this, true);
     }
 
     @Override

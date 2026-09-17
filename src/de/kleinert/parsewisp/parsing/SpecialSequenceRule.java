@@ -1,7 +1,6 @@
 package de.kleinert.parsewisp.parsing;
 
 import de.kleinert.parsewisp.reduction.ReductionType;
-import de.kleinert.parsewisp.result.failure.ParseFailureReason;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -31,6 +30,7 @@ public final class SpecialSequenceRule extends SimpleRule {
 
     /**
      * Returns the description of the rule.
+     *
      * @return The description as a string.
      */
     public @NotNull String getDescription() {
@@ -56,7 +56,7 @@ public final class SpecialSequenceRule extends SimpleRule {
         var res = function.apply(text);
 
         if (res.isEmpty()) {
-            runner.fail(nodeKey, index, ParseFailureReason.ofSpecialSequence(this, false));
+            runner.fail(nodeKey, index, this, false);
             return;
         }
 
@@ -70,7 +70,7 @@ public final class SpecialSequenceRule extends SimpleRule {
         var res = function.apply(text);
 
         if (res.isEmpty()) {
-            runner.fail(nodeKey, index, ParseFailureReason.ofSpecialSequence(this, true));
+            runner.fail(nodeKey, index, this, true);
             return;
         }
 

@@ -4,7 +4,6 @@ import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.Trampoline
 
 import de.kleinert.parsewisp.parser_options.ParsingOptions;
 import de.kleinert.parsewisp.reduction.ReductionType;
-import de.kleinert.parsewisp.result.failure.ParseFailureReason;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -82,7 +81,7 @@ public final class RegexTerm extends Terminal {
         final @Nullable String firstMatch = reMatchAtFront(regexp, subString);
 
         if (firstMatch == null) {
-            runner.fail(nodeKey, index, ParseFailureReason.ofRegexTerminal(this, false));
+            runner.fail(nodeKey, index, this, false);
             return;
         }
 
@@ -112,7 +111,7 @@ public final class RegexTerm extends Terminal {
         if (match != null && match.length() == desiredLength) {
             runner.pushSuccessMessage(nodeKey, match, text.length());
         } else {
-            runner.fail(nodeKey, index, ParseFailureReason.ofRegexTerminal(this, true));
+            runner.fail(nodeKey, index, this, true);
         }
     }
 

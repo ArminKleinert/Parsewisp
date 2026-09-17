@@ -49,8 +49,8 @@ class ParsewispTest {
 
         // The parsers are the same on the inside.
         Assertions.assertEquals(
-                Parsewisp.parser(pSingleQuoted),
-                Parsewisp.parser(pDoubleQuoted));
+                Parsewisp.parser(pSingleQuoted).grammar(),
+                Parsewisp.parser(pDoubleQuoted).grammar());
     }
 
     @Test
@@ -74,8 +74,8 @@ class ParsewispTest {
 
         // The parsers are the same on the inside.
         Assertions.assertEquals(
-                Parsewisp.parser(pSingleQuoted),
-                Parsewisp.parser(pDoubleQuoted));
+                Parsewisp.parser(pSingleQuoted).grammar(),
+                Parsewisp.parser(pDoubleQuoted).grammar());
     }
 
     @Test
