@@ -1,6 +1,6 @@
 package de.kleinert.parsewisp.result.failure;
 
-import de.kleinert.parsewisp.Print;
+import de.kleinert.parsewisp.grammar.GrammarPrinter;
 import de.kleinert.parsewisp.parsing.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +28,7 @@ public record ParseFailureReason(
      */
     public String failureReasonString() {
         if (reasonString != null) return reasonString;
-        return Print.ruleToString(rule);
+        return new GrammarPrinter().toString(rule);
     }
 
     /**
@@ -105,7 +105,7 @@ public record ParseFailureReason(
      * @return A failure-reason based on the parameters.
      */
     public static @NotNull ParseFailureReason ofNegated(final @NotNull NegativeLookaheadRule rule, final boolean untilEndOfInput) {
-        return new ParseFailureReason(rule, "NOT " + Print.ruleToString(rule.getRule()), untilEndOfInput, "neg");
+        return new ParseFailureReason(rule, "NOT " + (new GrammarPrinter()).toString(rule.getRule()), untilEndOfInput, "neg");
     }
 
     /**
@@ -116,8 +116,9 @@ public record ParseFailureReason(
      * @return A failure-reason based on the parameters.
      */
     public static @NotNull ParseFailureReason ofExclusion(final @NotNull ExclusionRule rule, final boolean untilEndOfInput) {
+        var gp = new GrammarPrinter();
         return new ParseFailureReason(rule,
-                Print.ruleToString(rule.getExpected()) + " but NOT " + Print.ruleToString(rule.getExcluded()),
+                gp.toString(rule.getExpected()) + " but NOT " + gp.toString(rule.getExcluded()),
                 untilEndOfInput, "exclude");
     }
 

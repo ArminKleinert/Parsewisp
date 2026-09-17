@@ -30,6 +30,14 @@ public final class SpecialSequenceRule extends SimpleRule {
     }
 
     /**
+     * Returns the description of the rule.
+     * @return The description as a string.
+     */
+    public @NotNull String getDescription() {
+        return description;
+    }
+
+    /**
      * Create a new instance. Depending on the implementation, allows for buffering or create a different type of rule.
      *
      * @param description The description of the special sequence.

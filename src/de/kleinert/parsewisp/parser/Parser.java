@@ -3,6 +3,7 @@ package de.kleinert.parsewisp.parser;
 import de.kleinert.parsewisp.*;
 import de.kleinert.parsewisp.error.ParserCreationFailure;
 import de.kleinert.parsewisp.grammar.Grammar;
+import de.kleinert.parsewisp.grammar.GrammarPrinter;
 import de.kleinert.parsewisp.parser_options.*;
 import de.kleinert.parsewisp.parsing.Gll;
 import de.kleinert.parsewisp.result.*;
@@ -151,6 +152,6 @@ public record Parser(@NotNull Grammar grammar,
      * @return The string.
      */
     public @NotNull String show() {
-        return Print.parserToString(this);
+        return new GrammarPrinter().toString(this.grammar());
     }
 }

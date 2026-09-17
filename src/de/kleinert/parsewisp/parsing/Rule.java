@@ -2,8 +2,8 @@ package de.kleinert.parsewisp.parsing;
 
 import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.TrampolineListenerKey;
 
-import de.kleinert.parsewisp.Print;
 import de.kleinert.parsewisp.collections.FlatResultSeq;
+import de.kleinert.parsewisp.grammar.GrammarPrinter;
 import de.kleinert.parsewisp.reduction.ReductionType;
 import de.kleinert.parsewisp.result.failure.ParseFailureReason;
 import org.jetbrains.annotations.NotNull;
@@ -125,6 +125,6 @@ public abstract sealed class Rule
 
     @Override
     public String toString() {
-        return Print.ruleToString(this);
+        return (new GrammarPrinter()).toString(this);
     }
 }

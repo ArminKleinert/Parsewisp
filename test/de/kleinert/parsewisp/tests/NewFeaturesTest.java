@@ -15,6 +15,26 @@ import java.nio.file.Path;
 import java.util.List;
 
 class NewFeaturesTest {
+    @Test
+    void test0() {
+        var p = Parsewisp.parser("""
+                S = &(A !'b') 'a'* B
+                A = ('a' A 'b')?
+                B = ('b' B 'c')?
+                """);
+        System.out.println(p.parse("aabbcc"));
+        System.out.println(p.parse("aaabbbccc"));
+        int n = 5;
+        for (int a = 0; a < n; a++) {
+            for (int b = 0; b < n; b++) {
+                for (int c = 0; c < n; c++) {
+                    var s = "a".repeat(a) + "b".repeat(b) + "c".repeat(c);
+                    if (p.parse(s).isSuccess())
+                        System.out.println(s);
+                }
+            }
+        }
+    }
 
     @Test
     void test1() {
