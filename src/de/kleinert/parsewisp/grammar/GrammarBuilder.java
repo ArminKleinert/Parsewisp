@@ -47,16 +47,28 @@ import java.util.stream.Stream;
  * The {@link #addProduction(Sym, Rule)} method can be used to add new productions.
  */
 public abstract class GrammarBuilder {
-    protected @NotNull LinkedHashMap<Sym, Rule> productions;
+    private final @NotNull LinkedHashMap<Sym, Rule> productions;
     private final BufferForRules buffer;
     private final RedefinitionOption redefinitionOpt;
-    protected @Nullable Sym startProduction;
     private boolean wasMakeCalled = false;
 
+    /**
+     * The starting production.
+     */
+    protected @Nullable Sym startProduction;
+
+    /**
+     * Default constructor. Calls {@link GrammarBuilder(RedefinitionOption)} with the default value {@link RedefinitionOption#defaultOption}.
+     */
     protected GrammarBuilder() {
-        this(RedefinitionOption.ERROR);
+        this(RedefinitionOption.defaultOption);
     }
 
+    /**
+     * Creates a new builder with the given option for redefinitions.
+     *
+     * @param redefinitionOption Option used when a production is added multiple times (see {@link #addProduction(Sym, Rule)}).
+     */
     protected GrammarBuilder(final @NotNull RedefinitionOption redefinitionOption) {
         this.productions = new LinkedHashMap<>();
         this.redefinitionOpt = redefinitionOption;
@@ -133,6 +145,11 @@ public abstract class GrammarBuilder {
                         + " (a valid grammar has at least one terminal)");
     }
 
+    /**
+     * Set the start production symbol for the grammar.
+     *
+     * @param startProduction Name of the start production.
+     */
     protected void setStartProduction(@Nullable Sym startProduction) {
         this.startProduction = startProduction;
     }
@@ -754,6 +771,13 @@ public abstract class GrammarBuilder {
                 Objects.requireNonNull(grammarWS.getProduction(startWS)).hideTag());
     }
 
+    /**
+     * Buffers a rule for the lifetime of this builder.
+     *
+     * @param rule The rule.
+     * @param <T>  The type of the rule.
+     * @return The same rule or a previously buffered equivalent.
+     */
     protected <T extends Rule> T buffer(T rule) {
         if (rule instanceof StringTerm) {
             //noinspection unchecked

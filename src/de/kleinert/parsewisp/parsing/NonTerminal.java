@@ -32,9 +32,9 @@ public final class NonTerminal extends SimpleRule {
     }
 
     /**
-     * Returns the name.
+     * Returns the name of the rule.
      *
-     * @return The name.
+     * @return The name of the rule.
      */
     public @NotNull Sym getKeyword() {
         return keyword;

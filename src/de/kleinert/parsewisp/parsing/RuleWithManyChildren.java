@@ -13,8 +13,19 @@ public sealed abstract class RuleWithManyChildren
         extends Rule
         permits AlternationRule, ConcatRule, ExclusionRule, OrderedChoiceRule {
     private long bufferedHashCode = Long.MIN_VALUE;
+
+    /**
+     * The rules wrapped by this rule.
+     */
     protected final @NotNull List<@NotNull Rule> rules;
 
+    /**
+     * Constructor.
+     *
+     * @param hide  The hide option.
+     * @param red   The reduction type for this rule.
+     * @param rules The rules.
+     */
     protected RuleWithManyChildren(final boolean hide,
                                    final @NotNull ReductionType red,
                                    final @NotNull List<@NotNull Rule> rules) {

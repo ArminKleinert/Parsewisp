@@ -22,9 +22,22 @@ public abstract sealed class Rule
      */
     protected static final ReductionType defaultReductionType = ReductionType.standardInitialReduction();
 
+    /**
+     * Whether to hide the rule in the output.
+     */
     protected final boolean hide;
+
+    /**
+     * See {@link ReductionType}.
+     */
     protected final @NotNull ReductionType red;
 
+    /**
+     * The constructor. Do not call directly unless you are maintaining this library.
+     *
+     * @param hide The hide option.
+     * @param red  The reduction type for this rule.
+     */
     protected Rule(final boolean hide, final @NotNull ReductionType red) {
         this.hide = hide;
         this.red = red;
@@ -124,6 +137,6 @@ public abstract sealed class Rule
 
     @Override
     public String toString() {
-        return (new GrammarPrinter()).toString(this);
+        return (new GrammarPrinter()).ruleToString(this);
     }
 }

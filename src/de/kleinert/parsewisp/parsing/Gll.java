@@ -339,6 +339,7 @@ public final class Gll {
      * @param partial            Whether to include partial results.
      * @param iterativeDeepening Iteratively deepens the evaluation of {@link RegexTerm#parse}.
      * @param errorIfEmpty       If true, return an error if the parsing failed. By default, an empty list would be returned.
+     * @param printer The printer used for the parser. In the current version, it's used to format failure info if parsing fails.
      * @return The parse forest.
      * @see Parser#parses(String)
      * @see Parser#parses(String, ParsingOptions)
@@ -373,6 +374,7 @@ public final class Gll {
      * @param text               The text.
      * @param partial            Whether to include partial results.
      * @param iterativeDeepening Iteratively deepens the evaluation of {@link RegexTerm#parse}.
+     * @param printer The printer used for the parser. In the current version, it's used to format failure info if parsing fails.
      * @return The parse tree or failure.
      * @see Parser#parse(String)
      * @see Parser#parse(String, ParsingOptions)
@@ -405,6 +407,7 @@ public final class Gll {
      * @param text               The text.
      * @param partial            Whether to include partial results.
      * @param iterativeDeepening Iteratively deepens the evaluation of {@link RegexTerm#parse}.
+     * @param printer The printer used for the parser. In the current version, it's used to format failure info if parsing fails.
      * @return The parse forest.
      * @see Parser#parses(String, ParsingOptions)
      * @see ParsingOptions#embedFailureInParseTree()
@@ -447,6 +450,7 @@ public final class Gll {
      * @param text               The text.
      * @param partial            Whether to include partial results.
      * @param iterativeDeepening Iteratively deepens the evaluation of {@link RegexTerm#parse}.
+     * @param printer The printer used for the parser. In the current version, it's used to format failure info if parsing fails.
      * @return The parse tree or failure.
      * @see Parser#parse(String, ParsingOptions)
      * @see ParsingOptions#embedFailureInParseTree()

@@ -28,6 +28,7 @@ public class ParserCreationOptions {
      * @param startProduction    The starting production name of the parser. If null, the first defined production is used.
      * @param redefinitionOption Sets what to do when a production appears twice in the definition.
      * @param checkCorrectness   Whether to check the correctness of the grammar when creating the parser.
+     * @param printer            A helper for converting the rules to strings if ever required.
      */
     public ParserCreationOptions(@Nullable Parser whitespaceParser,
                                  @Nullable Sym startProduction,
@@ -78,6 +79,10 @@ public class ParserCreationOptions {
         return checkCorrectness;
     }
 
+    /**
+     * Returns the {@link GrammarPrinter} associated with the created parser.
+     * @return The printer.
+     */
     public @NotNull GrammarPrinter getPrinter() {
         return printer;
     }
@@ -91,6 +96,7 @@ public class ParserCreationOptions {
      * @param startProduction    The starting production name of the parser. If null, the first defined production is used.
      * @param redefinitionOption Sets what to do when a production appears twice in the definition.
      * @param checkCorrectness   Whether to check the correctness of the grammar when creating the parser.
+     * @param printer            A helper for converting the rules to strings if ever required.
      * @return A new instance.
      */
     public static @NotNull ParserCreationOptions create(

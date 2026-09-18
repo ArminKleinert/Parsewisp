@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param grammar         The grammar.
  * @param startProduction The first production to try.
+ * @param printer The printer for the grammar. Used in {@link #show()}.
  */
 public record Parser(@NotNull Grammar grammar,
                      @NotNull Sym startProduction,

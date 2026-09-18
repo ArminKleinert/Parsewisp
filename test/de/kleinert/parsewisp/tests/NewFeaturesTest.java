@@ -1,9 +1,13 @@
 package de.kleinert.parsewisp.tests;
 
 import de.kleinert.parsewisp.Parsewisp;
+import de.kleinert.parsewisp.grammar.GrammarPrinter;
 import de.kleinert.parsewisp.parser.Parser;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
 import de.kleinert.parsewisp.parser_options.ParsingOptions;
+import de.kleinert.parsewisp.parsing.AlternationRule;
+import de.kleinert.parsewisp.parsing.ConcatRule;
+import de.kleinert.parsewisp.parsing.StringTerm;
 import de.kleinert.parsewisp.testutil.PT;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
@@ -15,6 +19,36 @@ import java.nio.file.Path;
 import java.util.List;
 
 class NewFeaturesTest {
+    @Test
+    void test00() {
+        var p = Parsewisp.parser(
+                "S = P S | eps ; P = \"(\" S* \")\" ;",
+                ParserCreationOptions.getDefault().withPrinter(new GrammarPrinter()));
+        System.out.println(p.show()); // Use default printer.
+        System.out.println(new GrammarPrinter().toString(p.grammar())); // Use specific printer.
+
+        System.out.println(p.printer().escape("\"a88b\nc\"\\", '\''));
+
+        var rule0 = AlternationRule.create(List.of(
+                ConcatRule.create(List.of(
+                        StringTerm.create("a", false),
+                        StringTerm.create("b", false))),
+                ConcatRule.create(List.of(
+                        StringTerm.create("c", false),
+                        StringTerm.create("d", false)))
+        ));
+        System.out.println(p.printer().ruleToString(rule0));
+        var rule1 = ConcatRule.create(List.of(
+                AlternationRule.create(List.of(
+                        StringTerm.create("a", false),
+                        StringTerm.create("b", false))),
+                AlternationRule.create(List.of(
+                        StringTerm.create("c", false),
+                        StringTerm.create("d", false)))
+        ));
+        System.out.println(p.printer().ruleToString(rule1));
+    }
+
     @Test
     void test0() {
         var p = Parsewisp.parser("""
@@ -46,6 +80,7 @@ class NewFeaturesTest {
         System.out.println(p.parse("a"));
         System.out.println(p.parses("a").stream().limit(5).toList());
     }
+
     @Test
     void testExampleFromWikipedia() {
         var grammar = """
@@ -57,15 +92,16 @@ class NewFeaturesTest {
         System.out.println(p.parse("91"));
         System.out.println(p.parse("091"));
     }
+
     @Test
     void testArithmetic() {
         var p = Parsewisp.parser("""
-               sum          = sum ('+'|'-') sum | product
-               product      = power ('*'|'/') product | power
-               power        = paren-or-val '^' power | paren-or-val
-               paren-or-val = '(' sum ')' | number
-               number       = ('+'|'-')? ('0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9')+
-               """, ParserCreationOptions.newWithStandardWhitespace());
+                sum          = sum ('+'|'-') sum | product
+                product      = power ('*'|'/') product | power
+                power        = paren-or-val '^' power | paren-or-val
+                paren-or-val = '(' sum ')' | number
+                number       = ('+'|'-')? ('0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9')+
+                """, ParserCreationOptions.newWithStandardWhitespace());
         System.out.println(p.parse("1"));
         System.out.println(p.parse("1+2"));
         System.out.println(p.parse("1 + 2"));
@@ -74,11 +110,13 @@ class NewFeaturesTest {
         System.out.println(p.parse("1*2+3*4"));
         System.out.println(p.parse("1*(2+-3)^4"));
     }
+
     @Test
     void negativeEpsilon() {
         var p = Parsewisp.parser("S = !epsilon epsilon 'a'");
         System.out.println(p.parse("a"));
     }
+
     @Test
     void zeroOrMoreRuleCausesInfiniteEpsilonProblem() {
         var p = Parsewisp.parser("S = (S epsilon)*", ParserCreationOptions.getDefault());

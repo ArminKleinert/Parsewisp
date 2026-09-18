@@ -25,7 +25,7 @@ public record ParseFailureReason(
      */
     public String failureReasonString() {
         if (reasonString != null) return reasonString;
-        return new GrammarPrinter().toString(rule);
+        return new GrammarPrinter().ruleToString(rule);
     }
 
     /**
@@ -51,12 +51,13 @@ public record ParseFailureReason(
      *
      * @param rule            The rule.
      * @param untilEndOfInput Whether the rule is followed by end-of-string.
+     * @param stringifier  The printer used to create a string-representation of the failure.
      * @return A failure-reason based on the parameters.
      */
     public static @NotNull ParseFailureReason ofUnicodeChar(final @NotNull ValueRangeTerm rule, final boolean untilEndOfInput, GrammarPrinter stringifier) {
         return new ParseFailureReason(
                 rule,
-                stringifier.toString(rule),
+                stringifier.ruleToString(rule),
                 untilEndOfInput, "char");
     }
 
@@ -76,10 +77,11 @@ public record ParseFailureReason(
      *
      * @param rule            The rule.
      * @param untilEndOfInput Whether the rule is followed by end-of-string.
+     * @param stringifier  The printer used to create a string-representation of the failure.
      * @return A failure-reason based on the parameters.
      */
     public static @NotNull ParseFailureReason ofRepetition(final @NotNull VariableRepetitionRule rule, final boolean untilEndOfInput, GrammarPrinter stringifier) {
-        return new ParseFailureReason(rule, stringifier.toString(rule), untilEndOfInput, "rep");
+        return new ParseFailureReason(rule, stringifier.ruleToString(rule), untilEndOfInput, "rep");
     }
 
     /**
@@ -87,10 +89,11 @@ public record ParseFailureReason(
      *
      * @param rule            The rule.
      * @param untilEndOfInput Whether the rule is followed by end-of-string.
+     * @param stringifier  The printer used to create a string-representation of the failure.
      * @return A failure-reason based on the parameters.
      */
     public static @NotNull ParseFailureReason ofLookahead(final @NotNull LookaheadRule rule, final boolean untilEndOfInput, GrammarPrinter stringifier) {
-        return new ParseFailureReason(rule, untilEndOfInput ? "end-of-string" : stringifier.toString(rule), untilEndOfInput, "look");
+        return new ParseFailureReason(rule, untilEndOfInput ? "end-of-string" : stringifier.ruleToString(rule), untilEndOfInput, "look");
     }
 
     /**
@@ -98,10 +101,11 @@ public record ParseFailureReason(
      *
      * @param rule            The rule.
      * @param untilEndOfInput Whether the rule is followed by end-of-string.
+     * @param stringifier  The printer used to create a string-representation of the failure.
      * @return A failure-reason based on the parameters.
      */
     public static @NotNull ParseFailureReason ofNegated(final @NotNull NegativeLookaheadRule rule, final boolean untilEndOfInput, GrammarPrinter stringifier) {
-        return new ParseFailureReason(rule, "NOT " + stringifier.toString(rule.getRule()), untilEndOfInput, "neg");
+        return new ParseFailureReason(rule, "NOT " + stringifier.ruleToString(rule.getRule()), untilEndOfInput, "neg");
     }
 
     /**
@@ -109,11 +113,12 @@ public record ParseFailureReason(
      *
      * @param rule            The rule.
      * @param untilEndOfInput Whether the rule is followed by end-of-string.
+     * @param stringifier  The printer used to create a string-representation of the failure.
      * @return A failure-reason based on the parameters.
      */
     public static @NotNull ParseFailureReason ofExclusion(final @NotNull ExclusionRule rule, final boolean untilEndOfInput, GrammarPrinter stringifier) {
         return new ParseFailureReason(rule,
-                stringifier.toString(rule.getExpected()) + " but NOT " + stringifier.toString(rule.getExcluded()),
+                stringifier.ruleToString(rule.getExpected()) + " but NOT " + stringifier.ruleToString(rule.getExcluded()),
                 untilEndOfInput, "exclude");
     }
 
@@ -122,10 +127,11 @@ public record ParseFailureReason(
      *
      * @param rule            The rule.
      * @param untilEndOfInput Whether the rule is followed by end-of-string.
+     * @param stringifier  The printer used to create a string-representation of the failure.
      * @return A failure-reason based on the parameters.
      */
     public static @NotNull ParseFailureReason ofOptional(final @NotNull OptionalRule rule, final boolean untilEndOfInput, GrammarPrinter stringifier) {
-        return new ParseFailureReason(rule, stringifier.toString(rule), untilEndOfInput, "optional");
+        return new ParseFailureReason(rule, stringifier.ruleToString(rule), untilEndOfInput, "optional");
     }
 
     /**
@@ -133,10 +139,11 @@ public record ParseFailureReason(
      *
      * @param rule            The rule.
      * @param untilEndOfInput Whether the rule is followed by end-of-string.
+     * @param stringifier  The printer used to create a string-representation of the failure.
      * @return A failure-reason based on the parameters.
      */
     public static @NotNull ParseFailureReason ofRegexTerminal(final @NotNull RegexTerm rule, final boolean untilEndOfInput, GrammarPrinter stringifier) {
-        return new ParseFailureReason(rule, stringifier.toString(rule), untilEndOfInput, "regex");
+        return new ParseFailureReason(rule, stringifier.ruleToString(rule), untilEndOfInput, "regex");
     }
 
     /**
@@ -144,10 +151,11 @@ public record ParseFailureReason(
      *
      * @param rule            The rule.
      * @param untilEndOfInput Whether the rule is followed by end-of-string.
+     * @param stringifier  The printer used to create a string-representation of the failure.
      * @return A failure-reason based on the parameters.
      */
     public static @NotNull ParseFailureReason ofStringTerminal(final @NotNull StringTerm rule, final boolean untilEndOfInput, GrammarPrinter stringifier) {
-        return new ParseFailureReason(rule, stringifier.toString(rule), untilEndOfInput, "string");
+        return new ParseFailureReason(rule, stringifier.ruleToString(rule), untilEndOfInput, "string");
     }
 
     /**
@@ -155,13 +163,20 @@ public record ParseFailureReason(
      *
      * @param rule            The rule.
      * @param untilEndOfInput Whether the rule is followed by end-of-string.
+     * @param stringifier  The printer used to create a string-representation of the failure.
      * @return A failure-reason based on the parameters.
      */
     public static @NotNull ParseFailureReason ofSpecialSequence(final @NotNull SpecialSequenceRule rule, final boolean untilEndOfInput, GrammarPrinter stringifier) {
-        return new ParseFailureReason(rule, stringifier.toString(rule), untilEndOfInput, "function");
+        return new ParseFailureReason(rule, stringifier.ruleToString(rule), untilEndOfInput, "function");
     }
 
-
+    /**
+     * Creates a {@link ParseFailureReason} for the given inputs.
+     * @param rule            The rule.
+     * @param untilEnd Whether the rule is followed by end-of-string.
+     * @param printer  The printer used to create a string-representation of the failure.
+     * @return A failure-reason based on the parameters.
+     */
     public static ParseFailureReason creatureFailReason(@NotNull Rule rule, boolean untilEnd, GrammarPrinter printer) {
         if (rule instanceof ValueRangeTerm) return ParseFailureReason.ofUnicodeChar((ValueRangeTerm) rule, untilEnd, printer);
         if (rule instanceof EpsilonTerm || rule instanceof EOFTerm) return ParseFailureReason.ofEpsilon(EpsilonTerm.getDefault(), untilEnd);

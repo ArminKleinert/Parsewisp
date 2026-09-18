@@ -12,6 +12,10 @@ public sealed abstract class RuleWithChild
         extends Rule
         permits LookaheadRule, NegativeLookaheadRule, OptionalRule, OnceOrMoreRule, VariableRepetitionRule, ZeroOrMoreRule {
     private long bufferedHashCode = Long.MIN_VALUE;
+
+    /**
+     * The rule which is wrapped by this rule.
+     */
     protected final @NotNull Rule rule;
 
     RuleWithChild(final boolean hide,
