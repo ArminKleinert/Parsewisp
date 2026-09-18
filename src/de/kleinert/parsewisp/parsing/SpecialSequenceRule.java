@@ -38,6 +38,15 @@ public final class SpecialSequenceRule extends SimpleRule {
     }
 
     /**
+     * The function wrapped in this rule. You should only use this kind of rule if you are absolutely sure that you know what you are doing. The same is true for this method.
+     *
+     * @return The wrapped function.
+     */
+    public @NotNull Function<@NotNull String, Optional<String>> getFunction() {
+        return function;
+    }
+
+    /**
      * Create a new instance. Depending on the implementation, allows for buffering or create a different type of rule.
      *
      * @param description The description of the special sequence.

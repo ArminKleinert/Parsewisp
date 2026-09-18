@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  * System.out.println(new GrammarPrinter().toString(p.grammar())); // Use specific printer.
  * }
  * </pre>
- *
+ * <p>
  * To implement your own printer, you need to override the methods as follows:
  * <table>
  *     <caption>A table of rules/elements of a grammar with the associated methods in the printer.</caption>
@@ -117,7 +117,8 @@ public class GrammarPrinter {
      * printer.escape("\"a88b\nc\"\\", '\''); // ?> "a88b\nc"\\
      * }
      * </pre>
-     * @param s The string.
+     *
+     * @param s                   The string.
      * @param terminatorCodepoint The terminator.
      * @return A string.
      */
@@ -181,6 +182,7 @@ public class GrammarPrinter {
 
     /**
      * Prints  in the format {@code }.
+     *
      * @param sym The production's name.
      * @param rhs The rule on the right-hand-side of the separator.
      * @return A string.
@@ -223,7 +225,7 @@ public class GrammarPrinter {
      * }
      * </pre>
      *
-     * @param current The parent rule.
+     * @param current     The parent rule.
      * @param ruleToPrint The rule which is wrapped by the first rule.
      * @return A string.
      */
@@ -235,6 +237,7 @@ public class GrammarPrinter {
 
     /**
      * This method just delegates the printing to a specific rule for the type of the input.
+     *
      * @param rule The rule.
      * @return A string.
      */
@@ -401,7 +404,7 @@ public class GrammarPrinter {
      * @return A string-representation of the rule
      */
     public @NotNull String onceOrMoreToString(final @NotNull OnceOrMoreRule rule) {
-        return parens(rule, rule.getRule())+"+";
+        return parens(rule, rule.getRule()) + "+";
     }
 
     /**
@@ -451,7 +454,7 @@ public class GrammarPrinter {
      * @return A string-representation of the rule
      */
     public @NotNull String specialToString(final @NotNull SpecialSequenceRule rule) {
-        return "?" + rule + "?";
+        return "?" + rule.getDescription() + "?";
     }
 
     /**
@@ -463,7 +466,7 @@ public class GrammarPrinter {
      * @return A string-representation of the rule
      */
     public @NotNull String literalToString(final @NotNull StringTerm rule) {
-        return '"'+escape(rule.getString(), '"')+'"';
+        return '"' + escape(rule.getString(), '"') + '"';
     }
 
     /**
@@ -500,6 +503,6 @@ public class GrammarPrinter {
      * @return A string-representation of the rule
      */
     public @NotNull String zeroOrMoreToString(final @NotNull ZeroOrMoreRule rule) {
-        return parens(rule, rule.getRule())+"*";
+        return parens(rule, rule.getRule()) + "*";
     }
 }

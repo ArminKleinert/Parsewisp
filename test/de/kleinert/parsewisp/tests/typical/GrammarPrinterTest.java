@@ -1,8 +1,17 @@
 package de.kleinert.parsewisp.tests.typical;
 
 import de.kleinert.parsewisp.Parsewisp;
+import de.kleinert.parsewisp.Sym;
+import de.kleinert.parsewisp.grammar.Grammar;
+import de.kleinert.parsewisp.grammar.GrammarPrinter;
+import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
+import de.kleinert.parsewisp.parsing.SpecialSequenceRule;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 
 class GrammarPrinterTest {
 
@@ -115,7 +124,8 @@ class GrammarPrinterTest {
 
     @Test
     void specialToString() {
-        // TODO
+        var r = SpecialSequenceRule.create("description here", Optional::of);
+        Assertions.assertEquals("?description here?", new GrammarPrinter().ruleToString(r));
     }
 
     @Test
@@ -136,7 +146,7 @@ class GrammarPrinterTest {
 
     @Test
     void repToString() {
-        var p = Parsewisp.parser("S = 1*4\"a\"");
+        var p = Parsewisp.parser("S = 2*\"a\"");
         var text = p.show();
         var p2 = Parsewisp.parser(text);
         Assertions.assertEquals(p.grammar(), p2.grammar());
