@@ -2,14 +2,12 @@ package de.kleinert.parsewisp.tests.typical;
 
 import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.Sym;
-import de.kleinert.parsewisp.parser.Parser;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
 import de.kleinert.parsewisp.parser_options.ParsingOptions;
 import de.kleinert.parsewisp.parser_options.Unhide;
 import de.kleinert.parsewisp.testutil.PT;
 import de.kleinert.parsewisp.result.ParseFailureNode;
 import de.kleinert.parsewisp.result.ParseTree;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -17,235 +15,17 @@ import java.util.List;
 import java.util.Set;
 
 class ParsewispCoreTest {
-
-    final @NotNull Parser as_and_bs = Parsewisp.parser(
-            """
-                    S = AB*
-                    AB = A B
-                    A = 'a'+
-                    B = 'b'+
-                    """);
-
-    final @NotNull Parser as_and_bs_regex = Parsewisp.parser(
-            """
-                    S = AB*
-                    AB = A B
-                    A = #'a'+
-                    B = #'b'+
-                    """);
-
-    final @NotNull Parser as_and_bs_variation1 = Parsewisp.parser(
-            """
-                    S = AB*
-                    AB = 'a'+ 'b'+
-                    """);
-
-    final @NotNull Parser as_and_bs_variation2 = Parsewisp.parser(
-            """
-                    S = ('a'+ 'b'+)*
-                    """);
-
-    final @NotNull Parser paren_ab = Parsewisp.parser(
-            """
-                    paren-wrapped = '(' seq-of-A-or-B ')'
-                    seq-of-A-or-B = ('a' | 'b')*
-                    """);
-
-    final @NotNull Parser paren_ab_hide_parens = Parsewisp.parser(
-            """
-                    paren-wrapped = <'('> seq-of-A-or-B <')'>
-                    seq-of-A-or-B = ('a' | 'b')*
-                    """);
-
-    final @NotNull Parser paren_ab_manually_flattened = Parsewisp.parser(
-            """
-                    paren-wrapped = <'('> ('a' | 'b')* <')'>
-                    """);
-
-    final @NotNull Parser paren_ab_hide_tag = Parsewisp.parser(
-            """
-                    paren-wrapped = <'('> seq-of-A-or-B <')'>
-                    <seq-of-A-or-B> = ('a' | 'b')*
-                    """);
-
-    final @NotNull Parser paren_ab_hide_both_tags = Parsewisp.parser(
-            """
-                    <paren-wrapped> = <'('> seq-of-A-or-B <')'>
-                    <seq-of-A-or-B> = ('a' | 'b')*
-                    """);
-
-    final @NotNull Parser words_and_numbers = Parsewisp.parser(
-            """
-                    sentence = token (<whitespace> token)*
-                    <token> = word | number
-                    whitespace = #'\\s+'
-                    word = #'[a-zA-Z]+'
-                    number = #'[0-9]+'
-                    """);
-
-    final @NotNull Parser words_and_numbers_one_character_at_a_time = Parsewisp.parser(
-            """
-                    sentence = token (<whitespace> token)*
-                    <token> = word | number
-                    whitespace = #'\\s+'
-                    word = letter+
-                    number = digit+
-                    <letter> = #'[a-zA-Z]'
-                    <digit> = #'[0-9]'
-                    """);
-
-    final @NotNull Parser ambiguous = Parsewisp.parser(
-            """
-                    S = A A
-                    A = 'a'*
-                    """);
-
-    final @NotNull Parser not_ambiguous = Parsewisp.parser(
-            """
-                    S = A A
-                    A = #'a*'
-                    """);
-
-
-    final @NotNull Parser lookahead_example = Parsewisp.parser(
-            """
-                    S = &'ab' ('a' | 'b')+
-                    """);
-
-    final @NotNull Parser negative_lookahead_example = Parsewisp.parser(
-            """
-                    S = !'ab' ('a' | 'b')+
-                    """);
-
-    final @NotNull Parser ambiguous_tokenizer = Parsewisp.parser(
-            """
-                    sentence = token (<whitespace> token)*
-                    <token> = keyword | identifier
-                    whitespace = #'\\s+'
-                    identifier = #'[a-zA-Z]+'
-                    keyword = 'cond' | 'defn'
-                    """);
-
-    final @NotNull Parser unambiguous_tokenizer = Parsewisp.parser(
-            """
-                    sentence = token (<whitespace> token)*
-                    <token> = keyword | !keyword identifier
-                    whitespace = #'\\s+'
-                    identifier = #'[a-zA-Z]+'
-                    keyword = 'cond' | 'defn'
-                    """);
-
-    final @NotNull Parser preferential_tokenizer = Parsewisp.parser(
-            """
-                    sentence = token (<whitespace> token)*
-                    <token> = keyword / identifier
-                    whitespace = #'\\s+'
-                    identifier = #'[a-zA-Z]+'
-                    keyword = 'cond' | 'defn'
-                    """);
-
-    final @NotNull Parser arithmetic = Parsewisp.parser(
-            """
-                    expr = add-sub
-                    <add-sub> = mul-div | add | sub
-                    add = add-sub <'+'> mul-div
-                    sub = add-sub <'-'> mul-div
-                    <mul-div> = term | mul | div
-                    mul = mul-div <'*'> term
-                    div = mul-div <'/'> term
-                    <term> = number | <'('> add-sub <')'>
-                    number = #'[0-9]+'
-                    """);
-
-    final @NotNull Parser tricky_ebnf_build = Parsewisp.parser("""
-                    S = A | B
-                    <A> = '='*
-                    B = 'b' '='
-                    """,
-            ParserCreationOptions.getDefault().withStartProduction(Sym.sym("S"))
-    );
-
-    final @NotNull Parser whitespace = Parsewisp.parser(
-            """
-                    whitespace = #'\\s+'
-                    """);
-
-    final @NotNull Parser auto_whitespace_example = Parsewisp.parser(
-            """
-                    S = A B
-                    <A> = 'foo'
-                    <B> = #'\\d+'
-                    """,
-            ParserCreationOptions.getDefault().withWhitespaceParser(whitespace));
-
-    final @NotNull Parser words_and_numbers_auto_whitespace = Parsewisp.parser(
-            """
-                    sentence = token+
-                    <token> = word | number
-                    word = #'[a-zA-Z]+'
-                    number = #'[0-9]+'
-                    """,
-            ParserCreationOptions.getDefault().withWhitespaceParser(whitespace));
-
-    final @NotNull Parser auto_whitespace_example2 = Parsewisp.parser(
-            """
-                    S = A B
-                    <A> = 'foo'
-                    <B> = #'\\d+'
-                    """,
-            ParserCreationOptions.getDefault().withWhitespaceParser(
-                    Parsewisp.getPredefinedWhitespaceParser("standard")));
-
-    final @NotNull Parser words_and_numbers_auto_whitespace2 = Parsewisp.parser(
-            """
-                    sentence = token+
-                    <token> = word | number
-                    word = #'[a-zA-Z]+'
-                    number = #'[0-9]+'
-                    """,
-            ParserCreationOptions.getDefault().withWhitespaceParser(
-                    Parsewisp.getPredefinedWhitespaceParser("standard")));
-
-    final @NotNull Parser whitespace_or_comments = Parsewisp.parser(
-            """
-                    ws-or-comments = #'\\s+' | comments
-                    comments = comment+
-                    comment = '(*' inside-comment* '*)'
-                    inside-comment =  !'*)' !'(*' #'.' | comment
-                    """,
-            ParserCreationOptions.getDefault().withWhitespaceParser(whitespace));
-
-    final @NotNull Parser words_and_numbers_auto_whitespace_and_comments = Parsewisp.parser(
-            """
-                    sentence = token+
-                    <token> = word | number
-                    word = #'[a-zA-Z]+'
-                    number = #'[0-9]+'
-                    """,
-            ParserCreationOptions.getDefault().withWhitespaceParser(whitespace_or_comments));
-
-    final @NotNull Parser eat_a = Parsewisp.parser("Aeater = #'[a]'+",
-            ParserCreationOptions.getDefault());
-
-    final @NotNull Parser int_or_double = Parsewisp.parser(
-            """
-                    ws = #'\\s+';
-                    Int = #'[0-9]+';
-                    Double = #'[0-9]+\\.[0-9]*|\\.[0-9]+';
-                    <ConstExpr> = Int | Double;
-                    Input = ConstExpr <ws> ConstExpr;
-                    """,
-            ParserCreationOptions.getDefault().withStartProduction(Sym.sym("Input")));
-
-    final @NotNull Parser case_insensitive_regexp = Parsewisp.parser(
-            """
-                    S = #'(?i)a+'
-                    """);
-
     @Test
     void testAsAndBs() {
-        final @NotNull String text = "aaaaabbbaaaabb";
-        final @NotNull ParseTree tree = PT.create(
+        var as_and_bs = Parsewisp.parser(
+                """
+                        S = AB*
+                        AB = A B
+                        A = 'a'+
+                        B = 'b'+
+                        """);
+        var text = "aaaaabbbaaaabb";
+        var tree = PT.create(
                 "S",
                 PT.create("AB", PT.create("A", "a", "a", "a", "a", "a"), PT.create("B", "b", "b", "b")),
                 PT.create("AB", PT.create("A", "a", "a", "a", "a"), PT.create("B", "b", "b"))
@@ -264,8 +44,15 @@ class ParsewispCoreTest {
 
     @Test
     void testAsAndBsRegex() {
-        final @NotNull String text = "aaaaabbbaaaabb";
-        final @NotNull ParseTree tree = PT.create(
+        var as_and_bs_regex = Parsewisp.parser(
+                """
+                        S = AB*
+                        AB = A B
+                        A = #'a'+
+                        B = #'b'+
+                        """);
+        var text = "aaaaabbbaaaabb";
+        var tree = PT.create(
                 "S",
                 PT.create("AB", PT.create("A", "a", "a", "a", "a", "a"), PT.create("B", "b", "b", "b")),
                 PT.create("AB", PT.create("A", "a", "a", "a", "a"), PT.create("B", "b", "b"))
@@ -284,8 +71,15 @@ class ParsewispCoreTest {
 
     @Test
     void testAsAndBsHiccup() {
-        final @NotNull String text = "aaaaabbbaaaabb";
-        final @NotNull ParseTree tree = PT.create(
+        final var as_and_bs = Parsewisp.parser(
+                """
+                        S = AB*
+                        AB = A B
+                        A = 'a'+
+                        B = 'b'+
+                        """);
+        var text = "aaaaabbbaaaabb";
+        var tree = PT.create(
                 "S",
                 PT.create("AB", PT.create("A", "a", "a", "a", "a", "a"), PT.create("B", "b", "b", "b")),
                 PT.create("AB", PT.create("A", "a", "a", "a", "a"), PT.create("B", "b", "b"))
@@ -293,7 +87,7 @@ class ParsewispCoreTest {
         var abTag = Sym.sym("AB");
         var aTag = Sym.sym("A");
         var bTag = Sym.sym("B");
-        final @NotNull List<Object> treeHiccup = List.of(
+        var treeHiccup = List.of(
                 Sym.sym("S"),
                 List.of(abTag, List.of(aTag, "a", "a", "a", "a", "a"), List.of(bTag, "b", "b", "b")),
                 List.of(abTag, List.of(aTag, "a", "a", "a", "a"), List.of(bTag, "b", "b"))
@@ -312,7 +106,12 @@ class ParsewispCoreTest {
 
     @Test
     void testAsAndBsVariation1() {
-        final @NotNull String text = "aaaaabbbaaaabb";
+        var as_and_bs_variation1 = Parsewisp.parser(
+                """
+                        S = AB*
+                        AB = 'a'+ 'b'+
+                        """);
+        var text = "aaaaabbbaaaabb";
 
         var res = PT.create("S",
                 PT.create("AB", "a", "a", "a", "a", "a", "b", "b", "b"),
@@ -325,7 +124,11 @@ class ParsewispCoreTest {
 
     @Test
     void testAsAndBsVariation2() {
-        final @NotNull String text = "aaaaabbbaaaabb";
+        var as_and_bs_variation2 = Parsewisp.parser(
+                """
+                        S = ('a'+ 'b'+)*
+                        """);
+        var text = "aaaaabbbaaaabb";
 
         var res = PT.create(
                 "S",
@@ -344,6 +147,11 @@ class ParsewispCoreTest {
 
     @Test
     void testParenAb() {
+        var paren_ab = Parsewisp.parser(
+                """
+                        paren-wrapped = '(' seq-of-A-or-B ')'
+                        seq-of-A-or-B = ('a' | 'b')*
+                        """);
         var text = "(aba)";
         var tree = PT.create("paren-wrapped",
                 "(",
@@ -357,6 +165,11 @@ class ParsewispCoreTest {
 
     @Test
     void testParenAbHideParens() {
+        var paren_ab_hide_parens = Parsewisp.parser(
+                """
+                        paren-wrapped = <'('> seq-of-A-or-B <')'>
+                        seq-of-A-or-B = ('a' | 'b')*
+                        """);
         var text = "(aba)";
         var tree = PT.create("paren-wrapped",
                 PT.create("seq-of-A-or-B", "a", "b", "a"));
@@ -367,6 +180,10 @@ class ParsewispCoreTest {
 
     @Test
     void testParenAbManuallyFlattened() {
+        var paren_ab_manually_flattened = Parsewisp.parser(
+                """
+                        paren-wrapped = <'('> ('a' | 'b')* <')'>
+                        """);
         var text = "(aba)";
         var tree = PT.create("paren-wrapped", "a", "b", "a");
 
@@ -376,6 +193,11 @@ class ParsewispCoreTest {
 
     @Test
     void testParenAbHideTag() {
+        var paren_ab_hide_tag = Parsewisp.parser(
+                """
+                        paren-wrapped = <'('> seq-of-A-or-B <')'>
+                        <seq-of-A-or-B> = ('a' | 'b')*
+                        """);
         var text = "(aba)";
         var tree = PT.create("paren-wrapped", "a", "b", "a");
 
@@ -385,6 +207,11 @@ class ParsewispCoreTest {
 
     @Test
     void testParenAbHideBothTags() {
+        var paren_ab_hide_both_tags = Parsewisp.parser(
+                """
+                        <paren-wrapped> = <'('> seq-of-A-or-B <')'>
+                        <seq-of-A-or-B> = ('a' | 'b')*
+                        """);
         var text = "(aba)";
 
         // Sadly, Parsewisp can not output untagged trees.
@@ -421,6 +248,11 @@ class ParsewispCoreTest {
 
     @Test
     void testAmbiguousParses() {
+        var ambiguous = Parsewisp.parser(
+                """
+                        S = A A
+                        A = 'a'*
+                        """);
         var text = "aaaaaa";
 
         var treesAmbiguous = List.of(
@@ -439,8 +271,12 @@ class ParsewispCoreTest {
 
     @Test
     void testUnambiguousParses() {
+        var not_ambiguous = Parsewisp.parser(
+                """
+                        S = A A
+                        A = #'a*'
+                        """);
         var text = "aaaaaa";
-
 
         var treesUnambiguous = List.of(
                 PT.create("S", PT.create("A", text), PT.create("A", ""))
@@ -452,6 +288,10 @@ class ParsewispCoreTest {
 
     @Test
     void testLookaheadExample() {
+        var lookahead_example = Parsewisp.parser(
+                """
+                        S = &'ab' ('a' | 'b')+
+                        """);
         var text = "abaaaab";
         var tree = PT.create("S", "a", "b", "a", "a", "a", "a", "b");
         Assertions.assertEquals(tree, lookahead_example.parse(text));
@@ -460,6 +300,10 @@ class ParsewispCoreTest {
 
     @Test
     void testLookaheadExampleFailure() {
+        var lookahead_example = Parsewisp.parser(
+                """
+                        S = &'ab' ('a' | 'b')+
+                        """);
         var text = "bbaaaab";
 
         Assertions.assertFalse(lookahead_example.parse(text).isSuccess());
@@ -468,6 +312,10 @@ class ParsewispCoreTest {
 
     @Test
     void testNegativeLookaheadExample() {
+        var negative_lookahead_example = Parsewisp.parser(
+                """
+                        S = !'ab' ('a' | 'b')+
+                        """);
         var text = "bbaaaab";
         var tree = PT.create("S", "b", "b", "a", "a", "a", "a", "b");
 
@@ -476,6 +324,10 @@ class ParsewispCoreTest {
 
     @Test
     void testNegativeLookaheadExampleFailure() {
+        var negative_lookahead_example = Parsewisp.parser(
+                """
+                        S = !'ab' ('a' | 'b')+
+                        """);
         var text = "abaaaab";
 
         Assertions.assertFalse(negative_lookahead_example.parse(text).isSuccess());
@@ -508,6 +360,14 @@ class ParsewispCoreTest {
 
     @Test
     void testAmbiguousTokenizer() {
+        var ambiguous_tokenizer = Parsewisp.parser(
+                """
+                        sentence = token (<whitespace> token)*
+                        <token> = keyword | identifier
+                        whitespace = #'\\s+'
+                        identifier = #'[a-zA-Z]+'
+                        keyword = 'cond' | 'defn'
+                        """);
         var text = "defn my cond";
         var trees = Set.of(
                 PT.create("sentence", PT.create("identifier", "defn"), PT.create("identifier", "my"), PT.create("identifier", "cond")),
@@ -521,6 +381,14 @@ class ParsewispCoreTest {
 
     @Test
     void testUnambiguousTokenizer() {
+        var unambiguous_tokenizer = Parsewisp.parser(
+                """
+                        sentence = token (<whitespace> token)*
+                        <token> = keyword | !keyword identifier
+                        whitespace = #'\\s+'
+                        identifier = #'[a-zA-Z]+'
+                        keyword = 'cond' | 'defn'
+                        """);
         var text = "defn my cond";
         var trees = List.of(
                 PT.create("sentence", PT.create("keyword", "defn"), PT.create("identifier", "my"), PT.create("keyword", "cond"))
@@ -531,6 +399,14 @@ class ParsewispCoreTest {
 
     @Test
     void testPreferentialTokenizer() {
+        var preferential_tokenizer = Parsewisp.parser(
+                """
+                        sentence = token (<whitespace> token)*
+                        <token> = keyword / identifier
+                        whitespace = #'\\s+'
+                        identifier = #'[a-zA-Z]+'
+                        keyword = 'cond' | 'defn'
+                        """);
         var text = "defn my cond";
         var trees = Set.of(
                 PT.create("sentence", PT.create("keyword", "defn"), PT.create("identifier", "my"), PT.create("keyword", "cond")),
@@ -573,6 +449,16 @@ class ParsewispCoreTest {
 
     @Test
     void testWordsAndNumbersOneCharacterAtATime() {
+        var words_and_numbers_one_character_at_a_time = Parsewisp.parser(
+                """
+                        sentence = token (<whitespace> token)*
+                        <token> = word | number
+                        whitespace = #'\\s+'
+                        word = letter+
+                        number = digit+
+                        <letter> = #'[a-zA-Z]'
+                        <digit> = #'[0-9]'
+                        """);
         var text = "abc 123 def";
         var tree = PT.create("sentence",
                 PT.create("word", "a", "b", "c"),
@@ -584,6 +470,18 @@ class ParsewispCoreTest {
 
     @Test
     void testArithmeticGrammar() {
+        var arithmetic = Parsewisp.parser(
+                """
+                        expr = add-sub
+                        <add-sub> = mul-div | add | sub
+                        add = add-sub <'+'> mul-div
+                        sub = add-sub <'-'> mul-div
+                        <mul-div> = term | mul | div
+                        mul = mul-div <'*'> term
+                        div = mul-div <'/'> term
+                        <term> = number | <'('> add-sub <')'>
+                        number = #'[0-9]+'
+                        """);
         var text = "1-2/(3-4)+5*6";
         var tree = PT.create("expr",
                 PT.create("add",
@@ -602,16 +500,14 @@ class ParsewispCoreTest {
         Assertions.assertEquals(tree, arithmetic.parse(text, ParsingOptions.getDefault()));
     }
 
-    /*
-             (tricky-ebnf-build "===")
-             [:S "=" "=" "="]
-
-             (tricky-ebnf-build "b=")
-             [:S [:B "b" "="]]
-     */
-
     @Test
     void testTrickyEbnfBuild() {
+        var tricky_ebnf_build = Parsewisp.parser("""
+                        S = A | B
+                        <A> = '='*
+                        B = 'b' '='
+                        """,
+                ParserCreationOptions.getDefault().withStartProduction(Sym.sym("S")));
         var text1 = "===";
         var text2 = "b=";
         var tree1 = PT.create("S", "=", "=", "=");
@@ -664,7 +560,11 @@ class ParsewispCoreTest {
                 PT.create("seq-of-A-or-B",
                         "a", "b", "a", "b", "a"),
                 ")");
-        var p = paren_ab_hide_parens;
+        var p = Parsewisp.parser(
+                """
+                        paren-wrapped = <'('> seq-of-A-or-B <')'>
+                        seq-of-A-or-B = ('a' | 'b')*
+                        """);
 
         Assertions.assertEquals(treeNormal, p.parse(text));
         Assertions.assertEquals(treeWParen,
@@ -677,6 +577,11 @@ class ParsewispCoreTest {
 
     @Test
     void testUnhide2() {
+        var p = Parsewisp.parser(
+                """
+                        paren-wrapped = <'('> seq-of-A-or-B <')'>
+                        <seq-of-A-or-B> = ('a' | 'b')*
+                        """);
         var text = "(ababa)";
         var treeWTag = PT.create("paren-wrapped",
                 PT.create("seq-of-A-or-B",
@@ -686,7 +591,6 @@ class ParsewispCoreTest {
                 PT.create("seq-of-A-or-B",
                         "a", "b", "a", "b", "a"),
                 ")");
-        var p = paren_ab_hide_tag;
 
         Assertions.assertEquals(treeWTag,
                 p.parse(text, ParsingOptions.getDefault().withUnhide(Unhide.UnhideOptions.TAGS)));
@@ -742,6 +646,14 @@ class ParsewispCoreTest {
 
     @Test
     void testWordsAndNumbers() {
+        var words_and_numbers = Parsewisp.parser(
+                """
+                        sentence = token (<whitespace> token)*
+                        <token> = word | number
+                        whitespace = #'\\s+'
+                        word = #'[a-zA-Z]+'
+                        number = #'[0-9]+'
+                        """);
         var text = "ab 123 cd";
         var treeWithoutTokenTag = PT.create(
                 "sentence",
@@ -764,6 +676,23 @@ class ParsewispCoreTest {
 
     @Test
     void testWordsAndNumbersAutoWhitespace() {
+        var p = Parsewisp.parser(
+                """
+                        sentence = token+
+                        <token> = word | number
+                        word = #'[a-zA-Z]+'
+                        number = #'[0-9]+'
+                        """,
+                ParserCreationOptions.getDefault().withWhitespaceParser(Parsewisp.parser("whitespace = #'\\s+'")));
+        var p2 = Parsewisp.parser(
+                """
+                        sentence = token+
+                        <token> = word | number
+                        word = #'[a-zA-Z]+'
+                        number = #'[0-9]+'
+                        """,
+                ParserCreationOptions.getDefault().withWhitespaceParser(
+                        Parsewisp.getPredefinedWhitespaceParser("standard")));
         var tree = PT.create(
                 "sentence",
                 PT.create("word", "ab"),
@@ -771,17 +700,31 @@ class ParsewispCoreTest {
                 PT.create("word", "cd")
         );
 
-        var p = words_and_numbers_auto_whitespace;
         Assertions.assertEquals(tree, p.parse("ab 123 cd"));
         Assertions.assertEquals(tree, p.parse(" ab 123 cd "));
 
-        var p2 = words_and_numbers_auto_whitespace2;
         Assertions.assertEquals(tree, p2.parse("ab 123 cd"));
         Assertions.assertEquals(tree, p2.parse(" ab 123 cd "));
     }
 
     @Test
     void testWordsAndNumbersAutoWhitespaceAndComments() {
+        var ws = Parsewisp.parser(
+                """
+                        ws-or-comments = #'\\s+' | comments
+                        comments = comment+
+                        comment = '(*' inside-comment* '*)'
+                        inside-comment =  !'*)' !'(*' #'.' | comment
+                        """,
+                ParserCreationOptions.getDefault().withWhitespaceParser(Parsewisp.parser("whitespace = #'\\s+'")));
+        var words_and_numbers_auto_whitespace_and_comments = Parsewisp.parser(
+                """
+                        sentence = token+
+                        <token> = word | number
+                        word = #'[a-zA-Z]+'
+                        number = #'[0-9]+'
+                        """,
+                ParserCreationOptions.getDefault().withWhitespaceParser(ws));
         var tree = PT.create(
                 "sentence",
                 PT.create("word", "abc"),
@@ -789,52 +732,65 @@ class ParsewispCoreTest {
                 PT.create("word", "def")
         );
 
-        final @NotNull Parser p = words_and_numbers_auto_whitespace_and_comments;
-
-        Assertions.assertEquals(tree, p.parse(" abc 123  def "));
-        Assertions.assertEquals(tree, p.parse(" abc 123 (* (*de*)f *) def"));
+        Assertions.assertEquals(
+                tree,
+                words_and_numbers_auto_whitespace_and_comments
+                        .parse(" abc 123  def "));
+        Assertions.assertEquals(
+                tree,
+                words_and_numbers_auto_whitespace_and_comments
+                        .parse(" abc 123 (* (*de*)f *) def"));
     }
 
     @Test
     void testEatA() {
+        var p = Parsewisp.parser("Aeater = #'[a]'+",
+                ParserCreationOptions.getDefault());
         var tree = PT.create(
                 "Aeater",
                 "a", "a", "a", "a", "a", "a", "a", "a",
                 new ParseFailureNode("bbbbbb", Sym.sym("failure"), 8, 14)
         );
 
-        final @NotNull Parser p = eat_a;
-        final @NotNull var text = "aaaaaaaabbbbbb";
+        var text = "aaaaaaaabbbbbb";
 
         Assertions.assertEquals(tree, p.parse(text, ParsingOptions.getDefault().withEmbedFailureInParseTree(true)));
     }
 
     @Test
     void testIntOrDouble() {
+        var int_or_double = Parsewisp.parser(
+                """
+                        ws = #'\\s+';
+                        Int = #'[0-9]+';
+                        Double = #'[0-9]+\\.[0-9]*|\\.[0-9]+';
+                        <ConstExpr> = Int | Double;
+                        Input = ConstExpr <ws> ConstExpr;
+                        """,
+                ParserCreationOptions.getDefault().withStartProduction(Sym.sym("Input")));
         var tree = PT.create(
                 "Input",
                 PT.create("Int", "31"),
                 PT.create("Double", "0.2")
         );
 
-        final @NotNull Parser p = int_or_double;
-        final @NotNull var text = "31 0.2";
+        var text = "31 0.2";
 
-        Assertions.assertEquals(tree, p.parse(text));
+        Assertions.assertEquals(tree, int_or_double.parse(text));
     }
 
     @Test
     void testGreedyRegex() {
         {
-            final @NotNull Parser p = Parsewisp.parser("S = #'\\s*'");
-            final @NotNull var text = "     ";
+            var p = Parsewisp.parser("S = #'\\s*'");
+            var text = "     ";
             var tree = PT.create("S", text);
 
             Assertions.assertEquals(tree, p.parse(text));
         }
         {
-            final @NotNull Parser p = Parsewisp.parser("S = #'a+'");
-            final @NotNull var text = "aaaaaa";
+            var p = Parsewisp.parser("S = #'a+'");
+            var text = "aaaaaa";
             var tree = PT.create("S", text);
 
             Assertions.assertEquals(tree, p.parse(text));
@@ -843,7 +799,7 @@ class ParsewispCoreTest {
 
     @Test
     void testSimpleOrderedChoice() {
-        final @NotNull Parser p = Parsewisp.parser("S = 'a' / ε");
+        var p = Parsewisp.parser("S = 'a' / ε");
 
         Assertions.assertEquals(PT.create("S"), p.parse(""));
         Assertions.assertEquals(PT.create("S", "a"), p.parse("a"));
@@ -913,6 +869,13 @@ class ParsewispCoreTest {
 
     @Test
     void testAutoWhitespaceExamples() {
+        var auto_whitespace_example = Parsewisp.parser(
+                """
+                        S = A B
+                        <A> = 'foo'
+                        <B> = #'\\d+'
+                        """,
+                ParserCreationOptions.getDefault().withWhitespaceParser(Parsewisp.parser("whitespace = #'\\s+'")));
         var tree = PT.create("S", "foo", "123");
         var text = "foo 123";
 
@@ -921,6 +884,14 @@ class ParsewispCoreTest {
 
     @Test
     void testAutoWhitespaceExample2() {
+        var auto_whitespace_example2 = Parsewisp.parser(
+                """
+                        S = A B
+                        <A> = 'foo'
+                        <B> = #'\\d+'
+                        """,
+                ParserCreationOptions.getDefault().withWhitespaceParser(
+                        Parsewisp.getPredefinedWhitespaceParser("standard")));
         var tree = PT.create("S", "foo", "123");
         var text = "foo 123";
 
@@ -939,6 +910,10 @@ class ParsewispCoreTest {
 
     @Test
     void testCaseInsensitiveRegex() {
+        var case_insensitive_regexp = Parsewisp.parser(
+                """
+                        S = #'(?i)a+'
+                        """);
         Assertions.assertEquals(
                 PT.create("S", "aaa"),
                 case_insensitive_regexp.parse("aaa"));

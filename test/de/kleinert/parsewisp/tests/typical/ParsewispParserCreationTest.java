@@ -15,24 +15,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 class ParsewispParserCreationTest {
-
-    @Test
-    void parserFrom() {
-    }
-
     @Test
     void parserFromString() {
-        {
-            final @NotNull var p = Parsewisp.parser("S = '1'");
-            final @NotNull var p2 = Parsewisp.parser("S = '1'");
-            Assertions.assertEquals(p.grammar(), p2.grammar());
-        }
+        final @NotNull var p = Parsewisp.parser("S = '1'");
+        final @NotNull var p2 = Parsewisp.parser("S = '1'");
+        Assertions.assertEquals(p.grammar(), p2.grammar());
     }
 
     @Test
     void parserFromFile() {
         try {
-
             final @NotNull String text = "aaaaabbbaaaabb";
             final @NotNull var grammarFile = new File("testres/grammars/as_and_bs.grammar");
             final @NotNull var p = Parsewisp.parser(Files.readString(grammarFile.toPath()));
@@ -47,6 +39,7 @@ class ParsewispParserCreationTest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
         try {
             final @NotNull var grammarFile = new File("testres/grammars/as_and_bs.grammar");
             final @NotNull var p = Parsewisp.parser(Files.readString(grammarFile.toPath()));
@@ -76,12 +69,6 @@ class ParsewispParserCreationTest {
     @Test
     void parserFromStringWithOptions() {
     }
-/*
-@Nullable Parser whitespaceParser,
-@Nullable Keyword startProduction,
-@NotNull Cfg.GlobalCaseInsensitivity stringCaseInsensitive,
-@NotNull ReductionType.ReductionTypesAvailable outputFormat
-*/
 
     @Test
     void parserFromFileWithOptions() {
