@@ -10,6 +10,8 @@ import java.util.regex.Pattern;
 
 /**
  * Utilities for printing and modifying failure objects. Calling these methods from outside the parsing algorithm is heavily discouraged and might result in immediate termination of the user.
+ *
+ * @since 0.9.7
  */
 public final class FailureUtil {
     private FailureUtil() {
@@ -23,6 +25,7 @@ public final class FailureUtil {
      * @param failure The failure.
      * @param text    The text.
      * @return A new string.
+     * @since 0.9.7
      */
     public static @NotNull ParseFailure augmentFailure(
             final @NotNull ParseFailure failure,
@@ -57,6 +60,7 @@ public final class FailureUtil {
      * @param text The text.
      * @param n    The index.
      * @return Indentation and marker.
+     * @since 0.9.7
      */
     public static @NotNull String marker(final String text, final int n) {
         if (text == null) return "<No text>";
@@ -74,6 +78,7 @@ public final class FailureUtil {
      * @param newReason The new reasonList.
      * @param nextIndex The next index for the reasonList.
      * @return A modified failure object.
+     * @since 0.9.7
      */
     public static @NotNull ParseFailure modifyFailureByIndex(
             final @Nullable ParseFailure failure,
@@ -94,6 +99,7 @@ public final class FailureUtil {
      *
      * @param failure The failure.
      * @return The string.
+     * @since 0.9.7
      */
     public static @NotNull String pprintFailure(final @NotNull ParseFailure failure) {
         final int line = ((Number) failure.line()).intValue();

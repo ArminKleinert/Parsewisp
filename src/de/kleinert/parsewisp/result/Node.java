@@ -12,6 +12,8 @@ import org.jetbrains.annotations.Nullable;
  *     <li>{@link NodeFail} wraps {@link ParseFailureNode}. This happens only if failures are embedded in parse trees.</li>
  *     <li>{@link NodeTreeTag} wraps {@link String} (or anything else that represents text) and must be the head of a parse tree.</li>
  * </ul>
+ *
+ * @since 0.9.7
  */
 public sealed interface Node permits Node.NodeFail, Node.NodeParseTree, Node.NodeString, Node.NodeTreeTag {
     /**
@@ -19,6 +21,7 @@ public sealed interface Node permits Node.NodeFail, Node.NodeParseTree, Node.Nod
      *
      * @param o The object.
      * @return A node.
+     * @since 0.9.7
      */
     static @NotNull Node of(final @Nullable Object o) {
         if (o == null) throw new IllegalArgumentException("Input cannot be null.");
@@ -35,6 +38,7 @@ public sealed interface Node permits Node.NodeFail, Node.NodeParseTree, Node.Nod
      * The inner object.
      *
      * @return The inner object.
+     * @since 0.9.7
      */
     @NotNull Object content();
 
@@ -43,6 +47,7 @@ public sealed interface Node permits Node.NodeFail, Node.NodeParseTree, Node.Nod
      *
      * @return The content as a string.
      * @throws ClassCastException If the node is not a {@link NodeString}.
+     * @since 0.9.7
      */
     default @NotNull String string() {
         return ((NodeString) this).content();
@@ -53,6 +58,7 @@ public sealed interface Node permits Node.NodeFail, Node.NodeParseTree, Node.Nod
      *
      * @return The content as a {@link ParseTree}.
      * @throws ClassCastException If the node is not a {@link NodeParseTree}.
+     * @since 0.9.7
      */
     default @NotNull ParseTree tree() {
         return ((NodeParseTree) this).content();
@@ -62,6 +68,7 @@ public sealed interface Node permits Node.NodeFail, Node.NodeParseTree, Node.Nod
      * Represents the tag of a tree. This is the left hand side of a production. A tag can not exist without a tree and a tree can not exist without a tag.
      *
      * @param content The inner object.
+     * @since 0.9.7
      */
     record NodeTreeTag(@NotNull Sym content) implements Node {
         @Override
@@ -74,6 +81,7 @@ public sealed interface Node permits Node.NodeFail, Node.NodeParseTree, Node.Nod
      * Wraps a {@link ParseTree}.
      *
      * @param content The inner object.
+     * @since 0.9.7
      */
     record NodeParseTree(@NotNull ParseTree content) implements Node {
         @Override
@@ -86,6 +94,7 @@ public sealed interface Node permits Node.NodeFail, Node.NodeParseTree, Node.Nod
      * Wraps a {@link String}.
      *
      * @param content The inner object.
+     * @since 0.9.7
      */
     record NodeString(@NotNull String content) implements Node {
         @Override
@@ -98,6 +107,7 @@ public sealed interface Node permits Node.NodeFail, Node.NodeParseTree, Node.Nod
      * Wraps a {@link ParseFailureNode} and is only used to embed failures into the tree.
      *
      * @param content The inner object.
+     * @since 0.9.7
      */
     record NodeFail(@NotNull ParseFailureNode content) implements Node {
         @Override

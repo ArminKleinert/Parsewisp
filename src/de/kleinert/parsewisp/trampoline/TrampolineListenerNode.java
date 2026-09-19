@@ -14,6 +14,7 @@ import java.util.*;
  * @param fullListeners Listeners that expect to be parsed to the end of the input text.
  * @param results       Successes (or failures) for listeners.
  * @param fullResults   Successes (or failures) for full listeners.
+ * @since 0.9.7
  */
 public record TrampolineListenerNode(@NotNull List<Listener> listeners,
                                      @NotNull List<Listener> fullListeners,
@@ -31,6 +32,7 @@ public record TrampolineListenerNode(@NotNull List<Listener> listeners,
      *
      * @param index The index.
      * @param rule  The production.
+     * @since 0.9.7
      */
     public record TrampolineListenerKey(int index, @NotNull Rule rule) {
     }

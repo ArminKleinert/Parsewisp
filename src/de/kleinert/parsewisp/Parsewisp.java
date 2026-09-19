@@ -7,12 +7,11 @@ import de.kleinert.parsewisp.parser_options.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
-import java.nio.file.Files;
 import java.util.Map;
 
 /**
  * The main interface for interacting with the library.
+ * @since 0.9.7
  */
 public final class Parsewisp {
     private Parsewisp() {
@@ -25,6 +24,7 @@ public final class Parsewisp {
      * @return The parser.
      * @see #parser(String, ParserCreationOptions)
      * @see ParserCreationOptions#getDefault()
+     * @since 0.9.7
      */
     public static @NotNull Parser parser(final @NotNull String grammar) {
         return parser(grammar, ParserCreationOptions.getDefault());
@@ -36,6 +36,7 @@ public final class Parsewisp {
      * @param grammar The grammar as a string.
      * @param options The options.
      * @return The parser.
+     * @since 0.9.7
      */
     public static @NotNull Parser parser(final @NotNull String grammar,
                                          final @NotNull ParserCreationOptions options) {
@@ -45,19 +46,30 @@ public final class Parsewisp {
     }
 
     /**
-     * Creates a parser from a grammar specification. For documentation of the options, see {@link ParserCreationOptions}.
+     * Equivalent to {@link #parser(Grammar, ParserCreationOptions)}, using {@link ParserCreationOptions#getDefault()} for the options.
      *
-     * @param grammar The grammar as a file.
-     * @param options The options
+     * @param grammar The grammar.
      * @return The parser.
-     * @throws IOException If the file doesn't exist or can't be accessed.
-     * @see #parser(String, ParserCreationOptions)
+     * @since 0.9.7
      */
-    public static @NotNull Parser parser(final @NotNull File grammar,
-                                         final @NotNull ParserCreationOptions options) throws IOException {
-        final @NotNull String contents = Files.readString(grammar.toPath());
-        return parser(contents, options);
+    public static @NotNull Parser parser(final @NotNull Grammar grammar) {
+        return parser(grammar, ParserCreationOptions.getDefault());
     }
+
+//    /**
+//     * Creates a parser from a grammar specification. For documentation of the options, see {@link ParserCreationOptions}.
+//     *
+//     * @param grammar The grammar as a file.
+//     * @param options The options
+//     * @return The parser.
+//     * @throws IOException If the file doesn't exist or can't be accessed.
+//     * @see #parser(String, ParserCreationOptions)
+//     */
+//    public static @NotNull Parser parser(final @NotNull File grammar,
+//                                         final @NotNull ParserCreationOptions options) throws IOException {
+//        final @NotNull String contents = Files.readString(grammar.toPath());
+//        return parser(contents, options);
+//    }
 
     /**
      * Creates a parser from a grammar. See {@link #parser(String, ParserCreationOptions)} for what the options do.
@@ -66,6 +78,7 @@ public final class Parsewisp {
      * @param options The options, most importantly the start production.
      * @return The parser.
      * @throws ParserCreationFailure If the start production is invalid.
+     * @since 0.9.7
      */
     public static @NotNull Parser parser(@NotNull Grammar grammar,
                                          @Nullable ParserCreationOptions options) {
@@ -101,6 +114,7 @@ public final class Parsewisp {
      *
      * @param wsParserName The key.
      * @return A parser or null.
+     * @since 0.9.7
      */
     public static @Nullable Parser getPredefinedWhitespaceParser(
             final @Nullable String wsParserName) {

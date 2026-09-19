@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
 
 /**
  * A builder for grammars for parsing context free grammars (CFGs).
+ *
+ * @since 0.9.7
  */
 public final class CfgGrammar extends GrammarBuilder {
     final @NotNull ParserCreationOptions options;
@@ -516,6 +518,7 @@ public final class CfgGrammar extends GrammarBuilder {
      *
      * @param options The options.
      * @return The grammar.
+     * @since 0.9.7
      */
     @NotNull
     public static Grammar makeCfg(final @NotNull ParserCreationOptions options) {

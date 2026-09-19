@@ -7,6 +7,8 @@ import java.util.Objects;
 
 /**
  * Abstraction of {@link Rule} types which wrap one other {@link Rule}. Examples: repetitions, optionals, lookahead.
+ *
+ * @since 0.9.7
  */
 public sealed abstract class RuleWithChild
         extends Rule
@@ -15,6 +17,8 @@ public sealed abstract class RuleWithChild
 
     /**
      * The rule which is wrapped by this rule.
+     *
+     * @since 0.9.7
      */
     protected final @NotNull Rule rule;
 
@@ -29,6 +33,7 @@ public sealed abstract class RuleWithChild
      * Get the inner {@link Rule} used for parsing. For example, for a repetition {@code P+}, returns {@code P}.
      *
      * @return The inner {@link Rule}.
+     * @since 0.9.7
      */
     public @NotNull Rule getRule() {
         return rule;
@@ -39,6 +44,7 @@ public sealed abstract class RuleWithChild
      *
      * @param rule The new inner {@link Rule}.
      * @return A new instance.
+     * @since 0.9.7
      */
     public abstract @NotNull RuleWithChild withRule(final @NotNull Rule rule);
 

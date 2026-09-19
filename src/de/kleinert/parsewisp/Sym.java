@@ -17,6 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * Sym k2 = Sym.sym(str);
  * k1 == k2 // Guarantied to be true.
  * }
+ *
+ * @since 0.9.7
  */
 public final class Sym {
     private static final @NotNull Map<@NotNull String, Reference<Sym>> table =
@@ -31,6 +33,7 @@ public final class Sym {
      *
      * @param sym The string for the symbol.
      * @return The new or already existing symbol.
+     * @since 0.9.7
      */
     public static @NotNull Sym sym(final @NotNull String sym) {
         Sym k = null;
@@ -84,6 +87,7 @@ public final class Sym {
      * Returns the backing string.
      *
      * @return The backing string.
+     * @since 0.9.7
      */
     public @NotNull String name() {
         return name;

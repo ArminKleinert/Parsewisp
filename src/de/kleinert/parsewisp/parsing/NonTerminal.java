@@ -11,6 +11,8 @@ import java.util.Objects;
 
 /**
  * This type represents non-terminals.
+ *
+ * @since 0.9.7
  */
 public final class NonTerminal extends SimpleRule {
     private final @NotNull Sym keyword;
@@ -24,8 +26,10 @@ public final class NonTerminal extends SimpleRule {
 
     /**
      * Create a new instance. Depending on the implementation, allows for buffering.
+     *
      * @param keyword The wrapped symbol.
      * @return A non-terminal.
+     * @since 0.9.7
      */
     public static @NotNull NonTerminal create(final @NotNull Sym keyword) {
         return new NonTerminal(defaultHidden, defaultReductionType, keyword);
@@ -35,6 +39,7 @@ public final class NonTerminal extends SimpleRule {
      * Returns the name of the rule.
      *
      * @return The name of the rule.
+     * @since 0.9.7
      */
     public @NotNull Sym getKeyword() {
         return keyword;
@@ -44,7 +49,7 @@ public final class NonTerminal extends SimpleRule {
     public void parse(final int index, final @NotNull Gll runner) {
         final @Nullable Rule rule = runner.tramp().getGrammar().getProduction(this.getKeyword());
         if (rule == null)
-            throw new IllegalStateException("Cannot use non terminal "+this.getKeyword()+ " Availability should be checked when initializing parser.");
+            throw new IllegalStateException("Cannot use non terminal " + this.getKeyword() + " Availability should be checked when initializing parser.");
         runner.pushListener(
                 new TrampolineListenerKey(index, rule),
                 runner.nodeListener(new TrampolineListenerKey(index, this))
@@ -55,7 +60,7 @@ public final class NonTerminal extends SimpleRule {
     public void fullParse(final int index, final @NotNull Gll runner) {
         final @Nullable Rule rule = runner.tramp().getGrammar().getProduction(this.getKeyword());
         if (rule == null)
-            throw new IllegalStateException("Cannot use non terminal "+this.getKeyword()+ " Availability should be checked when initializing parser.");
+            throw new IllegalStateException("Cannot use non terminal " + this.getKeyword() + " Availability should be checked when initializing parser.");
         runner.pushFullListener(
                 new TrampolineListenerKey(index, rule),
                 runner.nodeListener(new TrampolineListenerKey(index, this)));

@@ -20,6 +20,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * }
  * </pre>
  * The tool <b>dot</b> must be installed.
+ *
+ * @since 0.9.7
  */
 public final class Viztool {
     private Viztool() {
@@ -78,6 +80,7 @@ public final class Viztool {
      * @return The return code. That is 0 on success or another number on failure.
      * @throws IOException          If the file can't be created or written to.
      * @throws InterruptedException If the operation is interrupted somehow.
+     * @since 0.9.7
      */
     public static int dumpParseTree(
             final @NotNull String dotFileNamePrefix,

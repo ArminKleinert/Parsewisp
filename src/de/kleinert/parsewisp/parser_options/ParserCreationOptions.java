@@ -29,6 +29,7 @@ public class ParserCreationOptions {
      * @param redefinitionOption Sets what to do when a production appears twice in the definition.
      * @param checkCorrectness   Whether to check the correctness of the grammar when creating the parser.
      * @param printer            A helper for converting the rules to strings if ever required.
+     * @since 0.9.7
      */
     public ParserCreationOptions(@Nullable Parser whitespaceParser,
                                  @Nullable Sym startProduction,
@@ -46,6 +47,7 @@ public class ParserCreationOptions {
      * A parser which is used to ignore whitespaces between words or characters. This parser is merged into the new parser when the creation options are used. If null, no such parser is used.
      *
      * @return A {@link Parser} or null.
+     * @since 0.9.7
      */
     public @Nullable Parser getWhitespaceParser() {
         return whitespaceParser;
@@ -55,6 +57,7 @@ public class ParserCreationOptions {
      * The starting production name of the parser. If null, the first defined production is used.
      *
      * @return A symbol which should be the left-hand side of a production in the grammar.
+     * @since 0.9.7
      */
     public @Nullable Sym getStartProduction() {
         return startProduction;
@@ -65,6 +68,7 @@ public class ParserCreationOptions {
      *
      * @return A {@link RedefinitionOption}
      * @see RedefinitionOption
+     * @since 0.9.7
      */
     public @NotNull RedefinitionOption getRedefinitionOption() {
         return redefinitionOption;
@@ -74,6 +78,7 @@ public class ParserCreationOptions {
      * Whether to check the correctness of the grammar when creating the parser.
      *
      * @return true or false
+     * @since 0.9.7
      */
     public boolean doCheckCorrectness() {
         return checkCorrectness;
@@ -81,7 +86,9 @@ public class ParserCreationOptions {
 
     /**
      * Returns the {@link GrammarPrinter} associated with the created parser.
+     *
      * @return The printer.
+     * @since 0.9.7
      */
     public @NotNull GrammarPrinter getPrinter() {
         return printer;
@@ -98,6 +105,7 @@ public class ParserCreationOptions {
      * @param checkCorrectness   Whether to check the correctness of the grammar when creating the parser.
      * @param printer            A helper for converting the rules to strings if ever required.
      * @return A new instance.
+     * @since 0.9.7
      */
     public static @NotNull ParserCreationOptions create(
             final @Nullable Parser whitespaceParser,
@@ -118,6 +126,7 @@ public class ParserCreationOptions {
      *
      * @param whitespaceParser The parser (or null).
      * @return A new instance.
+     * @since 0.9.7
      */
     public @NotNull ParserCreationOptions withWhitespaceParser(
             final @Nullable Parser whitespaceParser) {
@@ -135,6 +144,7 @@ public class ParserCreationOptions {
      *
      * @param startProduction The start production's name.
      * @return A new instance.
+     * @since 0.9.7
      */
     public @NotNull ParserCreationOptions withStartProduction(
             final @Nullable Sym startProduction) {
@@ -152,6 +162,7 @@ public class ParserCreationOptions {
      *
      * @param redefinitionOption Sets what to do when a production appears twice in the definition.
      * @return A new instance.
+     * @since 0.9.7
      */
     public @NotNull ParserCreationOptions withRedefinitionOption(
             final @Nullable RedefinitionOption redefinitionOption) {
@@ -167,6 +178,7 @@ public class ParserCreationOptions {
      *
      * @param checkCorrectness The new setting for {@link ParserCreationOptions#doCheckCorrectness()}.
      * @return A new instance.
+     * @since 0.9.7
      */
     public @NotNull ParserCreationOptions withCorrectnessCheck(
             final boolean checkCorrectness) {
@@ -182,6 +194,7 @@ public class ParserCreationOptions {
      *
      * @param printer The new grammar-printer.
      * @return A new instance.
+     * @since 0.9.7
      */
     public @NotNull ParserCreationOptions withPrinter(
             final @Nullable GrammarPrinter printer) {
@@ -208,6 +221,7 @@ public class ParserCreationOptions {
      * </pre>
      *
      * @return A new instance.
+     * @since 0.9.7
      */
     public static @NotNull ParserCreationOptions newWithStandardWhitespace() {
         return ParserCreationOptions
@@ -225,6 +239,7 @@ public class ParserCreationOptions {
      * </ul>
      *
      * @return default settings.
+     * @since 0.9.7
      */
     public static @NotNull ParserCreationOptions getDefault() {
         return ParserCreationOptions.create(

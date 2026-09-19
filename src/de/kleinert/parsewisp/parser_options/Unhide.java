@@ -33,6 +33,7 @@ import java.util.LinkedHashMap;
  * </pre>
  *
  * @see ParsingOptions#unhide()
+ * @since 0.9.7
  */
 public class Unhide {
     private Unhide() {
@@ -44,6 +45,7 @@ public class Unhide {
      * @param grammar The grammar.
      * @return The new grammar.
      * @see ParsingOptions#unhide()
+     * @since 0.9.7
      */
     public static @NotNull Grammar unhideContent(final @NotNull Grammar grammar) {
         final @NotNull LinkedHashMap<Sym, Rule> res = new LinkedHashMap<>();
@@ -58,6 +60,7 @@ public class Unhide {
      *
      * @param grammar The grammar.
      * @return The new grammar.
+     * @since 0.9.7
      */
     public static @NotNull Grammar unhideTags(final @NotNull Grammar grammar) {
         final @NotNull LinkedHashMap<Sym, Rule> res = new LinkedHashMap<>();
@@ -76,6 +79,7 @@ public class Unhide {
      *
      * @param grammar The grammar.
      * @return The new grammar.
+     * @since 0.9.7
      */
     public static @NotNull Grammar unhideAll(final @NotNull Grammar grammar) {
         final @NotNull LinkedHashMap<Sym, Rule> res = new LinkedHashMap<>();
@@ -90,12 +94,15 @@ public class Unhide {
 
     /**
      * See {@link Unhide} for documentation and an example.
+     *
+     * @since 0.9.7
      */
     public enum UnhideOptions {
         /**
          * Do nothing.
          *
          * @see ParsingOptions#unhide()
+         * @since 0.9.7
          */
         NONE,
         /**
@@ -103,6 +110,7 @@ public class Unhide {
          *
          * @see Unhide#unhideTags(Grammar)
          * @see ParsingOptions#unhide()
+         * @since 0.9.7
          */
         TAGS,
         /**
@@ -110,6 +118,7 @@ public class Unhide {
          *
          * @see Unhide#unhideContent(Grammar)
          * @see ParsingOptions#unhide()
+         * @since 0.9.7
          */
         CONTENT,
         /**
@@ -117,6 +126,7 @@ public class Unhide {
          *
          * @see Unhide#unhideAll(Grammar)
          * @see ParsingOptions#unhide()
+         * @since 0.9.7
          */
         ALL
     }

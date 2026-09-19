@@ -10,6 +10,8 @@ import java.util.Objects;
  * This class should almost never be used, but can have its uses occasionally.
  * <p>
  * Format: {@code "EOF"}
+ *
+ * @since 0.9.7
  */
 public final class EOFTerm extends Terminal {
     private EOFTerm(final boolean hide, final @NotNull ReductionType red) {
@@ -18,9 +20,11 @@ public final class EOFTerm extends Terminal {
 
     /**
      * Default text for EOF.
+     *
      * @return The text that identifies an EOF rule in a grammar.
+     * @since 0.9.7
      */
-    public static @NotNull String text () {
+    public static @NotNull String text() {
         return "EOF";
     }
 
@@ -28,6 +32,7 @@ public final class EOFTerm extends Terminal {
      * Default EOF rule. Can be buffered.
      *
      * @return Default EOF rule. Can be buffered.
+     * @since 0.9.7
      */
     public static @NotNull EOFTerm getDefault() {
         return new EOFTerm(defaultHidden, defaultReductionType);

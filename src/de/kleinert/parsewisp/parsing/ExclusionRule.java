@@ -27,6 +27,8 @@ import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.Trampoline
  * }
  * </pre>
  * See also: <a href="https://www.iso.org/standard/26153.html">ISO/IEC 14977:1996</a> and <a href="https://stackoverflow.com/a/35138946">an explanation on StackOverflow</a>.
+ *
+ * @since 0.9.7
  */
 public final class ExclusionRule extends RuleWithManyChildren {
     private final @NotNull Rule expected;
@@ -47,6 +49,7 @@ public final class ExclusionRule extends RuleWithManyChildren {
      * @param ruleExpected The rule that must be matched.
      * @param ruleExcluded The rule that must not be matched.
      * @return A rule.
+     * @since 0.9.7
      */
     public static @NotNull Rule create(final @NotNull Rule ruleExpected,
                                        final @NotNull Rule ruleExcluded) {
@@ -120,7 +123,7 @@ public final class ExclusionRule extends RuleWithManyChildren {
 
             grammar = new Grammar(startSymbol, tempG);
         }
-        return Gll.parse(grammar, startSymbol, subs, false, false, runner.getStringifier());
+        return Gll.parse(grammar, startSymbol, subs, false, false, runner.getGrammarPrinter());
     }
 
     /**

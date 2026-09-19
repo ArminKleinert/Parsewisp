@@ -25,14 +25,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This class provides the general parsing algorithms.
+ *
+ * @since 0.9.7
  */
 public final class Gll {
     private final @NotNull Tramp tramp;
     private final boolean iterativeDeepening;
-    private final GrammarPrinter stringifier;
+    private final GrammarPrinter grammarPrinter;
 
-    GrammarPrinter getStringifier() {
-        return stringifier;
+    GrammarPrinter getGrammarPrinter() {
+        return grammarPrinter;
     }
 
     Tramp tramp() {
@@ -43,10 +45,10 @@ public final class Gll {
         return iterativeDeepening;
     }
 
-    private Gll(final @NotNull Tramp tramp, final boolean iterativeDeepening, GrammarPrinter stringifier) {
+    private Gll(final @NotNull Tramp tramp, final boolean iterativeDeepening, GrammarPrinter grammarPrinter) {
         this.tramp = tramp;
         this.iterativeDeepening = iterativeDeepening;
-        this.stringifier = stringifier;
+        this.grammarPrinter = grammarPrinter;
     }
 
     private @NotNull TrampolineListenerNode getOrCreateListenerNode(
@@ -289,7 +291,7 @@ public final class Gll {
             final boolean untilEnd) {
         tramp.setFailure(FailureUtil.modifyFailureByIndex(
                 tramp.getFailure(),
-                ParseFailureReason.creatureFailReason(rule, untilEnd, getStringifier()),
+                ParseFailureReason.creatureFailReason(rule, untilEnd, getGrammarPrinter()),
                 index));
         if (index == tramp.getFailIndex()) {
             final @NotNull String subSeq = tramp.getText().substring(index);
@@ -339,10 +341,11 @@ public final class Gll {
      * @param partial            Whether to include partial results.
      * @param iterativeDeepening Iteratively deepens the evaluation of {@link RegexTerm#parse}.
      * @param errorIfEmpty       If true, return an error if the parsing failed. By default, an empty list would be returned.
-     * @param printer The printer used for the parser. In the current version, it's used to format failure info if parsing fails.
+     * @param printer            The printer used for the parser. In the current version, it's used to format failure info if parsing fails.
      * @return The parse forest.
      * @see Parser#parses(String)
      * @see Parser#parses(String, ParsingOptions)
+     * @since 0.9.7
      */
     public static @NotNull ParsesResult parses(
             final @NotNull Grammar grammar,
@@ -374,10 +377,11 @@ public final class Gll {
      * @param text               The text.
      * @param partial            Whether to include partial results.
      * @param iterativeDeepening Iteratively deepens the evaluation of {@link RegexTerm#parse}.
-     * @param printer The printer used for the parser. In the current version, it's used to format failure info if parsing fails.
+     * @param printer            The printer used for the parser. In the current version, it's used to format failure info if parsing fails.
      * @return The parse tree or failure.
      * @see Parser#parse(String)
      * @see Parser#parse(String, ParsingOptions)
+     * @since 0.9.7
      */
     public static @NotNull ParseResult parse(
             final @NotNull Grammar grammar,
@@ -407,10 +411,11 @@ public final class Gll {
      * @param text               The text.
      * @param partial            Whether to include partial results.
      * @param iterativeDeepening Iteratively deepens the evaluation of {@link RegexTerm#parse}.
-     * @param printer The printer used for the parser. In the current version, it's used to format failure info if parsing fails.
+     * @param printer            The printer used for the parser. In the current version, it's used to format failure info if parsing fails.
      * @return The parse forest.
      * @see Parser#parses(String, ParsingOptions)
      * @see ParsingOptions#embedFailureInParseTree()
+     * @since 0.9.7
      */
     public static @NotNull ParsesResult parsesEmbedFailure(
             final @NotNull Grammar grammar,
@@ -450,10 +455,11 @@ public final class Gll {
      * @param text               The text.
      * @param partial            Whether to include partial results.
      * @param iterativeDeepening Iteratively deepens the evaluation of {@link RegexTerm#parse}.
-     * @param printer The printer used for the parser. In the current version, it's used to format failure info if parsing fails.
+     * @param printer            The printer used for the parser. In the current version, it's used to format failure info if parsing fails.
      * @return The parse tree or failure.
      * @see Parser#parse(String, ParsingOptions)
      * @see ParsingOptions#embedFailureInParseTree()
+     * @since 0.9.7
      */
     public static @NotNull ParseResult parseEmbedFailure(
             final @NotNull Grammar grammar,

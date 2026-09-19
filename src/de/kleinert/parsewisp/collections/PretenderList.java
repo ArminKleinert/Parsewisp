@@ -11,6 +11,7 @@ import java.util.ListIterator;
  * An interface which pretends to be a list. Every method of {@link List} is defined to throw an {@link UnsupportedOperationException}.
  *
  * @param <T> The generic type.
+ * @since 0.9.7
  */
 public interface PretenderList<T> extends List<T> {
     @Override

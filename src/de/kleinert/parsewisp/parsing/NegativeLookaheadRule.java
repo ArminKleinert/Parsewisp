@@ -11,6 +11,8 @@ import de.kleinert.parsewisp.trampoline.TrampolineListenerNode;
  * Represents a negative lookahead. Written {@code !P}.
  * <p>
  * Example: The production {@code S := !'a' ('a'|'b')+} matches any string of 'a' and 'b' which does NOT start with 'a'.
+ *
+ * @since 0.9.7
  */
 public final class NegativeLookaheadRule extends RuleWithChild {
     private NegativeLookaheadRule(final boolean hide,
@@ -24,6 +26,7 @@ public final class NegativeLookaheadRule extends RuleWithChild {
      *
      * @param rule The thing to avoid.
      * @return A rule.
+     * @since 0.9.7
      */
     public static @NotNull Rule create(final @NotNull Rule rule) {
         if (rule instanceof EpsilonTerm)

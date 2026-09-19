@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
  * @param grammar         The grammar.
  * @param startProduction The first production to try.
  * @param printer The printer for the grammar. Used in {@link #show()}.
+ * @since 0.9.7
  */
 public record Parser(@NotNull Grammar grammar,
                      @NotNull Sym startProduction,
@@ -25,6 +26,7 @@ public record Parser(@NotNull Grammar grammar,
      * @param grammar         The grammar.
      * @param startProduction The first production to try.
      * @throws ParserCreationFailure if the parameters are invalid (for example, if the grammar does not contain the start-production symbol).
+     * @since 0.9.7
      */
     public Parser {
         if (!grammar.containsKey(startProduction))
@@ -63,6 +65,7 @@ public record Parser(@NotNull Grammar grammar,
      * @param text    The text.
      * @param options Options.
      * @return {@link ParseTree} if successful, {@link ParseFailure} if not.
+     * @since 0.9.7
      */
     public @NotNull ParseResult parse(final @NotNull String text,
                                       final @NotNull ParsingOptions options) {
@@ -90,6 +93,7 @@ public record Parser(@NotNull Grammar grammar,
      * @return The result of the parse.
      * @see Parser#parse(String, ParsingOptions)
      * @see ParsingOptions#getDefault()
+     * @since 0.9.7
      */
     public @NotNull ParseResult parse(final @NotNull String text) {
         return parse(text, ParsingOptions.getDefault());
@@ -110,6 +114,7 @@ public record Parser(@NotNull Grammar grammar,
      * @param options The options for the parse operation.
      * @return A (potentially empty) parse forest. ({@link ParsesResult.LazyResultList})
      * @see Parser#parses(String, ParsingOptions)
+     * @since 0.9.7
      */
     public @NotNull ParsesResult parses(final @NotNull String text,
                                         final @NotNull ParsingOptions options) {
@@ -136,6 +141,7 @@ public record Parser(@NotNull Grammar grammar,
      * @param text The text.
      * @return The parse forest or error, as needed.
      * @see Parser#parses(String, ParsingOptions)
+     * @since 0.9.7
      */
     public @NotNull ParsesResult parses(final @NotNull String text) {
         return parses(text, ParsingOptions.getDefault());
@@ -147,6 +153,7 @@ public record Parser(@NotNull Grammar grammar,
      * @param grammar the new grammar.
      * @return A new Parser.
      * @throws IllegalArgumentException if the new grammar does not include a production for the current start production.
+     * @since 0.9.7
      */
     public @NotNull Parser withGrammar(final @NotNull Grammar grammar) {
         if (this.grammar.equals(grammar))
@@ -158,6 +165,7 @@ public record Parser(@NotNull Grammar grammar,
      * Creates a string representing this parser.
      *
      * @return The string.
+     * @since 0.9.7
      */
     public @NotNull String show() {
         return printer.toString(this.grammar());

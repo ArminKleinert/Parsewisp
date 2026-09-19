@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param index    The index.
  * @param listener The listener.
+ * @since 0.9.7
  */
 public record TrampolineMsgCacheKey(int index, @NotNull Listener listener) {
 }

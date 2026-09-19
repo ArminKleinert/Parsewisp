@@ -13,6 +13,7 @@ import java.util.function.IntFunction;
  * The function takes an {@code int} as input.
  *
  * @param <T> The result type for the function.
+ * @since 0.9.7
  */
 public class LazySupplierList<T> implements List<@Nullable T> {
     private final @NotNull ArrayList<@NotNull T> evaluatedPart;
@@ -25,6 +26,7 @@ public class LazySupplierList<T> implements List<@Nullable T> {
      *
      * @param nextFn     The function.
      * @param maxResults Maximum number of results after which generation of results stops.
+     * @since 0.9.7
      */
     public LazySupplierList(final @NotNull IntFunction<@Nullable T> nextFn, final int maxResults) {
         this.evaluatedPart = new ArrayList<>();
@@ -68,6 +70,8 @@ public class LazySupplierList<T> implements List<@Nullable T> {
 
     /**
      * Fully evaluates the list.
+     *
+     * @since 0.9.7
      */
     public void evaluate() {
         @Nullable T ep;
@@ -80,6 +84,7 @@ public class LazySupplierList<T> implements List<@Nullable T> {
      * True if the list is fully evaluated, false otherwise.
      *
      * @return true or false.
+     * @since 0.9.7
      */
     public boolean isFullyEvaluated() {
         return fullyEvaluated;
@@ -138,6 +143,7 @@ public class LazySupplierList<T> implements List<@Nullable T> {
      * Implemented to allow the use of {@link List#stream()} operations.
      *
      * @return A Spliterator for this list.
+     * @since 0.9.7
      */
     @Override
     public @NotNull Spliterator<@Nullable T> spliterator() {
@@ -205,6 +211,7 @@ public class LazySupplierList<T> implements List<@Nullable T> {
      *
      * @param i The index.
      * @return The element at the provided index or null.
+     * @since 0.9.7
      */
     public T getOrNull(final int i) {
         // If already calculated, return.

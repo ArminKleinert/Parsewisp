@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * This class represents the {@code [p]} or {@code p?} operator (where p is an instance of {@link Rule}).
  * When parsing, the rule contained herein is optional (run zero times or once).
+ *
+ * @since 0.9.7
  */
 public final class OptionalRule extends RuleWithChild {
     private OptionalRule(final boolean hide,
@@ -22,6 +24,7 @@ public final class OptionalRule extends RuleWithChild {
      *
      * @param rule The rule.
      * @return A rule.
+     * @since 0.9.7
      */
     public static @NotNull Rule create(final @NotNull Rule rule) {
         if (rule instanceof EpsilonTerm)

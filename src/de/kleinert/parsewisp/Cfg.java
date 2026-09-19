@@ -160,7 +160,7 @@ final class Cfg {
                         return regex(
                                 strParser.processRegexp(
                                         (String) tree.getContent().get(0).content(),
-                                        2));
+                                        2, 1));
                     }
                     case "neg" -> {
                         return neg((Rule) buildRule(

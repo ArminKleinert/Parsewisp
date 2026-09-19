@@ -14,6 +14,7 @@ import java.util.*;
  * @param line       The line where parsing failed, 1-indexed. This can be inferred from the string and index.
  * @param column     The column where parsing failed, 1-indexed. This can be inferred from the string and index.
  * @param text       The text that could not be matched.
+ * @since 0.9.7
  */
 public record ParseFailure(int index,
                            @NotNull List<ParseFailureReason> reasonList,
@@ -26,6 +27,7 @@ public record ParseFailure(int index,
      *
      * @param index      The index where parsing failed.
      * @param reasonList The list of expected things or other reasons why parsing failed.
+     * @since 0.9.7
      */
     public ParseFailure(final int index, final @NotNull List<ParseFailureReason> reasonList) {
         this(index, reasonList, -1, -1, null);
@@ -40,6 +42,7 @@ public record ParseFailure(int index,
      * Formats the failure into a string with all information included clearly. This is useful for debugging.
      *
      * @return A string for easy viewing.
+     * @since 0.9.7
      */
     public @NotNull String contentsToString() {
         return "[" + index + ", " + reasonList + ", " + line + ", " + column + ", " + text + "]";

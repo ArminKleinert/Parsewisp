@@ -12,6 +12,8 @@ import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.Trampoline
  * <br/>
  * When parsing, the process depends on whether a full parse is being done (matching to the end of the input):
  * If yes, success if the end of input has been reached, fail otherwise. If no, always success.
+ *
+ * @since 0.9.7
  */
 public final class EpsilonTerm extends Terminal {
     private static final @NotNull EpsilonTerm epsilon = new EpsilonTerm(defaultHidden, defaultReductionType);
@@ -24,6 +26,7 @@ public final class EpsilonTerm extends Terminal {
      * The default is always buffered. {@link #getReduction()} and {@link #isHidden()} have their default values.
      *
      * @return The canonical instance of Epsilon.
+     * @since 0.9.7
      */
     public static @NotNull EpsilonTerm getDefault() {
         return epsilon;
@@ -39,7 +42,7 @@ public final class EpsilonTerm extends Terminal {
         if (index == runner.tramp().getText().length())
             runner.pushSuccessMessageWithoutValue(new TrampolineListenerKey(index, this), index);
         else
-            runner.fail(new TrampolineListenerKey(index, this), index,this, true);
+            runner.fail(new TrampolineListenerKey(index, this), index, this, true);
     }
 
     @Override

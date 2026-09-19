@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
  * "Zero or more" repetition. Represents a production which repeatedly ties to match an input. E.g. {@code P*} matches zero or more.
  * <p>
  * Notation: {@code {rule}} or {@code rule*}
+ *
+ * @since 0.9.7
  */
 public final class ZeroOrMoreRule extends RuleWithChild {
     private ZeroOrMoreRule(final boolean hide,
@@ -23,6 +25,7 @@ public final class ZeroOrMoreRule extends RuleWithChild {
      *
      * @param rule The {@link Rule} to match repeatedly.
      * @return A rule.
+     * @since 0.9.7
      */
     public static @NotNull Rule create(final @NotNull Rule rule) {
         if (rule instanceof EpsilonTerm)

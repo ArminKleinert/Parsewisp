@@ -17,6 +17,7 @@ import java.util.List;
  * <p>
  * As of now, it does not work right,
  * so it can be considered a worse alternative to the {@link AlternationRule}.
+ * @since 0.9.7
  */
 public final class OrderedChoiceRule extends RuleWithManyChildren {
     private final @NotNull Rule rule1;
@@ -58,6 +59,7 @@ public final class OrderedChoiceRule extends RuleWithManyChildren {
      *
      * @param rules The wrapped symbol.
      * @return A rule.
+     * @since 0.9.7
      */
     public static @NotNull Rule create(final @NotNull List<Rule> rules) {
         if (rules.isEmpty())

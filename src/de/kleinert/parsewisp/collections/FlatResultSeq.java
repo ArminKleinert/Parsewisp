@@ -13,6 +13,8 @@ import java.util.stream.Stream;
  * These lists are outwardly purely functional. They are also intended to be intermediate structures and thus do not need to override {@link Object#equals(Object)} ()}, {@link Object#hashCode()}, or {@link Object#toString()}.
  * <p>
  * It is advised that users of this library do not use this type directly.
+ *
+ * @since 0.9.7
  */
 public class FlatResultSeq {
     private static FlatResultSeq EMPTY = null;
@@ -44,6 +46,7 @@ public class FlatResultSeq {
      * Instances of this type always start empty. This method simply returns an empty sequence.
      *
      * @return The empty instance.
+     * @since 0.9.7
      */
     public static @NotNull FlatResultSeq make() {
         if (EMPTY == null) EMPTY = new FlatResultSeq();
@@ -52,7 +55,9 @@ public class FlatResultSeq {
 
     /**
      * Checks whether this sequence is empty.
+     *
      * @return true if size==0
+     * @since 0.9.7
      */
     public boolean isEmpty() {
         return size == 0;
@@ -60,7 +65,9 @@ public class FlatResultSeq {
 
     /**
      * Returns the size of this sequence.
+     *
      * @return The size.
+     * @since 0.9.7
      */
     public int size() {
         return size;
@@ -78,7 +85,7 @@ public class FlatResultSeq {
      * var frs12123 = frs12.appendOrConcat(frs12).appendOrConcat(3); // (content=3, head=(content=frs12, head=frs12))
      * }
      * </pre>
-     *
+     * <p>
      * Flattening the sequence iterates backwards.
      * <p>
      * <b>Example: {@code frs12123.stream} is called.</b>
@@ -100,9 +107,10 @@ public class FlatResultSeq {
      * <p>
      * The sequence is now empty, the array is filled. So the index ({@code -1}) is returned and the array is saved.<br/>
      *
-     * @param list Destination array.
+     * @param list           Destination array.
      * @param backwardsIndex Current index.
      * @return The next index.
+     * @since 0.9.7
      */
     private int flatten(Object[] list, int backwardsIndex) {
         if (isEmpty())
@@ -125,6 +133,7 @@ public class FlatResultSeq {
      * Returns a stream for this sequence. The result may be cached.
      *
      * @return A stream for this sequence.
+     * @since 0.9.7
      */
     public @NotNull Stream<Object> stream() {
         if (cached == null) {
@@ -144,6 +153,7 @@ public class FlatResultSeq {
      *
      * @param obj The input.
      * @return A new instance or {@code this}, if nothing is added.
+     * @since 0.9.7
      */
     public @NotNull FlatResultSeq appendOrConcat(final Object obj) {
         if (obj == null) return this;

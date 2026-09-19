@@ -20,6 +20,8 @@ import java.util.regex.Pattern;
  * instead of returning different results "a", "aa", "aaa" and "aaaa".
  * <br/>
  * Syntax: A string literal prefixed with a hash-symbol: {@code #"..."} and {@code #'...'} are equivalent.
+ *
+ * @since 0.9.7
  */
 public final class RegexTerm extends Terminal {
     private final @NotNull Pattern regexp;
@@ -36,6 +38,7 @@ public final class RegexTerm extends Terminal {
      *
      * @param regexp The pattern.
      * @return A rule.
+     * @since 0.9.7
      */
     public static @NotNull Rule create(final @NotNull Pattern regexp) {
         var s = regexp.pattern();
@@ -71,6 +74,7 @@ public final class RegexTerm extends Terminal {
      *
      * @param index  The start index.
      * @param runner Helper structure.
+     * @since 0.9.7
      */
     @Override
     public void parse(final int index, final @NotNull Gll runner) {
@@ -119,6 +123,7 @@ public final class RegexTerm extends Terminal {
      * The regex/pattern.
      *
      * @return The regex.
+     * @since 0.9.7
      */
     public @NotNull Pattern getRegexp() {
         return regexp;

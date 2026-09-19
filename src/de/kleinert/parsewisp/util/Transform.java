@@ -11,6 +11,8 @@ import java.util.function.Function;
 
 /**
  * This class provides methods for transforming parse trees via tag-to-function tables.
+ *
+ * @since 0.9.7
  */
 public final class Transform {
     private Transform() {
@@ -121,6 +123,7 @@ public final class Transform {
      * @param <T>          The output type.
      * @return Transformed content.
      * @throws IllegalArgumentException If the parseResult is not a parse tree.
+     * @since 0.9.7
      */
     public static <T> T transform(
             final @NotNull ParseResult parseResult,
@@ -137,6 +140,7 @@ public final class Transform {
      * @param transformMap Map of tags (symbols) to functions.
      * @return Transformed content.
      * @throws IllegalArgumentException If the parseResult is not a parse tree.
+     * @since 0.9.7
      */
     public static Object transform(
             final @NotNull ParseResult parseResult,

@@ -9,10 +9,14 @@ import java.util.*;
 
 /**
  * This class represents parse trees. Throughout the documentation, trees are typically notated as lists.
+ *
+ * @since 0.9.7
  */
 public final class ParseTree implements List<@NotNull Node>, ParseResult {
     /**
      * A technically invalid tag. It is used to mark trees "without" a tag. Such trees should always be subtrees of other parse trees and are "flattened" when used. See {@link #create(Node.NodeTreeTag, List, int, int)}
+     *
+     * @since 0.9.7
      */
     public static @NotNull Node.NodeTreeTag NULL_TAG = new Node.NodeTreeTag(Sym.sym("\0\0\0\0"));
 
@@ -51,6 +55,7 @@ public final class ParseTree implements List<@NotNull Node>, ParseResult {
      * </pre>
      *
      * @return The tag of the tree.
+     * @since 0.9.7
      */
     public @NotNull Node.NodeTreeTag getTag() {
         return tag;
@@ -68,6 +73,7 @@ public final class ParseTree implements List<@NotNull Node>, ParseResult {
      * </pre>
      *
      * @return The content of the tree.
+     * @since 0.9.7
      */
     public @NotNull List<@NotNull Node> getContent() {
         return content;
@@ -78,6 +84,7 @@ public final class ParseTree implements List<@NotNull Node>, ParseResult {
      *
      * @param index The index in content.
      * @return A node.
+     * @since 0.9.7
      */
     public @NotNull Node getNode(final int index) {
         return getContent().get(index);
@@ -88,6 +95,7 @@ public final class ParseTree implements List<@NotNull Node>, ParseResult {
      * This method is not recursive, ie does not apply to subtrees.
      *
      * @return The tree as a list of nodes.
+     * @since 0.9.7
      */
     public @NotNull List<@NotNull Node> toList() {
         final @NotNull List<@NotNull Node> alist = new ArrayList<>();
@@ -104,6 +112,7 @@ public final class ParseTree implements List<@NotNull Node>, ParseResult {
      * @param tag     The tag as a node.
      * @param content The content as a node.
      * @return A new parse tree.
+     * @since 0.9.7
      */
     public static @NotNull ParseTree create(final @NotNull Sym tag,
                                             final @Nullable Object content) {
@@ -120,6 +129,7 @@ public final class ParseTree implements List<@NotNull Node>, ParseResult {
      * @param spanStart Starting index in the input (inclusive).
      * @param spanEnd   End index in the input (exclusive).
      * @return A new parse tree.
+     * @since 0.9.7
      */
     public static @NotNull ParseTree create(final @NotNull Sym tag,
                                             final @Nullable Object content,
@@ -159,6 +169,7 @@ public final class ParseTree implements List<@NotNull Node>, ParseResult {
      * @param spanStart Starting index in the input (inclusive).
      * @param spanEnd   End index in the input (exclusive).
      * @return A new parse tree.
+     * @since 0.9.7
      */
     public static @NotNull ParseTree create(final @NotNull Node.NodeTreeTag tag,
                                             final @NotNull List<Node> content,
@@ -203,6 +214,7 @@ public final class ParseTree implements List<@NotNull Node>, ParseResult {
      * Converts the tree into a nested list. Unlike {@link #toList()}, this method is recursive.
      *
      * @return A nested list of Objects.
+     * @since 0.9.7
      */
     public @NotNull List<@NotNull Object> toRawList() {
         int i = 0;
@@ -241,6 +253,7 @@ public final class ParseTree implements List<@NotNull Node>, ParseResult {
      * </pre>
      *
      * @return The starting index in the input string of the parse (inclusive).
+     * @since 0.9.7
      */
     public int getSpanStart() {
         return spanStart;
@@ -259,6 +272,7 @@ public final class ParseTree implements List<@NotNull Node>, ParseResult {
      * </pre>
      *
      * @return The end index in the input string of the parse (exclusive).
+     * @since 0.9.7
      */
     public int getSpanEndExclusive() {
         return spanEndExclusive;
@@ -282,6 +296,7 @@ public final class ParseTree implements List<@NotNull Node>, ParseResult {
      * @param s Input string.
      * @return An {@link Optional} containing the string if present or an empty {@link Optional} if the string is not covered by this tree.
      * @throws IllegalArgumentException if this tree has no span specified.
+     * @since 0.9.7
      */
     public @NotNull Optional<@NotNull String> containedString(String s) {
         if (spanEndExclusive == -1) return Optional.empty();

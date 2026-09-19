@@ -7,6 +7,8 @@ import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.Trampoline
 
 /**
  * This class represents the ABNF "lookahead" operator {@code &p} (where p is an instance of {@link Rule}).
+ *
+ * @since 0.9.7
  */
 public final class LookaheadRule extends RuleWithChild {
     private LookaheadRule(final boolean hide,
@@ -20,6 +22,7 @@ public final class LookaheadRule extends RuleWithChild {
      *
      * @param rule The inner rule.
      * @return A rule.
+     * @since 0.9.7
      */
     public static @NotNull Rule create(final @NotNull Rule rule) {
         if (rule instanceof EpsilonTerm)

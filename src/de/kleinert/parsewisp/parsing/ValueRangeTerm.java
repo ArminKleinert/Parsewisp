@@ -10,6 +10,7 @@ import java.util.Objects;
 
 /**
  * Represents an ABNF value range.
+ * @since 0.9.7
  */
 public final class ValueRangeTerm extends Terminal {
     private final int lo;
@@ -31,6 +32,7 @@ public final class ValueRangeTerm extends Terminal {
      * @param hi The highest codepoint.
      * @return A rule.
      * @throws IllegalArgumentException if the minimum codepoint value is greater than the maximum.
+     * @since 0.9.7
      */
     public static @NotNull Rule create(final int lo, final int hi) {
         if (lo > hi)

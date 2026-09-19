@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
  * {@link RuntimeException} which occurs if the parser could not be created.
  *
  * @see Parsewisp#parser(String, ParserCreationOptions)
+ * @since 0.9.7
  */
 public final class ParserCreationFailure extends RuntimeException {
     /**
@@ -15,6 +16,7 @@ public final class ParserCreationFailure extends RuntimeException {
      *
      * @param exception Argument.
      * @see Parsewisp#parser(String, ParserCreationOptions)
+     * @since 0.9.7
      */
     public ParserCreationFailure(@NotNull IllegalArgumentException exception) {
         super(exception);
@@ -25,6 +27,7 @@ public final class ParserCreationFailure extends RuntimeException {
      *
      * @param exception Argument.
      * @see Parsewisp#parser(String, ParserCreationOptions)
+     * @since 0.9.7
      */
     public ParserCreationFailure(@NotNull IllegalGrammarException exception) {
         super(exception);
@@ -35,6 +38,7 @@ public final class ParserCreationFailure extends RuntimeException {
      *
      * @param message Argument.
      * @see Parsewisp#parser(String, ParserCreationOptions)
+     * @since 0.9.7
      */
     public ParserCreationFailure(String message) {
         super(message);

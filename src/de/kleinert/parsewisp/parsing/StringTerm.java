@@ -9,9 +9,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 /**
- * Represents string terminals (both case-sensitive or case-insensitive).
- * <br/>
+ * Represents string terminals (both case-sensitive or case-insensitive).<br/>
  * Syntax: can be written with double quotes or single quotes, so {@code "..."} and {@code '...'} are equivalent.
+ *
+ * @since 0.9.7
  */
 public final class StringTerm extends Terminal {
     private final @NotNull String string;
@@ -32,6 +33,7 @@ public final class StringTerm extends Terminal {
      * @param string          The string to match.
      * @param caseInsensitive True if the casing doesn't matter, false if it does matter.
      * @return A rule.
+     * @since 0.9.7
      */
     public static @NotNull Rule create(final @NotNull String string, final boolean caseInsensitive) {
         if (string.isEmpty())
@@ -72,6 +74,7 @@ public final class StringTerm extends Terminal {
      * Returns the string.
      *
      * @return The string.
+     * @since 0.9.7
      */
     public @NotNull String getString() {
         return string;
@@ -81,6 +84,7 @@ public final class StringTerm extends Terminal {
      * True if the casing doesn't matter, false if it does matter.
      *
      * @return True if the casing doesn't matter, false if it does matter.
+     * @since 0.9.7
      */
     public boolean isCaseInsensitive() {
         return caseInsensitive;

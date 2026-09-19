@@ -9,26 +9,36 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * A class representing the right-hand sides of productions.
+ *
+ * @since 0.9.7
  */
 public abstract sealed class Rule
         permits RuleWithManyChildren, RuleWithChild, SimpleRule {
     /**
      * Default value for {@link Rule#isHidden()}.
+     *
+     * @since 0.9.7
      */
     protected static final boolean defaultHidden = false;
 
     /**
      * Default value for {@link Rule#getReduction()}.
+     *
+     * @since 0.9.7
      */
     protected static final ReductionType defaultReductionType = ReductionType.standardInitialReduction();
 
     /**
      * Whether to hide the rule in the output.
+     *
+     * @since 0.9.7
      */
     protected final boolean hide;
 
     /**
      * See {@link ReductionType}.
+     *
+     * @since 0.9.7
      */
     protected final @NotNull ReductionType red;
 
@@ -37,6 +47,7 @@ public abstract sealed class Rule
      *
      * @param hide The hide option.
      * @param red  The reduction type for this rule.
+     * @since 0.9.7
      */
     protected Rule(final boolean hide, final @NotNull ReductionType red) {
         this.hide = hide;
@@ -50,6 +61,7 @@ public abstract sealed class Rule
      *
      * @param index  The start index.
      * @param runner Helper structure.
+     * @since 0.9.7
      */
     public abstract void parse(final int index, final @NotNull Gll runner);
 
@@ -60,6 +72,7 @@ public abstract sealed class Rule
      *
      * @param index  The start index.
      * @param runner Helper structure.
+     * @since 0.9.7
      */
     public abstract void fullParse(final int index, final @NotNull Gll runner);
 
@@ -68,6 +81,7 @@ public abstract sealed class Rule
      *
      * @param hide Whether to hide the content.
      * @return An instance of the same class with the hide tag set to the parameter.
+     * @since 0.9.7
      */
     public abstract @NotNull Rule withHideTag(final boolean hide);
 
@@ -76,6 +90,7 @@ public abstract sealed class Rule
      *
      * @param red The reduction type.
      * @return An instance of the same class with the reduction type set to the parameter.
+     * @since 0.9.7
      */
     public abstract @NotNull Rule withReduction(final @NotNull ReductionType red);
 
@@ -83,6 +98,7 @@ public abstract sealed class Rule
      * Check whether the content is hidden in the output.
      *
      * @return true if the content is hidden in the output, false otherwise.
+     * @since 0.9.7
      */
     public boolean isHidden() {
         return hide;
@@ -92,6 +108,7 @@ public abstract sealed class Rule
      * Get the used reduction type.
      *
      * @return The current reduction type.
+     * @since 0.9.7
      */
     public @NotNull ReductionType getReduction() {
         return red;
@@ -102,6 +119,7 @@ public abstract sealed class Rule
      *
      * @return An instance of the same class with the hide tag set to true.
      * @see #withHideTag(boolean)
+     * @since 0.9.7
      */
     public @NotNull Rule enableHideTag() {
         return withHideTag(true);
@@ -112,6 +130,7 @@ public abstract sealed class Rule
      *
      * @return An instance of the same class with the hide tag set to false.
      * @see #withHideTag(boolean)
+     * @since 0.9.7
      */
     public @NotNull Rule unhideContent() {
         return withHideTag(false);
@@ -122,6 +141,7 @@ public abstract sealed class Rule
      * Wrap this rule around the entire right-hand side.
      *
      * @return A new instance of the same class.
+     * @since 0.9.7
      */
     public @NotNull Rule hideTag() {
         return withReduction(ReductionType.standardIntermediateReduction());

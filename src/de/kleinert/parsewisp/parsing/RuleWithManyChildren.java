@@ -8,6 +8,8 @@ import java.util.Objects;
 
 /**
  * Abstraction of {@link Rule} types which wrap multiple other {@link Rule} instances. Examples: choices, concatenations.
+ *
+ * @since 0.9.7
  */
 public sealed abstract class RuleWithManyChildren
         extends Rule
@@ -16,6 +18,8 @@ public sealed abstract class RuleWithManyChildren
 
     /**
      * The rules wrapped by this rule.
+     *
+     * @since 0.9.7
      */
     protected final @NotNull List<@NotNull Rule> rules;
 
@@ -25,6 +29,7 @@ public sealed abstract class RuleWithManyChildren
      * @param hide  The hide option.
      * @param red   The reduction type for this rule.
      * @param rules The rules.
+     * @since 0.9.7
      */
     protected RuleWithManyChildren(final boolean hide,
                                    final @NotNull ReductionType red,
@@ -37,6 +42,7 @@ public sealed abstract class RuleWithManyChildren
      * Set the inner {@link Rule} list used for parsing and returns an instance of the same class.
      *
      * @return The inner {@link Rule} list.
+     * @since 0.9.7
      */
     public @NotNull List<Rule> getRules() {
         return rules;
@@ -56,6 +62,7 @@ public sealed abstract class RuleWithManyChildren
      *
      * @param rules The new inner {@link Rule}.
      * @return A new instance.
+     * @since 0.9.7
      */
     public abstract @NotNull RuleWithManyChildren withRules(final @NotNull List<@NotNull Rule> rules);
 

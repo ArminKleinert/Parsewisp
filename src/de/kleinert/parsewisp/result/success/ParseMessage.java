@@ -12,6 +12,8 @@ import java.util.*;
  * A parsed "result" consists of an index and an object carrying more information.
  * Usually, the wrapped object is a {@link ParseTree} or a string. But this class is also used to transport other types of objects.
  * For specifics, see {@link ParseMessage#getResult()}.
+ *
+ * @since 0.9.7
  */
 public final class ParseMessage {
     private final int index;
@@ -21,6 +23,7 @@ public final class ParseMessage {
      * Simple, abstract constructor taking only the index. The wrapped object is defined in the specific subclasses.
      *
      * @param index The index.
+     * @since 0.9.7
      */
     private ParseMessage(final int index, final @Nullable Object result) {
         this.index = index;
@@ -33,6 +36,7 @@ public final class ParseMessage {
      * @param index  The last index of the previous parse, exclusive.
      * @param result The {@link ParseTree}.
      * @return The {@link ParseTree} wrapped into an instance of this class.
+     * @since 0.9.7
      */
     public static @NotNull ParseMessage create(final int index, final @NotNull ParseTree result) {
         return new ParseMessage(index, result);
@@ -44,6 +48,7 @@ public final class ParseMessage {
      * @param index  The last index of the previous parse, exclusive.
      * @param result The String.
      * @return The String wrapped into an instance of this class.
+     * @since 0.9.7
      */
     public static @NotNull ParseMessage create(final int index, final @NotNull String result) {
         return new ParseMessage(index, result);
@@ -54,6 +59,7 @@ public final class ParseMessage {
      *
      * @param index The last index of the previous parse, exclusive.
      * @return An instance wrapping null.
+     * @since 0.9.7
      */
     public static @NotNull ParseMessage create(final int index) {
         return new ParseMessage(index, null);
@@ -65,6 +71,7 @@ public final class ParseMessage {
      * @param index  The last index of the previous parse, exclusive.
      * @param result The {@link FlatResultSeq}.
      * @return The {@link FlatResultSeq} wrapped into an instance of this class.
+     * @since 0.9.7
      */
     public static @NotNull ParseMessage create(final int index, final @NotNull FlatResultSeq result) {
         return new ParseMessage(index, result);
@@ -76,6 +83,7 @@ public final class ParseMessage {
      * @param index  The last index of the previous parse, exclusive.
      * @param result The {@link ParseFailureNode}.
      * @return The {@link ParseFailureNode} wrapped into an instance of this class.
+     * @since 0.9.7
      */
     public static @NotNull ParseMessage create(final int index, final @NotNull ParseFailureNode result) {
         return new ParseMessage(index, result);
@@ -96,6 +104,7 @@ public final class ParseMessage {
      * The index of the message object.
      *
      * @return The index as an integer.
+     * @since 0.9.7
      */
     public int index() {
         return index;
@@ -105,6 +114,7 @@ public final class ParseMessage {
      * Creates a new instance with the current index.
      *
      * @return A new instance with the current index.
+     * @since 0.9.7
      */
     public @NotNull ParseMessage reset() {
         return create(index);
@@ -117,6 +127,7 @@ public final class ParseMessage {
      * If the object is a {@link FlatResultSeq}, the contents are any of the classes mentioned above.
      *
      * @return The wrapped object.
+     * @since 0.9.7
      */
     public @Nullable Object getResult() {
         return result;

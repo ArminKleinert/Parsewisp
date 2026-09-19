@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
  * @param key   The production name which failed.
  * @param start Start index of the failure.
  * @param end   End index of the failure.
+ * @since 0.9.7
  */
 public record TotalParsesFailureNode(
         @NotNull String text, @NotNull Sym key,

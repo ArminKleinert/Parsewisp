@@ -9,6 +9,7 @@ import java.util.Arrays;
  * A sorted collection which uses primitive ints as keys. It is made specifically for use in {@link Tramp}.
  *
  * @param <V> Value type.
+ * @since 0.9.7
  */
 public final class IntMap<V> {
     private int[] keys;
@@ -19,6 +20,7 @@ public final class IntMap<V> {
      * The constructor.
      *
      * @param capacity Initial capacity.
+     * @since 0.9.7
      */
     public IntMap(final int capacity) {
         keys = new int[capacity];
@@ -42,6 +44,7 @@ public final class IntMap<V> {
      *
      * @param key   The key.
      * @param value The value.
+     * @since 0.9.7
      */
     public void put(final int key, final V value) {
         int idx = findIndex(key);
@@ -66,6 +69,7 @@ public final class IntMap<V> {
      * Removes and returns the last value. If the map is empty, return null.
      *
      * @return The last value or null.
+     * @since 0.9.7
      */
     public @Nullable V intMapPoll() {
         if (size == 0)

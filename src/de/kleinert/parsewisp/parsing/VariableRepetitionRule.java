@@ -20,6 +20,8 @@ import java.util.Objects;
  *     <li>Repeat a maximum of {@code n1} times: {@code *n1 p}</li>
  *     <li>Repeat exactly of {@code n1} times: {@code n1 p}</li>
  * </ul>
+ *
+ * @since 0.9.7
  */
 public final class VariableRepetitionRule extends RuleWithChild {
     private final int min;
@@ -41,6 +43,7 @@ public final class VariableRepetitionRule extends RuleWithChild {
      * @param min  Minimum repetitions.
      * @param max  Maximum repetitions.
      * @return A rule.
+     * @since 0.9.7
      */
     public static @NotNull Rule create(final @NotNull Rule rule, final int min, final int max) {
         if (min < 0 || min > max)

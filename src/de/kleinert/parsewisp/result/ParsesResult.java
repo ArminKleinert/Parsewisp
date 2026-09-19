@@ -12,6 +12,8 @@ import java.util.function.IntFunction;
 
 /**
  * A class for the results of multiple parses. This typically covers {@link LazyResultList} and {@link ParsesFailureResult}.
+ *
+ * @since 0.9.7
  */
 public sealed interface ParsesResult
         extends List<ParseTree>
@@ -21,6 +23,7 @@ public sealed interface ParsesResult
      *
      * @param o The input.
      * @return Output as {@link ParsesResult}.
+     * @since 0.9.7
      */
     static @NotNull ParsesResult make(final @NotNull Object o) {
         if (o instanceof TotalParsesFailureNode) return (TotalParsesFailureNode) o;
@@ -34,6 +37,7 @@ public sealed interface ParsesResult
      * True if this is the result of a successful parse.
      *
      * @return True if this is the result of a successful parse.
+     * @since 0.9.7
      */
     default boolean isSuccess() {
         return this instanceof LazyResultList;
@@ -43,6 +47,7 @@ public sealed interface ParsesResult
      * Casts the result to a list of {@link ParseTree}.
      *
      * @return A list of {@link ParseTree}.
+     * @since 0.9.7
      */
     default @NotNull LazyResultList castToParsesSuccess() {
         if (!(this instanceof LazyResultList))
@@ -54,6 +59,7 @@ public sealed interface ParsesResult
      * Casts the result to an instance of {@link ParsesFailureResult}.
      *
      * @return An instance of {@link ParsesFailureResult}.
+     * @since 0.9.7
      */
     default ParsesFailureResult castToParsesFailure() {
         return (ParsesFailureResult) this;
@@ -63,6 +69,7 @@ public sealed interface ParsesResult
      * Converts the parse forest input into a list, each parse tree is converted using {@link ParseTree#toRawList()}.
      *
      * @return The parse forest as a list of lists.
+     * @since 0.9.7
      */
     default List<List<Object>> toRawList() {
         if (!this.isSuccess())
@@ -79,6 +86,7 @@ public sealed interface ParsesResult
          *
          * @param nextFn     The function.
          * @param maxResults Maximum number of results.
+         * @since 0.9.7
          */
         public LazyResultList(final @NotNull IntFunction<ParseTree> nextFn, final int maxResults) {
             super(nextFn, maxResults);
@@ -87,6 +95,8 @@ public sealed interface ParsesResult
 
     /**
      * This class is used for {@link Parser#parses(String, ParsingOptions)} to represent the failure.
+     *
+     * @since 0.9.7
      */
     final class ParsesFailureResult implements ParsesResult, PretenderList<ParseTree> {
         final @NotNull ParseFailure parseFailure;
@@ -99,6 +109,7 @@ public sealed interface ParsesResult
          * Extracts the wrapped failure object.
          *
          * @return The wrapped failure.
+         * @since 0.9.7
          */
         public @NotNull ParseFailure asFailure() {
             return parseFailure;

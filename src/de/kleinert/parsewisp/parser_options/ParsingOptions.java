@@ -25,6 +25,7 @@ import java.util.Objects;
  * @see ParsingOptions#DEFAULT_UNHIDE
  * @see ParsingOptions#DEFAULT_EMBED_FAILURES
  * @see ParsingOptions#DEFAULT_FAILURE_IF_EMPTY
+ * @since 0.9.7
  */
 public record ParsingOptions(
         @Nullable Sym start,
@@ -36,27 +37,39 @@ public record ParsingOptions(
 ) {
     /**
      * Default for the start production name of a parse operation. ({@code null})
+     *
+     * @since 0.9.7
      */
     public static final @Nullable Sym DEFAULT_START = null;
     /**
      * Default for the start production name of a parse operation. ({@code false})
+     *
+     * @since 0.9.7
      */
     public static final boolean DEFAULT_PARTIAL = false;
     /**
-     * By default, leave the parse trees as intended (hidden parts stay hidden). The value is {@link UnhideOptions#NONE}
+     * By default, leave the parse trees as intended (hidden parts stay hidden). The value is {@link UnhideOptions#NONE}.
+     *
+     * @since 0.9.7
      */
     public static final @NotNull UnhideOptions DEFAULT_UNHIDE = UnhideOptions.NONE;
     /**
      * By default, do not include failure nodes in parse trees. ({@code false})
+     *
+     * @since 0.9.7
      */
     public static final boolean DEFAULT_EMBED_FAILURES = false;
     /**
      * By default, do not iteratively deepen search when parsing with a regex. ({@code false})<br/>
      * The reason is that it is much slower to do.
+     *
+     * @since 0.9.7
      */
     public static final boolean DEFAULT_ITERATIVE_DEEPENING = false;
     /**
      * {@code false} by default.
+     *
+     * @since 0.9.7
      */
     public static final boolean DEFAULT_FAILURE_IF_EMPTY = false;
 
@@ -70,6 +83,7 @@ public record ParsingOptions(
      * @see ParsingOptions#DEFAULT_EMBED_FAILURES
      * @see ParsingOptions#DEFAULT_ITERATIVE_DEEPENING
      * @see ParsingOptions#DEFAULT_FAILURE_IF_EMPTY
+     * @since 0.9.7
      */
     public static @NotNull ParsingOptions getDefault() {
         return new ParsingOptions(DEFAULT_START, DEFAULT_PARTIAL, DEFAULT_UNHIDE, DEFAULT_EMBED_FAILURES, DEFAULT_ITERATIVE_DEEPENING, DEFAULT_FAILURE_IF_EMPTY);
@@ -100,6 +114,7 @@ public record ParsingOptions(
      * @see ParsingOptions#start()
      * @see ParsingOptions#DEFAULT_START
      * @see ParsingOptions#getDefault()
+     * @since 0.9.7
      */
     public @NotNull ParsingOptions withStart(final @Nullable Sym start) {
         if (Objects.equals(this.start, start)) return this;
@@ -126,6 +141,7 @@ public record ParsingOptions(
      * @param usePartial The argument as a boolean.
      * @return A new instance.
      * @see #usePartial()
+     * @since 0.9.7
      */
     public @NotNull ParsingOptions withPartial(final boolean usePartial) {
         if (Objects.equals(this.usePartial, usePartial)) return this;
@@ -174,6 +190,7 @@ public record ParsingOptions(
      * @param unhide The new option.
      * @return A new instance.
      * @see #unhide()
+     * @since 0.9.7
      */
     public @NotNull ParsingOptions withUnhide(final @NotNull UnhideOptions unhide) {
         if (Objects.equals(this.unhide, unhide)) return this;
@@ -202,6 +219,7 @@ public record ParsingOptions(
      * @param embedFailureInParseTree The new (or old) setting.
      * @return A new instance.
      * @see #embedFailureInParseTree()
+     * @since 0.9.7
      */
     public @NotNull ParsingOptions withEmbedFailureInParseTree(final boolean embedFailureInParseTree) {
         if (Objects.equals(this.embedFailureInParseTree, embedFailureInParseTree)) return this;
@@ -214,6 +232,7 @@ public record ParsingOptions(
      * @param iterativeDeepening The new (or old) setting.
      * @return A new instance.
      * @see #iterativeDeepening()
+     * @since 0.9.7
      */
     public @NotNull ParsingOptions withIterativeDeepening(final boolean iterativeDeepening) {
         if (Objects.equals(this.iterativeDeepening, iterativeDeepening)) return this;
@@ -226,6 +245,7 @@ public record ParsingOptions(
      * @param failureIfEmpty The new (or old) setting.
      * @return A new instance.
      * @see #failureIfEmpty()
+     * @since 0.9.7
      */
     public @NotNull ParsingOptions withFailureIfEmpty(final boolean failureIfEmpty) {
         if (Objects.equals(this.failureIfEmpty, failureIfEmpty)) return this;

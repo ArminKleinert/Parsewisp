@@ -42,6 +42,8 @@ import java.util.List;
  *         println(p.parse("ab")); // [:S, ab]
  * }
  * </pre>
+ *
+ * @since 0.9.7
  */
 public final class AlternationRule extends RuleWithManyChildren {
     private AlternationRule(final boolean hide,
@@ -55,6 +57,7 @@ public final class AlternationRule extends RuleWithManyChildren {
      *
      * @param rules The wrapped rules.
      * @return A rule.
+     * @since 0.9.7
      */
     public static @NotNull Rule create(final @NotNull List<Rule> rules) {
         if (rules.isEmpty())
@@ -84,6 +87,7 @@ public final class AlternationRule extends RuleWithManyChildren {
      *
      * @param rules The wrapped rules.
      * @return A rule.
+     * @since 0.9.7
      */
     public static @NotNull AlternationRule createGuaranteeDistinctAndNotEmpty(
             final @NotNull List<Rule> rules) {

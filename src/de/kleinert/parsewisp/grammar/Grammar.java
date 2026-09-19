@@ -11,10 +11,14 @@ import java.util.stream.Collectors;
 
 /**
  * A type representing a Grammar.
+ *
+ * @since 0.9.7
  */
 public final class Grammar extends LinkedHashMap<@NotNull Sym, Rule> {
     /**
      * Staring symbol of this grammar. Can be overridden when the Grammar is used in a parser.
+     *
+     * @since 0.9.7
      */
     private final @NotNull Sym startSym;
 
@@ -23,6 +27,7 @@ public final class Grammar extends LinkedHashMap<@NotNull Sym, Rule> {
      *
      * @param startSym Starting production key.
      * @param m        Map of productions.
+     * @since 0.9.7
      */
     public Grammar(final @NotNull Sym startSym, final @NotNull LinkedHashMap<? extends Sym, ? extends Rule> m) {
         super(m);
@@ -37,6 +42,7 @@ public final class Grammar extends LinkedHashMap<@NotNull Sym, Rule> {
      * Return the starting production. This might be null.
      *
      * @return The starting production key.
+     * @since 0.9.7
      */
     public @NotNull Sym getStartSym() {
         return startSym;
@@ -66,6 +72,7 @@ public final class Grammar extends LinkedHashMap<@NotNull Sym, Rule> {
      *
      * @param key The right-hand side of the production.
      * @return The production or null if not found.
+     * @since 0.9.7
      */
     public @Nullable Rule getProduction(final @NotNull Sym key) {
         return getOrDefault(key, null);
@@ -86,6 +93,7 @@ public final class Grammar extends LinkedHashMap<@NotNull Sym, Rule> {
      *
      * @return An instance of {@link GrammarInfo}.
      * @see GrammarInfo
+     * @since 0.9.7
      */
     public @NotNull GrammarInfo analyze() {
         return new GrammarInfo(this);
@@ -95,12 +103,14 @@ public final class Grammar extends LinkedHashMap<@NotNull Sym, Rule> {
      * Holds some information about a grammar.
      *
      * @param grammar The grammar.
+     * @since 0.9.7
      */
     public record GrammarInfo(@NotNull Grammar grammar) {
         /**
          * All non-terminals of the Grammar.
          *
          * @return A collection of all non-terminals of the Grammar.
+         * @since 0.9.7
          */
 
         public @NotNull Collection<@NotNull Sym> definedNTs() {
@@ -111,6 +121,7 @@ public final class Grammar extends LinkedHashMap<@NotNull Sym, Rule> {
          * All non-terminals which appear on the right-hand side of any production.
          *
          * @return A collection of all non-terminals which appear on the right-hand side of any production.
+         * @since 0.9.7
          */
         public Set<@NotNull Sym> usedNTs() {
             return collect(it -> it instanceof NonTerminal).stream()
@@ -135,6 +146,7 @@ public final class Grammar extends LinkedHashMap<@NotNull Sym, Rule> {
          *
          * @param collector The predicate.
          * @return A collection of rules that match the predicate.
+         * @since 0.9.7
          */
         public @NotNull Set<@NotNull Rule> collect(final @NotNull Predicate<@NotNull Rule> collector) {
             final @NotNull Set<Rule> result = new HashSet<>();
@@ -177,6 +189,7 @@ public final class Grammar extends LinkedHashMap<@NotNull Sym, Rule> {
          * </p>
          *
          * @return A collection of unused non-terminals.
+         * @since 0.9.7
          */
         public @NotNull Collection<Sym> getUnusedNTs() {
             var usedNTs = usedNTs();
@@ -195,6 +208,7 @@ public final class Grammar extends LinkedHashMap<@NotNull Sym, Rule> {
          * </p>
          *
          * @return A collection which is hopefully empty.
+         * @since 0.9.7
          */
         public @NotNull Collection<Sym> getUndefinedUsedNTs() {
             var definedNTs = definedNTs();
@@ -206,6 +220,7 @@ public final class Grammar extends LinkedHashMap<@NotNull Sym, Rule> {
          *
          * @return true or false
          * @see GrammarInfo#getUndefinedUsedNTs()
+         * @since 0.9.7
          */
         public boolean isValid() {
             return getUndefinedUsedNTs().isEmpty()
@@ -216,6 +231,7 @@ public final class Grammar extends LinkedHashMap<@NotNull Sym, Rule> {
          * Collects all terminals and equivalent rules. If a rule occurs multiple times in the grammar, it still appears only once in the resulting collection.
          *
          * @return A collection of all terminals and special sequences (functions).
+         * @since 0.9.7
          */
         public @NotNull Set<@NotNull Rule> definedTerminals() {
             return collect(it -> it instanceof Terminal || it instanceof SpecialSequenceRule);
@@ -226,6 +242,7 @@ public final class Grammar extends LinkedHashMap<@NotNull Sym, Rule> {
          *
          * @param start The production from which to analyze.
          * @return A Set of reachable rules.
+         * @since 0.9.7
          */
         public @NotNull Grammar subGrammar(final @NotNull Sym start) {
             var startRule = grammar.getProduction(start);
@@ -290,6 +307,7 @@ public final class Grammar extends LinkedHashMap<@NotNull Sym, Rule> {
          *
          * @param start The starting symbol.
          * @return true or false
+         * @since 0.9.7
          */
         public boolean isProductive(final @NotNull Sym start) {
             return isProductive(start, new HashMap<>());

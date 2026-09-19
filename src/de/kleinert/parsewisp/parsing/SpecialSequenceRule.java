@@ -14,6 +14,8 @@ import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.Trampoline
  * For example, {@code S = ?any whitespace except newline?} means what it says. This allows some interaction with the program around the parser.
  * <p>
  * You should not use this class unless it is very important!
+ *
+ * @since 0.9.7
  */
 public final class SpecialSequenceRule extends SimpleRule {
     private final @NotNull String description;
@@ -32,6 +34,7 @@ public final class SpecialSequenceRule extends SimpleRule {
      * Returns the description of the rule.
      *
      * @return The description as a string.
+     * @since 0.9.7
      */
     public @NotNull String getDescription() {
         return description;
@@ -41,6 +44,7 @@ public final class SpecialSequenceRule extends SimpleRule {
      * The function wrapped in this rule. You should only use this kind of rule if you are absolutely sure that you know what you are doing. The same is true for this method.
      *
      * @return The wrapped function.
+     * @since 0.9.7
      */
     public @NotNull Function<@NotNull String, Optional<String>> getFunction() {
         return function;
@@ -52,6 +56,7 @@ public final class SpecialSequenceRule extends SimpleRule {
      * @param description The description of the special sequence.
      * @param function    The function which does what the description says.
      * @return A rule.
+     * @since 0.9.7
      */
     public static @NotNull Rule create(final @NotNull String description,
                                        final @NotNull Function<@NotNull String, Optional<String>> function) {

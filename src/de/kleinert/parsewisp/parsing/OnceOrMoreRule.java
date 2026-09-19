@@ -10,6 +10,8 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a "once or more" parse. That is the {@code p+} operator (where p is an instance of {@link Rule}).
+ *
+ * @since 0.9.7
  */
 public final class OnceOrMoreRule extends RuleWithChild {
     private OnceOrMoreRule(final boolean hide,
@@ -23,6 +25,7 @@ public final class OnceOrMoreRule extends RuleWithChild {
      *
      * @param rule The {@link Rule} to match repeatedly.
      * @return A rule.
+     * @since 0.9.7
      */
     public static @NotNull Rule create(final @NotNull Rule rule) {
         if (rule instanceof EpsilonTerm)

@@ -15,6 +15,8 @@ import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.Trampoline
 /**
  * This class represents a concatenation of productions, written as {@code p1 p2 p3 ...} (where p1, p2, etc. are instances of {@link Rule}).
  * When parsing, it tries to match p1, then p2, then p3 and so on.
+ *
+ * @since 0.9.7
  */
 public final class ConcatRule extends RuleWithManyChildren {
     private ConcatRule(final boolean hide,
@@ -28,6 +30,7 @@ public final class ConcatRule extends RuleWithManyChildren {
      *
      * @param rules The wrapped rules.
      * @return A rule.
+     * @since 0.9.7
      */
     public static @NotNull Rule create(final @NotNull List<Rule> rules) {
         if (rules.isEmpty())
@@ -53,6 +56,7 @@ public final class ConcatRule extends RuleWithManyChildren {
      *
      * @param rules The rules.
      * @return A concatenation rule.
+     * @since 0.9.7
      */
     public static @NotNull ConcatRule createNoEpsilonMoreThan1(
             final @NotNull List<Rule> rules) {

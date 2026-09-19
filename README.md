@@ -1,4 +1,4 @@
-# Parsewisp 0.9.6
+# Parsewisp 0.9.7
 
 A tool to generate and use parsers at runtime.
 

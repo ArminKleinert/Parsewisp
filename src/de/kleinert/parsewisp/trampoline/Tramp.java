@@ -18,6 +18,8 @@ import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.Trampoline
 
 /**
  * This class carries the inner state during the parsing process. It should not be used directly.
+ *
+ * @since 0.9.7
  */
 public final class Tramp {
     private final @NotNull Grammar grammar;
@@ -38,6 +40,7 @@ public final class Tramp {
      *
      * @param grammar The grammar.
      * @param text    The text.
+     * @since 0.9.7
      */
     public Tramp(final @NotNull Grammar grammar, final @NotNull String text) {
         this(grammar, text, -1);
@@ -49,6 +52,7 @@ public final class Tramp {
      * @param grammar   The grammar.
      * @param text      The text.
      * @param failIndex The index at which to continue.
+     * @since 0.9.7
      */
     public Tramp(final @NotNull Grammar grammar, final @NotNull String text, final int failIndex) {
         this.grammar = grammar;
@@ -69,6 +73,7 @@ public final class Tramp {
      * Get the grammar.
      *
      * @return The grammar.
+     * @since 0.9.7
      */
     public @NotNull Grammar getGrammar() {
         return grammar;
@@ -78,6 +83,7 @@ public final class Tramp {
      * Get the text.
      *
      * @return The text.
+     * @since 0.9.7
      */
     public @NotNull String getText() {
         return text;
@@ -87,6 +93,7 @@ public final class Tramp {
      * Get the index at which parsing started. This is only important if parsing had to be restarted after a failure.
      *
      * @return Get the index at which parsing started.
+     * @since 0.9.7
      */
     public int getFailIndex() {
         return failIndex;
@@ -96,6 +103,7 @@ public final class Tramp {
      * A stack of derivative parse procedures of the current generation.
      *
      * @return A stack of derivative parse procedures of the current generation.
+     * @since 0.9.7
      */
     public @NotNull ArrayList<@NotNull Procedure> getStack() {
         return stack;
@@ -105,6 +113,7 @@ public final class Tramp {
      * The current generation of derivatives.
      *
      * @return The current generation of derivatives.
+     * @since 0.9.7
      */
     public int getGeneration() {
         return generation;
@@ -114,6 +123,7 @@ public final class Tramp {
      * Sequential map of negative lookaheads.
      *
      * @return Sequential map of negative lookaheads.
+     * @since 0.9.7
      */
     public @NotNull TreeMap<@NotNull Integer, @NotNull ArrayList<NegativeListener>> getNegativeListeners() {
         return negativeListeners;
@@ -124,6 +134,7 @@ public final class Tramp {
      *
      * @param creator          The key.
      * @param negativeListener The listener procedure.
+     * @since 0.9.7
      */
     public void pushNegativeListener(final @NotNull TrampolineListenerNode.TrampolineListenerKey creator,
                                      final @NotNull NegativeListener negativeListener) {
@@ -141,6 +152,7 @@ public final class Tramp {
      * Last registered success.
      *
      * @return Last registered success.
+     * @since 0.9.7
      */
     public @Nullable ParseMessage getSuccess() {
         return success;
@@ -150,6 +162,7 @@ public final class Tramp {
      * If parsing failed, a failure is set.
      *
      * @return If parsing failed, a failure is set.
+     * @since 0.9.7
      */
     public @Nullable ParseFailure getFailure() {
         return failure;
@@ -157,6 +170,8 @@ public final class Tramp {
 
     /**
      * Increments the generation.
+     *
+     * @since 0.9.7
      */
     public void nextGeneration() {
         generation = generation + 1;
@@ -169,6 +184,7 @@ public final class Tramp {
      * Adds a procedure to the stack.
      *
      * @param frame The frame.
+     * @since 0.9.7
      */
     public void addToStack(final @NotNull Procedure frame) {
         this.stack.add(frame);
@@ -176,6 +192,8 @@ public final class Tramp {
 
     /**
      * Removes the top of the stack.
+     *
+     * @since 0.9.7
      */
     public void popStack() {
         stack.remove(stack.size() - 1);
@@ -185,6 +203,7 @@ public final class Tramp {
      * Adds an element to the stack for the next generation.
      *
      * @param frame The next frame.
+     * @since 0.9.7
      */
     public void addToNextStack(final @NotNull Procedure frame) {
         nextStack.add(frame);
@@ -196,6 +215,7 @@ public final class Tramp {
      * @param key        The key for the message.
      * @param defaultVal The generation to use if the key was not registered.
      * @return The generation.
+     * @since 0.9.7
      */
     public int getFromMsgCache(final @NotNull TrampolineMsgCacheKey key, final int defaultVal) {
         return msgCache.getOrDefault(key, defaultVal);
@@ -206,6 +226,7 @@ public final class Tramp {
      *
      * @param key        The key for the message.
      * @param defaultVal The generation the listener is for.
+     * @since 0.9.7
      */
     public void addToMsgCache(final @NotNull TrampolineMsgCacheKey key, final int defaultVal) {
         msgCache.put(key, defaultVal);
@@ -215,6 +236,7 @@ public final class Tramp {
      * This function is used when the parser detects a failure. Parsing will be terminated when a failure is set.
      *
      * @param failure The failure.
+     * @since 0.9.7
      */
     public void setFailure(final @NotNull ParseFailure failure) {
         this.failure = failure;
@@ -224,6 +246,7 @@ public final class Tramp {
      * Sets the last detected parsing success. This is usually a String for a parsed {@link StringTerm} or a finished {@link ParseTree}.
      *
      * @param success The new success or null.
+     * @since 0.9.7
      */
     public void setSuccess(final @Nullable ParseMessage success) {
         this.success = success;
@@ -234,6 +257,7 @@ public final class Tramp {
      *
      * @param nodeKey The key (position and production).
      * @return The node or null.
+     * @since 0.9.7
      */
     public @Nullable TrampolineListenerNode getNode(final @NotNull TrampolineListenerKey nodeKey) {
         return nodes.get(nodeKey);
@@ -244,6 +268,7 @@ public final class Tramp {
      *
      * @param key  The key (position and production)
      * @param node The node.
+     * @since 0.9.7
      */
     public void addToNodes(final @NotNull TrampolineListenerKey key,
                            final @NotNull TrampolineListenerNode node) {

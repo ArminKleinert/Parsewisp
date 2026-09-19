@@ -14,6 +14,8 @@ import java.util.Objects;
  * Unlike Instaparse's output formats, this class has no relevance for the final output.
  * <p>
  * None of this class's operations should be used by users of the library!
+ *
+ * @since 0.9.7
  */
 public final class ReductionType {
     private static ReductionType standardIntermediateReduction = null;
@@ -28,6 +30,7 @@ public final class ReductionType {
      * </ul>
      *
      * @return Default output format for intermediate operations.
+     * @since 0.9.7
      */
     public static @NotNull ReductionType standardIntermediateReduction() {
         if (standardIntermediateReduction == null)
@@ -45,6 +48,7 @@ public final class ReductionType {
      * </ul>
      *
      * @return Default output format for new instances of {@link Rule}.
+     * @since 0.9.7
      */
     public static @NotNull ReductionType standardInitialReduction() {
         if (standardInitialReduction == null)
@@ -55,18 +59,26 @@ public final class ReductionType {
 
     /**
      * The available types. They mark whether the parse operation is an intermediate operation or for the final output.
+     *
+     * @since 0.9.7
      */
     public enum ReductionTypesAvailable {
         /**
          * The default type. This should not be used directly.
+         *
+         * @since 0.9.7
          */
         INITIAL,
         /**
          * Has the same properties as {@link ReductionTypesAvailable#INITIAL}, but will not be replaced with the default type when finalizing the grammar. This should not be used directly.
+         *
+         * @since 0.9.7
          */
         INTERMEDIATE,
         /**
          * Default type. Represent parse trees as lists. Might be removed in the future.
+         *
+         * @since 0.9.7
          */
         TAGGED_PARSE_TREE
     }
@@ -86,6 +98,7 @@ public final class ReductionType {
      *
      * @param key The production's name.
      * @return A new output descriptor.
+     * @since 0.9.7
      */
     public static @NotNull ReductionType defaultNonRawReduction(final @NotNull Sym key) {
         return new ReductionType(key, ReductionTypesAvailable.TAGGED_PARSE_TREE, false);
@@ -96,6 +109,7 @@ public final class ReductionType {
      *
      * @param key The production's name.
      * @return A new output descriptor.
+     * @since 0.9.7
      */
     public static @NotNull ReductionType nonTerminalReduction(final @NotNull Sym key) {
         return defaultNonRawReduction(key);
@@ -117,6 +131,7 @@ public final class ReductionType {
      * The production key this output format is for.
      *
      * @return The production key this output format is for.
+     * @since 0.9.7
      */
     public @NotNull Sym getKey() {
         return key;
@@ -126,6 +141,7 @@ public final class ReductionType {
      * The {@link ReductionTypesAvailable} type of this reduction.
      *
      * @return The {@link ReductionTypesAvailable} type of this reduction.
+     * @since 0.9.7
      */
     public @NotNull ReductionTypesAvailable getReductionType() {
         return type;
@@ -143,6 +159,7 @@ public final class ReductionType {
      * If true, the intermediate result will be hidden in the final output tree.
      *
      * @return If true, the intermediate result will be hidden in the final output tree.
+     * @since 0.9.7
      */
     public boolean isHiddenOrRaw() {
         return hiddenOrRaw;
@@ -152,6 +169,7 @@ public final class ReductionType {
      * Replaces all rules that have the reduction type {@link ReductionType.ReductionTypesAvailable#INITIAL} (the default when created) with rules with the reduction type {@link ReductionType.ReductionTypesAvailable#TAGGED_PARSE_TREE}.
      *
      * @param productions The productions as a mapping of symbols to rules.
+     * @since 0.9.7
      */
     public static void applyStandardReductionToProductions(
             final @NotNull LinkedHashMap<@NotNull Sym, @NotNull Rule> productions) {

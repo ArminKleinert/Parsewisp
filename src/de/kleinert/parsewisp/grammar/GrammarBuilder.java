@@ -45,6 +45,8 @@ import java.util.stream.Stream;
  * </pre>
  * <p>
  * The {@link #addProduction(Sym, Rule)} method can be used to add new productions.
+ *
+ * @since 0.9.7
  */
 public abstract class GrammarBuilder {
     private final @NotNull LinkedHashMap<Sym, Rule> productions;
@@ -59,6 +61,8 @@ public abstract class GrammarBuilder {
 
     /**
      * Default constructor. Calls {@link GrammarBuilder(RedefinitionOption)} with the default value {@link RedefinitionOption#defaultOption}.
+     *
+     * @since 0.9.7
      */
     protected GrammarBuilder() {
         this(RedefinitionOption.defaultOption);
@@ -68,6 +72,7 @@ public abstract class GrammarBuilder {
      * Creates a new builder with the given option for redefinitions.
      *
      * @param redefinitionOption Option used when a production is added multiple times (see {@link #addProduction(Sym, Rule)}).
+     * @since 0.9.7
      */
     protected GrammarBuilder(final @NotNull RedefinitionOption redefinitionOption) {
         this.productions = new LinkedHashMap<>();
@@ -77,6 +82,8 @@ public abstract class GrammarBuilder {
 
     /**
      * Override this to create a grammar. Used in {@link #build()}.
+     *
+     * @since 0.9.7
      */
     protected void make() {
     }
@@ -85,6 +92,7 @@ public abstract class GrammarBuilder {
      * Use this to construct the grammar.
      *
      * @return The grammar.
+     * @since 0.9.7
      */
     public final @NotNull Grammar build() {
         return buildWithWhitespace(null, null, true);
@@ -97,6 +105,7 @@ public abstract class GrammarBuilder {
      * @param wsParser         Whitespace parser to include.
      * @param checkCorrectness Whether to check the grammar for validity.
      * @return The grammar.
+     * @since 0.9.7
      */
     public final @NotNull Grammar buildWithWhitespace(
             final @Nullable Sym startProduction,
@@ -149,6 +158,8 @@ public abstract class GrammarBuilder {
      * Set the start production symbol for the grammar.
      *
      * @param startProduction Name of the start production.
+     * @since 0.9.7
+     * @since 0.9.7
      */
     protected void setStartProduction(@Nullable Sym startProduction) {
         this.startProduction = startProduction;
@@ -159,6 +170,7 @@ public abstract class GrammarBuilder {
      *
      * @param entries The entries.
      * @see #addProduction(Sym, Rule)
+     * @since 0.9.7
      */
     protected final void addAllProductions(
             final @NotNull Collection<Map.Entry<Sym, Rule>> entries) {
@@ -172,6 +184,7 @@ public abstract class GrammarBuilder {
      *
      * @param lhs The production's key. (left-hand-side)
      * @param rhs The production's right-hand-side.
+     * @since 0.9.7
      */
     protected final void addProduction(
             final @NotNull Sym lhs, final @NotNull Rule rhs) {
@@ -195,6 +208,7 @@ public abstract class GrammarBuilder {
      * @param lhs The production's key. (left-hand-side)
      * @param rhs The production's right-hand-side.
      * @see #addProduction(Sym, Rule)
+     * @since 0.9.7
      */
     protected final void addProduction(
             final @NotNull String lhs, final @NotNull Rule rhs) {
@@ -215,6 +229,7 @@ public abstract class GrammarBuilder {
      *
      * @param c Input object.
      * @return A rule depending on the input's type.
+     * @since 0.9.7
      */
     protected final @NotNull Rule of(final @Nullable Object c) {
         if (c == null) {
@@ -247,6 +262,7 @@ public abstract class GrammarBuilder {
      *
      * @param p The input regex.
      * @return A {@link RegexTerm} or something that returns equivalent outputs when parsing.
+     * @since 0.9.7
      */
     protected final @NotNull Rule regex(final @NotNull Pattern p) {
         return buffer.getOrAddRegex(p);
@@ -257,6 +273,7 @@ public abstract class GrammarBuilder {
      *
      * @param s The input regex.
      * @return A {@link RegexTerm} or something that returns equivalent outputs when parsing.
+     * @since 0.9.7
      */
     protected final @NotNull Rule regex(final @NotNull String s) {
         return buffer.getOrAddRegex(Pattern.compile(s));
@@ -268,6 +285,7 @@ public abstract class GrammarBuilder {
      *
      * @param input The rule to look for.
      * @return The new rule.
+     * @since 0.9.7
      */
     protected final @NotNull Rule look(final @NotNull Rule input) {
         return LookaheadRule.create(input);
@@ -279,6 +297,7 @@ public abstract class GrammarBuilder {
      *
      * @param input The rule to avoid.
      * @return The new rule.
+     * @since 0.9.7
      */
     protected final @NotNull Rule neg(final @NotNull Rule input) {
         return NegativeLookaheadRule.create(input);
@@ -291,6 +310,7 @@ public abstract class GrammarBuilder {
      * @param lo The minimum codepoint.
      * @param hi The maximum codepoint.
      * @return The new rule.
+     * @since 0.9.7
      */
     protected @NotNull Rule numVal(final int lo, final int hi) {
         return ValueRangeTerm.create(lo, hi);
@@ -302,6 +322,7 @@ public abstract class GrammarBuilder {
      *
      * @param loHi The codepoint.
      * @return The new rule.
+     * @since 0.9.7
      */
     protected @NotNull Rule numVal(final int loHi) {
         return ValueRangeTerm.create(loHi, loHi);
@@ -317,6 +338,7 @@ public abstract class GrammarBuilder {
      *
      * @param inputRules The parsers for the output.
      * @return A rule.
+     * @since 0.9.7
      */
     protected final @NotNull Rule ordAlt(final @NotNull List<Rule> inputRules) {
         return OrderedChoiceRule.create(inputRules);
@@ -327,6 +349,7 @@ public abstract class GrammarBuilder {
      *
      * @param name The name symbol of the output rule.
      * @return A {@link NonTerminal}.
+     * @since 0.9.7
      */
     protected @NotNull NonTerminal nt(final @NotNull Sym name) {
         return buffer.getOrAddNt(name);
@@ -337,6 +360,7 @@ public abstract class GrammarBuilder {
      *
      * @param name The name symbol of the output rule.
      * @return A {@link NonTerminal}.
+     * @since 0.9.7
      */
     protected @NotNull NonTerminal nt(final @NotNull String name) {
         return buffer.getOrAddNt(Sym.sym(name));
@@ -349,6 +373,7 @@ public abstract class GrammarBuilder {
      * @param string          The string to match.
      * @param caseInsensitive Whether the Terminal will match case-insensitive.
      * @return The new rule.
+     * @since 0.9.7
      */
     protected @NotNull Rule string(final @NotNull String string, final boolean caseInsensitive) {
         return buffer.getOrAddString(string, caseInsensitive);
@@ -360,6 +385,7 @@ public abstract class GrammarBuilder {
      *
      * @param string The string to match.
      * @return The new rule.
+     * @since 0.9.7
      */
     protected final @NotNull Rule stringCS(final @NotNull String string) {
         return string(string, false);
@@ -371,6 +397,7 @@ public abstract class GrammarBuilder {
      *
      * @param string The string to match.
      * @return The new rule.
+     * @since 0.9.7
      */
     protected final @NotNull Rule stringCI(final @NotNull String string) {
         return string(string, true);
@@ -383,6 +410,7 @@ public abstract class GrammarBuilder {
      *
      * @param string The string to match.
      * @return The new rule.
+     * @since 0.9.7
      */
     protected final @NotNull Rule string(final @NotNull String string) {
         return string(string, false);
@@ -393,6 +421,7 @@ public abstract class GrammarBuilder {
      *
      * @param o The input.
      * @return A copy of the input for which {@link Rule#isHidden} returns true.
+     * @since 0.9.7
      */
     protected final @NotNull Rule hide(final @NotNull Rule o) {
         return o.enableHideTag();
@@ -402,6 +431,7 @@ public abstract class GrammarBuilder {
      * Get an epsilon rule.
      *
      * @return An {@link EpsilonTerm}.
+     * @since 0.9.7
      */
     protected final @NotNull Rule eps() {
         return EpsilonTerm.getDefault();
@@ -411,6 +441,7 @@ public abstract class GrammarBuilder {
      * Create a rule which matches end of input.
      *
      * @return A rule.
+     * @since 0.9.7
      */
     protected final @NotNull Rule eof() {
         return EOFTerm.getDefault();
@@ -427,6 +458,7 @@ public abstract class GrammarBuilder {
      * @param rule  First rule for the output.
      * @param rules More rules for the output.
      * @return A rule.
+     * @since 0.9.7
      */
     protected final @NotNull Rule cat(
             final @NotNull Rule rule, final @NotNull Rule... rules) {
@@ -443,6 +475,7 @@ public abstract class GrammarBuilder {
      *
      * @param rules The rules for the output.
      * @return A rule.
+     * @since 0.9.7
      */
     protected final @NotNull Rule cat(
             final @NotNull List<@NotNull Rule> rules) {
@@ -454,6 +487,7 @@ public abstract class GrammarBuilder {
      *
      * @param rules The rules.
      * @return A {@link ConcatRule}.
+     * @since 0.9.7
      */
     protected @NotNull ConcatRule concatNoEpsilonMoreThan1(
             final @NotNull List<Rule> rules) {
@@ -471,6 +505,7 @@ public abstract class GrammarBuilder {
      * @param rule  The first element for the output.
      * @param rules More elements.
      * @return A rule.
+     * @since 0.9.7
      */
     protected final @NotNull Rule alt(
             final @NotNull Rule rule, final @NotNull Rule... rules) {
@@ -491,6 +526,7 @@ public abstract class GrammarBuilder {
      *
      * @param rules The rules for the output.
      * @return A rule.
+     * @since 0.9.7
      */
     protected final @NotNull Rule alt(final @NotNull List<Rule> rules) {
         return AlternationRule.create(rules);
@@ -501,6 +537,7 @@ public abstract class GrammarBuilder {
      *
      * @param chars A string of matchable chars.
      * @return A rule.
+     * @since 0.9.7
      */
     protected final @NotNull Rule oneOf(final @NotNull String chars) {
         if (chars.isEmpty())
@@ -519,6 +556,7 @@ public abstract class GrammarBuilder {
      *
      * @param rules The rules.
      * @return A rule.
+     * @since 0.9.7
      */
     protected final @NotNull AlternationRule alternationGuaranteeDistinctAndNotEmpty(
             final @NotNull List<Rule> rules) {
@@ -535,6 +573,7 @@ public abstract class GrammarBuilder {
      * @param description The description of the special sequence.
      * @param function    The function which does what the description says.
      * @return A {@link SpecialSequenceRule}.
+     * @since 0.9.7
      */
     protected @NotNull Rule specialSequence(
             final @NotNull String description,
@@ -555,6 +594,7 @@ public abstract class GrammarBuilder {
      * @param max  The maximum amount of repetitions.
      * @param rule The rule.
      * @return A rule, as described.
+     * @since 0.9.7
      */
     protected final @NotNull Rule rep(
             final @NotNull Rule rule, final int min, final int max) {
@@ -569,6 +609,7 @@ public abstract class GrammarBuilder {
      * @param exact Minimum and maximum number of repetitions.
      * @return A repetition rule.
      * @see #rep(Rule, int, int)
+     * @since 0.9.7
      */
     protected final @NotNull Rule rep(
             final @NotNull Rule rule, final int exact) {
@@ -581,6 +622,7 @@ public abstract class GrammarBuilder {
      * @param ruleExpected The rule that must be matched.
      * @param ruleExcluded The rule that must not be matched.
      * @return A {@link ExclusionRule}.
+     * @since 0.9.7
      */
     protected final @NotNull Rule exclude(
             final @NotNull Rule ruleExpected, final @NotNull Rule ruleExcluded) {
@@ -596,6 +638,7 @@ public abstract class GrammarBuilder {
      * @param min  Minimum number of repetitions.
      * @return A repetition rule.
      * @see #rep(Rule, int, int)
+     * @since 0.9.7
      */
     protected final @NotNull Rule repMin(
             final @NotNull Rule rule, final int min) {
@@ -609,6 +652,7 @@ public abstract class GrammarBuilder {
      * @param max  Maximum number of repetitions.
      * @return A repetition rule.
      * @see #rep(Rule, int, int)
+     * @since 0.9.7
      */
     protected final @NotNull Rule repMax(
             final @NotNull Rule rule, final int max) {
@@ -620,6 +664,7 @@ public abstract class GrammarBuilder {
      *
      * @param rule The rule to match repeatedly.
      * @return A rule.
+     * @since 0.9.7
      */
     protected final @NotNull Rule zeroOrMore(final @NotNull Rule rule) {
         return rep(rule, 0, Integer.MAX_VALUE);
@@ -630,6 +675,7 @@ public abstract class GrammarBuilder {
      *
      * @param rule The rule to match repeatedly.
      * @return A rule.
+     * @since 0.9.7
      */
     protected final @NotNull Rule onceOrMore(final @NotNull Rule rule) {
         return rep(rule, 1, Integer.MAX_VALUE);
@@ -640,6 +686,7 @@ public abstract class GrammarBuilder {
      *
      * @param rule The rule to maybe match.
      * @return A rule.
+     * @since 0.9.7
      */
     protected final @NotNull Rule opt(final @NotNull Rule rule) {
         return OptionalRule.create(rule);
@@ -777,6 +824,7 @@ public abstract class GrammarBuilder {
      * @param rule The rule.
      * @param <T>  The type of the rule.
      * @return The same rule or a previously buffered equivalent.
+     * @since 0.9.7
      */
     protected <T extends Rule> T buffer(T rule) {
         if (rule instanceof StringTerm) {
