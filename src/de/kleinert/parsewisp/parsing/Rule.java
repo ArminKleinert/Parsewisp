@@ -157,6 +157,6 @@ public abstract sealed class Rule
 
     @Override
     public String toString() {
-        return (new GrammarPrinter()).ruleToString(this);
+        return (GrammarPrinter.getDefault()).ruleToString(this);
     }
 }

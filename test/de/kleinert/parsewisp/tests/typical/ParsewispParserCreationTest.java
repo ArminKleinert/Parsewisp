@@ -104,7 +104,7 @@ class ParsewispParserCreationTest {
                 null, Sym.sym("C"),
                 null,
                 true,
-                new GrammarPrinter());
+                GrammarPrinter.getDefault());
         Assertions.assertThrows(
                 ParserCreationFailure.class,
                 () -> Parsewisp.parser(grammar, options));

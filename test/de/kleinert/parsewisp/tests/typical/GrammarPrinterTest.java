@@ -1,34 +1,36 @@
 package de.kleinert.parsewisp.tests.typical;
 
 import de.kleinert.parsewisp.Parsewisp;
-import de.kleinert.parsewisp.Sym;
-import de.kleinert.parsewisp.grammar.Grammar;
 import de.kleinert.parsewisp.grammar.GrammarPrinter;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
 import de.kleinert.parsewisp.parsing.SpecialSequenceRule;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Optional;
 
 class GrammarPrinterTest {
 
     @Test
     void parens() {
-        var p = Parsewisp.parser("S = \"a\" \"b\" | \"c\" \"d\"");
+        var p = Parsewisp.parser(
+                "S = \"a\" \"b\" | \"c\" \"d\"",
+                ParserCreationOptions.getDefault().withPrinter(GrammarPrinter.getDefault()));
         Assertions.assertEquals(
                 p.grammar(), Parsewisp.parser(p.show()).grammar());
 
-        var p2 = Parsewisp.parser("S = (\"a\" | \"b\") (\"c\" | \"d\")");
+        var p2 = Parsewisp.parser(
+                "S = (\"a\" | \"b\") (\"c\" | \"d\")",
+                ParserCreationOptions.getDefault().withPrinter(GrammarPrinter.getDefault()));
         Assertions.assertEquals(
                 p2.grammar(), Parsewisp.parser(p2.show()).grammar());
     }
 
     @Test
     void altToString() {
-        var p = Parsewisp.parser("S = \"a\" | \"b\"");
+        var p = Parsewisp.parser(
+                "S = \"a\" | \"b\"",
+                ParserCreationOptions.getDefault().withPrinter(GrammarPrinter.getDefault()));
         var text = p.show();
         var p2 = Parsewisp.parser(text);
         Assertions.assertEquals(p.grammar(), p2.grammar());
@@ -36,7 +38,9 @@ class GrammarPrinterTest {
 
     @Test
     void catToString() {
-        var p = Parsewisp.parser("S = \"a\" \"b\"");
+        var p = Parsewisp.parser(
+                "S = \"a\" \"b\"",
+                ParserCreationOptions.getDefault().withPrinter(GrammarPrinter.getDefault()));
         var text = p.show();
         var p2 = Parsewisp.parser(text);
         Assertions.assertEquals(p.grammar(), p2.grammar());
@@ -44,7 +48,9 @@ class GrammarPrinterTest {
 
     @Test
     void eofToString() {
-        var p = Parsewisp.parser("S = EOF");
+        var p = Parsewisp.parser(
+                "S = EOF",
+                ParserCreationOptions.getDefault().withPrinter(GrammarPrinter.getDefault()));
         var text = p.show();
         var p2 = Parsewisp.parser(text);
         Assertions.assertEquals(p.grammar(), p2.grammar());
@@ -52,7 +58,9 @@ class GrammarPrinterTest {
 
     @Test
     void epsToString() {
-        var p = Parsewisp.parser("S = epsilon");
+        var p = Parsewisp.parser(
+                "S = epsilon",
+                ParserCreationOptions.getDefault().withPrinter(GrammarPrinter.getDefault()));
         var text = p.show();
         var p2 = Parsewisp.parser(text);
         Assertions.assertEquals(p.grammar(), p2.grammar());
@@ -60,7 +68,9 @@ class GrammarPrinterTest {
 
     @Test
     void exclusionToString() {
-        var p = Parsewisp.parser("S = \"a\"* - \"a\"");
+        var p = Parsewisp.parser(
+                "S = \"a\"* - \"a\"",
+                ParserCreationOptions.getDefault().withPrinter(GrammarPrinter.getDefault()));
         var text = p.show();
         var p2 = Parsewisp.parser(text);
         Assertions.assertEquals(p.grammar(), p2.grammar());
@@ -68,7 +78,9 @@ class GrammarPrinterTest {
 
     @Test
     void lookToString() {
-        var p = Parsewisp.parser("S = &\"a\" \"a\"*");
+        var p = Parsewisp.parser(
+                "S = &\"a\" \"a\"*",
+                ParserCreationOptions.getDefault().withPrinter(GrammarPrinter.getDefault()));
         var text = p.show();
         var p2 = Parsewisp.parser(text);
         Assertions.assertEquals(p.grammar(), p2.grammar());
@@ -76,7 +88,9 @@ class GrammarPrinterTest {
 
     @Test
     void negToString() {
-        var p = Parsewisp.parser("S = !\"a\" \"b\"");
+        var p = Parsewisp.parser(
+                "S = !\"a\" \"b\"",
+                ParserCreationOptions.getDefault().withPrinter(GrammarPrinter.getDefault()));
         var text = p.show();
         var p2 = Parsewisp.parser(text);
         Assertions.assertEquals(p.grammar(), p2.grammar());
@@ -84,7 +98,9 @@ class GrammarPrinterTest {
 
     @Test
     void ntToString() {
-        var p = Parsewisp.parser("S = A\nA = \"a\"");
+        var p = Parsewisp.parser(
+                "S = A\nA = \"a\"",
+                ParserCreationOptions.getDefault().withPrinter(GrammarPrinter.getDefault()));
         var text = p.show();
         var p2 = Parsewisp.parser(text);
         Assertions.assertEquals(p.grammar(), p2.grammar());
@@ -92,7 +108,9 @@ class GrammarPrinterTest {
 
     @Test
     void onceOrMoreToString() {
-        var p = Parsewisp.parser("S = \"a\"+");
+        var p = Parsewisp.parser(
+                "S = \"a\"+",
+                ParserCreationOptions.getDefault().withPrinter(GrammarPrinter.getDefault()));
         var text = p.show();
         var p2 = Parsewisp.parser(text);
         Assertions.assertEquals(p.grammar(), p2.grammar());
@@ -100,7 +118,9 @@ class GrammarPrinterTest {
 
     @Test
     void optToString() {
-        var p = Parsewisp.parser("S = \"a\"?");
+        var p = Parsewisp.parser(
+                "S = \"a\"?",
+                ParserCreationOptions.getDefault().withPrinter(GrammarPrinter.getDefault()));
         var text = p.show();
         var p2 = Parsewisp.parser(text);
         Assertions.assertEquals(p.grammar(), p2.grammar());
@@ -108,7 +128,9 @@ class GrammarPrinterTest {
 
     @Test
     void ordToString() {
-        var p = Parsewisp.parser("S = \"a\" / \"b\"");
+        var p = Parsewisp.parser(
+                "S = \"a\" / \"b\"",
+                ParserCreationOptions.getDefault().withPrinter(GrammarPrinter.getDefault()));
         var text = p.show();
         var p2 = Parsewisp.parser(text);
         Assertions.assertEquals(p.grammar(), p2.grammar());
@@ -116,7 +138,9 @@ class GrammarPrinterTest {
 
     @Test
     void regexpToString() {
-        var p = Parsewisp.parser("S = #\"a\"");
+        var p = Parsewisp.parser(
+                "S = #\"a\"",
+                ParserCreationOptions.getDefault().withPrinter(GrammarPrinter.getDefault()));
         var text = p.show();
         var p2 = Parsewisp.parser(text);
         Assertions.assertEquals(p.grammar(), p2.grammar());
@@ -125,12 +149,14 @@ class GrammarPrinterTest {
     @Test
     void specialToString() {
         var r = SpecialSequenceRule.create("description here", Optional::of);
-        Assertions.assertEquals("?description here?", new GrammarPrinter().ruleToString(r));
+        Assertions.assertEquals("?description here?", GrammarPrinter.getDefault().ruleToString(r));
     }
 
     @Test
     void literalToString() {
-        var p = Parsewisp.parser("S = \"a\"");
+        var p = Parsewisp.parser(
+                "S = \"a\"",
+                ParserCreationOptions.getDefault().withPrinter(GrammarPrinter.getDefault()));
         var text = p.show();
         var p2 = Parsewisp.parser(text);
         Assertions.assertEquals(p.grammar(), p2.grammar());
@@ -138,7 +164,9 @@ class GrammarPrinterTest {
 
     @Test
     void valRangeToString() {
-        var p = Parsewisp.parser("S = %x41-42 %d65");
+        var p = Parsewisp.parser(
+                "S = %x41-42 %d65",
+                ParserCreationOptions.getDefault().withPrinter(GrammarPrinter.getDefault()));
         var text = p.show();
         var p2 = Parsewisp.parser(text);
         Assertions.assertEquals(p.grammar(), p2.grammar());
@@ -146,7 +174,9 @@ class GrammarPrinterTest {
 
     @Test
     void repToString() {
-        var p = Parsewisp.parser("S = 2*\"a\"");
+        var p = Parsewisp.parser(
+                "S = 2*\"a\"",
+                ParserCreationOptions.getDefault().withPrinter(GrammarPrinter.getDefault()));
         var text = p.show();
         var p2 = Parsewisp.parser(text);
         Assertions.assertEquals(p.grammar(), p2.grammar());
@@ -154,7 +184,9 @@ class GrammarPrinterTest {
 
     @Test
     void zeroOrMoreToString() {
-        var p = Parsewisp.parser("S = \"a\"*");
+        var p = Parsewisp.parser(
+                "S = \"a\"*",
+                ParserCreationOptions.getDefault().withPrinter(GrammarPrinter.getDefault()));
         var text = p.show();
         var p2 = Parsewisp.parser(text);
         Assertions.assertEquals(p.grammar(), p2.grammar());

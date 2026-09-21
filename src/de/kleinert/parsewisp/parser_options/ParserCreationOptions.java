@@ -118,7 +118,7 @@ public class ParserCreationOptions {
                 startProduction,
                 redefinitionOption == null ? RedefinitionOption.defaultOption : redefinitionOption,
                 checkCorrectness,
-                printer == null ? new GrammarPrinter() : printer);
+                printer == null ? GrammarPrinter.getDefault() : printer);
     }
 
     /**

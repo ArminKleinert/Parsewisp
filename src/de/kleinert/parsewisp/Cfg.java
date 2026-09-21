@@ -10,6 +10,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+/**
+ * This class provides the means of creating a Grammar
+ */
 final class Cfg {
     private final @NotNull ParserCreationOptions options;
 
@@ -17,6 +20,11 @@ final class Cfg {
         this.options = options;
     }
 
+    /**
+     * Returns a default creator.
+     * @param options Input options.
+     * @return An instance of {@link Cfg}.
+     */
     static @NotNull Cfg make(final @NotNull ParserCreationOptions options) {
         return new Cfg(options);
     }
@@ -25,7 +33,7 @@ final class Cfg {
         String spec;
         Grammar grammarGrammar;
 
-        GrammarBuild(final @NotNull ParserCreationOptions options,
+        private GrammarBuild(final @NotNull ParserCreationOptions options,
                      final @NotNull String spec,
                      final @NotNull Grammar grammarGrammar) {
             super(options.getRedefinitionOption());
@@ -230,7 +238,7 @@ final class Cfg {
             final @NotNull ParseResult rules = Gll.parse(
                     grammarGrammar,
                     Sym.sym("rules"),
-                    spec, false, false, new GrammarPrinter());
+                    spec, false, false, GrammarPrinter.getDefault());
 
             if (rules instanceof ParseFailure) {
                 throw new ParserCreationFailure(

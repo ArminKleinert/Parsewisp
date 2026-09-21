@@ -10,18 +10,20 @@ import org.jetbrains.annotations.NotNull;
  * Examples for usage of the library.
  */
 public class Arithmetic {
-    private Arithmetic(){}
+    private Arithmetic() {
+    }
+
     /**
      * We use a simple EBNF grammar for arithmetic expressions on the test input. We do not use any special features yet.
      *
-     * @return  output for tutorial state
+     * @return output for tutorial state
      */
     static @NotNull ParseResult state1() {
         var g = """
                 Expression = Term , { ( "+" | "-" ) , Term } ;
                 Term       = Factor , { ( "*" | "/" ) , Factor } ;
                 Factor     = Number | "(", Expression, ")" ;
-                Number     = [ "+" | "-" ] Digit , { Digit } ;
+                Number     = [ "+" | "-" ] , Digit , { Digit } ;
                 Digit      = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
                 """;
         var p = Parsewisp.parser(g);
@@ -29,6 +31,7 @@ public class Arithmetic {
         // Since Parsewisp is scannerless, we can not include spaces for now.
         return p.parse("(8-9)*-20/18+1");
     }
+
     /**
      * We use the alternative string terminals '...' instead of the standard "...". This is still 100% standard EBNF.
      *
@@ -39,7 +42,7 @@ public class Arithmetic {
                 Expression = Term , { ( '+' | '-' ) , Term } ;
                 Term       = Factor , { ( '*' | '/' ) , Factor } ;
                 Factor     = Number | '(', Expression, ')' ;
-                Number     = [ '+' | '-' ] Digit , { Digit } ;
+                Number     = [ '+' | '-' ] , Digit , { Digit } ;
                 Digit      = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' ;
                 """;
         var p = Parsewisp.parser(g);
@@ -47,6 +50,7 @@ public class Arithmetic {
         // Since Parsewisp is scannerless, we can not include spaces for now.
         return p.parse("(8-9)*-20/18+1");
     }
+
     /**
      * We remove the commas (dividing rules in concatenation) and semicolons (production terminators).
      *
@@ -65,6 +69,7 @@ public class Arithmetic {
         // Since Parsewisp is scannerless, we can not include spaces for now.
         return p.parse("(8-9)*-20/18+1");
     }
+
     /**
      * Annoyed by needing to write the expression without spaces? I am too. Let's fix that.
      * <p>
@@ -99,6 +104,7 @@ public class Arithmetic {
 
         return p.parse("(8 - 9) * -20 / 18 + 1");
     }
+
     /**
      * You may have noticed that the definition of "Digit" is pretty long. We can replace it with a regular expression (regex).
      * The format for regexes is {@code #"..."}. The alternative syntax {@code #'...'} is also available.
@@ -120,6 +126,7 @@ public class Arithmetic {
 
         return p.parse("(8 - 9) * -20 / 18 + 1");
     }
+
     /**
      * We can make the grammar a bit nicer to look at by using '?' for optionals and '*' for repetitions.
      *
@@ -138,9 +145,10 @@ public class Arithmetic {
 
         return p.parse("(8 - 9) * -20 / 18 + 1");
     }
+
     /**
      * In the "Factor" production, do the '(' and ')' around "Expression" provide any value in the parse tree? Not really? Let's hide them.
-     * To hide a rule in the output, wrap it in '<' and '>'.
+     * To hide a rule in the output, wrap it in '&lt;' and '&gt;'.
      *
      * @return output for tutorial state
      */
@@ -157,6 +165,7 @@ public class Arithmetic {
 
         return p.parse("(8 - 9) * -20 / 18 + 1");
     }
+
     /**
      * Parsewisp also supports '+' to shorten our rule "Digit Digit*".
      *
@@ -175,8 +184,9 @@ public class Arithmetic {
 
         return p.parse("(8 - 9) * -20 / 18 + 1");
     }
+
     /**
-     * We can compress the output futher by flattening "Digit" into "Number". To do this, wrap Digit between "<" and ">", but this time on the left.
+     * We can compress the output further by flattening "Digit" into "Number". To do this, wrap Digit between "&lt;" and "&gt;", but this time on the left.
      *
      * @return output for tutorial state
      */
@@ -197,6 +207,8 @@ public class Arithmetic {
     /**
      * If we used ABNF, we could also use value ranges instead of a regular expression for Digit. But we are using EBNF. Still, we can allow that rule explicitly.
      * To do this, we need to modify the creation-options again:
+     *
+     * @return output for tutorial state
      */
     static ParseResult state10() {
         var g = """
@@ -214,6 +226,7 @@ public class Arithmetic {
 
     /**
      * Example main for tutorial.
+     *
      * @param args Ignored.
      */
     public static void main(String[] args) {

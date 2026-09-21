@@ -23,9 +23,9 @@ class NewFeaturesTest {
     void test00() {
         var p = Parsewisp.parser(
                 "S = P S | eps ; P = \"(\" S* \")\" ;",
-                ParserCreationOptions.getDefault().withPrinter(new GrammarPrinter()));
+                ParserCreationOptions.getDefault().withPrinter(GrammarPrinter.getDefault()));
         System.out.println(p.show()); // Use default printer.
-        System.out.println(new GrammarPrinter().toString(p.grammar())); // Use specific printer.
+        System.out.println(GrammarPrinter.getDefault().toString(p.grammar())); // Use specific printer.
 
         System.out.println(p.printer().escape("\"a88b\nc\"\\", '\''));
 

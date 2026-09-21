@@ -56,21 +56,6 @@ public final class Parsewisp {
         return parser(grammar, ParserCreationOptions.getDefault());
     }
 
-//    /**
-//     * Creates a parser from a grammar specification. For documentation of the options, see {@link ParserCreationOptions}.
-//     *
-//     * @param grammar The grammar as a file.
-//     * @param options The options
-//     * @return The parser.
-//     * @throws IOException If the file doesn't exist or can't be accessed.
-//     * @see #parser(String, ParserCreationOptions)
-//     */
-//    public static @NotNull Parser parser(final @NotNull File grammar,
-//                                         final @NotNull ParserCreationOptions options) throws IOException {
-//        final @NotNull String contents = Files.readString(grammar.toPath());
-//        return parser(contents, options);
-//    }
-
     /**
      * Creates a parser from a grammar. See {@link #parser(String, ParserCreationOptions)} for what the options do.
      *

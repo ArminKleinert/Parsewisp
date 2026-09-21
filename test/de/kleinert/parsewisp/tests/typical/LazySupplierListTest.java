@@ -7,7 +7,8 @@ import org.junit.jupiter.api.Test;
 class LazySupplierListTest {
     @Test
     void simpleTest() {
-        @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") final var lsl = new LazySupplierList<>((i) -> i < 15 ? i : null, Integer.MAX_VALUE);
+        //noinspection MismatchedQueryAndUpdateOfCollection
+        final var lsl = new LazySupplierList<>((i) -> i < 15 ? i : null, Integer.MAX_VALUE);
 
         Assertions.assertFalse(lsl.isFullyEvaluated());
 
@@ -24,7 +25,8 @@ class LazySupplierListTest {
 
     @Test
     void emptyTest() {
-        @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") final var lsl = new LazySupplierList<>((i) -> null, Integer.MAX_VALUE);
+        //noinspection MismatchedQueryAndUpdateOfCollection
+        final var lsl = new LazySupplierList<>((i) -> null, Integer.MAX_VALUE);
 
         Assertions.assertFalse(lsl.isFullyEvaluated());
         Assertions.assertNull(lsl.getOrNull(0));

@@ -57,7 +57,7 @@ import java.util.stream.Collectors;
  *     <tr><td>{@link OrderedChoiceRule}</td><td>{@link #ordToString(OrderedChoiceRule)}</td><td>{@code rule1 / ... / ruleN} (Rules separated by slashes)</td></tr>
  *     <tr><td>{@link RegexTerm}</td><td>{@link #regexpToString(RegexTerm)}</td><td>{@code #"..."} (Hash-symbol and then the pattern between double-quotes)</td></tr>
  *     <tr><td>{@link SpecialSequenceRule}</td><td>{@link #specialToString(SpecialSequenceRule)}</td><td>{@code ?...?} (The description between question-marks)</td></tr>
- *     <tr><td>{@link StringTerm}</td><td>{@link #literalToString(StringTerm)}</td><td>{@code "..."} (The string in double-quotes)</td></tr>
+ *     <tr><td>{@link StringTerm}</td><td>{@link #strTermToString(StringTerm)}</td><td>{@code "..."} (The string in double-quotes)</td></tr>
  *     <tr><td>{@link ValueRangeTerm}</td><td>{@link #valRangeToString(ValueRangeTerm)}</td><td>{@code %x...-...} (ABNF hexadecimal format)</td></tr>
  *     <tr><td>{@link VariableRepetitionRule}</td><td>{@link #repToString(VariableRepetitionRule)}</td><td>{@code n*m rule} (minimum STAR maximum followed by the rule)</td></tr>
  *     <tr><td>{@link ZeroOrMoreRule}</td><td>{@link #zeroOrMoreToString(ZeroOrMoreRule)}</td><td>{@code rule*} (The rule followed by a "*")</td></tr>
@@ -66,30 +66,29 @@ import java.util.stream.Collectors;
  *
  * @since 0.9.7
  */
-public class GrammarPrinter {
+public interface GrammarPrinter {
     /**
-     * Default constructor.
-     *
-     * @since 0.9.7
+     * Returns a default GrammarPrinter.
+     * @return A GrammarPrinter.
      */
-    public GrammarPrinter() {
-    }
+    static GrammarPrinter getDefault() {
+        return new GrammarPrinter() {
+            @Override
+            public boolean equals(Object o) {
+                return o != null && getClass() == o.getClass();
+            }
 
-    @Override
-    public String toString() {
-        return GrammarPrinter.class.getSimpleName();
-    }
+            @Override
+            public int hashCode() {
+                return Objects.hashCode(getClass());
+            }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
+            @Override
+            public String toString() {
+                return getClass().toString();
+            }
+        };
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-
     /**
      * Runs {@link #productionToString(Sym, Rule)} on each rule in the grammar. The starting rule is always printed first.
      *
@@ -97,7 +96,7 @@ public class GrammarPrinter {
      * @return A string.
      * @since 0.9.7
      */
-    public @NotNull String toString(final @NotNull Grammar grammar) {
+    default @NotNull String toString(final @NotNull Grammar grammar) {
         var sb = new StringBuilder();
         var start = grammar.getStartSym();
         sb.append(productionToString(start, Objects.requireNonNull(grammar.getProduction(start))));
@@ -126,7 +125,7 @@ public class GrammarPrinter {
      * @return A string.
      * @since 0.9.7
      */
-    public @NotNull String escape(final @NotNull String s, int terminatorCodepoint) {
+    default @NotNull String escape(final @NotNull String s, int terminatorCodepoint) {
         var sb = new StringBuilder();
         var codeIter = s.codePoints().iterator();
         while (codeIter.hasNext()) {
@@ -167,7 +166,7 @@ public class GrammarPrinter {
      * @return An int.
      * @since 0.9.7
      */
-    public static int precedence(final @NotNull Rule rule) {
+    default int precedence(final @NotNull Rule rule) {
         if (rule instanceof AlternationRule || rule instanceof OrderedChoiceRule)
             return 100;
         if (rule instanceof ConcatRule)
@@ -193,7 +192,7 @@ public class GrammarPrinter {
      * @return A string.
      * @since 0.9.7
      */
-    public @NotNull String productionToString(final @NotNull Sym sym, final @NotNull Rule rhs) {
+    default @NotNull String productionToString(final @NotNull Sym sym, final @NotNull Rule rhs) {
         return sym.name() + " = " + ruleToString(rhs) + " ;";
     }
 
@@ -236,7 +235,7 @@ public class GrammarPrinter {
      * @return A string.
      * @since 0.9.7
      */
-    public @NotNull String parens(final @NotNull Rule current, final @NotNull Rule ruleToPrint) {
+    default @NotNull String parens(final @NotNull Rule current, final @NotNull Rule ruleToPrint) {
         if (precedence(current) <= precedence(ruleToPrint))
             return "(" + ruleToString(ruleToPrint) + ")";
         return ruleToString(ruleToPrint);
@@ -249,7 +248,7 @@ public class GrammarPrinter {
      * @return A string.
      * @since 0.9.7
      */
-    public @NotNull String ruleToString(final @NotNull Rule rule) {
+    default @NotNull String ruleToString(final @NotNull Rule rule) {
         var sb = new StringBuilder();
         String s;
 
@@ -287,7 +286,7 @@ public class GrammarPrinter {
         } else if (rule instanceof RegexTerm) {
             s = regexpToString((RegexTerm) rule);
         } else if (rule instanceof StringTerm) {
-            s = literalToString((StringTerm) rule);
+            s = strTermToString((StringTerm) rule);
         } else if (rule instanceof ValueRangeTerm) {
             s = valRangeToString((ValueRangeTerm) rule);
         } else {
@@ -312,7 +311,7 @@ public class GrammarPrinter {
      * @return A string-representation of the rule.
      * @since 0.9.7
      */
-    public @NotNull String altToString(final @NotNull AlternationRule rule) {
+    default @NotNull String altToString(final @NotNull AlternationRule rule) {
         return rule.getRules().stream()
                 .map(it -> parens(rule, it))
                 .collect(Collectors.joining(" | "));
@@ -327,7 +326,7 @@ public class GrammarPrinter {
      * @return A string-representation of the rule.
      * @since 0.9.7
      */
-    public @NotNull String catToString(final @NotNull ConcatRule rule) {
+    default @NotNull String catToString(final @NotNull ConcatRule rule) {
         return rule.getRules().stream()
                 .map(it -> parens(rule, it))
                 .collect(Collectors.joining(" "));
@@ -342,7 +341,7 @@ public class GrammarPrinter {
      * @return A string-representation of the rule.
      * @since 0.9.7
      */
-    public @NotNull String eofToString(final @NotNull EOFTerm rule) {
+    default @NotNull String eofToString(final @NotNull EOFTerm rule) {
         return EOFTerm.text();
     }
 
@@ -355,7 +354,7 @@ public class GrammarPrinter {
      * @return A string-representation of the rule,
      * @since 0.9.7
      */
-    public @NotNull String epsToString(final @NotNull EpsilonTerm rule) {
+    default @NotNull String epsToString(final @NotNull EpsilonTerm rule) {
         return "ε";
     }
 
@@ -368,7 +367,7 @@ public class GrammarPrinter {
      * @return A string-representation of the rule.
      * @since 0.9.7
      */
-    public @NotNull String exclusionToString(final @NotNull ExclusionRule rule) {
+    default @NotNull String exclusionToString(final @NotNull ExclusionRule rule) {
         return parens(rule, rule.getExpected()) + " - " + parens(rule, rule.getExcluded());
     }
 
@@ -381,7 +380,7 @@ public class GrammarPrinter {
      * @return A string-representation of the rule.
      * @since 0.9.7
      */
-    public @NotNull String lookToString(final @NotNull LookaheadRule rule) {
+    default @NotNull String lookToString(final @NotNull LookaheadRule rule) {
         return "&" + parens(rule, rule.getRule());
     }
 
@@ -394,7 +393,7 @@ public class GrammarPrinter {
      * @return A string-representation of the rule.
      * @since 0.9.7
      */
-    public @NotNull String negToString(final @NotNull NegativeLookaheadRule rule) {
+    default @NotNull String negToString(final @NotNull NegativeLookaheadRule rule) {
         return "!" + parens(rule, rule.getRule());
     }
 
@@ -407,7 +406,7 @@ public class GrammarPrinter {
      * @return A string-representation of the rule.
      * @since 0.9.7
      */
-    public @NotNull String ntToString(final @NotNull NonTerminal rule) {
+    default @NotNull String ntToString(final @NotNull NonTerminal rule) {
         return rule.getKeyword().name();
     }
 
@@ -420,7 +419,7 @@ public class GrammarPrinter {
      * @return A string-representation of the rule.
      * @since 0.9.7
      */
-    public @NotNull String onceOrMoreToString(final @NotNull OnceOrMoreRule rule) {
+    default @NotNull String onceOrMoreToString(final @NotNull OnceOrMoreRule rule) {
         return parens(rule, rule.getRule()) + "+";
     }
 
@@ -433,7 +432,7 @@ public class GrammarPrinter {
      * @return A string-representation of the rule.
      * @since 0.9.7
      */
-    public @NotNull String optToString(final @NotNull OptionalRule rule) {
+    default @NotNull String optToString(final @NotNull OptionalRule rule) {
         return parens(rule, rule.getRule()) + "?";
     }
 
@@ -446,7 +445,7 @@ public class GrammarPrinter {
      * @return A string-representation of the rule.
      * @since 0.9.7
      */
-    public @NotNull String ordToString(final @NotNull OrderedChoiceRule rule) {
+    default @NotNull String ordToString(final @NotNull OrderedChoiceRule rule) {
         return rule.getRules().stream()
                 .map(it -> parens(rule, it))
                 .collect(Collectors.joining(" / "));
@@ -461,7 +460,7 @@ public class GrammarPrinter {
      * @return A string-representation of the rule.
      * @since 0.9.7
      */
-    public @NotNull String regexpToString(final @NotNull RegexTerm rule) {
+    default @NotNull String regexpToString(final @NotNull RegexTerm rule) {
         return "#\"" + rule.getRegexp().pattern() + "\"";
     }
 
@@ -474,7 +473,7 @@ public class GrammarPrinter {
      * @return A string-representation of the rule.
      * @since 0.9.7
      */
-    public @NotNull String specialToString(final @NotNull SpecialSequenceRule rule) {
+    default @NotNull String specialToString(final @NotNull SpecialSequenceRule rule) {
         return "?" + rule.getDescription() + "?";
     }
 
@@ -487,7 +486,7 @@ public class GrammarPrinter {
      * @return A string-representation of the rule.
      * @since 0.9.7
      */
-    public @NotNull String literalToString(final @NotNull StringTerm rule) {
+    default @NotNull String strTermToString(final @NotNull StringTerm rule) {
         return '"' + escape(rule.getString(), '"') + '"';
     }
 
@@ -500,7 +499,7 @@ public class GrammarPrinter {
      * @return A string-representation of the rule.
      * @since 0.9.7
      */
-    public @NotNull String valRangeToString(final @NotNull ValueRangeTerm rule) {
+    default @NotNull String valRangeToString(final @NotNull ValueRangeTerm rule) {
         if (rule.getLo() == rule.getHi()) return String.format("%%x%X", rule.getLo());
         return String.format("%%x%X-%X", rule.getLo(), rule.getHi());
     }
@@ -514,7 +513,7 @@ public class GrammarPrinter {
      * @return A string-representation of the rule.
      * @since 0.9.7
      */
-    public @NotNull String repToString(final @NotNull VariableRepetitionRule rule) {
+    default @NotNull String repToString(final @NotNull VariableRepetitionRule rule) {
         return rule.getMin() + "*" + rule.getMax() + parens(rule, rule.getRule());
     }
 
@@ -527,7 +526,7 @@ public class GrammarPrinter {
      * @return A string-representation of the rule.
      * @since 0.9.7
      */
-    public @NotNull String zeroOrMoreToString(final @NotNull ZeroOrMoreRule rule) {
+    default @NotNull String zeroOrMoreToString(final @NotNull ZeroOrMoreRule rule) {
         return parens(rule, rule.getRule()) + "*";
     }
 }
