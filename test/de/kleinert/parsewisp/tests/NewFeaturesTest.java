@@ -20,6 +20,10 @@ import java.util.List;
 
 class NewFeaturesTest {
     @Test
+    void test10() {
+        System.out.println(Parsewisp.parser("S = 'a' E+ 'b' ; E = eps").parses("ab"));
+    }
+    @Test
     void test00() {
         var p = Parsewisp.parser(
                 "S = P S | eps ; P = \"(\" S* \")\" ;",
