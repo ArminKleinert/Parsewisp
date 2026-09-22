@@ -60,13 +60,14 @@ public final class OnceOrMoreRule extends RuleWithChild {
         return result -> {
             final @Nullable Object parsedResult = result.getResult();
             final int continueIndex = result.index();
+            final var newResultsSoFar = resultsSoFar.appendOrConcat(parsedResult);
             if (continueIndex == prevIndex) {
                 if (resultsSoFar.isEmpty()) {
-                    runner.pushSuccessMessageWithoutValue(nodeKey, continueIndex);
+                    runner.pushSuccessMessage(nodeKey, newResultsSoFar, continueIndex);
+                    //runner.pushSuccessMessageWithoutValue(nodeKey, continueIndex);
                 }
                 return;
             }
-            final var newResultsSoFar = resultsSoFar.appendOrConcat(parsedResult);
             runner.pushListener(
                     new TrampolineListenerKey(continueIndex, rule),
                     plusListener(newResultsSoFar, rule, continueIndex, nodeKey, runner));
@@ -86,7 +87,8 @@ public final class OnceOrMoreRule extends RuleWithChild {
             final var continueIndex = result.index();
             if (continueIndex == prevIndex) {
                 if (resultsSoFar.isEmpty()) {
-                    runner.pushSuccessMessageWithoutValue(nodeKey, continueIndex);
+                    runner.pushSuccessMessage(nodeKey, resultsSoFar.appendOrConcat(parsedResult), continueIndex);
+                    //runner.pushSuccessMessageWithoutValue(nodeKey, continueIndex);
                 }
                 return;
             }

@@ -852,7 +852,13 @@ class ParsewispCoreTest {
                 p.parse("AaaAaa", opts)
         );
 
-        Assertions.assertEquals(PT.create("S"), p.parse("", opts));
+        Assertions.assertEquals(
+                PT.create("S",
+                    new ParseFailureNode(
+                        "",
+                        Sym.sym("failure"),
+                        0, 0)),
+                p.parse("", opts));
     }
 
     @Test

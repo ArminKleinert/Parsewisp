@@ -1,6 +1,7 @@
 package de.kleinert.parsewisp.tests;
 
 import de.kleinert.parsewisp.Parsewisp;
+import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.grammar.GrammarPrinter;
 import de.kleinert.parsewisp.parser.Parser;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
@@ -21,7 +22,9 @@ import java.util.List;
 class NewFeaturesTest {
     @Test
     void test10() {
-        System.out.println(Parsewisp.parser("S = 'a' E+ 'b' ; E = eps").parses("ab"));
+        var p = Parsewisp.parser("S = 'a' E+ 'b' ; E = eps");
+        System.out.println(p.grammar().getProduction(Sym.sym("S")));
+        System.out.println(p.parses("ab"));
     }
     @Test
     void test00() {
