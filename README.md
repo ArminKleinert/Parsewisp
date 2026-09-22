@@ -1,6 +1,6 @@
 # Parsewisp 0.9.7
 
-A tool to generate and use parsers at runtime.
+A tool to generate and use parsers for context-free grammars (CFGs) at runtime.
 
 This project started as a conversion of the great Clojure-library [Instaparse](https://github.com/engelberg/instaparse)
 but has grown beyond it.
@@ -20,7 +20,7 @@ but has grown beyond it.
 ## First parser
 
 To create a parser, you'll typically want to use the `Parsewisp.parser` static method. It takes a string as its first
-argument.
+argument. Grammars are written in a form similar to [EBNF](https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form).
 
 ```java
 import de.kleinert.parsewisp.Parsewisp;

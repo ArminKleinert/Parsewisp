@@ -1,7 +1,6 @@
 package de.kleinert.parsewisp.tests.typical;
 
 import de.kleinert.parsewisp.Parsewisp;
-import de.kleinert.parsewisp.parser_options.ParsingOptions;
 import de.kleinert.parsewisp.testutil.PT;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
@@ -9,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-public class OrderedChoiceRuleTest {
+class OrderedChoiceRuleTest {
     @Test
     void orderWhenEverythingIsEps() {
         final @NotNull var p = Parsewisp.parser("""
