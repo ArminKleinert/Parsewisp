@@ -44,6 +44,6 @@ class CornerCasesTests {
 
     @Test
     void test12() {var p = Parsewisp.parser("S = 2*4 E 'a'\nE = eps");
-        System.out.println(p.parse("a"));
+        System.out.println(p.parses("a"));
     }
 }
