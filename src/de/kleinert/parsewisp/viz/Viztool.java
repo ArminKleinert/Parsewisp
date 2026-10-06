@@ -1,5 +1,8 @@
 package de.kleinert.parsewisp.viz;
 
+import de.kleinert.parsewisp.grammar.Grammar;
+import de.kleinert.parsewisp.grammar.GrammarPrinter;
+import de.kleinert.parsewisp.parsing.Rule;
 import de.kleinert.parsewisp.result.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -7,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -31,7 +35,7 @@ public final class Viztool {
                                          final @NotNull List<Node> parseRes,
                                          final @NotNull AtomicInteger count) {
         final int currentId = count.getAndIncrement();
-        final @NotNull String label = getLabel(parseRes);
+        final @NotNull String label = getLabel(parseRes.get(0));
 
         printer.print(currentId + "[shape=box, label=\"" + label + "\"];");
         parseRes.stream().skip(1)
@@ -46,19 +50,18 @@ public final class Viztool {
         return currentId;
     }
 
-    private static @NotNull String getLabel(@NotNull List<Node> parseRes) {
-        final @NotNull Node fpr = parseRes.get(0);
+    private static @NotNull String getLabel(final @NotNull Node node) {
         final @NotNull String label;
-        if (fpr instanceof Node.NodeString) {
-            label = ((Node.NodeString) fpr).content();
-        } else if (fpr instanceof Node.NodeTreeTag) {
-            label = ((Node.NodeTreeTag) fpr).content().name();
-        } else if (fpr instanceof Node.NodeFail) {
-            throw new IllegalStateException("Cannot create parse-tree visualization for " + fpr + " (TODO).");
-        } else if (fpr instanceof Node.NodeParseTree) {
+        if (node instanceof Node.NodeString) {
+            label = ((Node.NodeString) node).content();
+        } else if (node instanceof Node.NodeTreeTag) {
+            label = ((Node.NodeTreeTag) node).content().name();
+        } else if (node instanceof Node.NodeFail) {
+            throw new IllegalStateException("Cannot create parse-tree visualization for " + node + " (TODO).");
+        } else if (node instanceof Node.NodeParseTree) {
             throw new IllegalStateException("This case should be handled in dumpParseTreeHelp.");
         } else {
-            throw new IllegalStateException(fpr.getClass().getName());
+            throw new IllegalStateException(node.getClass().getName());
         }
         return label.replace("\\", "\\\\").replace("\"", "\\\"");
     }
