@@ -439,7 +439,8 @@ class ParsewispTest {
     /**
      * There used to be a bug where the following made the parse fail.
      */
-    @Test void orderedChoiceAtSameIndex () {
+    @Test
+    void orderedChoiceAtSameIndex() {
         var p = Parsewisp.parser(
                 """
                         S = number ("+" | "-") S / number
@@ -447,7 +448,7 @@ class ParsewispTest {
                         <digits> = #'[0-9]'+
                         """);
         Assertions.assertEquals(
-                List.of(PT.create("S", PT.create("number","1","2","3"))),
+                List.of(PT.create("S", PT.create("number", "1", "2", "3"))),
                 p.parses("123"));
     }
 
@@ -482,6 +483,14 @@ class ParsewispTest {
 
     @Test
     void parsesPartial() {
+        var opts = new ParsingOptions(
+                ParsingOptions.DEFAULT_START,
+                true,
+                ParsingOptions.DEFAULT_UNHIDE,
+                ParsingOptions.DEFAULT_EMBED_FAILURES,
+                ParsingOptions.DEFAULT_ITERATIVE_DEEPENING,
+                ParsingOptions.DEFAULT_FAILURE_IF_EMPTY,
+                ParsingOptions.DEFAULT_STOP_EARLY_ON_EMPTY_REPETITION);
         {
             final @NotNull var grammar = """
                     S  = (r1 / r2 / r3)*
@@ -491,7 +500,7 @@ class ParsewispTest {
                     """;
             final @NotNull var text = "aa";
             final @NotNull var p = Parsewisp.parser(grammar);
-            final @NotNull var ps = p.parses(text, new ParsingOptions(null, true, Unhide.UnhideOptions.NONE, false, false, false));
+            final @NotNull var ps = p.parses(text, opts);
             final @NotNull var possibleParses = partialParsesOrderedR123();
             Assertions.assertEquals(possibleParses, ps);
         }
@@ -504,7 +513,7 @@ class ParsewispTest {
                     """;
             final @NotNull var text = "aa";
             final @NotNull var p = Parsewisp.parser(grammar);
-            final @NotNull var ps = new HashSet<>(p.parses(text, new ParsingOptions(null, true, Unhide.UnhideOptions.NONE, false, false, false)));
+            final @NotNull var ps = new HashSet<>(p.parses(text, opts));
             final @NotNull var possibleParses = new HashSet<>(partialParsesOrderedR123());
             Assertions.assertEquals(possibleParses, ps);
         }

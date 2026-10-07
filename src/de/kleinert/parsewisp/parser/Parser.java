@@ -126,12 +126,14 @@ public record Parser(@NotNull Grammar grammar,
         if (embedFailure) {
             return Gll.parsesEmbedFailure(
                     unhiddenParser.grammar(), startProduction, text,
-                    usePartial, options.iterativeDeepening(), printer);
+                    usePartial, options.iterativeDeepening(), printer,
+                    options.stopEarlyOnEmptyRepetition());
         } else {
             return Gll.parses(
                     unhiddenParser.grammar(), startProduction, text,
                     usePartial, options.iterativeDeepening(),
-                    options.failureIfEmpty(), printer);
+                    options.failureIfEmpty(), printer,
+                    options.stopEarlyOnEmptyRepetition());
         }
     }
 

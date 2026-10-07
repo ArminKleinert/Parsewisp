@@ -14,17 +14,19 @@ import java.util.Objects;
 /**
  * Options for parsing with an already created parser.
  *
- * @param start                   Start production for the parse. Use {@code null} to use the Parser's start production.
- * @param usePartial              Whether to return partial (incomplete) parses.
- * @param unhide                  Which parts of a parse result to show when they would normally be hidden by the parser.
- * @param embedFailureInParseTree If true, a failed parse results in a {@link ParseTree}, as a success would, but a {@link ParseFailureNode} is embedded in the tree.
- * @param iterativeDeepening      Whether to iteratively deepen parsing when parsing with a regex terminal. See {@link RegexTerm#parse}.
- * @param failureIfEmpty          Important for {@link Parser#parses(String, ParsingOptions)} only. If false, return an empty list if the parsing failed. If true, return the failure.
+ * @param start                      Start production for the parse. Use {@code null} to use the Parser's start production.
+ * @param usePartial                 Whether to return partial (incomplete) parses.
+ * @param unhide                     Which parts of a parse result to show when they would normally be hidden by the parser.
+ * @param embedFailureInParseTree    If true, a failed parse results in a {@link ParseTree}, as a success would, but a {@link ParseFailureNode} is embedded in the tree.
+ * @param iterativeDeepening         Whether to iteratively deepen parsing when parsing with a regex terminal. See {@link RegexTerm#parse}.
+ * @param failureIfEmpty             Important for {@link Parser#parses(String, ParsingOptions)} only. If false, return an empty list if the parsing failed. If true, return the failure.
+ * @param stopEarlyOnEmptyRepetition If a repetition (once-or-more, zero-or-more, variable) returns an empty parse, it can be stopped early, provided that the minimum number of parses has been resolved.
  * @see ParsingOptions#DEFAULT_START
  * @see ParsingOptions#DEFAULT_PARTIAL
  * @see ParsingOptions#DEFAULT_UNHIDE
  * @see ParsingOptions#DEFAULT_EMBED_FAILURES
  * @see ParsingOptions#DEFAULT_FAILURE_IF_EMPTY
+ * @see ParsingOptions#DEFAULT_STOP_EARLY_ON_EMPTY_REPETITION
  * @since 0.9.7
  */
 public record ParsingOptions(
@@ -33,7 +35,8 @@ public record ParsingOptions(
         @NotNull UnhideOptions unhide,
         boolean embedFailureInParseTree,
         boolean iterativeDeepening,
-        boolean failureIfEmpty
+        boolean failureIfEmpty,
+        boolean stopEarlyOnEmptyRepetition
 ) {
     /**
      * Default for the start production name of a parse operation. ({@code null})
@@ -72,9 +75,15 @@ public record ParsingOptions(
      * @since 0.9.7
      */
     public static final boolean DEFAULT_FAILURE_IF_EMPTY = false;
+    /**
+     * {@code true} by default.
+     *
+     * @since 0.9.7
+     */
+    public static final boolean DEFAULT_STOP_EARLY_ON_EMPTY_REPETITION = true;
 
     /**
-     * Calls {@link ParsingOptions#ParsingOptions(Sym, boolean, UnhideOptions, boolean, boolean, boolean)} with the static defaults.
+     * Calls {@link ParsingOptions#ParsingOptions(Sym, boolean, UnhideOptions, boolean, boolean, boolean, boolean)} with the static defaults.
      *
      * @return An instance of this class, using all the static DEFAULT_* values.
      * @see ParsingOptions#DEFAULT_START
@@ -86,7 +95,7 @@ public record ParsingOptions(
      * @since 0.9.7
      */
     public static @NotNull ParsingOptions getDefault() {
-        return new ParsingOptions(DEFAULT_START, DEFAULT_PARTIAL, DEFAULT_UNHIDE, DEFAULT_EMBED_FAILURES, DEFAULT_ITERATIVE_DEEPENING, DEFAULT_FAILURE_IF_EMPTY);
+        return new ParsingOptions(DEFAULT_START, DEFAULT_PARTIAL, DEFAULT_UNHIDE, DEFAULT_EMBED_FAILURES, DEFAULT_ITERATIVE_DEEPENING, DEFAULT_FAILURE_IF_EMPTY, DEFAULT_STOP_EARLY_ON_EMPTY_REPETITION);
     }
 
     /**
@@ -118,7 +127,7 @@ public record ParsingOptions(
      */
     public @NotNull ParsingOptions withStart(final @Nullable Sym start) {
         if (Objects.equals(this.start, start)) return this;
-        return new ParsingOptions(start, usePartial, unhide, embedFailureInParseTree, iterativeDeepening, failureIfEmpty);
+        return new ParsingOptions(start, usePartial, unhide, embedFailureInParseTree, iterativeDeepening, failureIfEmpty, stopEarlyOnEmptyRepetition);
     }
 
     /**
@@ -145,7 +154,7 @@ public record ParsingOptions(
      */
     public @NotNull ParsingOptions withPartial(final boolean usePartial) {
         if (Objects.equals(this.usePartial, usePartial)) return this;
-        return new ParsingOptions(start, usePartial, unhide, embedFailureInParseTree, iterativeDeepening, failureIfEmpty);
+        return new ParsingOptions(start, usePartial, unhide, embedFailureInParseTree, iterativeDeepening, failureIfEmpty, stopEarlyOnEmptyRepetition);
     }
 
     /**
@@ -194,7 +203,7 @@ public record ParsingOptions(
      */
     public @NotNull ParsingOptions withUnhide(final @NotNull UnhideOptions unhide) {
         if (Objects.equals(this.unhide, unhide)) return this;
-        return new ParsingOptions(start, usePartial, unhide, embedFailureInParseTree, iterativeDeepening, failureIfEmpty);
+        return new ParsingOptions(start, usePartial, unhide, embedFailureInParseTree, iterativeDeepening, failureIfEmpty, stopEarlyOnEmptyRepetition);
     }
 
     /**
@@ -223,7 +232,7 @@ public record ParsingOptions(
      */
     public @NotNull ParsingOptions withEmbedFailureInParseTree(final boolean embedFailureInParseTree) {
         if (Objects.equals(this.embedFailureInParseTree, embedFailureInParseTree)) return this;
-        return new ParsingOptions(start, usePartial, unhide, embedFailureInParseTree, iterativeDeepening, failureIfEmpty);
+        return new ParsingOptions(start, usePartial, unhide, embedFailureInParseTree, iterativeDeepening, failureIfEmpty, stopEarlyOnEmptyRepetition);
     }
 
     /**
@@ -236,7 +245,7 @@ public record ParsingOptions(
      */
     public @NotNull ParsingOptions withIterativeDeepening(final boolean iterativeDeepening) {
         if (Objects.equals(this.iterativeDeepening, iterativeDeepening)) return this;
-        return new ParsingOptions(start, usePartial, unhide, embedFailureInParseTree, iterativeDeepening, failureIfEmpty);
+        return new ParsingOptions(start, usePartial, unhide, embedFailureInParseTree, iterativeDeepening, failureIfEmpty, stopEarlyOnEmptyRepetition);
     }
 
     /**
@@ -249,6 +258,19 @@ public record ParsingOptions(
      */
     public @NotNull ParsingOptions withFailureIfEmpty(final boolean failureIfEmpty) {
         if (Objects.equals(this.failureIfEmpty, failureIfEmpty)) return this;
-        return new ParsingOptions(start, usePartial, unhide, embedFailureInParseTree, iterativeDeepening, failureIfEmpty);
+        return new ParsingOptions(start, usePartial, unhide, embedFailureInParseTree, iterativeDeepening, failureIfEmpty, stopEarlyOnEmptyRepetition);
+    }
+
+    /**
+     * Creates a new instance with the {@link #stopEarlyOnEmptyRepetition()} option set to the parameter.
+     *
+     * @param stopEarlyOnEmptyRepetition The new (or old) setting.
+     * @return A new instance.
+     * @see #stopEarlyOnEmptyRepetition()
+     * @since 0.9.7
+     */
+    public @NotNull ParsingOptions withStopEarlyOnEmptyRepetition(final boolean stopEarlyOnEmptyRepetition) {
+        if (Objects.equals(this.stopEarlyOnEmptyRepetition, stopEarlyOnEmptyRepetition)) return this;
+        return new ParsingOptions(start, usePartial, unhide, embedFailureInParseTree, iterativeDeepening, failureIfEmpty, stopEarlyOnEmptyRepetition);
     }
 }

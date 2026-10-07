@@ -32,6 +32,7 @@ public final class Gll {
     private final @NotNull Tramp tramp;
     private final boolean iterativeDeepening;
     private final GrammarPrinter grammarPrinter;
+    final boolean stopEarlyOnEmptyRepetition;
 
     GrammarPrinter getGrammarPrinter() {
         return grammarPrinter;
@@ -45,10 +46,11 @@ public final class Gll {
         return iterativeDeepening;
     }
 
-    private Gll(final @NotNull Tramp tramp, final boolean iterativeDeepening, GrammarPrinter grammarPrinter) {
+    private Gll(final @NotNull Tramp tramp, final boolean iterativeDeepening, GrammarPrinter grammarPrinter, boolean stopEarlyOnEmptyRepetition) {
         this.tramp = tramp;
         this.iterativeDeepening = iterativeDeepening;
         this.grammarPrinter = grammarPrinter;
+        this.stopEarlyOnEmptyRepetition = stopEarlyOnEmptyRepetition;
     }
 
     private @NotNull TrampolineListenerNode getOrCreateListenerNode(
@@ -318,10 +320,11 @@ public final class Gll {
             final @NotNull String text,
             final boolean partial,
             final boolean iterativeDeepening,
-            final @NotNull GrammarPrinter printer) {
+            final @NotNull GrammarPrinter printer,
+            final boolean stopRepetitionsIfInfiniteRepetitionHappens) {
         final @NotNull var tramp = new Tramp(grammar, text, 0);
         final @NotNull var parser = NonTerminal.create(start);
-        var gll = new Gll(tramp, iterativeDeepening, printer);
+        var gll = new Gll(tramp, iterativeDeepening, printer, stopRepetitionsIfInfiniteRepetitionHappens);
         gll.startParser(tramp, parser, partial);
         final @NotNull var allParses = gll.run();
         return ParsesResult.make(allParses);
@@ -354,10 +357,11 @@ public final class Gll {
             final boolean partial,
             final boolean iterativeDeepening,
             final boolean errorIfEmpty,
-            final @NotNull GrammarPrinter printer) {
+            final @NotNull GrammarPrinter printer,
+            final boolean stopEarlyOnEmptyRepetition) {
         final @NotNull var tramp = new Tramp(grammar, text);
         final @NotNull var parser = NonTerminal.create(start);
-        final @NotNull var gll = new Gll(tramp, iterativeDeepening, printer);
+        final @NotNull var gll = new Gll(tramp, iterativeDeepening, printer, stopEarlyOnEmptyRepetition);
         gll.startParser(tramp, parser, partial);
         final @NotNull var allParses = gll.run();
         if (errorIfEmpty && allParses.isEmpty()) {
@@ -391,7 +395,9 @@ public final class Gll {
             final boolean iterativeDeepening,
             final @NotNull GrammarPrinter printer) {
         final @NotNull var tramp = new Tramp(grammar, text);
-        final @NotNull var gll = new Gll(tramp, iterativeDeepening, printer);
+        final @NotNull var gll = new Gll(
+                tramp, iterativeDeepening, printer,
+                ParsingOptions.DEFAULT_STOP_EARLY_ON_EMPTY_REPETITION);
         final @NotNull var parser = NonTerminal.create(start);
         gll.startParser(tramp, parser, partial);
         final @NotNull var allParses = gll.run(1);
@@ -423,10 +429,15 @@ public final class Gll {
             final @NotNull String text,
             final boolean partial,
             final boolean iterativeDeepening,
-            final @NotNull GrammarPrinter printer) {
-        final @NotNull var allParses = parses(grammar, start, text, partial, iterativeDeepening, false, printer);
+            final @NotNull GrammarPrinter printer,
+            final boolean stopEarlyOnEmptyRepetition) {
+        final @NotNull var allParses = parses(
+                grammar, start, text, partial, iterativeDeepening, false, printer,
+                stopEarlyOnEmptyRepetition);
         if (!allParses.castToParsesSuccess().isEmpty()) return ParsesResult.make(allParses);
-        return parsesEmbedFailureAfterFail(grammar, start, text, partial, iterativeDeepening, printer);
+        return parsesEmbedFailureAfterFail(
+                grammar, start, text, partial, iterativeDeepening, printer,
+                stopEarlyOnEmptyRepetition);
     }
 
     private static @NotNull ParseResult parseEmbedFailureAfterFail(
@@ -439,7 +450,7 @@ public final class Gll {
             final @NotNull GrammarPrinter printer) {
         final @NotNull var tramp = new Tramp(grammar, text, failIndex);
         final @NotNull var parser = NonTerminal.create(start);
-        final @NotNull var gll = new Gll(tramp, iterativeDeepening, printer);
+        final @NotNull var gll = new Gll(tramp, iterativeDeepening, printer, ParsingOptions.DEFAULT_STOP_EARLY_ON_EMPTY_REPETITION);
         gll.startParser(tramp, parser, partial);
         final @NotNull var allParses = gll.run(1);
         if (!allParses.isEmpty())

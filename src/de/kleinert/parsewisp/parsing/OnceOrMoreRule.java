@@ -61,7 +61,8 @@ public final class OnceOrMoreRule extends RuleWithChild {
             final @Nullable Object parsedResult = result.getResult();
             final int continueIndex = result.index();
             final var newResultsSoFar = resultsSoFar.appendOrConcat(parsedResult);
-            if (continueIndex == prevIndex) {
+            if (//runner.stopEarlyOnEmptyRepetition &&
+                    continueIndex == prevIndex) {
                 if (resultsSoFar.isEmpty()) {
                     runner.pushSuccessMessage(nodeKey, newResultsSoFar, continueIndex);
                     //runner.pushSuccessMessageWithoutValue(nodeKey, continueIndex);
