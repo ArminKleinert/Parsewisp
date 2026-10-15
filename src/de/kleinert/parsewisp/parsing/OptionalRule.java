@@ -63,7 +63,7 @@ public final class OptionalRule extends RuleWithChild {
 
     @Override
     public @NotNull OptionalRule withHideTag(boolean hide) {
-        return isHidden() == hide ? this : new OptionalRule(hide, red, rule);
+        return isHiddenInResult() == hide ? this : new OptionalRule(hide, red, rule);
     }
 
     @Override

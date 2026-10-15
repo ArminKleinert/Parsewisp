@@ -3,7 +3,6 @@ package de.kleinert.parsewisp.parsing;
 import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.TrampolineListenerKey;
 
 import de.kleinert.parsewisp.reduction.ReductionType;
-import de.kleinert.parsewisp.result.failure.ParseFailureReason;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -94,7 +93,7 @@ public final class ValueRangeTerm extends Terminal {
 
     @Override
     public @NotNull ValueRangeTerm withHideTag(final boolean hide) {
-        return isHidden() == hide ? this : new ValueRangeTerm(hide, red, lo, hi);
+        return isHiddenInResult() == hide ? this : new ValueRangeTerm(hide, red, lo, hi);
     }
 
     @Override

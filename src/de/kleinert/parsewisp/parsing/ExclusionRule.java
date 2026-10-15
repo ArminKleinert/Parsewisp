@@ -146,18 +146,18 @@ public final class ExclusionRule extends RuleWithManyChildren {
 
     @Override
     public @NotNull ExclusionRule withHideTag(final boolean hide) {
-        return isHidden() == hide ? this : new ExclusionRule(hide, this.getReduction(), expected, excluded);
+        return isHiddenInResult() == hide ? this : new ExclusionRule(hide, this.getReduction(), expected, excluded);
     }
 
     @Override
     public @NotNull ExclusionRule withReduction(final @NotNull ReductionType red) {
-        return getReduction() == red ? this : new ExclusionRule(isHidden(), red, expected, excluded);
+        return getReduction() == red ? this : new ExclusionRule(isHiddenInResult(), red, expected, excluded);
     }
 
     @Override
     public @NotNull ExclusionRule withRules(final @NotNull List<@NotNull Rule> rules) {
         if (rules.size() != 2)
             throw new IllegalArgumentException("Must pass exactly 2 arguments.");
-        return new ExclusionRule(isHidden(), getReduction(), rules.get(0), rules.get(rules.size() - 1));
+        return new ExclusionRule(isHiddenInResult(), getReduction(), rules.get(0), rules.get(rules.size() - 1));
     }
 }

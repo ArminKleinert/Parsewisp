@@ -68,7 +68,7 @@ public final class NonTerminal extends SimpleRule {
 
     @Override
     public @NotNull NonTerminal withHideTag(final boolean hide) {
-        return isHidden() == hide ? this : new NonTerminal(hide, red, keyword);
+        return isHiddenInResult() == hide ? this : new NonTerminal(hide, red, keyword);
     }
 
     @Override

@@ -252,7 +252,7 @@ public interface GrammarPrinter {
         var sb = new StringBuilder();
         String s;
 
-        if (rule.isHidden())
+        if (rule.isHiddenInResult())
             sb.append('<');
 
         if (rule instanceof AlternationRule) {
@@ -295,7 +295,7 @@ public interface GrammarPrinter {
 
         sb.append(s);
 
-        if (rule.isHidden())
+        if (rule.isHiddenInResult())
             sb.append('>');
 
         return sb.toString();

@@ -93,7 +93,7 @@ public final class SpecialSequenceRule extends SimpleRule {
 
     @Override
     public @NotNull SpecialSequenceRule withHideTag(final boolean hide) {
-        return isHidden() == hide ? this : new SpecialSequenceRule(hide, red, description, function);
+        return isHiddenInResult() == hide ? this : new SpecialSequenceRule(hide, red, description, function);
     }
 
     @Override

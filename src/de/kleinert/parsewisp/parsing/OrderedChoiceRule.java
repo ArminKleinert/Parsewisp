@@ -110,16 +110,16 @@ public final class OrderedChoiceRule extends RuleWithManyChildren {
 
     @Override
     public @NotNull OrderedChoiceRule withHideTag(final boolean hide) {
-        return isHidden() == hide ? this : new OrderedChoiceRule(hide, this.getReduction(), rule1, rule2);
+        return isHiddenInResult() == hide ? this : new OrderedChoiceRule(hide, this.getReduction(), rule1, rule2);
     }
 
     @Override
     public @NotNull OrderedChoiceRule withReduction(final @NotNull ReductionType red) {
-        return getReduction() == red ? this : new OrderedChoiceRule(isHidden(), red, rule1, rule2);
+        return getReduction() == red ? this : new OrderedChoiceRule(isHiddenInResult(), red, rule1, rule2);
     }
 
     @Override
     public @NotNull OrderedChoiceRule withRules(final @NotNull List<@NotNull Rule> rules) {
-        return new OrderedChoiceRule(rules, isHidden(), getReduction());
+        return new OrderedChoiceRule(rules, isHiddenInResult(), getReduction());
     }
 }

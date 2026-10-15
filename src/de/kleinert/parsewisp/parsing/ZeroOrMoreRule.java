@@ -66,7 +66,7 @@ public final class ZeroOrMoreRule extends RuleWithChild {
 
     @Override
     public @NotNull ZeroOrMoreRule withHideTag(boolean hide) {
-        return isHidden() == hide ? this : new ZeroOrMoreRule(hide, red, rule);
+        return isHiddenInResult() == hide ? this : new ZeroOrMoreRule(hide, red, rule);
     }
 
     @Override

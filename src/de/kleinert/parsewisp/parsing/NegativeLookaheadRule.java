@@ -78,7 +78,7 @@ public final class NegativeLookaheadRule extends RuleWithChild {
 
     @Override
     public @NotNull NegativeLookaheadRule withHideTag(boolean hide) {
-        return isHidden() == hide ? this : new NegativeLookaheadRule(hide, red, rule);
+        return isHiddenInResult() == hide ? this : new NegativeLookaheadRule(hide, red, rule);
     }
 
     @Override

@@ -131,7 +131,7 @@ public final class RegexTerm extends Terminal {
 
     @Override
     public @NotNull RegexTerm withHideTag(final boolean hide) {
-        return isHidden() == hide ? this : new RegexTerm(hide, red, regexp);
+        return isHiddenInResult() == hide ? this : new RegexTerm(hide, red, regexp);
     }
 
     @Override

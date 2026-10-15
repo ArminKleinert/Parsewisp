@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract sealed class Rule
         permits RuleWithManyChildren, RuleWithChild, SimpleRule {
     /**
-     * Default value for {@link Rule#isHidden()}.
+     * Default value for {@link Rule#isHiddenInResult()}.
      *
      * @since 0.9.7
      */
@@ -100,7 +100,7 @@ public abstract sealed class Rule
      * @return true if the content is hidden in the output, false otherwise.
      * @since 0.9.7
      */
-    public boolean isHidden() {
+    public boolean isHiddenInResult() {
         return hide;
     }
 
@@ -121,7 +121,7 @@ public abstract sealed class Rule
      * @see #withHideTag(boolean)
      * @since 0.9.7
      */
-    public @NotNull Rule enableHideTag() {
+    public @NotNull Rule hideInResult() {
         return withHideTag(true);
     }
 
@@ -132,7 +132,7 @@ public abstract sealed class Rule
      * @see #withHideTag(boolean)
      * @since 0.9.7
      */
-    public @NotNull Rule unhideContent() {
+    public @NotNull Rule includeInResult() {
         return withHideTag(false);
     }
 
@@ -143,7 +143,7 @@ public abstract sealed class Rule
      * @return A new instance of the same class.
      * @since 0.9.7
      */
-    public @NotNull Rule hideTag() {
+    public @NotNull Rule mergeToTop() {
         return withReduction(ReductionType.standardIntermediateReduction());
     }
 

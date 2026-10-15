@@ -417,14 +417,14 @@ public abstract class GrammarBuilder {
     }
 
     /**
-     * Create a copy of the input for which {@link Rule#isHidden} returns true.
+     * Create a copy of the input for which {@link Rule#isHiddenInResult} returns true.
      *
      * @param o The input.
-     * @return A copy of the input for which {@link Rule#isHidden} returns true.
+     * @return A copy of the input for which {@link Rule#isHiddenInResult} returns true.
      * @since 0.9.7
      */
     protected final @NotNull Rule hide(final @NotNull Rule o) {
-        return o.enableHideTag();
+        return o.hideInResult();
     }
 
     /**
@@ -722,7 +722,7 @@ public abstract class GrammarBuilder {
             }
 
             return newRule
-                    .withHideTag(variableRepetitionRule.isHidden())
+                    .withHideTag(variableRepetitionRule.isHiddenInResult())
                     .withReduction(variableRepetitionRule.getReduction());
         }
         if (originalRule instanceof RuleWithManyChildren) {
@@ -796,7 +796,7 @@ public abstract class GrammarBuilder {
                                 final @NotNull Grammar grammarWS,
                                 final @NotNull Sym startWS) {
         final @NotNull Rule wsParser =
-                opt(nt(startWS)).enableHideTag();
+                opt(nt(startWS)).hideInResult();
 
         final @NotNull LinkedHashMap<@NotNull Sym, @NotNull Rule> finalGrammar =
                 productions;
@@ -815,7 +815,7 @@ public abstract class GrammarBuilder {
         finalGrammar.put(start, newStartComb);
         finalGrammar.putAll(grammarWS);
         finalGrammar.put(startWS,
-                Objects.requireNonNull(grammarWS.getProduction(startWS)).hideTag());
+                Objects.requireNonNull(grammarWS.getProduction(startWS)).mergeToTop());
     }
 
     /**

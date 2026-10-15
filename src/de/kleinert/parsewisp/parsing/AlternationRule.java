@@ -118,16 +118,16 @@ public final class AlternationRule extends RuleWithManyChildren {
 
     @Override
     public @NotNull AlternationRule withHideTag(boolean hide) {
-        return isHidden() == hide ? this : new AlternationRule(hide, getReduction(), getRules());
+        return isHiddenInResult() == hide ? this : new AlternationRule(hide, getReduction(), getRules());
     }
 
     @Override
     public @NotNull AlternationRule withReduction(@NotNull ReductionType red) {
-        return getReduction() == red ? this : new AlternationRule(isHidden(), red, getRules());
+        return getReduction() == red ? this : new AlternationRule(isHiddenInResult(), red, getRules());
     }
 
     @Override
     public @NotNull AlternationRule withRules(@NotNull List<@NotNull Rule> rules) {
-        return new AlternationRule(isHidden(), getReduction(), rules);
+        return new AlternationRule(isHiddenInResult(), getReduction(), rules);
     }
 }

@@ -92,7 +92,7 @@ public final class StringTerm extends Terminal {
 
     @Override
     public @NotNull StringTerm withHideTag(final boolean hide) {
-        return isHidden() == hide ? this : new StringTerm(hide, red, string, caseInsensitive);
+        return isHiddenInResult() == hide ? this : new StringTerm(hide, red, string, caseInsensitive);
     }
 
     @Override

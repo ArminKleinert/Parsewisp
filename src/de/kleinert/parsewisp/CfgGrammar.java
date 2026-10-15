@@ -23,7 +23,7 @@ public final class CfgGrammar extends GrammarBuilder {
     }
 
     private final @NotNull Rule optWhitespace =
-            makeCfgOptWhitespaceRhs().enableHideTag();
+            makeCfgOptWhitespaceRhs().hideInResult();
 
     private final Set<String> epsilonNames = Set.of("Epsilon", "epsilon", "EPSILON", "eps", "ε");
 
@@ -41,7 +41,7 @@ public final class CfgGrammar extends GrammarBuilder {
                 List.of(optWhitespace,
                         onceOrMore(nt("rule")) /// {@link #makeCfgRuleRhs}
                 ))
-                .hideTag();
+                .mergeToTop();
         return rulesRule;
     }
 
@@ -54,7 +54,7 @@ public final class CfgGrammar extends GrammarBuilder {
                                         nt("comment") /// {@link #makeCfgCommentRhs}
                                 )),
                                 string("*)")))
-                        .hideTag();
+                        .mergeToTop();
         return rulesRule;
     }
 
@@ -100,7 +100,7 @@ public final class CfgGrammar extends GrammarBuilder {
                                 nt("eof"), /// {@link #makeEofRhs}
                                 ntNt /// {@link #makeCfgNtRhs}
                         ))
-                        .hideTag();
+                        .mergeToTop();
         return rulesRule;
     }
 
@@ -114,7 +114,7 @@ public final class CfgGrammar extends GrammarBuilder {
                 concatNoEpsilonMoreThan1(
                         List.of(factorNt, /// {@link #makeCfgFactorRhs}
                                 optWhitespace,
-                                string("+").enableHideTag()));
+                                string("+").hideInResult()));
         return rulesRule;
     }
 
@@ -132,22 +132,22 @@ public final class CfgGrammar extends GrammarBuilder {
     private @NotNull Rule makeCfgParenRhs() {
         final @NotNull Rule rulesRule =
                 concatNoEpsilonMoreThan1(
-                        List.of(string("(").enableHideTag(),
+                        List.of(string("(").hideInResult(),
                                 optWhitespace,
                                 altOrOrdNt, /// {@link #makeCfgAltOrOrdRhs}
                                 optWhitespace,
-                                string(")").enableHideTag()));
+                                string(")").hideInResult()));
         return rulesRule;
     }
 
     private @NotNull Rule makeCfgHideRhs() {
         final @NotNull Rule rulesRule =
                 concatNoEpsilonMoreThan1(
-                        List.of(buffer(string("<").enableHideTag()),
+                        List.of(buffer(string("<").hideInResult()),
                                 optWhitespace,
                                 altOrOrdNt, /// {@link #makeCfgAltOrOrdRhs}
                                 optWhitespace,
-                                buffer(string(">").enableHideTag())));
+                                buffer(string(">").hideInResult())));
         return rulesRule;
     }
 
@@ -198,7 +198,7 @@ public final class CfgGrammar extends GrammarBuilder {
                         List.of(nt("rules"), /// {@link #makeCfgRulesRhs}
                                 altOrOrdNt /// {@link #makeCfgAltOrOrdRhs}
                         ))
-                        .hideTag();
+                        .mergeToTop();
         return rulesRule;
     }
 
@@ -254,7 +254,7 @@ public final class CfgGrammar extends GrammarBuilder {
     private @NotNull Rule makeCfgLookRhs() {
         final @NotNull Rule rulesRule =
                 concatNoEpsilonMoreThan1(
-                        List.of(string("&").enableHideTag(),
+                        List.of(string("&").hideInResult(),
                                 optWhitespace,
                                 factorNt /// {@link #makeCfgFactorRhs}
                         ));
@@ -269,7 +269,7 @@ public final class CfgGrammar extends GrammarBuilder {
     private @NotNull Rule makeCfgNegRhs() {
         final @NotNull Rule rulesRule =
                 concatNoEpsilonMoreThan1(
-                        List.of(string("!").enableHideTag(),
+                        List.of(string("!").hideInResult(),
                                 optWhitespace,
                                 factorNt /// {@link #makeCfgFactorRhs}
                         ));
@@ -284,11 +284,11 @@ public final class CfgGrammar extends GrammarBuilder {
     private @NotNull Rule makeCfgZeroOrMoreStdRhs() {
         final @NotNull Rule rule =
                 concatNoEpsilonMoreThan1(
-                        List.of(string("{").enableHideTag(),
+                        List.of(string("{").hideInResult(),
                                 optWhitespace,
                                 altOrOrdNt, /// {@link #makeCfgAltOrOrdRhs}
                                 optWhitespace,
-                                string("}").enableHideTag()));
+                                string("}").hideInResult()));
         return rule;
     }
 
@@ -302,7 +302,7 @@ public final class CfgGrammar extends GrammarBuilder {
                 concatNoEpsilonMoreThan1(
                         List.of(factorNt, /// {@link #makeCfgFactorRhs}
                                 optWhitespace,
-                                string("*").enableHideTag()));
+                                string("*").hideInResult()));
         return rule;
     }
 
@@ -314,11 +314,11 @@ public final class CfgGrammar extends GrammarBuilder {
     private @NotNull Rule makeCfgOptRhs() {
         final @NotNull Rule rule =
                 concatNoEpsilonMoreThan1(
-                        List.of(string("[").enableHideTag(),
+                        List.of(string("[").hideInResult(),
                                 optWhitespace,
                                 altOrOrdNt, /// {@link #makeCfgAltOrOrdRhs}
                                 optWhitespace,
-                                string("]").enableHideTag()));
+                                string("]").hideInResult()));
         return rule;
     }
 
@@ -332,7 +332,7 @@ public final class CfgGrammar extends GrammarBuilder {
                 concatNoEpsilonMoreThan1(
                         List.of(factorNt, /// {@link #makeCfgFactorRhs}
                                 optWhitespace,
-                                string("?").enableHideTag()));
+                                string("?").hideInResult()));
         return rule;
     }
 
@@ -340,18 +340,18 @@ public final class CfgGrammar extends GrammarBuilder {
         final @NotNull Rule rulesRule = alternationGuaranteeDistinctAndNotEmpty(
                 List.of(nt("alt"), /// {@link #makeCfgAltRhs}
                         nt("ord") /// {@link #makeCfgOrdRhs}
-                )).hideTag();
+                )).mergeToTop();
         return rulesRule;
     }
 
     private @NotNull Rule makeCfgHideNtRhs() {
         final @NotNull Rule rulesRule =
                 concatNoEpsilonMoreThan1(
-                        List.of(buffer(string("<").enableHideTag()),
+                        List.of(buffer(string("<").hideInResult()),
                                 optWhitespace,
                                 ntNt, /// {@link #makeCfgNtRhs}
                                 optWhitespace,
-                                buffer(string(">").enableHideTag())));
+                                buffer(string(">").hideInResult())));
         return rulesRule;
     }
 
@@ -364,7 +364,7 @@ public final class CfgGrammar extends GrammarBuilder {
                                                 nt("hide-nt") /// {@link #makeCfgHideNtRhs}
                                         )),
                                 optWhitespace,
-                                nt("rule-separator").enableHideTag(), /// {@link #makeCfgRuleSeparatorRhs}
+                                nt("rule-separator").hideInResult(), /// {@link #makeCfgRuleSeparatorRhs}
                                 optWhitespace,
                                 altOrOrdNt, /// {@link #makeCfgAltOrOrdRhs}
                                 alternationGuaranteeDistinctAndNotEmpty(
@@ -375,7 +375,7 @@ public final class CfgGrammar extends GrammarBuilder {
                                                                         List.of(string(";"),
                                                                                 string("."))),
                                                                 optWs))))
-                                        .enableHideTag()));
+                                        .hideInResult()));
         return rulesRule;
     }
 
@@ -392,7 +392,7 @@ public final class CfgGrammar extends GrammarBuilder {
                                 zeroOrMore(
                                         concatNoEpsilonMoreThan1(
                                                 List.of(optWhitespace,
-                                                        string("/").enableHideTag(),
+                                                        string("/").hideInResult(),
                                                         optWhitespace,
                                                         catNt)))));
         return rulesRule;
@@ -411,7 +411,7 @@ public final class CfgGrammar extends GrammarBuilder {
                                 zeroOrMore(
                                         concatNoEpsilonMoreThan1(
                                                 List.of(optWhitespace,
-                                                        string("|").enableHideTag(),
+                                                        string("|").hideInResult(),
                                                         optWhitespace,
                                                         catNt)))));
         return rulesRule;
@@ -449,7 +449,7 @@ public final class CfgGrammar extends GrammarBuilder {
         final @NotNull Rule rulesRule =
                 concatNoEpsilonMoreThan1(
                         List.of(factorLookNeg, optWhitespace,
-                                string("-").enableHideTag(),
+                                string("-").hideInResult(),
                                 optWhitespace,
                                 alternationGuaranteeDistinctAndNotEmpty(List.of(factorLookNeg, nt("exclude")))));
         return rulesRule;

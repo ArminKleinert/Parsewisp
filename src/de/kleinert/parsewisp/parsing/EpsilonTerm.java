@@ -23,7 +23,7 @@ public final class EpsilonTerm extends Terminal {
     }
 
     /**
-     * The default is always buffered. {@link #getReduction()} and {@link #isHidden()} have their default values.
+     * The default is always buffered. {@link #getReduction()} and {@link #isHiddenInResult()} have their default values.
      *
      * @return The canonical instance of Epsilon.
      * @since 0.9.7
@@ -47,7 +47,7 @@ public final class EpsilonTerm extends Terminal {
 
     @Override
     public @NotNull EpsilonTerm withHideTag(final boolean hide) {
-        return isHidden() == hide ? this : new EpsilonTerm(hide, red);
+        return isHiddenInResult() == hide ? this : new EpsilonTerm(hide, red);
     }
 
     @Override

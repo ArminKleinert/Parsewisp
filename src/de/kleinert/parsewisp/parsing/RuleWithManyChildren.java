@@ -49,11 +49,11 @@ public sealed abstract class RuleWithManyChildren
     }
 
     @NotNull
-    public RuleWithManyChildren unhideContent() {
+    public RuleWithManyChildren includeInResult() {
         return ((RuleWithManyChildren) withHideTag(false)).withRules(
                 getRules()
                         .stream()
-                        .map(Rule::unhideContent)
+                        .map(Rule::includeInResult)
                         .toList());
     }
 
@@ -72,14 +72,14 @@ public sealed abstract class RuleWithManyChildren
         if (hashCode() != o.hashCode()) return false;
         final @NotNull var that = (RuleWithManyChildren) o;
         if (!Objects.equals(getReduction(), that.getReduction())) return false;
-        if (!Objects.equals(isHidden(), that.isHidden())) return false;
+        if (!Objects.equals(isHiddenInResult(), that.isHiddenInResult())) return false;
         return Objects.equals(getRules(), that.getRules());
     }
 
     @Override
     public int hashCode() {
         if (bufferedHashCode == Long.MIN_VALUE)
-            bufferedHashCode = Objects.hash(getClass(), getReduction(), isHidden(), getRules());
+            bufferedHashCode = Objects.hash(getClass(), getReduction(), isHiddenInResult(), getRules());
         return (int) bufferedHashCode;
     }
 }

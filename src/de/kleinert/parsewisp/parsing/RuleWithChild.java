@@ -49,8 +49,8 @@ public sealed abstract class RuleWithChild
     public abstract @NotNull RuleWithChild withRule(final @NotNull Rule rule);
 
     @Override
-    public @NotNull Rule unhideContent() {
-        return ((RuleWithChild) withHideTag(false)).withRule(rule.unhideContent());
+    public @NotNull Rule includeInResult() {
+        return ((RuleWithChild) withHideTag(false)).withRule(rule.includeInResult());
     }
 
     @Override
@@ -59,14 +59,14 @@ public sealed abstract class RuleWithChild
         if (hashCode() != o.hashCode()) return false;
         final @NotNull var that = (RuleWithChild) o;
         if (!Objects.equals(getReduction(), that.getReduction())) return false;
-        if (!Objects.equals(isHidden(), that.isHidden())) return false;
+        if (!Objects.equals(isHiddenInResult(), that.isHiddenInResult())) return false;
         return Objects.equals(getRule(), that.getRule());
     }
 
     @Override
     public int hashCode() {
         if (bufferedHashCode == Long.MIN_VALUE)
-            bufferedHashCode = Objects.hash(getClass(), getReduction(), isHidden(), getRule());
+            bufferedHashCode = Objects.hash(getClass(), getReduction(), isHiddenInResult(), getRule());
         return (int) bufferedHashCode;
     }
 }

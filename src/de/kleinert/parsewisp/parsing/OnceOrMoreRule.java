@@ -111,7 +111,7 @@ public final class OnceOrMoreRule extends RuleWithChild {
 
     @Override
     public @NotNull OnceOrMoreRule withHideTag(boolean hide) {
-        return isHidden() == hide ? this : new OnceOrMoreRule(hide, red, rule);
+        return isHiddenInResult() == hide ? this : new OnceOrMoreRule(hide, red, rule);
     }
 
     @Override

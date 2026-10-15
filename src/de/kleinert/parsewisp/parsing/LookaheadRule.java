@@ -51,7 +51,7 @@ public final class LookaheadRule extends RuleWithChild {
 
     @Override
     public @NotNull LookaheadRule withHideTag(final boolean hide) {
-        return isHidden() == hide ? this : new LookaheadRule(hide, red, rule);
+        return isHiddenInResult() == hide ? this : new LookaheadRule(hide, red, rule);
     }
 
     @Override

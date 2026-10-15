@@ -207,7 +207,7 @@ public final class Gll {
             @NotNull ParseMessage result) {
         final @NotNull TrampolineListenerNode node = getOrCreateListenerNode(nodeKey);
         final @NotNull Rule rule = nodeKey.rule();
-        if (rule.isHidden()) {
+        if (rule.isHiddenInResult()) {
             result = result.reset();
         }
         if (rule.getReduction().getReductionType() != ReductionType.ReductionTypesAvailable.INITIAL) {
@@ -338,13 +338,14 @@ public final class Gll {
     /**
      * This method should not be called directly. Use {@link Parser#parses(String)} or {@link Parser#parses(String, ParsingOptions)} instead.
      *
-     * @param grammar            The grammar.
-     * @param start              The name of the start production.
-     * @param text               The text.
-     * @param partial            Whether to include partial results.
-     * @param iterativeDeepening Iteratively deepens the evaluation of {@link RegexTerm#parse}.
-     * @param errorIfEmpty       If true, return an error if the parsing failed. By default, an empty list would be returned.
-     * @param printer            The printer used for the parser. In the current version, it's used to format failure info if parsing fails.
+     * @param grammar                    The grammar.
+     * @param start                      The name of the start production.
+     * @param text                       The text.
+     * @param partial                    Whether to include partial results.
+     * @param iterativeDeepening         Iteratively deepens the evaluation of {@link RegexTerm#parse}.
+     * @param errorIfEmpty               If true, return an error if the parsing failed. By default, an empty list would be returned.
+     * @param printer                    The printer used for the parser. In the current version, it's used to format failure info if parsing fails.
+     * @param stopEarlyOnEmptyRepetition Whether to end resolution of {@link VariableRepetitionRule} parses early when the rule first successfully parses an empty string.
      * @return The parse forest.
      * @see Parser#parses(String)
      * @see Parser#parses(String, ParsingOptions)
@@ -412,12 +413,13 @@ public final class Gll {
     /**
      * This method should not be called directly. Use {@link Parser#parses(String, ParsingOptions)} with {@link ParsingOptions#embedFailureInParseTree()} set to true instead.
      *
-     * @param grammar            The grammar.
-     * @param start              The name of the start production.
-     * @param text               The text.
-     * @param partial            Whether to include partial results.
-     * @param iterativeDeepening Iteratively deepens the evaluation of {@link RegexTerm#parse}.
-     * @param printer            The printer used for the parser. In the current version, it's used to format failure info if parsing fails.
+     * @param grammar                    The grammar.
+     * @param start                      The name of the start production.
+     * @param text                       The text.
+     * @param partial                    Whether to include partial results.
+     * @param iterativeDeepening         Iteratively deepens the evaluation of {@link RegexTerm#parse}.
+     * @param printer                    The printer used for the parser. In the current version, it's used to format failure info if parsing fails.
+     * @param stopEarlyOnEmptyRepetition Whether to end resolution of {@link VariableRepetitionRule} parses early when the rule first successfully parses an empty string.
      * @return The parse forest.
      * @see Parser#parses(String, ParsingOptions)
      * @see ParsingOptions#embedFailureInParseTree()

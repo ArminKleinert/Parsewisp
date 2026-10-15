@@ -40,7 +40,7 @@ public class Unhide {
     }
 
     /**
-     * Applies {@link Rule#unhideContent} to all entries in the grammar.
+     * Applies {@link Rule#includeInResult} to all entries in the grammar.
      *
      * @param grammar The grammar.
      * @return The new grammar.
@@ -50,7 +50,7 @@ public class Unhide {
     public static @NotNull Grammar unhideContent(final @NotNull Grammar grammar) {
         final @NotNull LinkedHashMap<Sym, Rule> res = new LinkedHashMap<>();
         for (final @NotNull var symRuleEntry : grammar.entrySet()) {
-            res.put(symRuleEntry.getKey(), symRuleEntry.getValue().unhideContent());
+            res.put(symRuleEntry.getKey(), symRuleEntry.getValue().includeInResult());
         }
         return new Grammar(grammar.getStartSym(), res);
     }
@@ -75,7 +75,7 @@ public class Unhide {
 
     /**
      * Applies the reduction-type to all entries in the grammar
-     * and applies {@link Rule#unhideContent()}.
+     * and applies {@link Rule#includeInResult()}.
      *
      * @param grammar The grammar.
      * @return The new grammar.
@@ -86,7 +86,7 @@ public class Unhide {
         for (final @NotNull var symRuleEntry : grammar.entrySet()) {
             final @NotNull var key = symRuleEntry.getKey();
             final @NotNull var reduction = ReductionType.nonTerminalReduction(key);
-            final @NotNull var p = symRuleEntry.getValue().unhideContent().withReduction(reduction);
+            final @NotNull var p = symRuleEntry.getValue().includeInResult().withReduction(reduction);
             res.put(key, p);
         }
         return new Grammar(grammar.getStartSym(), res);

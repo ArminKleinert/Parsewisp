@@ -53,7 +53,7 @@ public final class EOFTerm extends Terminal {
 
     @Override
     public @NotNull EOFTerm withHideTag(final boolean hide) {
-        return isHidden() == hide ? this : new EOFTerm(hide, red);
+        return isHiddenInResult() == hide ? this : new EOFTerm(hide, red);
     }
 
     @Override

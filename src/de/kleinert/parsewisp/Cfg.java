@@ -82,7 +82,7 @@ final class Cfg {
             if (Objects.equals(Sym.sym("hide-nt"), nt.getTag().content())) {
                 content = ((ParseTree) content.content()).getContent().get(0);
                 key = Sym.sym(content.content().toString());
-                rule = ((Rule) buildRule(altOrOrd)).hideTag();
+                rule = ((Rule) buildRule(altOrOrd)).mergeToTop();
             } else {
                 key = Sym.sym((String) content.content());
                 rule = (Rule) buildRule(altOrOrd);
@@ -131,7 +131,7 @@ final class Cfg {
                     }
                     case "hide" -> {
                         return ((Rule) buildRule(
-                                ((Node.NodeParseTree) tree.getContent().get(0)).content())).enableHideTag();
+                                ((Node.NodeParseTree) tree.getContent().get(0)).content())).hideInResult();
                     }
                     case "cat" -> {
                         return cat(tree

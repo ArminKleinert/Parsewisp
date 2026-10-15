@@ -129,16 +129,16 @@ public final class ConcatRule extends RuleWithManyChildren {
 
     @Override
     public @NotNull Rule withHideTag(boolean hide) {
-        return isHidden() == hide ? this : new ConcatRule(hide, getReduction(), getRules());
+        return isHiddenInResult() == hide ? this : new ConcatRule(hide, getReduction(), getRules());
     }
 
     @Override
     public @NotNull Rule withReduction(@NotNull ReductionType red) {
-        return getReduction() == red ? this : new ConcatRule(isHidden(), red, getRules());
+        return getReduction() == red ? this : new ConcatRule(isHiddenInResult(), red, getRules());
     }
 
     @Override
     public @NotNull ConcatRule withRules(@NotNull List<@NotNull Rule> rules) {
-        return new ConcatRule(isHidden(), getReduction(), rules);
+        return new ConcatRule(isHiddenInResult(), getReduction(), rules);
     }
 }

@@ -188,7 +188,7 @@ public final class VariableRepetitionRule extends RuleWithChild {
 
     @Override
     public @NotNull VariableRepetitionRule withHideTag(boolean hide) {
-        return isHidden() == hide ? this : new VariableRepetitionRule(hide, red, rule, min, max);
+        return isHiddenInResult() == hide ? this : new VariableRepetitionRule(hide, red, rule, min, max);
     }
 
     @Override
