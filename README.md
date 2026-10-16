@@ -118,3 +118,31 @@ These are priorities that directly impact the usage.
 - Keep output memory small
 - Use only the Java standard libraries
 - Determinism
+
+
+## Known issues
+
+The following will not work:
+```java
+class MyFirstParser {
+    public static void main(String[] args) {
+        final var p = Parsewisp.parser("S = { A | B }\nA = 'a'\nB = 'a'");
+        var res = p.parses("a".repeat(30));
+        var iter = res.iterator();
+        System.out.println(iter.hasNext());
+        System.out.println(iter.next());
+        System.out.println(iter.hasNext());
+        System.out.println(iter.next()); // << Still works here
+        System.out.println(iter.hasNext()); // << Gives up
+    }
+}
+```
+The same bug exists in Instaparse:
+```clojure
+(let [p (parser "S = { A | B }\nA = 'a'\nB = 'a'")
+      res (parses p "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")]
+  (println (count (take 1 res)))
+  (println (count (take 2 res)))
+  (println (count (take 3 res)))
+  )
+```

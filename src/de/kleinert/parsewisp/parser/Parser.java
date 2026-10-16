@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param grammar         The grammar.
  * @param startProduction The first production to try.
- * @param printer The printer for the grammar. Used in {@link #show()}.
+ * @param printer         The printer for the grammar. Used in {@link #show()}.
  * @since 0.9.7
  */
 public record Parser(@NotNull Grammar grammar,
@@ -127,13 +127,13 @@ public record Parser(@NotNull Grammar grammar,
             return Gll.parsesEmbedFailure(
                     unhiddenParser.grammar(), startProduction, text,
                     usePartial, options.iterativeDeepening(), printer,
-                    options.stopEarlyOnEmptyRepetition());
+                    options.stopEarlyOnEmptyRepetition(), options.resultLimit());
         } else {
             return Gll.parses(
                     unhiddenParser.grammar(), startProduction, text,
                     usePartial, options.iterativeDeepening(),
                     options.failureIfEmpty(), printer,
-                    options.stopEarlyOnEmptyRepetition());
+                    options.stopEarlyOnEmptyRepetition(), options.resultLimit());
         }
     }
 

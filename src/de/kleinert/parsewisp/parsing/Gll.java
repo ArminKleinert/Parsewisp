@@ -110,10 +110,6 @@ public final class Gll {
         top.execute();
     }
 
-    private @NotNull ParsesResult.LazyResultList run() {
-        return run(Integer.MAX_VALUE);
-    }
-
     private @NotNull ParsesResult.LazyResultList run(
             final int maxResults) {
         final var foundResult = new AtomicBoolean(false);
@@ -321,12 +317,13 @@ public final class Gll {
             final boolean partial,
             final boolean iterativeDeepening,
             final @NotNull GrammarPrinter printer,
-            final boolean stopRepetitionsIfInfiniteRepetitionHappens) {
+            final boolean stopRepetitionsIfInfiniteRepetitionHappens,
+            final int resultLimit) {
         final @NotNull var tramp = new Tramp(grammar, text, 0);
         final @NotNull var parser = NonTerminal.create(start);
         var gll = new Gll(tramp, iterativeDeepening, printer, stopRepetitionsIfInfiniteRepetitionHappens);
         gll.startParser(tramp, parser, partial);
-        final @NotNull var allParses = gll.run();
+        final @NotNull var allParses = gll.run(resultLimit);
         return ParsesResult.make(allParses);
     }
 
@@ -346,6 +343,7 @@ public final class Gll {
      * @param errorIfEmpty               If true, return an error if the parsing failed. By default, an empty list would be returned.
      * @param printer                    The printer used for the parser. In the current version, it's used to format failure info if parsing fails.
      * @param stopEarlyOnEmptyRepetition Whether to end resolution of {@link VariableRepetitionRule} parses early when the rule first successfully parses an empty string.
+     * @param resultLimit                Maximum number of results. See {@link ParsingOptions#resultLimit()}.
      * @return The parse forest.
      * @see Parser#parses(String)
      * @see Parser#parses(String, ParsingOptions)
@@ -359,12 +357,13 @@ public final class Gll {
             final boolean iterativeDeepening,
             final boolean errorIfEmpty,
             final @NotNull GrammarPrinter printer,
-            final boolean stopEarlyOnEmptyRepetition) {
+            final boolean stopEarlyOnEmptyRepetition,
+            final int resultLimit) {
         final @NotNull var tramp = new Tramp(grammar, text);
         final @NotNull var parser = NonTerminal.create(start);
         final @NotNull var gll = new Gll(tramp, iterativeDeepening, printer, stopEarlyOnEmptyRepetition);
         gll.startParser(tramp, parser, partial);
-        final @NotNull var allParses = gll.run();
+        final @NotNull var allParses = gll.run(resultLimit);
         if (errorIfEmpty && allParses.isEmpty()) {
             if (tramp.getFailure() == null)
                 throw new IllegalStateException("Parsing failed. Perhaps the grammar was non-productive?");
@@ -420,6 +419,7 @@ public final class Gll {
      * @param iterativeDeepening         Iteratively deepens the evaluation of {@link RegexTerm#parse}.
      * @param printer                    The printer used for the parser. In the current version, it's used to format failure info if parsing fails.
      * @param stopEarlyOnEmptyRepetition Whether to end resolution of {@link VariableRepetitionRule} parses early when the rule first successfully parses an empty string.
+     * @param resultLimit                Maximum number of results. See {@link ParsingOptions#resultLimit()}.
      * @return The parse forest.
      * @see Parser#parses(String, ParsingOptions)
      * @see ParsingOptions#embedFailureInParseTree()
@@ -432,14 +432,15 @@ public final class Gll {
             final boolean partial,
             final boolean iterativeDeepening,
             final @NotNull GrammarPrinter printer,
-            final boolean stopEarlyOnEmptyRepetition) {
+            final boolean stopEarlyOnEmptyRepetition,
+            final int resultLimit) {
         final @NotNull var allParses = parses(
                 grammar, start, text, partial, iterativeDeepening, false, printer,
-                stopEarlyOnEmptyRepetition);
+                stopEarlyOnEmptyRepetition, resultLimit);
         if (!allParses.castToParsesSuccess().isEmpty()) return ParsesResult.make(allParses);
         return parsesEmbedFailureAfterFail(
                 grammar, start, text, partial, iterativeDeepening, printer,
-                stopEarlyOnEmptyRepetition);
+                stopEarlyOnEmptyRepetition, resultLimit);
     }
 
     private static @NotNull ParseResult parseEmbedFailureAfterFail(

@@ -26,6 +26,7 @@ class NewFeaturesTest {
         System.out.println(p.grammar().getProduction(Sym.sym("S")));
         System.out.println(p.parses("ab"));
     }
+
     @Test
     void test00() {
         var p = Parsewisp.parser(
@@ -196,8 +197,8 @@ class NewFeaturesTest {
                     PT.create("S", PT.create("r1", "a"), PT.create("r2", "a")),
                     PT.create("S", PT.create("r2", "a"), PT.create("r2", "a"))
             );
-//            System.out.println("Expect: "+possibleParses);
-//            System.out.println("Have:   "+Parsewisp.parses(p, text));
+            System.out.println("Expect: "+possibleParses);
+            System.out.println("Have:   "+p.parses(text));
         }
     }
 

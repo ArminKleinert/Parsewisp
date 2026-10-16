@@ -4,6 +4,8 @@ import de.kleinert.parsewisp.collections.LazySupplierList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 class LazySupplierListTest {
     @Test
     void simpleTest() {
@@ -35,5 +37,15 @@ class LazySupplierListTest {
         Assertions.assertTrue(lsl.isFullyEvaluated());
 
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> lsl.get(1));
+    }
+
+    @Test
+    void streamOnInfinite() {
+        // The list is not infinite, but it would still be too big to fit into an array, so it's practically infinite.
+
+        //noinspection MismatchedQueryAndUpdateOfCollection
+        final var lsl = new LazySupplierList<>((i) -> i, Integer.MAX_VALUE);
+
+        Assertions.assertEquals(List.of(0, 1, 2, 3, 4), lsl.stream().limit(5).toList());
     }
 }

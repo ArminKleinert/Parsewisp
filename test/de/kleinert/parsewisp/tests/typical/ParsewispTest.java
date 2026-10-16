@@ -490,7 +490,8 @@ class ParsewispTest {
                 ParsingOptions.DEFAULT_EMBED_FAILURES,
                 ParsingOptions.DEFAULT_ITERATIVE_DEEPENING,
                 ParsingOptions.DEFAULT_FAILURE_IF_EMPTY,
-                ParsingOptions.DEFAULT_STOP_EARLY_ON_EMPTY_REPETITION);
+                ParsingOptions.DEFAULT_STOP_EARLY_ON_EMPTY_REPETITION,
+                ParsingOptions.DEFAULT_RESULT_LIMIT);
         {
             final @NotNull var grammar = """
                     S  = (r1 / r2 / r3)*

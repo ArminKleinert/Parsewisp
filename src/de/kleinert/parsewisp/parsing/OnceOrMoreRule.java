@@ -86,14 +86,14 @@ public final class OnceOrMoreRule extends RuleWithChild {
         return result -> {
             final @Nullable var parsedResult = result.getResult();
             final var continueIndex = result.index();
+            final var newResultsSoFar = resultsSoFar.appendOrConcat(parsedResult);
             if (continueIndex == prevIndex) {
                 if (resultsSoFar.isEmpty()) {
-                    runner.pushSuccessMessage(nodeKey, resultsSoFar.appendOrConcat(parsedResult), continueIndex);
+                    runner.pushSuccessMessage(nodeKey, newResultsSoFar, continueIndex);
                     //runner.pushSuccessMessageWithoutValue(nodeKey, continueIndex);
                 }
                 return;
             }
-            final var newResultsSoFar = resultsSoFar.appendOrConcat(parsedResult);
             if (continueIndex == runner.tramp().getText().length()) {
                 runner.pushSuccessMessage(nodeKey, newResultsSoFar, continueIndex);
             } else {
