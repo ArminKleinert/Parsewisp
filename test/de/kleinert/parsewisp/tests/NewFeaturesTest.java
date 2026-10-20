@@ -1,7 +1,6 @@
 package de.kleinert.parsewisp.tests;
 
 import de.kleinert.parsewisp.Parsewisp;
-import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.grammar.GrammarPrinter;
 import de.kleinert.parsewisp.parser.Parser;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
@@ -18,15 +17,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.regex.Pattern;
 
 class NewFeaturesTest {
     @Test
-    void test10() {
-        var p = Parsewisp.parser("S = 'a' E+ 'b' ; E = eps");
-        System.out.println(p.grammar().getProduction(Sym.sym("S")));
-        System.out.println(p.parses("ab"));
+    void t10 () {
+        var pattern = Parsewisp.parser("WS = (#'\\s+' | '//' #'[^\\n]*' ('\\n' | EOF) | #'/\\*.*\\*/') WS?");
+        System.out.println(pattern.parse("/* abc */ // a\n //"));
     }
-
     @Test
     void test00() {
         var p = Parsewisp.parser(

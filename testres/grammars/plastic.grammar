@@ -80,7 +80,7 @@ ArrayValue = WS <'['> WS ((Expression WS Separator WS)* Expression)? WS <']'> WS
 
 InvocationOrValue = Value InvocationArgs* Body?
 
-<WS> = <#'[\s]*'> | <(('//' #'[^\n]*' ('\n' | EOF)) WS)> | <('/*' #'.*' '*/' WS)>
+<WS> = <{ #'\s+' | '//' #'[^\n]*' ('\n' | EOF) | "/*" #"(?:(?!\*/)[\s\S])*" "*/" }>
 
 
 
