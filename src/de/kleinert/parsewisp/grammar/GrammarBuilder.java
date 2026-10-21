@@ -30,8 +30,8 @@ import java.util.stream.Stream;
  *         var gFromGB = new GrammarBuilder(ParserCreationOptions.getDefault()) {
  *             @Override
  *             public void make() {
- *                 addProduction("S", concat(Sym.sym("NUMBER"), repeatMin(nt(Sym.sym("NUMBER")), 0)));
- *                 addProduction("NUMBER", alternation("0", "1", "2", "3", "4", "5", "6", "7", "8", "9"));
+ *                 addProduction("S", cat(nt("NUMBER"), zeroOrMore(nt(Sym.sym("NUMBER")))));
+ *                 addProduction("NUMBER", alt("0", "1", "2", "3", "4", "5", "6", "7", "8", "9"));
  *             }
  *         }.build();
  *
@@ -120,13 +120,15 @@ public abstract class GrammarBuilder {
 
         var resultProductions = new LinkedHashMap<>(productions);
 
-        if (startProduction == null) {
-            start = resultProductions.keySet().iterator().next();
-        } else {
+        if (startProduction != null) {
             start = startProduction;
+        } else if (this.startProduction != null) {
+            start = this.startProduction;
+        } else {
+            start = resultProductions.keySet().iterator().next();
         }
 
-        compress(resultProductions);
+        //compress(resultProductions);
 
         ReductionType.applyStandardReductionToProductions(resultProductions);
         if (wsParser != null) {
@@ -213,47 +215,6 @@ public abstract class GrammarBuilder {
     protected final void addProduction(
             final @NotNull String lhs, final @NotNull Rule rhs) {
         addProduction(Sym.sym(lhs), rhs);
-    }
-
-    /**
-     * Creates a rule depending on the input's specific type.
-     * <ul>
-     * <li>For {@code null}, use {@link #eps()}.</li>
-     * <li>For {@code Rule}, return the input.</li>
-     * <li>For {@code String}, use {@link #string(String)}.</li>
-     * <li>For {@code Pattern}, use {@link #regex(Pattern)}.</li>
-     * <li>For {@code Sym}, use {@link #nt(Sym)}.</li>
-     * <li>For {@code List}, use {@link #cat(List)}.</li>
-     * <li>For {@code Set}, use {@link #alt(Rule, Rule...)}.</li>
-     * </ul>
-     *
-     * @param c Input object.
-     * @return A rule depending on the input's type.
-     * @since 0.9.7
-     */
-    protected final @NotNull Rule of(final @Nullable Object c) {
-        if (c == null) {
-            return EpsilonTerm.getDefault();
-        }
-        if (c instanceof Rule) {
-            return (Rule) c;
-        }
-        if (c instanceof String) {
-            return string((String) c);
-        }
-        if (c instanceof Pattern) {
-            return regex((Pattern) c);
-        }
-        if (c instanceof Sym) {
-            return nt((Sym) c);
-        }
-        if (c instanceof List<?>) {
-            return cat(((List<?>) c).stream().map(this::of).toList());
-        }
-        if (c instanceof Set<?>) {
-            return alt(((Set<?>) c).stream().distinct().map(this::of).toList());
-        }
-        throw new IllegalArgumentException(c.getClass().getName());
     }
 
     /**
@@ -582,7 +543,7 @@ public abstract class GrammarBuilder {
     }
 
     /**
-     * Creates a {@link ZeroOrMoreRule} or an {@link EpsilonTerm} if the input is epsilon.
+     * Creates a {@link VariableRepetitionRule} or an {@link EpsilonTerm} if the input is epsilon.
      * <ul>
      * <li>If minimum and maximum amount of repetitions is set to 0, return an {@link EpsilonTerm}.</li>
      * <li>If minimum and maximum amount of repetitions is set to 1, may return the input rule.</li>
@@ -598,12 +559,11 @@ public abstract class GrammarBuilder {
      */
     protected final @NotNull Rule rep(
             final @NotNull Rule rule, final int min, final int max) {
-        var r = of(rule);
-        return VariableRepetitionRule.create(r, min, max);
+        return VariableRepetitionRule.create((rule), min, max);
     }
 
     /**
-     * Equivalent to {@code repeat(rule, exact, exact)}.
+     * Equivalent to {@code rep(rule, exact, exact)}.
      *
      * @param rule  The rule.
      * @param exact Minimum and maximum number of repetitions.
@@ -632,7 +592,7 @@ public abstract class GrammarBuilder {
     }
 
     /**
-     * Equivalent to {@code repeat(rule, min, Integer.MAX_VALUE)}.
+     * Equivalent to {@code rep(rule, min, Integer.MAX_VALUE)}.
      *
      * @param rule The rule.
      * @param min  Minimum number of repetitions.
@@ -646,7 +606,7 @@ public abstract class GrammarBuilder {
     }
 
     /**
-     * Equivalent to {@code repeat(rule, 0, max)}.
+     * Equivalent to {@code rep(rule, 0, max)}.
      *
      * @param rule The rule.
      * @param max  Maximum number of repetitions.
@@ -667,7 +627,7 @@ public abstract class GrammarBuilder {
      * @since 0.9.7
      */
     protected final @NotNull Rule zeroOrMore(final @NotNull Rule rule) {
-        return rep(rule, 0, Integer.MAX_VALUE);
+        return ZeroOrMoreRule.create(rule);
     }
 
     /**
@@ -678,7 +638,7 @@ public abstract class GrammarBuilder {
      * @since 0.9.7
      */
     protected final @NotNull Rule onceOrMore(final @NotNull Rule rule) {
-        return rep(rule, 1, Integer.MAX_VALUE);
+        return OnceOrMoreRule.create(rule);
     }
 
     /**
@@ -690,74 +650,6 @@ public abstract class GrammarBuilder {
      */
     protected final @NotNull Rule opt(final @NotNull Rule rule) {
         return OptionalRule.create(rule);
-    }
-
-    private void compress(final @NotNull LinkedHashMap<Sym, Rule> productions) {
-        for (final @NotNull var symRuleEntry : productions.entrySet()) {
-            final @NotNull var value = symRuleEntry.getValue();
-            final @NotNull var compressedRule = compressRule(value);
-            if (compressedRule != value) {// Yes, I need a reference equality check here.
-                symRuleEntry.setValue(compressedRule);
-            }
-        }
-    }
-
-    private @NotNull Rule compressRule(final @NotNull Rule originalRule) {
-        if (originalRule instanceof VariableRepetitionRule) {
-            //noinspection PatternVariableCanBeUsed
-            final var variableRepetitionRule = (VariableRepetitionRule) originalRule;
-            final var min = variableRepetitionRule.getMin();
-            final var max = variableRepetitionRule.getMax();
-            final @NotNull var rule = compressRule(variableRepetitionRule.getRule());
-
-            Rule newRule = null;
-            if (max == Integer.MAX_VALUE) {
-                if (min == 0) newRule = ZeroOrMoreRule.create(rule);
-                else if (min == 1) newRule = OnceOrMoreRule.create(rule);
-            } else if (min == 0 && max == 1) {
-                newRule = OptionalRule.create(rule);
-            }
-            if (newRule == null) {
-                newRule = variableRepetitionRule;
-            }
-
-            return newRule
-                    .withHideTag(variableRepetitionRule.isHiddenInResult())
-                    .withReduction(variableRepetitionRule.getReduction());
-        }
-        if (originalRule instanceof ExclusionRule && ((ExclusionRule) originalRule).getExcluded() instanceof ExclusionRule) {
-            // This could be removed. It transforms nested exclusion rules to reduce the number of exclusions.
-            // The rule `r1 - (r2 - r3)` is equivalent to `(r1 - r2) | r3`.
-            // The same is *not* true for `(r1 - r2) - r3`.
-            // E.g. consider `S = #"[0-9]+" - (#"1+" - "11")`
-            //      Input "11" will match #"[0-9]+" and check the exclusion. It will then not match the exclusion because it is excluded from the exclusion.
-            // Now the equivalent `S = (#"[0-9]+" - #"1+") | "11"`:
-            //      Input "11" will not match `(#"[0-9]+" - #"1+")`, but will then match `"11"`.
-            // But for `S = (#"[0-9]+" - #"1+") - "11"`:
-            //      Input "11" will not match `(#"[0-9]+" - #"1+")` and never even reach the exclusion check.
-            var ruleExpected = ((ExclusionRule) originalRule).getExpected();
-            var ruleExcluded = (ExclusionRule) ((ExclusionRule) originalRule).getExcluded();
-            return AlternationRule.create(List.of(
-                    ExclusionRule.create(compressRule(ruleExpected), compressRule(ruleExcluded.getExpected())),
-                    compressRule(ruleExcluded.getExcluded())
-            ));
-        }
-        if (originalRule instanceof RuleWithManyChildren) {
-            //noinspection PatternVariableCanBeUsed
-            var ruleWithManyChildren = (RuleWithManyChildren) originalRule;
-            return ruleWithManyChildren
-                    .withRules(ruleWithManyChildren
-                            .getRules()
-                            .stream()
-                            .map(this::compressRule)
-                            .toList());
-        }
-        if (originalRule instanceof RuleWithChild) {
-            //noinspection PatternVariableCanBeUsed
-            var ruleWithChild = (RuleWithChild) originalRule;
-            return ruleWithChild.withRule(compressRule(ruleWithChild.getRule()));
-        }
-        return originalRule;
     }
 
     private @NotNull Rule autoWhitespaceHelper(
@@ -847,12 +739,10 @@ public abstract class GrammarBuilder {
         if (rule instanceof StringTerm) {
             //noinspection unchecked
             return (T) buffer.getOrAdd((StringTerm) rule);
-        }
-        if (rule instanceof RegexTerm) {
+        } else if (rule instanceof RegexTerm) {
             //noinspection unchecked
             return (T) buffer.getOrAdd((RegexTerm) rule);
-        }
-        if (rule instanceof NonTerminal) {
+        } else if (rule instanceof NonTerminal) {
             //noinspection unchecked
             return (T) buffer.getOrAdd((NonTerminal) rule);
         }

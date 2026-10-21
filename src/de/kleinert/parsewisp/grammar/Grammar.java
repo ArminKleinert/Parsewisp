@@ -50,10 +50,9 @@ public final class Grammar extends LinkedHashMap<@NotNull Sym, Rule> {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Grammar g))
-            return false;
-
-        if (g.size() != size())
+        if (!(o instanceof Grammar g)
+                || g.size() != size()
+                || !Objects.equals(this.startSym, g.startSym))
             return false;
 
         for (Map.Entry<@NotNull Sym, Rule> symRuleEntry : entrySet()) {

@@ -49,16 +49,26 @@ public final class ExclusionRule extends RuleWithManyChildren {
         this.expected = expected;
         this.excluded = excluded;
 
-        Predicate<Rule> stringOrRegexPredicate = it -> it instanceof StringTerm || it instanceof RegexTerm;
+        Predicate<Rule> stringOrRegexPredicate =
+                it -> it instanceof StringTerm
+                        || it instanceof RegexTerm
+                        || it instanceof EpsilonTerm;
 
-        if (excluded instanceof StringTerm) mode = 1;
-        else if (excluded instanceof RegexTerm) mode = 2;
-        else if (excluded instanceof AlternationRule && ((AlternationRule) excluded).rules.stream().allMatch(stringOrRegexPredicate))
+        if (excluded instanceof StringTerm) {
+            mode = 1;
+        } else if (excluded instanceof RegexTerm) {
+            mode = 2;
+        } else if (excluded instanceof AlternationRule
+                && ((AlternationRule) excluded).rules.stream().allMatch(stringOrRegexPredicate)) {
             mode = 3;
-        else if (excluded instanceof ConcatRule && ((ConcatRule) excluded).rules.stream().allMatch(stringOrRegexPredicate))
+        } else if (excluded instanceof ConcatRule
+                && ((ConcatRule) excluded).rules.stream().allMatch(stringOrRegexPredicate)) {
             mode = 4;
-        else if (excluded instanceof EpsilonTerm) mode = 5;
-        else mode = 0;
+        } else if (excluded instanceof EpsilonTerm) {
+            mode = 5;
+        } else {
+            mode = 0;
+        }
     }
 
     /**
@@ -143,6 +153,7 @@ public final class ExclusionRule extends RuleWithManyChildren {
 
     private boolean reparseStrOrRegex(String subs, Rule r1) {
         if (r1 instanceof StringTerm) {
+            //noinspection PatternVariableCanBeUsed
             var r = (StringTerm) r1;
             return r.isCaseInsensitive()
                     ? r.getString().equalsIgnoreCase(subs)
