@@ -2,7 +2,6 @@ package de.kleinert.parsewisp.tests.typical.grammars;
 
 import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.parser.Parser;
-import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,11 +18,6 @@ import java.nio.file.Path;
 class TestGrammarJava {
     private @NotNull Parser parser() {
         try {
-//            return Parsewisp.parser(
-//                    Files.readString(Path.of("testres/grammars/java21.grammar")),
-//                    ParserCreationOptions.getDefault().withWhitespaceParser(
-//                            Parsewisp.parser("WS = { #\"\\s+\" | \"//\" #\"[^\\n]*\" (\"\\n\" | EOF) | \"/*\" #\"(?:(?!\\*/)[\\s\\S])*\" \"*/\" }"))
-//            );
             return Parsewisp.parser(
                     Files.readString(Path.of("testres/grammars/java21.grammar"))
             );
@@ -145,6 +139,18 @@ class TestGrammarJava {
                     }
                 }
                 """;
+        var res = parser().parse(text);
+        Assertions.assertTrue(res.isSuccess());
+    }
+
+    @Test
+    void testWhichIsWayTooBig() {
+        var text = """
+                package de.kleinert.parsewisp.tests.typical.rules_available;
+                class RulesAvailableGeneralizedTests {
+                """;
+        text += "private static void doNothing(List opts, boolean run) {}".repeat(5000);
+        text += "}";
         var res = parser().parse(text);
         Assertions.assertTrue(res.isSuccess());
     }

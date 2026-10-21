@@ -725,6 +725,23 @@ public abstract class GrammarBuilder {
                     .withHideTag(variableRepetitionRule.isHiddenInResult())
                     .withReduction(variableRepetitionRule.getReduction());
         }
+        if (originalRule instanceof ExclusionRule && ((ExclusionRule) originalRule).getExcluded() instanceof ExclusionRule) {
+            // This could be removed. It transforms nested exclusion rules to reduce the number of exclusions.
+            // The rule `r1 - (r2 - r3)` is equivalent to `(r1 - r2) | r3`.
+            // The same is *not* true for `(r1 - r2) - r3`.
+            // E.g. consider `S = #"[0-9]+" - (#"1+" - "11")`
+            //      Input "11" will match #"[0-9]+" and check the exclusion. It will then not match the exclusion because it is excluded from the exclusion.
+            // Now the equivalent `S = (#"[0-9]+" - #"1+") | "11"`:
+            //      Input "11" will not match `(#"[0-9]+" - #"1+")`, but will then match `"11"`.
+            // But for `S = (#"[0-9]+" - #"1+") - "11"`:
+            //      Input "11" will not match `(#"[0-9]+" - #"1+")` and never even reach the exclusion check.
+            var ruleExpected = ((ExclusionRule) originalRule).getExpected();
+            var ruleExcluded = (ExclusionRule) ((ExclusionRule) originalRule).getExcluded();
+            return AlternationRule.create(List.of(
+                    ExclusionRule.create(compressRule(ruleExpected), compressRule(ruleExcluded.getExpected())),
+                    compressRule(ruleExcluded.getExcluded())
+            ));
+        }
         if (originalRule instanceof RuleWithManyChildren) {
             //noinspection PatternVariableCanBeUsed
             var ruleWithManyChildren = (RuleWithManyChildren) originalRule;

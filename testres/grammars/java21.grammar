@@ -1,264 +1,255 @@
 (* https://docs.oracle.com/javase/specs/jls/se21/html/jls-19.html *)
 
-CompilationUnit:
-      WS FieldDeclaration WS
+CompilationUnit
+    = WS FieldDeclaration WS
     | WS OrdinaryCompilationUnit WS
     | WS ModularCompilationUnit WS
-OrdinaryCompilationUnit:
-    [PackageDeclaration WS] {ImportDeclaration WS} {WS TopLevelClassOrInterfaceDeclaration}
-ModularCompilationUnit:
-    {ImportDeclaration WS} ModuleDeclaration
-PackageDeclaration:
-    {PackageModifier WS} "package" WS Identifier WS {"." WS Identifier WS} ";"
-PackageModifier:
-    Annotation
-ImportDeclaration:
-    SingleTypeImportDeclaration
+OrdinaryCompilationUnit
+    = [PackageDeclaration WS] {ImportDeclaration WS} {WS TopLevelClassOrInterfaceDeclaration}
+ModularCompilationUnit
+    = {ImportDeclaration WS} ModuleDeclaration
+PackageDeclaration
+    = {PackageModifier WS} "package" WS Identifier WS {"." WS Identifier WS} ";"
+PackageModifier
+    = Annotation
+ImportDeclaration
+    = SingleTypeImportDeclaration
     | TypeImportOnDemandDeclaration
     | SingleStaticImportDeclaration
     | StaticImportOnDemandDeclaration
-SingleTypeImportDeclaration:
-    "import" WS TypeName WS ";"
-TypeImportOnDemandDeclaration:
-    "import" WS PackageOrTypeName WS "." WS "*" WS ";"
-SingleStaticImportDeclaration:
-    "import" WS "static" WS TypeName WS "." WS Identifier WS ";"
-StaticImportOnDemandDeclaration:
-    "import" WS "static" WS TypeName WS "." WS "*" WS ";"
-TopLevelClassOrInterfaceDeclaration:
-    ClassDeclaration
+SingleTypeImportDeclaration
+    = "import" WS TypeName WS ";"
+TypeImportOnDemandDeclaration
+    = "import" WS PackageOrTypeName WS "." WS "*" WS ";"
+SingleStaticImportDeclaration
+    = "import" WS "static" WS TypeName WS "." WS Identifier WS ";"
+StaticImportOnDemandDeclaration
+    = "import" WS "static" WS TypeName WS "." WS "*" WS ";"
+TopLevelClassOrInterfaceDeclaration
+    = ClassDeclaration
     | InterfaceDeclaration
     | ";"
-ModuleDeclaration:
-    {Annotation WS} ["open" WS] "module" WS Identifier WS {"." WS Identifier WS} "{" WS {ModuleDirective WS} "}"
-ModuleDirective:
-      "requires" WS {RequiresModifier WS} ModuleName WS ";"
+ModuleDeclaration
+    = {Annotation WS} ["open" WS] "module" WS Identifier WS {"." WS Identifier WS} "{" WS {ModuleDirective WS} "}"
+ModuleDirective
+    = "requires" WS {RequiresModifier WS} ModuleName WS ";"
     | "exports" WS PackageName WS ["to" WS ModuleName WS {"," WS ModuleName WS}] ";"
     | "opens" WS PackageName WS ["to" WS ModuleName WS {"," WS ModuleName WS}] ";"
     | "uses" WS TypeName ";"
     | "provides" WS TypeName WS "with" WS TypeName WS {"," WS TypeName WS} ";"
-RequiresModifier:
-    "transitive" | "static"
+RequiresModifier
+    = "transitive" 
+    | "static"
 
-IntegerLiteral:
-    DecimalIntegerLiteral
-   | HexIntegerLiteral
-   | OctalIntegerLiteral
-   | BinaryIntegerLiteral
-DecimalIntegerLiteral:
-    DecimalNumeral [IntegerTypeSuffix]
-HexIntegerLiteral:
-    HexNumeral [IntegerTypeSuffix]
-OctalIntegerLiteral:
-    OctalNumeral [IntegerTypeSuffix]
-BinaryIntegerLiteral:
-    BinaryNumeral [IntegerTypeSuffix]
-IntegerTypeSuffix:
-    "l" | "L"
+IntegerLiteral
+    = DecimalIntegerLiteral
+    | HexIntegerLiteral
+    | OctalIntegerLiteral
+    | BinaryIntegerLiteral
+DecimalIntegerLiteral
+    = DecimalNumeral [IntegerTypeSuffix]
+HexIntegerLiteral
+    = HexNumeral [IntegerTypeSuffix]
+OctalIntegerLiteral
+    = OctalNumeral [IntegerTypeSuffix]
+BinaryIntegerLiteral
+    = BinaryNumeral [IntegerTypeSuffix]
+IntegerTypeSuffix
+    = "l" | "L"
 
-DecimalNumeral:
-    "0"
-   | NonZeroDigit [Digits]
-   | NonZeroDigit Underscores Digits
-NonZeroDigit:
-    #"[1-9]"
-Digits:
-    Digit
-   | Digit [DigitsAndUnderscores] Digit
-Digit:
-    "0"
-   | NonZeroDigit
-DigitsAndUnderscores:
-    DigitOrUnderscore {DigitOrUnderscore}
-DigitOrUnderscore:
-    Digit
-   | "_"
-Underscores:
-    "_" {"_"}
+DecimalNumeral
+    = "0"
+    | NonZeroDigit [Digits]
+    | NonZeroDigit Underscores Digits
+NonZeroDigit
+    = #"[1-9]"
+Digits
+    = Digit
+    | Digit [DigitsAndUnderscores] Digit
+Digit
+    = "0"
+    | NonZeroDigit
+DigitsAndUnderscores
+    = DigitOrUnderscore {DigitOrUnderscore}
+DigitOrUnderscore
+    = Digit
+    | "_"
+Underscores
+    = "_" {"_"}
 
-HexNumeral:
-      "0" "x" HexDigits
+HexNumeral
+    = "0" "x" HexDigits
     | "0" "X" HexDigits
-HexDigits:
-    HexDigit
+HexDigits
+    = HexDigit
     | HexDigit [HexDigitsAndUnderscores] HexDigit
-HexDigit:
-    #"[0-9a-fA-F]"
-HexDigitsAndUnderscores:
-    HexDigitOrUnderscore {HexDigitOrUnderscore}
-HexDigitOrUnderscore:
-    HexDigit
+HexDigit
+    = #"[0-9a-fA-F]"
+HexDigitsAndUnderscores
+    = HexDigitOrUnderscore {HexDigitOrUnderscore}
+HexDigitOrUnderscore
+    = HexDigit
     "_"
 
-OctalNumeral:
-     "0" OctalDigits
-   | "0" Underscores OctalDigits
-OctalDigits:
-    OctalDigit
-   | OctalDigit [OctalDigitsAndUnderscores] OctalDigit
-OctalDigit:
-    #"[0-7]"
-OctalDigitsAndUnderscores:
-    OctalDigitOrUnderscore {OctalDigitOrUnderscore}
-OctalDigitOrUnderscore:
-    OctalDigit
-   | "_"
+OctalNumeral
+    = "0" OctalDigits
+    | "0" Underscores OctalDigits
+OctalDigits
+    = OctalDigit
+    | OctalDigit [OctalDigitsAndUnderscores] OctalDigit
+OctalDigit
+    = #"[0-7]"
+OctalDigitsAndUnderscores
+    = OctalDigitOrUnderscore {OctalDigitOrUnderscore}
+OctalDigitOrUnderscore
+    = OctalDigit
+    | "_"
 
-BinaryNumeral:
-     "0" "b" BinaryDigits
-   | "0" "B" BinaryDigits
-BinaryDigits:
-     BinaryDigit
-   | BinaryDigit [BinaryDigitsAndUnderscores] BinaryDigit
-BinaryDigit:
-    "0" | "1"
-BinaryDigitsAndUnderscores:
-    BinaryDigitOrUnderscore {BinaryDigitOrUnderscore}
-BinaryDigitOrUnderscore:
-     BinaryDigit
-   | "_"
+BinaryNumeral
+    = "0" "b" BinaryDigits
+    | "0" "B" BinaryDigits
+BinaryDigits
+    = BinaryDigit
+    | BinaryDigit [BinaryDigitsAndUnderscores] BinaryDigit
+BinaryDigit
+    = "0" | "1"
+BinaryDigitsAndUnderscores
+    = BinaryDigitOrUnderscore {BinaryDigitOrUnderscore}
+BinaryDigitOrUnderscore
+    = BinaryDigit
+    | "_"
 
-
-FloatingPointLiteral:
-    DecimalFloatingPointLiteral
+FloatingPointLiteral
+    = DecimalFloatingPointLiteral
     | HexadecimalFloatingPointLiteral
-DecimalFloatingPointLiteral:
-    Digits "." [Digits] [ExponentPart] [FloatTypeSuffix]
+DecimalFloatingPointLiteral
+    = Digits "." [Digits] [ExponentPart] [FloatTypeSuffix]
     | "." Digits [ExponentPart] [FloatTypeSuffix]
     | Digits ExponentPart [FloatTypeSuffix]
     | Digits [ExponentPart] FloatTypeSuffix
-ExponentPart:
-    ExponentIndicator SignedInteger
-ExponentIndicator:
-    "e" | "E"
-SignedInteger:
-    [Sign] Digits
-Sign:
-    "+" | "-"
-FloatTypeSuffix:
-    "f" | "F" | "d" | "D"
+ExponentPart
+    = ExponentIndicator SignedInteger
+ExponentIndicator
+    = "e" | "E"
+SignedInteger
+    = [Sign] Digits
+Sign
+    = "+" | "-"
+FloatTypeSuffix
+    = "f" | "F" | "d" | "D"
 
-HexadecimalFloatingPointLiteral:
-    HexSignificand BinaryExponent [FloatTypeSuffix]
-HexSignificand:
-    HexNumeral ["."]
+HexadecimalFloatingPointLiteral
+    = HexSignificand BinaryExponent [FloatTypeSuffix]
+HexSignificand
+    = HexNumeral ["."]
     "0" "x" [HexDigits] "." HexDigits
     "0" "X" [HexDigits] "." HexDigits
-BinaryExponent:
-    BinaryExponentIndicator SignedInteger
-BinaryExponentIndicator:
-    "p" | "P"
+BinaryExponent
+    = BinaryExponentIndicator SignedInteger
+BinaryExponentIndicator
+    = "p" | "P"
 
-BooleanLiteral:
-    "true" | "false"
+BooleanLiteral
+    = "true" | "false"
 
-CharacterLiteral:
-     "'" SingleCharacter "'"
-   | "'" EscapeSequence "'"
-SingleCharacter:
-    InputCharacter - ("'" | "\\")
+CharacterLiteral
+    = "'" SingleCharacter "'"
+    | "'" EscapeSequence "'"
+SingleCharacter
+    = InputCharacter - ("'" | "\\")
 
-StringLiteral:
-    '"' {StringCharacter} '"'
-StringCharacter:
-    InputCharacter - ('"' | "\\")
-   | EscapeSequence
+StringLiteral
+    = '"' {StringCharacter} '"'
+StringCharacter
+    = InputCharacter - ('"' | "\\")
+    | EscapeSequence
 
-
-TextBlock:
-    '"""' {TextBlockWhiteSpace} LineTerminator {TextBlockCharacter} '"""'
-TextBlockWhiteSpace:
-    WhiteSpace - LineTerminator
-TextBlockCharacter:
-    InputCharacter - "\\"
-   | EscapeSequence
-   | LineTerminator
-
-
-WhiteSpace:
-    " " | "\t" | "\f"
+TextBlock
+    = '"""' {TextBlockWhiteSpace} LineTerminator {TextBlockCharacter} '"""'
+TextBlockWhiteSpace
+    = WhiteSpace - LineTerminator
+TextBlockCharacter
+    = InputCharacter - "\\"
+    | EscapeSequence
     | LineTerminator
-LineTerminator:
-    "\r\n" | "\n" | "\r"
-InputCharacter:
-    UnicodeInputCharacter - ("\r" | "\n")
-UnicodeInputCharacter:
-    UnicodeEscape
-   | RawInputCharacter
-UnicodeEscape:
-    "\\" UnicodeMarker HexDigit HexDigit HexDigit HexDigit
-UnicodeMarker:
-    "u" {"u"}
-RawInputCharacter:
-    #"." (* any Unicode character *)
 
-EscapeSequence:
-      #"\\[\\bfrnst\"']"
+WhiteSpace
+    = " " | "\t" | "\f"
+    | LineTerminator
+LineTerminator
+    = "\r\n" | "\n" | "\r"
+InputCharacter
+    = UnicodeInputCharacter - ("\r" | "\n")
+UnicodeInputCharacter
+    = UnicodeEscape
+    | RawInputCharacter
+UnicodeEscape
+    = "\\" UnicodeMarker HexDigit HexDigit HexDigit HexDigit
+UnicodeMarker
+    = "u" {"u"}
+RawInputCharacter
+    = #"." (* any Unicode character *)
+
+EscapeSequence
+    = #"\\[\\bfrnst\"']"
     | "\\" LineTerminator
     | OctalEscape
-OctalEscape:
-    "\\" OctalDigit
+OctalEscape
+    = "\\" OctalDigit
     | "\\" OctalDigit OctalDigit
     | "\\" ZeroToThree OctalDigit OctalDigit
-ZeroToThree:
-    #"[0-3]"
+ZeroToThree
+    = #"[0-3]"
 
-NullLiteral:
-    "null"
+NullLiteral
+    = "null"
 
-Separator:
-    "(" | ")" | "{" | "}" | "[" | "]" | ";" | "," | "." | "..." | "@" | "::"
+Separator
+    = "(" | ")" | "{" | "}" | "[" | "]" | ";" | "," | "." | "..." | "@" | "::"
 
-Operator:
-      "="  | ">"  | "<"  | "!"  | "~"  | "?"  | ":"  | "->"
+Operator
+    = "="  | ">"  | "<"  | "!"  | "~"  | "?"  | ":"  | "->"
     | "==" | ">=" | "<=" | "!=" | "&&" | "||" | "++" | "--"
     | "+"  | "-"  | "*"  | "/"  | "&"  | "|"  | "^"  | "%"  | "<<"  | ">>"  | ">>>"
     | "+=" | "-=" | "*=" | "/=" | "&=" | "|=" | "^=" | "%=" | "<<=" | ">>=" | ">>>="
 
+Keyword
+    = ReservedKeyword
+    | ContextualKeyword
+ReservedKeyword
+    = "abstract"  | "continue"  | "for"         | "new"        | "switch"
+    | "assert"    | "default"   | "if"          | "package"    | "synchronized"
+    | "boolean"   | "do"        | "goto"        | "private"    | "this"
+    | "break"     | "double"    | "implements"  | "protected"  | "throw"
+    | "byte"      | "else"      | "import"      | "public"     | "throws"
+    | "case"      | "enum"      | "instanceof"  | "return"     | "transient"
+    | "catch"     | "extends"   | "int"         | "short"      | "try"
+    | "char"      | "final"     | "interface"   | "static"     | "void"
+    | "class"     | "finally"   | "long"        | "strictfp"   | "volatile"
+    | "const"     | "float"     | "native"      | "super"      | "while"
+    | "_"
 
+ContextualKeyword
+    = "exports"     | "opens"     | "requires"    | "uses"  | "yield"
+    | "module"      | "permits"   | "sealed"      | "var"
+    | "non-sealed"  | "provides"  | "to"          | "when"
+    | "open"        | "record"    | "transitive"  | "with"
 
+Identifier
+    = IdentifierChars - (ReservedKeyword | BooleanLiteral | NullLiteral)
+IdentifierChars
+    = #"[a-zA-Z$_][a-zA-Z$_0-9]*" (* JavaLetter {JavaLetterOrDigit} *)
+JavaLetter
+    = #"[a-zA-Z$_]"
+JavaLetterOrDigit
+    = #"[a-zA-Z$_0-9]"
 
-
-
-
-
-Keyword:
-    ReservedKeyword
-   | ContextualKeyword
-ReservedKeyword:
-     "abstract"  | "continue"  | "for"         | "new"        | "switch"
-   | "assert"    | "default"   | "if"          | "package"    | "synchronized"
-   | "boolean"   | "do"        | "goto"        | "private"    | "this"
-   | "break"     | "double"    | "implements"  | "protected"  | "throw"
-   | "byte"      | "else"      | "import"      | "public"     | "throws"
-   | "case"      | "enum"      | "instanceof"  | "return"     | "transient"
-   | "catch"     | "extends"   | "int"         | "short"      | "try"
-   | "char"      | "final"     | "interface"   | "static"     | "void"
-   | "class"     | "finally"   | "long"        | "strictfp"   | "volatile"
-   | "const"     | "float"     | "native"      | "super"      | "while"
-   | "_"
-
-ContextualKeyword:
-     "exports"     | "opens"     | "requires"    | "uses"  | "yield"
-   | "module"      | "permits"   | "sealed"      | "var"
-   | "non-sealed"  | "provides"  | "to"          | "when"
-   | "open"        | "record"    | "transitive"  | "with"
-
-Identifier:
-    IdentifierChars - (ReservedKeyword | BooleanLiteral | NullLiteral)
-IdentifierChars:
-    JavaLetter {JavaLetterOrDigit}
-JavaLetter:
-    #"[a-zA-Z$_]"
-JavaLetterOrDigit:
-    #"[a-zA-Z$_0-9]"
-
-TypeIdentifier:
-    Identifier - ("permits" | "record" | "sealed" | "var" | "yield")
-UnqualifiedMethodIdentifier:
-    Identifier - "yield"
-Literal:
-    IntegerLiteral
+TypeIdentifier
+    = Identifier - ("permits" | "record" | "sealed" | "var" | "yield")
+UnqualifiedMethodIdentifier
+    = Identifier - "yield"
+Literal
+    = IntegerLiteral
     | FloatingPointLiteral
     | BooleanLiteral
     | CharacterLiteral
@@ -266,353 +257,349 @@ Literal:
     | TextBlock
     | NullLiteral
 
-Type:
-    PrimitiveType
-   | ReferenceType
-PrimitiveType:
-    {Annotation WS} NumericType
-   | {Annotation WS} "boolean"
-NumericType:
-    IntegralType
-   | FloatingPointType
-IntegralType:
-    "byte" | "short" | "int" | "long" | "char"
-FloatingPointType:
-    "float" | "double"
-ReferenceType:
-    ClassOrInterfaceType
-   | TypeVariable
-   | ArrayType
-ClassOrInterfaceType:
-    ClassType
-   | InterfaceType
-ClassType:
-    {Annotation WS} TypeIdentifier WS [TypeArguments]
-   | PackageName WS "." WS {Annotation WS} TypeIdentifier WS [TypeArguments]
-   | ClassOrInterfaceType WS "." WS {Annotation WS} TypeIdentifier WS [TypeArguments]
-InterfaceType:
-    ClassType
-TypeVariable:
-    {Annotation WS} TypeIdentifier
-ArrayType:
-    PrimitiveType WS Dims
-   | ClassOrInterfaceType WS Dims
-   | TypeVariable WS Dims
-Dims:
-    {Annotation WS} "[" WS "]" {WS {Annotation WS} "[" WS "]"}
-TypeParameter:
-    {TypeParameterModifier WS} TypeIdentifier WS [TypeBound]
-TypeParameterModifier:
-    Annotation
-TypeBound:
-    "extends" WS TypeVariable
-   | "extends" WS ClassOrInterfaceType {WS AdditionalBound}
-AdditionalBound:
-    "&" WS InterfaceType
-TypeArguments:
-    "<" WS TypeArgumentList WS ">"
-TypeArgumentList:
-    TypeArgument {WS "," WS TypeArgument}
-TypeArgument:
-    ReferenceType
-   | Wildcard
-Wildcard:
-    {Annotation WS} "?" WS [WildcardBounds]
-WildcardBounds:
-    "extends" WS ReferenceType
-   | "super" WS ReferenceType
-
-
-ModuleName:
-    Identifier
-   | ModuleName WS "." WS Identifier
-PackageName:
-    Identifier
-   | PackageName WS "." WS Identifier
-TypeName:
-    TypeIdentifier
-   | PackageOrTypeName WS "." WS TypeIdentifier
-ExpressionName:
-    Identifier
-   | AmbiguousName WS "." WS Identifier
-MethodName:
-    UnqualifiedMethodIdentifier
-PackageOrTypeName:
-    Identifier
-   | PackageOrTypeName WS "." WS Identifier
-AmbiguousName:
-    Identifier
-   | AmbiguousName WS "." WS Identifier
-
-
-ClassDeclaration:
-    NormalClassDeclaration
-   | EnumDeclaration
-   | RecordDeclaration
-NormalClassDeclaration:
-    {ClassModifier WS} "class" WS TypeIdentifier WS [TypeParameters WS] [ClassExtends WS] [ClassImplements WS] [ClassPermits WS] ClassBody
-ClassModifier:
-    Annotation | "public" | "protected" | "private"
-   | "abstract" | "static" | "final" | "sealed" | "non-sealed" | "strictfp"
-TypeParameters:
-    "<" WS TypeParameterList WS ">"
-TypeParameterList:
-    TypeParameter {WS "," WS TypeParameter}
-ClassExtends:
-    "extends" WS ClassType
-ClassImplements:
-    "implements" WS InterfaceTypeList
-InterfaceTypeList:
-    InterfaceType WS {"," WS InterfaceType}
-ClassPermits:
-    "permits" WS TypeName WS {"," WS TypeName}
-ClassBody:
-    "{" WS {ClassBodyDeclaration WS} "}"
-ClassBodyDeclaration:
-     ClassMemberDeclaration
-   | InstanceInitializer
-   | StaticInitializer
-   | ConstructorDeclaration
-ClassMemberDeclaration:
-     FieldDeclaration
-   | MethodDeclaration
-   | ClassDeclaration
-   | InterfaceDeclaration
-   | ";"
-FieldDeclaration:
-    {FieldModifier WS} UnannType WS VariableDeclaratorList WS ";"
-FieldModifier:
-    Annotation | "public" | "protected" | "private"
-    | "static" | "final" | "transient" | "volatile"
-VariableDeclaratorList:
-    VariableDeclarator WS {"," WS VariableDeclarator}
-VariableDeclarator:
-    VariableDeclaratorId WS ["=" WS VariableInitializer]
-VariableDeclaratorId:
-    Identifier WS [Dims]
-VariableInitializer:
-    Expression
-    |ArrayInitializer
-UnannType:
-    UnannPrimitiveType
-    | UnannReferenceType
-UnannPrimitiveType:
-    NumericType
-    | "boolean"
-UnannReferenceType:
-    UnannClassOrInterfaceType
-   | UnannTypeVariable
-   | UnannArrayType
-UnannClassOrInterfaceType:
-    UnannClassType
-   | UnannInterfaceType
-UnannClassType:
-    TypeIdentifier WS [TypeArguments]
-   | PackageName WS "." WS {Annotation WS} TypeIdentifier WS [TypeArguments]
-   | UnannClassOrInterfaceType WS "." WS {Annotation WS} TypeIdentifier WS [TypeArguments]
-UnannInterfaceType:
-    UnannClassType
-UnannTypeVariable:
-    TypeIdentifier
-UnannArrayType:
-    UnannPrimitiveType WS Dims
-   | UnannClassOrInterfaceType WS Dims
-   | UnannTypeVariable WS Dims
-MethodDeclaration:
-    {MethodModifier WS} MethodHeader WS MethodBody
-MethodModifier:
-    Annotation | "public" | "protected" | "private"
-   | "abstract" | "static" | "final" | "synchronized" | "native" | "strictfp"
-MethodHeader:
-    Result WS MethodDeclarator WS [Throws]
-    | TypeParameters WS {Annotation WS} Result WS MethodDeclarator WS [Throws]
-Result:
-    UnannType
-    | "void"
-MethodDeclarator:
-    Identifier WS "(" WS [ReceiverParameter WS "," WS] [FormalParameterList WS] ")" WS [Dims]
-ReceiverParameter:
-    {Annotation WS} UnannType WS [Identifier WS "." WS] "this"
-FormalParameterList:
-    FormalParameter {WS "," WS FormalParameter}
-FormalParameter:
-    {VariableModifier WS} UnannType WS VariableDeclaratorId
-    | VariableArityParameter
-VariableArityParameter:
-    {VariableModifier WS} UnannType WS {Annotation WS} "..." WS Identifier
-VariableModifier:
-    Annotation
-    | "final"
-Throws:
-    "throws" WS ExceptionTypeList
-ExceptionTypeList:
-    ExceptionType {WS "," WS ExceptionType}
-ExceptionType:
-    ClassType
+Type
+    = PrimitiveType
+    | ReferenceType
+PrimitiveType
+    = {Annotation WS} NumericType
+    | {Annotation WS} "boolean"
+NumericType
+    = IntegralType
+    | FloatingPointType
+IntegralType
+    = "byte" | "short" | "int" | "long" | "char"
+FloatingPointType
+    = "float" | "double"
+ReferenceType
+    = ClassOrInterfaceType
     | TypeVariable
-MethodBody:
-    Block
+    | ArrayType
+ClassOrInterfaceType
+    = ClassType
+    | InterfaceType
+ClassType
+    = {Annotation WS} TypeIdentifier WS [TypeArguments]
+    | PackageName WS "." WS {Annotation WS} TypeIdentifier WS [TypeArguments]
+    | ClassOrInterfaceType WS "." WS {Annotation WS} TypeIdentifier WS [TypeArguments]
+InterfaceType
+    = ClassType
+TypeVariable
+    = {Annotation WS} TypeIdentifier
+ArrayType
+    = PrimitiveType WS Dims
+    | ClassOrInterfaceType WS Dims
+    | TypeVariable WS Dims
+Dims
+    = {Annotation WS} "[" WS "]" {WS {Annotation WS} "[" WS "]"}
+TypeParameter
+    = {TypeParameterModifier WS} TypeIdentifier WS [TypeBound]
+TypeParameterModifier
+    = Annotation
+TypeBound
+    = "extends" WS TypeVariable
+    | "extends" WS ClassOrInterfaceType {WS AdditionalBound}
+AdditionalBound
+    = "&" WS InterfaceType
+TypeArguments
+    = "<" WS TypeArgumentList WS ">"
+TypeArgumentList
+    = TypeArgument {WS "," WS TypeArgument}
+TypeArgument
+    = ReferenceType
+    | Wildcard
+Wildcard
+    = {Annotation WS} "?" WS [WildcardBounds]
+WildcardBounds
+    = "extends" WS ReferenceType
+    | "super" WS ReferenceType
+
+
+ModuleName
+    = Identifier
+    | ModuleName WS "." WS Identifier
+PackageName
+    = Identifier
+    | PackageName WS "." WS Identifier
+TypeName
+    = TypeIdentifier
+    | PackageOrTypeName WS "." WS TypeIdentifier
+ExpressionName
+    = Identifier
+    | AmbiguousName WS "." WS Identifier
+MethodName
+    = UnqualifiedMethodIdentifier
+PackageOrTypeName
+    = Identifier
+    | PackageOrTypeName WS "." WS Identifier
+AmbiguousName
+    = Identifier
+    | AmbiguousName WS "." WS Identifier
+
+ClassDeclaration
+    = NormalClassDeclaration
+    | EnumDeclaration
+    | RecordDeclaration
+NormalClassDeclaration
+    = {ClassModifier WS} "class" WS TypeIdentifier WS [TypeParameters WS] [ClassExtends WS] [ClassImplements WS] [ClassPermits WS] ClassBody
+ClassModifier
+    = Annotation | "public" | "protected" | "private"
+    | "abstract" | "static" | "final" | "sealed" | "non-sealed" | "strictfp"
+TypeParameters
+    = "<" WS TypeParameterList WS ">"
+TypeParameterList
+    = TypeParameter {WS "," WS TypeParameter}
+ClassExtends
+    = "extends" WS ClassType
+ClassImplements
+    = "implements" WS InterfaceTypeList
+InterfaceTypeList
+    = InterfaceType WS {"," WS InterfaceType}
+ClassPermits
+    = "permits" WS TypeName WS {"," WS TypeName}
+ClassBody
+    = "{" WS {ClassBodyDeclaration WS} "}"
+ClassBodyDeclaration
+    = ClassMemberDeclaration
+    | InstanceInitializer
+    | StaticInitializer
+    | ConstructorDeclaration
+ClassMemberDeclaration
+    = FieldDeclaration
+    | MethodDeclaration
+    | ClassDeclaration
+    | InterfaceDeclaration
     | ";"
-InstanceInitializer:
-    Block
-StaticInitializer:
-    "static" WS Block
-ConstructorDeclaration:
-    {ConstructorModifier WS} ConstructorDeclarator WS [Throws WS] ConstructorBody
-ConstructorModifier:
-    Annotation | "public" | "protected" | "private"
-ConstructorDeclarator:
-    [TypeParameters WS] SimpleTypeName WS "(" WS [ReceiverParameter WS "," WS] [FormalParameterList WS] ")"
-SimpleTypeName:
-    TypeIdentifier
-ConstructorBody:
-    "{" WS [ExplicitConstructorInvocation WS] [BlockStatements WS] "}"
-ExplicitConstructorInvocation:
-    [TypeArguments WS] "this" WS "(" WS [ArgumentList WS] ")" WS ";"
-   | [TypeArguments WS] "super" WS "(" WS [ArgumentList WS] ")" WS ";"
-   | ExpressionName WS "." WS [TypeArguments WS] "super" WS "(" WS [ArgumentList WS] ")" WS ";"
-   | Primary WS "." WS [TypeArguments WS] "super" WS "(" WS [ArgumentList WS] ")" WS ";"
-EnumDeclaration:
-    {ClassModifier WS} "enum" WS TypeIdentifier WS [ClassImplements WS] EnumBody
-EnumBody:
-    "{" WS [EnumConstantList WS] ["," WS] [EnumBodyDeclarations WS] "}"
-EnumConstantList:
-    EnumConstant {WS "," WS EnumConstant}
-EnumConstant:
-    {EnumConstantModifier WS} Identifier WS ["(" WS [ArgumentList WS] ")" WS] [ClassBody]
-EnumConstantModifier:
-    Annotation
-EnumBodyDeclarations:
-    ";" {WS ClassBodyDeclaration}
-RecordDeclaration:
-    {ClassModifier WS} "record" WS TypeIdentifier WS [TypeParameters WS] RecordHeader WS [ClassImplements WS] RecordBody
-RecordHeader:
-    "(" WS [RecordComponentList WS] ")"
-RecordComponentList:
-    RecordComponent {WS "," WS RecordComponent}
-RecordComponent:
-    {RecordComponentModifier WS} UnannType WS Identifier
+FieldDeclaration
+    = {FieldModifier WS} UnannType WS VariableDeclaratorList WS ";"
+FieldModifier
+    = Annotation | "public" | "protected" | "private"
+    | "static" | "final" | "transient" | "volatile"
+VariableDeclaratorList
+    = VariableDeclarator WS {"," WS VariableDeclarator}
+VariableDeclarator
+    = VariableDeclaratorId WS ["=" WS VariableInitializer]
+VariableDeclaratorId
+    = Identifier WS [Dims]
+VariableInitializer
+    = Expression
+    |ArrayInitializer
+UnannType
+    = UnannPrimitiveType
+    | UnannReferenceType
+UnannPrimitiveType
+    = NumericType
+    | "boolean"
+UnannReferenceType
+    = UnannClassOrInterfaceType
+    | UnannTypeVariable
+    | UnannArrayType
+UnannClassOrInterfaceType
+    = UnannClassType
+    | UnannInterfaceType
+UnannClassType
+    = TypeIdentifier WS [TypeArguments]
+    | PackageName WS "." WS {Annotation WS} TypeIdentifier WS [TypeArguments]
+    | UnannClassOrInterfaceType WS "." WS {Annotation WS} TypeIdentifier WS [TypeArguments]
+UnannInterfaceType
+    = UnannClassType
+UnannTypeVariable
+    = TypeIdentifier
+UnannArrayType
+    = UnannPrimitiveType WS Dims
+    | UnannClassOrInterfaceType WS Dims
+    | UnannTypeVariable WS Dims
+MethodDeclaration
+    = {MethodModifier WS} MethodHeader WS MethodBody
+MethodModifier
+    = Annotation | "public" | "protected" | "private"
+    | "abstract" | "static" | "final" | "synchronized" | "native" | "strictfp"
+MethodHeader
+    = Result WS MethodDeclarator WS [Throws]
+    | TypeParameters WS {Annotation WS} Result WS MethodDeclarator WS [Throws]
+Result
+    = UnannType
+    | "void"
+MethodDeclarator
+    = Identifier WS "(" WS [ReceiverParameter WS "," WS] [FormalParameterList WS] ")" WS [Dims]
+ReceiverParameter
+    = {Annotation WS} UnannType WS [Identifier WS "." WS] "this"
+FormalParameterList
+    = FormalParameter {WS "," WS FormalParameter}
+FormalParameter
+    = {VariableModifier WS} UnannType WS VariableDeclaratorId
+    | VariableArityParameter
+VariableArityParameter
+    = {VariableModifier WS} UnannType WS {Annotation WS} "..." WS Identifier
+VariableModifier
+    = Annotation
+    | "final"
+Throws
+    = "throws" WS ExceptionTypeList
+ExceptionTypeList
+    = ExceptionType {WS "," WS ExceptionType}
+ExceptionType
+    = ClassType
+    | TypeVariable
+MethodBody
+    = Block
+    | ";"
+InstanceInitializer
+    = Block
+StaticInitializer
+    = "static" WS Block
+ConstructorDeclaration
+    = {ConstructorModifier WS} ConstructorDeclarator WS [Throws WS] ConstructorBody
+ConstructorModifier
+    = Annotation | "public" | "protected" | "private"
+ConstructorDeclarator
+    = [TypeParameters WS] SimpleTypeName WS "(" WS [ReceiverParameter WS "," WS] [FormalParameterList WS] ")"
+SimpleTypeName
+    = TypeIdentifier
+ConstructorBody
+    = "{" WS [ExplicitConstructorInvocation WS] [BlockStatements WS] "}"
+ExplicitConstructorInvocation
+    = [TypeArguments WS] "this" WS "(" WS [ArgumentList WS] ")" WS ";"
+    | [TypeArguments WS] "super" WS "(" WS [ArgumentList WS] ")" WS ";"
+    | ExpressionName WS "." WS [TypeArguments WS] "super" WS "(" WS [ArgumentList WS] ")" WS ";"
+    | Primary WS "." WS [TypeArguments WS] "super" WS "(" WS [ArgumentList WS] ")" WS ";"
+EnumDeclaration
+    = {ClassModifier WS} "enum" WS TypeIdentifier WS [ClassImplements WS] EnumBody
+EnumBody
+    = "{" WS [EnumConstantList WS] ["," WS] [EnumBodyDeclarations WS] "}"
+EnumConstantList
+    = EnumConstant {WS "," WS EnumConstant}
+EnumConstant
+    = {EnumConstantModifier WS} Identifier WS ["(" WS [ArgumentList WS] ")" WS] [ClassBody]
+EnumConstantModifier
+    = Annotation
+EnumBodyDeclarations
+    = ";" {WS ClassBodyDeclaration}
+RecordDeclaration
+    = {ClassModifier WS} "record" WS TypeIdentifier WS [TypeParameters WS] RecordHeader WS [ClassImplements WS] RecordBody
+RecordHeader
+    = "(" WS [RecordComponentList WS] ")"
+RecordComponentList
+    = RecordComponent {WS "," WS RecordComponent}
+RecordComponent
+    = {RecordComponentModifier WS} UnannType WS Identifier
     | VariableArityRecordComponent
-VariableArityRecordComponent:
-    {RecordComponentModifier WS} UnannType WS {Annotation WS} "..." WS Identifier
-RecordComponentModifier:
-    Annotation
-RecordBody:
-    "{" WS {RecordBodyDeclaration WS} "}"
-RecordBodyDeclaration:
-    ClassBodyDeclaration
+VariableArityRecordComponent
+    = {RecordComponentModifier WS} UnannType WS {Annotation WS} "..." WS Identifier
+RecordComponentModifier
+    = Annotation
+RecordBody
+    = "{" WS {RecordBodyDeclaration WS} "}"
+RecordBodyDeclaration
+    = ClassBodyDeclaration
     | CompactConstructorDeclaration
-CompactConstructorDeclaration:
-    {ConstructorModifier WS} SimpleTypeName WS ConstructorBody
+CompactConstructorDeclaration
+    = {ConstructorModifier WS} SimpleTypeName WS ConstructorBody
 
-
-InterfaceDeclaration:
-    NormalInterfaceDeclaration
-   | AnnotationInterfaceDeclaration
-NormalInterfaceDeclaration:
-    {InterfaceModifier WS} "interface WS" TypeIdentifier WS [TypeParameters WS] [InterfaceExtends WS] [InterfacePermits WS] InterfaceBody
-InterfaceModifier:
-    Annotation | "public" | "protected" | "private"
-   | "abstract" | "static" | "sealed" | "non-sealed" | "strictfp"
-InterfaceExtends:
-    "extends" InterfaceTypeList
-InterfacePermits:
-    "permits" WS TypeName {WS "," WS TypeName}
-InterfaceBody:
-    "{" WS {InterfaceMemberDeclaration WS} "}"
-    InterfaceMemberDeclaration:
-    ConstantDeclaration
-    InterfaceMethodDeclaration
-    ClassDeclaration
-    InterfaceDeclaration
-    ";"
-ConstantDeclaration:
-    {ConstantModifier WS} UnannType WS VariableDeclaratorList WS ";"
-ConstantModifier:
-    Annotation | "public" | "static" | "final"
-InterfaceMethodDeclaration:
-    {InterfaceMethodModifier WS} MethodHeader WS MethodBody
-InterfaceMethodModifier:
-    Annotation | "public" | "private" | "abstract" | "default" | "static" | "strictfp"
-AnnotationInterfaceDeclaration:
-    {InterfaceModifier WS} "@" WS "interface" WS TypeIdentifier WS AnnotationInterfaceBody
-AnnotationInterfaceBody:
-    "{" WS {AnnotationInterfaceMemberDeclaration WS} "}"
-AnnotationInterfaceMemberDeclaration:
-     AnnotationInterfaceElementDeclaration
+InterfaceDeclaration
+    = NormalInterfaceDeclaration
+    | AnnotationInterfaceDeclaration
+NormalInterfaceDeclaration
+    = {InterfaceModifier WS} "interface WS" TypeIdentifier WS [TypeParameters WS] [InterfaceExtends WS] [InterfacePermits WS] InterfaceBody
+InterfaceModifier
+    = Annotation | "public" | "protected" | "private"
+    | "abstract" | "static" | "sealed" | "non-sealed" | "strictfp"
+InterfaceExtends
+    = "extends" InterfaceTypeList
+InterfacePermits
+    = "permits" WS TypeName {WS "," WS TypeName}
+InterfaceBody
+    = "{" WS {InterfaceMemberDeclaration WS} "}"
+InterfaceMemberDeclaration
+    = ConstantDeclaration
+    | InterfaceMethodDeclaration
+    | ClassDeclaration
+    | InterfaceDeclaration
+    | ";"
+ConstantDeclaration
+    = {ConstantModifier WS} UnannType WS VariableDeclaratorList WS ";"
+ConstantModifier
+    = Annotation | "public" | "static" | "final"
+InterfaceMethodDeclaration
+    = {InterfaceMethodModifier WS} MethodHeader WS MethodBody
+InterfaceMethodModifier
+    = Annotation | "public" | "private" | "abstract" | "default" | "static" | "strictfp"
+AnnotationInterfaceDeclaration
+    = {InterfaceModifier WS} "@" WS "interface" WS TypeIdentifier WS AnnotationInterfaceBody
+AnnotationInterfaceBody
+    = "{" WS {AnnotationInterfaceMemberDeclaration WS} "}"
+AnnotationInterfaceMemberDeclaration
+    = AnnotationInterfaceElementDeclaration
     | ConstantDeclaration
     | ClassDeclaration
     | InterfaceDeclaration
     | ";"
-AnnotationInterfaceElementDeclaration:
-    {AnnotationInterfaceElementModifier WS} UnannType WS Identifier WS "(" WS ")" WS [Dims WS] [DefaultValue WS] ";"
-AnnotationInterfaceElementModifier:
-    Annotation | "public" | "abstract"
-DefaultValue:
-    "default" WS ElementValue
-Annotation:
-    NormalAnnotation
+AnnotationInterfaceElementDeclaration
+    = {AnnotationInterfaceElementModifier WS} UnannType WS Identifier WS "(" WS ")" WS [Dims WS] [DefaultValue WS] ";"
+AnnotationInterfaceElementModifier
+    = Annotation | "public" | "abstract"
+DefaultValue
+    = "default" WS ElementValue
+Annotation
+    = NormalAnnotation
     | MarkerAnnotation
     | SingleElementAnnotation
-NormalAnnotation:
-    "@" TypeName WS "(" WS [ElementValuePairList WS] ")"
-ElementValuePairList:
-    ElementValuePair {WS "," WS ElementValuePair}
-ElementValuePair:
-    Identifier WS "=" WS ElementValue
-ElementValue:
-    ConditionalExpression
+NormalAnnotation
+    = "@" TypeName WS "(" WS [ElementValuePairList WS] ")"
+ElementValuePairList
+    = ElementValuePair {WS "," WS ElementValuePair}
+ElementValuePair
+    = Identifier WS "=" WS ElementValue
+ElementValue
+    = ConditionalExpression
     | ElementValueArrayInitializer
     | Annotation
-ElementValueArrayInitializer:
-    "{" WS [ElementValueList WS] ["," WS] "}"
-ElementValueList:
-    ElementValue {WS "," WS ElementValue}
-MarkerAnnotation:
-    "@" TypeName
-SingleElementAnnotation:
-    "@" TypeName WS "(" WS ElementValue WS ")"
+ElementValueArrayInitializer
+    = "{" WS [ElementValueList WS] ["," WS] "}"
+ElementValueList
+    = ElementValue {WS "," WS ElementValue}
+MarkerAnnotation
+    = "@" TypeName
+SingleElementAnnotation
+    = "@" TypeName WS "(" WS ElementValue WS ")"
 
+ArrayInitializer
+    = "{" WS [VariableInitializerList WS] ["," WS] "}"
+VariableInitializerList
+    = VariableInitializer {WS "," WS VariableInitializer}
 
-ArrayInitializer:
-    "{" WS [VariableInitializerList WS] ["," WS] "}"
-VariableInitializerList:
-    VariableInitializer {WS "," WS VariableInitializer}
-
-
-Block:
-    "{" WS [BlockStatements WS] "}"
-BlockStatements:
-    BlockStatement {WS BlockStatement}
-BlockStatement:
-    LocalClassOrInterfaceDeclaration
+Block
+    = "{" WS [BlockStatements WS] "}"
+BlockStatements
+    = BlockStatement {WS BlockStatement}
+BlockStatement
+    = LocalClassOrInterfaceDeclaration
     | LocalVariableDeclarationStatement
     | Statement
-LocalClassOrInterfaceDeclaration:
-    ClassDeclaration
+LocalClassOrInterfaceDeclaration
+    = ClassDeclaration
     | NormalInterfaceDeclaration
-LocalVariableDeclarationStatement:
-    LocalVariableDeclaration WS ";"
-LocalVariableDeclaration:
-    {VariableModifier WS} LocalVariableType WS VariableDeclaratorList
-LocalVariableType:
-    UnannType
+LocalVariableDeclarationStatement
+    = LocalVariableDeclaration WS ";"
+LocalVariableDeclaration
+    = {VariableModifier WS} LocalVariableType WS VariableDeclaratorList
+LocalVariableType
+    = UnannType
     | "var"
-Statement:
-    StatementWithoutTrailingSubstatement
+Statement
+    = StatementWithoutTrailingSubstatement
     | LabeledStatement
     | IfThenStatement
     | IfThenElseStatement
     | WhileStatement
     | ForStatement
-StatementNoShortIf:
-    StatementWithoutTrailingSubstatement
+StatementNoShortIf
+    = StatementWithoutTrailingSubstatement
     | LabeledStatementNoShortIf
     | IfThenElseStatementNoShortIf
     | WhileStatementNoShortIf
     | ForStatementNoShortIf
-StatementWithoutTrailingSubstatement:
-    Block
+StatementWithoutTrailingSubstatement
+    = Block
     | EmptyStatement
     | ExpressionStatement
     | AssertStatement
@@ -625,134 +612,133 @@ StatementWithoutTrailingSubstatement:
     | ThrowStatement
     | TryStatement
     | YieldStatement
-EmptyStatement:
-    ";"
-LabeledStatement:
-    Identifier WS ":" WS Statement
-LabeledStatementNoShortIf:
-    Identifier WS ":" WS StatementNoShortIf
-ExpressionStatement:
-    StatementExpression WS ";"
-StatementExpression:
-    Assignment
+EmptyStatement
+    = ";"
+LabeledStatement
+    = Identifier WS ":" WS Statement
+LabeledStatementNoShortIf
+    = Identifier WS ":" WS StatementNoShortIf
+ExpressionStatement
+    = StatementExpression WS ";"
+StatementExpression
+    = Assignment
     | PreIncrementExpression
     | PreDecrementExpression
     | PostIncrementExpression
     | PostDecrementExpression
     | MethodInvocation
     | ClassInstanceCreationExpression
-IfThenStatement:
-    "if" WS "(" WS Expression WS ")" WS Statement
-IfThenElseStatement:
-    "if" WS "(" WS Expression WS ")" WS StatementNoShortIf WS "else" WS Statement
-IfThenElseStatementNoShortIf:
-    "if" WS "(" WS Expression WS ")" WS StatementNoShortIf WS "else" WS StatementNoShortIf
-AssertStatement:
-      "assert" WS Expression WS ";"
+IfThenStatement
+    = "if" WS "(" WS Expression WS ")" WS Statement
+IfThenElseStatement
+    = "if" WS "(" WS Expression WS ")" WS StatementNoShortIf WS "else" WS Statement
+IfThenElseStatementNoShortIf
+    = "if" WS "(" WS Expression WS ")" WS StatementNoShortIf WS "else" WS StatementNoShortIf
+AssertStatement
+    = "assert" WS Expression WS ";"
     | "assert" WS Expression WS ":" WS Expression WS ";"
-SwitchStatement:
-    "switch" WS "(" WS Expression WS ")" WS SwitchBlock
-SwitchBlock:
-    "{" WS SwitchRule WS {SwitchRule WS} "}"
+SwitchStatement
+    = "switch" WS "(" WS Expression WS ")" WS SwitchBlock
+SwitchBlock
+    = "{" WS SwitchRule WS {SwitchRule WS} "}"
     | "{" WS {SwitchBlockStatementGroup WS} {SwitchLabel WS ":" WS} "}"
-SwitchRule:
-      SwitchLabel WS "->" WS Expression WS ";"
+SwitchRule
+    = SwitchLabel WS "->" WS Expression WS ";"
     | SwitchLabel WS "->" WS Block
     | SwitchLabel WS "->" WS ThrowStatement
-SwitchBlockStatementGroup:
-    SwitchLabel WS ":" WS {SwitchLabel WS ":" WS} BlockStatements
-SwitchLabel:
-    "case" WS CaseConstant {WS "," WS CaseConstant}
+SwitchBlockStatementGroup
+    = SwitchLabel WS ":" WS {SwitchLabel WS ":" WS} BlockStatements
+SwitchLabel
+    = "case" WS CaseConstant {WS "," WS CaseConstant}
     | "case" WS "null" WS ["," WS "default"]
     | "case" WS CasePattern WS [Guard]
     | "default"
-CaseConstant:
-    ConditionalExpression
-CasePattern:
-    Pattern
-Guard:
-    "when" WS Expression
-WhileStatement:
-    "while" WS "(" WS Expression WS ")" WS Statement
-WhileStatementNoShortIf:
-    "while" WS "(" WS Expression WS ")" WS StatementNoShortIf
-DoStatement:
-    "do" WS Statement WS "while" WS "(" WS Expression WS ")" WS ";"
-ForStatement:
-    BasicForStatement
+CaseConstant
+    = ConditionalExpression
+CasePattern
+    = Pattern
+Guard
+    = "when" WS Expression
+WhileStatement
+    = "while" WS "(" WS Expression WS ")" WS Statement
+WhileStatementNoShortIf
+    = "while" WS "(" WS Expression WS ")" WS StatementNoShortIf
+DoStatement
+    = "do" WS Statement WS "while" WS "(" WS Expression WS ")" WS ";"
+ForStatement
+    = BasicForStatement
     | EnhancedForStatement
-ForStatementNoShortIf:
-    BasicForStatementNoShortIf
+ForStatementNoShortIf
+    = BasicForStatementNoShortIf
     | EnhancedForStatementNoShortIf
-BasicForStatement:
-    "for" WS "(" WS [ForInit WS] ";" WS [Expression WS] ";" WS [ForUpdate WS] ")" WS Statement
-BasicForStatementNoShortIf:
-    "for" WS "(" WS [ForInit WS] ";" WS [Expression WS] ";" WS [ForUpdate WS] ")" WS StatementNoShortIf
-ForInit:
-    StatementExpressionList
+BasicForStatement
+    = "for" WS "(" WS [ForInit WS] ";" WS [Expression WS] ";" WS [ForUpdate WS] ")" WS Statement
+BasicForStatementNoShortIf
+    = "for" WS "(" WS [ForInit WS] ";" WS [Expression WS] ";" WS [ForUpdate WS] ")" WS StatementNoShortIf
+ForInit
+    = StatementExpressionList
     | LocalVariableDeclaration
-ForUpdate:
-    StatementExpressionList
-StatementExpressionList:
-    StatementExpression {WS "," WS StatementExpression}
-EnhancedForStatement:
-    "for" WS "(" WS LocalVariableDeclaration WS ":" WS Expression WS ")" WS Statement
-EnhancedForStatementNoShortIf:
-    "for" WS "(" WS LocalVariableDeclaration WS ":" WS Expression WS ")" WS StatementNoShortIf
-BreakStatement:
-    "break" WS [Identifier] WS ;
-YieldStatement:
-    "yield" WS Expression WS ";"
-ContinueStatement:
-    "continue" WS [Identifier] WS ";"
-ReturnStatement:
-    "return" WS [Expression] WS ";"
-ThrowStatement:
-    "throw" WS Expression WS ";"
-SynchronizedStatement:
-    "synchronized" WS "(" WS Expression WS ")" WS Block
-TryStatement:
-    "try" WS Block WS Catches
+ForUpdate
+    = StatementExpressionList
+StatementExpressionList
+    = StatementExpression {WS "," WS StatementExpression}
+EnhancedForStatement
+    = "for" WS "(" WS LocalVariableDeclaration WS ":" WS Expression WS ")" WS Statement
+EnhancedForStatementNoShortIf
+    = "for" WS "(" WS LocalVariableDeclaration WS ":" WS Expression WS ")" WS StatementNoShortIf
+BreakStatement
+    = "break" WS [Identifier] WS ;
+YieldStatement
+    = "yield" WS Expression WS ";"
+ContinueStatement
+    = "continue" WS [Identifier] WS ";"
+ReturnStatement
+    = "return" WS [Expression] WS ";"
+ThrowStatement
+    = "throw" WS Expression WS ";"
+SynchronizedStatement
+    = "synchronized" WS "(" WS Expression WS ")" WS Block
+TryStatement
+    = "try" WS Block WS Catches
     | "try" WS Block WS [Catches WS] Finally
     | TryWithResourcesStatement
-Catches:
-    CatchClause {WS CatchClause}
-CatchClause:
-    "catch" WS "(" WS CatchFormalParameter WS ")" WS Block
-CatchFormalParameter:
-    {VariableModifier WS} CatchType WS VariableDeclaratorId
-CatchType:
-    UnannClassType {WS "|" WS ClassType}
-Finally:
-    "finally" WS Block
-TryWithResourcesStatement:
-    "try" WS ResourceSpecification WS Block WS [Catches WS] [Finally]
-ResourceSpecification:
-    "(" WS ResourceList WS [";" WS] ")"
-ResourceList:
-    Resource WS {";" WS Resource}
-Resource:
-    LocalVariableDeclaration
+Catches
+    = CatchClause {WS CatchClause}
+CatchClause
+    = "catch" WS "(" WS CatchFormalParameter WS ")" WS Block
+CatchFormalParameter
+    = {VariableModifier WS} CatchType WS VariableDeclaratorId
+CatchType
+    = UnannClassType {WS "|" WS ClassType}
+Finally
+    = "finally" WS Block
+TryWithResourcesStatement
+    = "try" WS ResourceSpecification WS Block WS [Catches WS] [Finally]
+ResourceSpecification
+    = "(" WS ResourceList WS [";" WS] ")"
+ResourceList
+    = Resource WS {";" WS Resource}
+Resource
+    = LocalVariableDeclaration
     | VariableAccess
-VariableAccess:
-    ExpressionName
+VariableAccess
+    = ExpressionName
     | FieldAccess
-Pattern:
-    TypePattern
+Pattern
+    = TypePattern
     | RecordPattern
-TypePattern:
-    LocalVariableDeclaration
-RecordPattern:
-    ReferenceType WS "(" WS [PatternList WS] ")"
-PatternList:
-    Pattern WS {"," WS Pattern }
+TypePattern
+    = LocalVariableDeclaration
+RecordPattern
+    = ReferenceType WS "(" WS [PatternList WS] ")"
+PatternList
+    = Pattern WS {"," WS Pattern }
 
-
-Primary:
-    PrimaryNoNewArray
+Primary
+    = PrimaryNoNewArray
     | ArrayCreationExpression
-PrimaryNoNewArray:
-    Literal
+PrimaryNoNewArray
+    = Literal
     | ClassLiteral
     | "this"
     | TypeName WS "." WS "this"
@@ -762,171 +748,170 @@ PrimaryNoNewArray:
     | ArrayAccess
     | MethodInvocation
     | MethodReference
-ClassLiteral:
-    TypeName WS {"[" WS "]" WS} "." WS "class"
+ClassLiteral
+    = TypeName WS {"[" WS "]" WS} "." WS "class"
     | NumericType WS {"[" WS "]" WS} "." WS "class"
     | "boolean" WS {"[" WS "]" WS} "." WS "class"
     | "void" WS "." WS "class"
-ClassInstanceCreationExpression:
-    UnqualifiedClassInstanceCreationExpression
+ClassInstanceCreationExpression
+    = UnqualifiedClassInstanceCreationExpression
     | ExpressionName WS "." WS UnqualifiedClassInstanceCreationExpression
     | Primary WS "." WS UnqualifiedClassInstanceCreationExpression
-UnqualifiedClassInstanceCreationExpression:
-    "new" WS [TypeArguments WS] ClassOrInterfaceTypeToInstantiate WS "(" WS [ArgumentList WS] ")" WS [ClassBody]
-ClassOrInterfaceTypeToInstantiate:
-    {Annotation WS} Identifier WS {"." WS {Annotation WS} Identifier WS} [TypeArgumentsOrDiamond]
-TypeArgumentsOrDiamond:
-    TypeArguments
+UnqualifiedClassInstanceCreationExpression
+    = "new" WS [TypeArguments WS] ClassOrInterfaceTypeToInstantiate WS "(" WS [ArgumentList WS] ")" WS [ClassBody]
+ClassOrInterfaceTypeToInstantiate
+    = {Annotation WS} Identifier WS {"." WS {Annotation WS} Identifier WS} [TypeArgumentsOrDiamond]
+TypeArgumentsOrDiamond
+    = TypeArguments
     | "<>"
-ArrayCreationExpression:
-    ArrayCreationExpressionWithoutInitializer
+ArrayCreationExpression
+    = ArrayCreationExpressionWithoutInitializer
     | ArrayCreationExpressionWithInitializer
-ArrayCreationExpressionWithoutInitializer:
-    "new" WS PrimitiveType WS DimExprs WS [Dims]
+ArrayCreationExpressionWithoutInitializer
+    = "new" WS PrimitiveType WS DimExprs WS [Dims]
     | "new" WS ClassOrInterfaceType WS DimExprs WS [Dims]
-ArrayCreationExpressionWithInitializer:
-    "new" WS PrimitiveType WS Dims WS ArrayInitializer
+ArrayCreationExpressionWithInitializer
+    = "new" WS PrimitiveType WS Dims WS ArrayInitializer
     | "new" WS ClassOrInterfaceType WS Dims WS ArrayInitializer
-DimExprs:
-    DimExpr WS {DimExpr WS}
-DimExpr:
-    {Annotation WS} "[" WS Expression WS "]"
-ArrayAccess:
-    ExpressionName WS "[" WS Expression WS "]"
+DimExprs
+    = DimExpr WS {DimExpr WS}
+DimExpr
+    = {Annotation WS} "[" WS Expression WS "]"
+ArrayAccess
+    = ExpressionName WS "[" WS Expression WS "]"
     | PrimaryNoNewArray WS "[" WS Expression WS "]"
     | ArrayCreationExpressionWithInitializer WS "[" WS Expression WS "]"
-FieldAccess:
-    Primary WS "." WS Identifier
+FieldAccess
+    = Primary WS "." WS Identifier
     | "super" WS "." WS Identifier
     | TypeName WS "." WS "super" WS "." WS Identifier
-MethodInvocation:
-    MethodName WS "(" WS [ArgumentList WS] ")"
+MethodInvocation
+    = MethodName WS "(" WS [ArgumentList WS] ")"
     | TypeName WS "." WS [TypeArguments WS] Identifier WS "(" WS [ArgumentList WS] ")"
     | ExpressionName WS "." WS [TypeArguments WS] Identifier WS "(" WS [ArgumentList WS] ")"
     | Primary WS "." WS [TypeArguments WS] Identifier WS "(" WS [ArgumentList WS] ")"
     | "super" WS "." WS [TypeArguments WS] Identifier WS "(" WS [ArgumentList WS] ")"
     | TypeName WS "." WS "super" WS "." WS [TypeArguments WS] Identifier WS "(" WS [ArgumentList WS] ")"
-ArgumentList:
-    Expression {WS "," WS Expression}
-MethodReference:
-    ExpressionName WS "::" WS [TypeArguments WS] Identifier
+ArgumentList
+    = Expression {WS "," WS Expression}
+MethodReference
+    = ExpressionName WS "::" WS [TypeArguments WS] Identifier
     | Primary WS "::" WS [TypeArguments WS] Identifier
     | ReferenceType WS "::" WS [TypeArguments WS] Identifier
     | "super" WS "::" WS [TypeArguments WS] Identifier
     | TypeName WS "." WS "super" WS "::" WS [TypeArguments WS] Identifier
     | ClassType WS "::" WS [TypeArguments WS] "new"
     | ArrayType WS "::" WS "new"
-Expression:
-    LambdaExpression
+Expression
+    = LambdaExpression
     | AssignmentExpression
-LambdaExpression:
-    LambdaParameters WS "->" WS LambdaBody
-LambdaParameters:
-    "(" WS [LambdaParameterList] WS ")"
+LambdaExpression
+    = LambdaParameters WS "->" WS LambdaBody
+LambdaParameters
+    = "(" WS [LambdaParameterList] WS ")"
     | Identifier
-LambdaParameterList:
-    LambdaParameter WS {"," WS LambdaParameter}
+LambdaParameterList
+    = LambdaParameter WS {"," WS LambdaParameter}
     | Identifier WS {"," WS Identifier}
-LambdaParameter:
-    {VariableModifier WS} LambdaParameterType WS VariableDeclaratorId
+LambdaParameter
+    = {VariableModifier WS} LambdaParameterType WS VariableDeclaratorId
     | VariableArityParameter
-LambdaParameterType:
-    UnannType
+LambdaParameterType
+    = UnannType
     | "var"
-LambdaBody:
-    Expression
+LambdaBody
+    = Expression
     | Block
-AssignmentExpression:
-    ConditionalExpression
+AssignmentExpression
+    = ConditionalExpression
     | Assignment
-Assignment:
-    LeftHandSide WS AssignmentOperator WS Expression
-LeftHandSide:
-    ExpressionName
+Assignment
+    = LeftHandSide WS AssignmentOperator WS Expression
+LeftHandSide
+    = ExpressionName
     | FieldAccess
     | ArrayAccess
-AssignmentOperator:
-    "=" | "*=" | "/=" | "%=" | "+=" | "-=" | "<<=" | ">>=" | ">>>=" | "&=" | "^=" | "|="
-ConditionalExpression:
-    ConditionalOrExpression
+AssignmentOperator
+    = "=" | "*=" | "/=" | "%=" | "+=" | "-=" | "<<=" | ">>=" | ">>>=" | "&=" | "^=" | "|="
+ConditionalExpression
+    = ConditionalOrExpression
     | ConditionalOrExpression WS "?" WS Expression WS ":" WS ConditionalExpression
     | ConditionalOrExpression WS "?" WS Expression WS ":" WS LambdaExpression
-ConditionalOrExpression:
-    ConditionalAndExpression
+ConditionalOrExpression
+    = ConditionalAndExpression
     | ConditionalOrExpression WS "||" WS ConditionalAndExpression
-ConditionalAndExpression:
-    InclusiveOrExpression
+ConditionalAndExpression
+    = InclusiveOrExpression
     | ConditionalAndExpression WS "&&" WS InclusiveOrExpression
-InclusiveOrExpression:
-    ExclusiveOrExpression
+InclusiveOrExpression
+    = ExclusiveOrExpression
     | InclusiveOrExpression WS "|" WS ExclusiveOrExpression
-ExclusiveOrExpression:
-    AndExpression
+ExclusiveOrExpression
+    = AndExpression
     | ExclusiveOrExpression WS "^" WS AndExpression
-AndExpression:
-    EqualityExpression
+AndExpression
+    = EqualityExpression
     | AndExpression WS "&" WS EqualityExpression
-EqualityExpression:
-    RelationalExpression
+EqualityExpression
+    = RelationalExpression
     | EqualityExpression WS "==" WS RelationalExpression
     | EqualityExpression WS "!=" WS RelationalExpression
-RelationalExpression:
-    ShiftExpression
+RelationalExpression
+    = ShiftExpression
     | RelationalExpression WS "<" WS ShiftExpression
     | RelationalExpression WS ">" WS ShiftExpression
     | RelationalExpression WS "<=" WS ShiftExpression
     | RelationalExpression WS ">=" WS ShiftExpression
     | InstanceofExpression
-InstanceofExpression:
-    RelationalExpression WS "instanceof" WS ReferenceType
+InstanceofExpression
+    = RelationalExpression WS "instanceof" WS ReferenceType
     | RelationalExpression WS "instanceof" WS Pattern
-ShiftExpression:
-    AdditiveExpression
+ShiftExpression
+    = AdditiveExpression
     | ShiftExpression WS "<<" WS AdditiveExpression
     | ShiftExpression WS ">>" WS AdditiveExpression
     | ShiftExpression WS ">>>" WS AdditiveExpression
-AdditiveExpression:
-    MultiplicativeExpression
+AdditiveExpression
+    = MultiplicativeExpression
     | AdditiveExpression WS "+" WS MultiplicativeExpression
     | AdditiveExpression WS "-" WS MultiplicativeExpression
-MultiplicativeExpression:
-    UnaryExpression
+MultiplicativeExpression
+    = UnaryExpression
     | MultiplicativeExpression WS "*" WS UnaryExpression
     | MultiplicativeExpression WS "/" WS UnaryExpression
     | MultiplicativeExpression WS "%" WS UnaryExpression
-UnaryExpression:
-    PreIncrementExpression
+UnaryExpression
+    = PreIncrementExpression
     | PreDecrementExpression
     | "+" WS UnaryExpression
     | "-" WS UnaryExpression
     | UnaryExpressionNotPlusMinus
-PreIncrementExpression:
-    "++" WS UnaryExpression
-PreDecrementExpression:
-    "--" WS UnaryExpression
-UnaryExpressionNotPlusMinus:
-    PostfixExpression
+PreIncrementExpression
+    = "++" WS UnaryExpression
+PreDecrementExpression
+    = "--" WS UnaryExpression
+UnaryExpressionNotPlusMinus
+    = PostfixExpression
     | "~" WS UnaryExpression
     | "!" WS UnaryExpression
     | CastExpression
     | SwitchExpression
-PostfixExpression:
-    Primary
+PostfixExpression
+    = Primary
     | ExpressionName
     | PostIncrementExpression
     | PostDecrementExpression
-PostIncrementExpression:
-    PostfixExpression WS "++"
-PostDecrementExpression:
-    PostfixExpression WS "--"
-CastExpression:
-    "(" WS PrimitiveType WS ")" WS UnaryExpression
+PostIncrementExpression
+    = PostfixExpression WS "++"
+PostDecrementExpression
+    = PostfixExpression WS "--"
+CastExpression
+    = "(" WS PrimitiveType WS ")" WS UnaryExpression
     | "(" WS ReferenceType {AdditionalBound} WS ")" WS UnaryExpressionNotPlusMinus
     | "(" WS ReferenceType {AdditionalBound} WS ")" WS LambdaExpression
-SwitchExpression:
-    "switch" WS "(" WS Expression WS ")" WS SwitchBlock
-ConstantExpression:
-    Expression
+SwitchExpression
+    = "switch" WS "(" WS Expression WS ")" WS SwitchBlock
+ConstantExpression
+    = Expression
 
-<WS>:
-    <{ #"\s+" | "//" #"[^\n]*" ("\n" | EOF) | "/*" #"(?:(?!\*/)[\s\S])*" "*/" }>
+<WS> = <{ #"\s+" | "//" #"[^\n]*" ("\n" | EOF) | "/*" #"(?:(?!\*/)[\s\S])*" "*/" }>

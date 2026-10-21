@@ -3,12 +3,14 @@ package de.kleinert.parsewisp.parsing;
 import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.grammar.Grammar;
 import de.kleinert.parsewisp.reduction.ReductionType;
-import de.kleinert.parsewisp.result.ParseResult;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.TrampolineListenerKey;
 
@@ -20,7 +22,6 @@ import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.Trampoline
  * Example
  * <pre>
  * {@code
- *         // Accepts the language {"a", "b", "ab"}
  *         var p = Parsewisp.parser("S := #'[0-9]+' - '11'"); // Any positive number except 11.
  *         println(p.parse("12"));  // [:S, 12]
  *         println(p.parse("11"));  // Failure
@@ -34,12 +35,30 @@ public final class ExclusionRule extends RuleWithManyChildren {
     private final @NotNull Rule expected;
     private final @NotNull Rule excluded;
 
+    // 0: Default (Complex grammar)
+    // 1: Simple string terminal
+    // 2: Regex terminal
+    // 3: Alternation of string or regex terminals
+    // 4: Concatenation of string or regex terminals
+    private final int mode;
+
     private ExclusionRule(final boolean hide, final @NotNull ReductionType red,
                           final @NotNull Rule expected,
                           final @NotNull Rule excluded) {
         super(hide, red, List.of(expected, excluded));
         this.expected = expected;
         this.excluded = excluded;
+
+        Predicate<Rule> stringOrRegexPredicate = it -> it instanceof StringTerm || it instanceof RegexTerm;
+
+        if (excluded instanceof StringTerm) mode = 1;
+        else if (excluded instanceof RegexTerm) mode = 2;
+        else if (excluded instanceof AlternationRule && ((AlternationRule) excluded).rules.stream().allMatch(stringOrRegexPredicate))
+            mode = 3;
+        else if (excluded instanceof ConcatRule && ((ConcatRule) excluded).rules.stream().allMatch(stringOrRegexPredicate))
+            mode = 4;
+        else if (excluded instanceof EpsilonTerm) mode = 5;
+        else mode = 0;
     }
 
     /**
@@ -68,7 +87,7 @@ public final class ExclusionRule extends RuleWithManyChildren {
                 expectedSuccess -> {
                     var substring = runner.tramp().getText().substring(index, expectedSuccess.index());
 
-                    if (reparsePart(substring, runner).isSuccess()) {
+                    if (reparsePart(substring, runner)) {
                         runner.fail(nodeKeyForThis, index, this, false);
                         return;
                     }
@@ -87,7 +106,7 @@ public final class ExclusionRule extends RuleWithManyChildren {
                 expectedSuccess -> {
                     var substring = runner.tramp().getText().substring(index, expectedSuccess.index());
 
-                    if (reparsePart(substring, runner).isSuccess()) {
+                    if (reparsePart(substring, runner)) {
                         runner.fail(nodeKeyForThis, index, this, true);
                         return;
                     }
@@ -96,22 +115,76 @@ public final class ExclusionRule extends RuleWithManyChildren {
                 });
     }
 
-    private @NotNull ParseResult reparsePart(final @NotNull String subs, final @NotNull Gll runner) {
+    private @Nullable WeakReference<Gll> referenceForBufferedElements;
+    private @Nullable Grammar modifiedExclusionGrammar = null;
+    private @Nullable Sym modifiedExclusionStart = null;
+
+    private boolean reparsePart(final @NotNull String subs, final @NotNull Gll runner) {
+        return switch (mode) {
+            case 1, 2, 5 ->  // String mode, Regex mode, Epsilon mode.
+                    reparseStrOrRegex(subs, excluded);
+            case 3 -> {
+                // If any of the rules in the exclusion match, the parse failed.
+                for (var r : ((AlternationRule) excluded).rules) {
+                    if (reparseStrOrRegex(subs, r)) yield true;
+                }
+                yield false;
+            }
+            case 4 -> {
+                // If all rules in the exclusion succeeded, the parse failed.
+                for (var r : ((ConcatRule) excluded).rules) {
+                    if (!reparseStrOrRegex(subs, r)) yield false;
+                }
+                yield true;
+            }
+            default -> reparseFromMoreComplexGrammar(subs, runner);
+        };
+    }
+
+    private boolean reparseStrOrRegex(String subs, Rule r1) {
+        if (r1 instanceof StringTerm) {
+            var r = (StringTerm) r1;
+            return r.isCaseInsensitive()
+                    ? r.getString().equalsIgnoreCase(subs)
+                    : r.getString().equals(subs);
+        }
+        if (r1 instanceof RegexTerm) {
+            return ((RegexTerm) r1).getRegexp().matcher(subs).matches();
+        }
+        if (r1 instanceof EpsilonTerm) {
+            return subs.isEmpty();
+        }
+        throw new IllegalStateException();
+    }
+
+    private boolean reparseFromMoreComplexGrammar(final @NotNull String subs, final @NotNull Gll runner) {
         final @NotNull var oldGrammar = runner.tramp().getGrammar();
         final @NotNull Sym startSymbol;
         final @NotNull Grammar grammar;
 
-        if (excluded instanceof NonTerminal) {
+        if (referenceForBufferedElements != null && referenceForBufferedElements.get() == runner) {
+            assert (modifiedExclusionGrammar != null);
+            assert (modifiedExclusionStart != null);
+            startSymbol = modifiedExclusionStart;
+            grammar = modifiedExclusionGrammar;
+        } else if (excluded instanceof NonTerminal) {
             // The rule was already a non-terminal. Simply change starting production.
             startSymbol = ((NonTerminal) excluded).getKeyword();
             grammar = oldGrammar;
         } else {
             // Find a new start production name which is not in the grammar yet.
             Sym tempSym;
-            int n = 0;
-            do {
-                tempSym = Sym.sym("RerunForExclusion" + n++);
-            } while (oldGrammar.containsKey(tempSym));
+            if (!oldGrammar.containsKey(Sym.sym("RerunForExclusion0"))) {
+                tempSym = Sym.sym("RerunForExclusion0");
+            } else {
+                int n = 0;
+                StringBuilder nameBuilder = new StringBuilder("RerunForExclusion");
+                do {
+                    nameBuilder.setLength(17);
+                    n++;
+                    tempSym = Sym.sym(nameBuilder.append(n).toString());
+                } while (oldGrammar.containsKey(tempSym));
+            }
             startSymbol = tempSym;
 
             // Make new Grammar
@@ -122,8 +195,12 @@ public final class ExclusionRule extends RuleWithManyChildren {
             ReductionType.applyStandardReductionToProductions(tempG);
 
             grammar = new Grammar(startSymbol, tempG);
+
+            referenceForBufferedElements = new WeakReference<>(runner);
+            modifiedExclusionStart = startSymbol;
+            modifiedExclusionGrammar = grammar;
         }
-        return Gll.parse(grammar, startSymbol, subs, false, false, runner.getGrammarPrinter());
+        return Gll.parse(grammar, startSymbol, subs, false, false, runner.getGrammarPrinter()).isSuccess();
     }
 
     /**
