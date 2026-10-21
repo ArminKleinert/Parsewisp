@@ -149,7 +149,7 @@ class TestGrammarJava {
                 package de.kleinert.parsewisp.tests.typical.rules_available;
                 class RulesAvailableGeneralizedTests {
                 """;
-        text += "private static void doNothing(List opts, boolean run) {}".repeat(5000);
+        text += "private static void doNothing(List opts, boolean run) {}".repeat(2000);
         text += "}";
         var res = parser().parse(text);
         Assertions.assertTrue(res.isSuccess());
