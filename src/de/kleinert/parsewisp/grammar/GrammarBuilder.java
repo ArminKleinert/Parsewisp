@@ -684,10 +684,9 @@ public abstract class GrammarBuilder {
             if (!originalRule.getReduction().isHiddenOrRaw()) {
                 // Hide the terminal in the output.
                 // It still appears in the tree, but is flattened into the concatenation.
-                rules.add(originalRule.withReduction(ReductionType.
-                        standardIntermediateReduction()));
-                result = cat(rules).withReduction(
-                        originalRule.getReduction());
+                rules.add(originalRule.withReduction(
+                        ReductionType.standardIntermediateReduction()));
+                result = cat(rules).withReduction(originalRule.getReduction());
             } else {
                 rules.add(originalRule);
                 result = cat(rules);
@@ -704,21 +703,21 @@ public abstract class GrammarBuilder {
                                 final @NotNull Sym start,
                                 final @NotNull Grammar grammarWS,
                                 final @NotNull Sym startWS) {
-        final @NotNull Rule wsParser =
+        final @NotNull Rule wsRule =
                 opt(nt(startWS)).hideInResult();
 
         final @NotNull LinkedHashMap<@NotNull Sym, @NotNull Rule> finalGrammar =
                 productions;
         for (final @NotNull var symRuleEntry : finalGrammar.entrySet()) {
             symRuleEntry.setValue(autoWhitespaceHelper(
-                    symRuleEntry.getValue(), wsParser));
+                    symRuleEntry.getValue(), wsRule));
         }
 
         final @NotNull Rule startWithoutReduction = (
                 finalGrammar.get(start)
                         .withReduction(ReductionType.standardInitialReduction()));
         final @NotNull Rule newStartComb =
-                cat(List.of(startWithoutReduction, wsParser))
+                cat(List.of(startWithoutReduction, wsRule))
                         .withReduction(finalGrammar.get(start).getReduction());
 
         finalGrammar.put(start, newStartComb);

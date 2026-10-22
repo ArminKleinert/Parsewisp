@@ -24,7 +24,7 @@ public final class ReductionType {
     /**
      * The default output format for intermediate operations. It has the following properties:
      * <ul>
-     *     <li>The illegal NULL_TAG (see {@link ParseTree#NULL_TAG}) as its tag to mark it as an illegal final output.</li>
+     *     <li>The NULL_TAG (see {@link ParseTree#NULL_TAG}) as its tag.</li>
      *     <li>The type is {@link ReductionTypesAvailable#INTERMEDIATE}.</li>
      *     <li>{@link ReductionType#isHiddenOrRaw} returns true.</li>
      * </ul>
@@ -42,7 +42,7 @@ public final class ReductionType {
     /**
      * Default output format for new instances of {@link Rule}. It has the following properties:
      * <ul>
-     *     <li>The illegal NULL_TAG (see {@link ParseTree#NULL_TAG}) as its tag to mark it as an illegal final output.</li>
+     *     <li>The NULL_TAG (see {@link ParseTree#NULL_TAG}) as its tag.</li>
      *     <li>The type is {@link ReductionTypesAvailable#INITIAL}.</li>
      *     <li>{@link ReductionType#isHiddenOrRaw} returns true.</li>
      * </ul>
@@ -76,7 +76,7 @@ public final class ReductionType {
          */
         INTERMEDIATE,
         /**
-         * Default type. Represent parse trees as lists. Might be removed in the future.
+         * Default type. Represent parse trees as lists.
          *
          * @since 0.9.7
          */

@@ -9,6 +9,10 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.function.BiPredicate;
+import java.util.stream.Stream;
 
 /**
  * Test(s) for the Java grammar.
@@ -166,4 +170,23 @@ class TestGrammarJava {
 //        var res = parser().parse(text);
 //        Assertions.assertTrue(res.isSuccess());
 //    }
+
+    @Test
+    void testParseParsewispSources() throws IOException {
+        BiPredicate<Path, BasicFileAttributes> matcher = (p, bfa) -> bfa.isRegularFile();
+        final var files = Stream.concat(
+                        Files.find(Paths.get("src"), 999, matcher),
+                        Files.find(Paths.get("test"), 999, matcher))
+                .filter(p -> p.toString().endsWith(".java"))
+                .toList();
+        var p = parser();
+
+        for (Path file : files) {
+            var s = Files.readString(file);
+            var res = p.parse(s);
+            Assertions.assertTrue(
+                    res.isSuccess(),
+                    () -> "Failed testcase.\n" + res.castToParseFailure());
+        }
+    }
 }

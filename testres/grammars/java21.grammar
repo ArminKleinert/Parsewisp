@@ -499,12 +499,12 @@ InterfaceDeclaration
     = NormalInterfaceDeclaration
     | AnnotationInterfaceDeclaration
 NormalInterfaceDeclaration
-    = {InterfaceModifier WS} "interface WS" TypeIdentifier WS [TypeParameters WS] [InterfaceExtends WS] [InterfacePermits WS] InterfaceBody
+    = {InterfaceModifier WS} "interface" WS TypeIdentifier WS [TypeParameters WS] [InterfaceExtends WS] [InterfacePermits WS] InterfaceBody
 InterfaceModifier
     = Annotation | "public" | "protected" | "private"
     | "abstract" | "static" | "sealed" | "non-sealed" | "strictfp"
 InterfaceExtends
-    = "extends" InterfaceTypeList
+    = "extends" WS InterfaceTypeList
 InterfacePermits
     = "permits" WS TypeName {WS "," WS TypeName}
 InterfaceBody

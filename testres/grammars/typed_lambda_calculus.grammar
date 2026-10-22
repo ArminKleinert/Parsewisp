@@ -1,5 +1,5 @@
 program        ::= assignments? term
-assignments    ::= (identifier "≡" term)
+assignments    ::= (identifier "≡" term)+
 
 term           ::= abstraction | application
 
