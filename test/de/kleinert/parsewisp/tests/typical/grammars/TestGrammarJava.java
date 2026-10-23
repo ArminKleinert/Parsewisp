@@ -31,6 +31,15 @@ class TestGrammarJava {
     }
 
     @Test
+    void stats() {
+        var p = parser();
+        var g = p.grammar();
+        var stats = g.analyze();
+        System.out.println(stats.getUnusedNTs());
+        var var = g.analyze();
+    }
+
+    @Test
     void helloWorld() {
         var text = "public class Main { public static void main(String[] args) { System.out.println(\"Hello World!\"); } }";
         Assertions.assertTrue(parser().parse(text).isSuccess());

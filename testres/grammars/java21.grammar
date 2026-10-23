@@ -33,8 +33,8 @@ ModuleDeclaration
     = {Annotation WS} ["open" WS] "module" WS Identifier WS {"." WS Identifier WS} "{" WS {ModuleDirective WS} "}"
 ModuleDirective
     = "requires" WS {RequiresModifier WS} ModuleName WS ";"
-    | "exports" WS PackageName WS ["to" WS ModuleName WS {"," WS ModuleName WS}] ";"
-    | "opens" WS PackageName WS ["to" WS ModuleName WS {"," WS ModuleName WS}] ";"
+    | "exports"  WS PackageName WS ["to" WS ModuleName WS {"," WS ModuleName WS}] ";"
+    | "opens"    WS PackageName WS ["to" WS ModuleName WS {"," WS ModuleName WS}] ";"
     | "uses" WS TypeName ";"
     | "provides" WS TypeName WS "with" WS TypeName WS {"," WS TypeName WS} ";"
 RequiresModifier
@@ -78,11 +78,9 @@ Underscores
     = "_" {"_"}
 
 HexNumeral
-    = "0" "x" HexDigits
-    | "0" "X" HexDigits
+    = ("0x" | "0X") HexDigits
 HexDigits
-    = HexDigit
-    | HexDigit [HexDigitsAndUnderscores] HexDigit
+    = HexDigit [ [HexDigitsAndUnderscores] HexDigit ]
 HexDigit
     = #"[0-9a-fA-F]"
 HexDigitsAndUnderscores
@@ -92,11 +90,9 @@ HexDigitOrUnderscore
     "_"
 
 OctalNumeral
-    = "0" OctalDigits
-    | "0" Underscores OctalDigits
+    = "0" [Underscores] OctalDigits
 OctalDigits
-    = OctalDigit
-    | OctalDigit [OctalDigitsAndUnderscores] OctalDigit
+    = OctalDigit [ [OctalDigitsAndUnderscores] OctalDigit ]
 OctalDigit
     = #"[0-7]"
 OctalDigitsAndUnderscores
@@ -106,11 +102,9 @@ OctalDigitOrUnderscore
     | "_"
 
 BinaryNumeral
-    = "0" "b" BinaryDigits
-    | "0" "B" BinaryDigits
+    = "0" ("b" | "B") BinaryDigits
 BinaryDigits
-    = BinaryDigit
-    | BinaryDigit [BinaryDigitsAndUnderscores] BinaryDigit
+    = BinaryDigit [ [BinaryDigitsAndUnderscores] BinaryDigit ]
 BinaryDigit
     = "0" | "1"
 BinaryDigitsAndUnderscores
@@ -142,8 +136,7 @@ HexadecimalFloatingPointLiteral
     = HexSignificand BinaryExponent [FloatTypeSuffix]
 HexSignificand
     = HexNumeral ["."]
-    "0" "x" [HexDigits] "." HexDigits
-    "0" "X" [HexDigits] "." HexDigits
+    | ("0x" | "0X") [HexDigits] "." HexDigits
 BinaryExponent
     = BinaryExponentIndicator SignedInteger
 BinaryExponentIndicator
@@ -153,23 +146,25 @@ BooleanLiteral
     = "true" | "false"
 
 CharacterLiteral
-    = "'" SingleCharacter "'"
-    | "'" EscapeSequence "'"
+    = "'" (SingleCharacter | EscapeSequence) "'"
 SingleCharacter
-    = InputCharacter - ("'" | "\\")
+    = !("'" | "\\") InputCharacter
+    | EscapeSequence
+    | UnicodeEscape
 
 StringLiteral
     = '"' {StringCharacter} '"'
 StringCharacter
-    = InputCharacter - ('"' | "\\")
+    = !('"' | "\\") InputCharacter
     | EscapeSequence
+    | UnicodeEscape
 
 TextBlock
     = '"""' {TextBlockWhiteSpace} LineTerminator {TextBlockCharacter} '"""'
 TextBlockWhiteSpace
-    = WhiteSpace - LineTerminator
+    = !LineTerminator WhiteSpace
 TextBlockCharacter
-    = InputCharacter - "\\"
+    = !"\\" InputCharacter
     | EscapeSequence
     | LineTerminator
 
@@ -179,7 +174,7 @@ WhiteSpace
 LineTerminator
     = "\r\n" | "\n" | "\r"
 InputCharacter
-    = UnicodeInputCharacter - ("\r" | "\n")
+    = !("\r" | "\n") UnicodeInputCharacter
 UnicodeInputCharacter
     = UnicodeEscape
     | RawInputCharacter
@@ -192,12 +187,9 @@ RawInputCharacter
 
 EscapeSequence
     = #"\\[\\bfrnst\"']"
-    | "\\" LineTerminator
     | OctalEscape
 OctalEscape
-    = "\\" OctalDigit
-    | "\\" OctalDigit OctalDigit
-    | "\\" ZeroToThree OctalDigit OctalDigit
+    = "\\" ( ZeroToThree OctalDigit OctalDigit | OctalDigit [OctalDigit] )
 ZeroToThree
     = #"[0-3]"
 
@@ -235,8 +227,12 @@ ContextualKeyword
     | "non-sealed"  | "provides"  | "to"          | "when"
     | "open"        | "record"    | "transitive"  | "with"
 
+<ForbiddenIdents>
+    = (ReservedKeyword | BooleanLiteral | NullLiteral)
+
 Identifier
-    = IdentifierChars - (ReservedKeyword | BooleanLiteral | NullLiteral)
+    = ForbiddenIdents  #"[a-zA-Z$_0-9]+"
+    | !ForbiddenIdents #"[a-zA-Z$_][a-zA-Z$_0-9]*"
 IdentifierChars
     = #"[a-zA-Z$_][a-zA-Z$_0-9]*" (* JavaLetter {JavaLetterOrDigit} *)
 JavaLetter
@@ -245,9 +241,15 @@ JavaLetterOrDigit
     = #"[a-zA-Z$_0-9]"
 
 TypeIdentifier
-    = Identifier - ("permits" | "record" | "sealed" | "var" | "yield")
+    = "permits" #"[a-zA-Z$_0-9]+"
+    | "record" #"[a-zA-Z$_0-9]+"
+    | "sealed" #"[a-zA-Z$_0-9]+"
+    | "var" #"[a-zA-Z$_0-9]+"
+    | "yield" #"[a-zA-Z$_0-9]+"
+    | !("permits" | "record" | "sealed" | "var" | "yield") Identifier
 UnqualifiedMethodIdentifier
-    = Identifier - "yield"
+    = "yield" #"[a-zA-Z$_0-9]+"
+    | !"yield" Identifier
 Literal
     = IntegerLiteral
     | FloatingPointLiteral
@@ -296,8 +298,7 @@ TypeParameter
 TypeParameterModifier
     = Annotation
 TypeBound
-    = "extends" WS TypeVariable
-    | "extends" WS ClassOrInterfaceType {WS AdditionalBound}
+    = "extends" WS (TypeVariable | ClassOrInterfaceType {WS AdditionalBound})
 AdditionalBound
     = "&" WS InterfaceType
 TypeArguments
@@ -310,30 +311,24 @@ TypeArgument
 Wildcard
     = {Annotation WS} "?" WS [WildcardBounds]
 WildcardBounds
-    = "extends" WS ReferenceType
-    | "super" WS ReferenceType
+    = ("extends" | "super") WS ReferenceType
 
 
 ModuleName
-    = Identifier
-    | ModuleName WS "." WS Identifier
+    = Identifier {WS "." WS Identifier}
 PackageName
-    = Identifier
-    | PackageName WS "." WS Identifier
+    = Identifier {WS "." WS Identifier}
 TypeName
     = TypeIdentifier
     | PackageOrTypeName WS "." WS TypeIdentifier
 ExpressionName
-    = Identifier
-    | AmbiguousName WS "." WS Identifier
+    = Identifier {WS "." WS Identifier}
 MethodName
     = UnqualifiedMethodIdentifier
 PackageOrTypeName
-    = Identifier
-    | PackageOrTypeName WS "." WS Identifier
+    = Identifier {WS "." WS Identifier}
 AmbiguousName
-    = Identifier
-    | AmbiguousName WS "." WS Identifier
+    = Identifier {WS "." WS Identifier}
 
 ClassDeclaration
     = NormalClassDeclaration
@@ -373,7 +368,7 @@ FieldDeclaration
     = {FieldModifier WS} UnannType WS VariableDeclaratorList WS ";"
 FieldModifier
     = Annotation | "public" | "protected" | "private"
-    | "static" | "final" | "transient" | "volatile"
+    | "static"   | "final"  | "transient" | "volatile"
 VariableDeclaratorList
     = VariableDeclarator WS {"," WS VariableDeclarator}
 VariableDeclarator
@@ -398,24 +393,23 @@ UnannClassOrInterfaceType
     | UnannInterfaceType
 UnannClassType
     = TypeIdentifier WS [TypeArguments]
-    | PackageName WS "." WS {Annotation WS} TypeIdentifier WS [TypeArguments]
-    | UnannClassOrInterfaceType WS "." WS {Annotation WS} TypeIdentifier WS [TypeArguments]
+    | (PackageName | UnannClassOrInterfaceType) WS "." WS {Annotation WS} TypeIdentifier WS [TypeArguments]
 UnannInterfaceType
     = UnannClassType
 UnannTypeVariable
     = TypeIdentifier
 UnannArrayType
-    = UnannPrimitiveType WS Dims
+    = UnannPrimitiveType        WS Dims
     | UnannClassOrInterfaceType WS Dims
-    | UnannTypeVariable WS Dims
+    | UnannTypeVariable         WS Dims
 MethodDeclaration
     = {MethodModifier WS} MethodHeader WS MethodBody
 MethodModifier
     = Annotation | "public" | "protected" | "private"
-    | "abstract" | "static" | "final" | "synchronized" | "native" | "strictfp"
+    | "abstract" | "static" | "final"     | "synchronized"
+    | "native"   | "strictfp"
 MethodHeader
-    = Result WS MethodDeclarator WS [Throws]
-    | TypeParameters WS {Annotation WS} Result WS MethodDeclarator WS [Throws]
+    = [ TypeParameters WS {Annotation WS} ] Result WS MethodDeclarator WS [Throws]
 Result
     = UnannType
     | "void"
@@ -458,10 +452,8 @@ SimpleTypeName
 ConstructorBody
     = "{" WS [ExplicitConstructorInvocation WS] [BlockStatements WS] "}"
 ExplicitConstructorInvocation
-    = [TypeArguments WS] "this" WS "(" WS [ArgumentList WS] ")" WS ";"
-    | [TypeArguments WS] "super" WS "(" WS [ArgumentList WS] ")" WS ";"
-    | ExpressionName WS "." WS [TypeArguments WS] "super" WS "(" WS [ArgumentList WS] ")" WS ";"
-    | Primary WS "." WS [TypeArguments WS] "super" WS "(" WS [ArgumentList WS] ")" WS ";"
+    = [TypeArguments WS] ("this" | "super")  WS "(" WS [ArgumentList WS] ")" WS ";"
+    | (ExpressionName | Primary) WS "." WS [TypeArguments WS] "super" WS "(" WS [ArgumentList WS] ")" WS ";"
 EnumDeclaration
     = {ClassModifier WS} "enum" WS TypeIdentifier WS [ClassImplements WS] EnumBody
 EnumBody
@@ -635,17 +627,14 @@ IfThenElseStatement
 IfThenElseStatementNoShortIf
     = "if" WS "(" WS Expression WS ")" WS StatementNoShortIf WS "else" WS StatementNoShortIf
 AssertStatement
-    = "assert" WS Expression WS ";"
-    | "assert" WS Expression WS ":" WS Expression WS ";"
+    = "assert" WS Expression WS [ ":" WS Expression WS ] ";"
 SwitchStatement
     = "switch" WS "(" WS Expression WS ")" WS SwitchBlock
 SwitchBlock
     = "{" WS SwitchRule WS {SwitchRule WS} "}"
     | "{" WS {SwitchBlockStatementGroup WS} {SwitchLabel WS ":" WS} "}"
 SwitchRule
-    = SwitchLabel WS "->" WS Expression WS ";"
-    | SwitchLabel WS "->" WS Block
-    | SwitchLabel WS "->" WS ThrowStatement
+    = SwitchLabel WS "->" WS (Expression WS ";" | Block | ThrowStatement)
 SwitchBlockStatementGroup
     = SwitchLabel WS ":" WS {SwitchLabel WS ":" WS} BlockStatements
 SwitchLabel
@@ -687,7 +676,7 @@ EnhancedForStatement
 EnhancedForStatementNoShortIf
     = "for" WS "(" WS LocalVariableDeclaration WS ":" WS Expression WS ")" WS StatementNoShortIf
 BreakStatement
-    = "break" WS [Identifier] WS ;
+    = "break" WS [Identifier] WS ";"
 YieldStatement
     = "yield" WS Expression WS ";"
 ContinueStatement
@@ -699,8 +688,8 @@ ThrowStatement
 SynchronizedStatement
     = "synchronized" WS "(" WS Expression WS ")" WS Block
 TryStatement
-    = "try" WS Block WS Catches
-    | "try" WS Block WS [Catches WS] Finally
+    = "try" WS Block WS Catches [ WS Finally ]
+    | "try" WS Block WS Finally
     | TryWithResourcesStatement
 Catches
     = CatchClause {WS CatchClause}
@@ -749,14 +738,11 @@ PrimaryNoNewArray
     | MethodInvocation
     | MethodReference
 ClassLiteral
-    = TypeName WS {"[" WS "]" WS} "." WS "class"
-    | NumericType WS {"[" WS "]" WS} "." WS "class"
-    | "boolean" WS {"[" WS "]" WS} "." WS "class"
+    = (TypeName | NumericType | "boolean" ) WS {"[" WS "]" WS} "." WS "class"
     | "void" WS "." WS "class"
 ClassInstanceCreationExpression
     = UnqualifiedClassInstanceCreationExpression
-    | ExpressionName WS "." WS UnqualifiedClassInstanceCreationExpression
-    | Primary WS "." WS UnqualifiedClassInstanceCreationExpression
+    | (ExpressionName | Primary) WS "." WS UnqualifiedClassInstanceCreationExpression
 UnqualifiedClassInstanceCreationExpression
     = "new" WS [TypeArguments WS] ClassOrInterfaceTypeToInstantiate WS "(" WS [ArgumentList WS] ")" WS [ClassBody]
 ClassOrInterfaceTypeToInstantiate
@@ -778,30 +764,21 @@ DimExprs
 DimExpr
     = {Annotation WS} "[" WS Expression WS "]"
 ArrayAccess
-    = ExpressionName WS "[" WS Expression WS "]"
-    | PrimaryNoNewArray WS "[" WS Expression WS "]"
-    | ArrayCreationExpressionWithInitializer WS "[" WS Expression WS "]"
+    = [ ExpressionName | PrimaryNoNewArray | ArrayCreationExpressionWithInitializer ] WS "[" WS Expression WS "]"
 FieldAccess
     = Primary WS "." WS Identifier
-    | "super" WS "." WS Identifier
-    | TypeName WS "." WS "super" WS "." WS Identifier
+    | [ TypeName WS "." WS ] "super" WS "." WS Identifier
 MethodInvocation
     = MethodName WS "(" WS [ArgumentList WS] ")"
-    | TypeName WS "." WS [TypeArguments WS] Identifier WS "(" WS [ArgumentList WS] ")"
-    | ExpressionName WS "." WS [TypeArguments WS] Identifier WS "(" WS [ArgumentList WS] ")"
-    | Primary WS "." WS [TypeArguments WS] Identifier WS "(" WS [ArgumentList WS] ")"
-    | "super" WS "." WS [TypeArguments WS] Identifier WS "(" WS [ArgumentList WS] ")"
-    | TypeName WS "." WS "super" WS "." WS [TypeArguments WS] Identifier WS "(" WS [ArgumentList WS] ")"
+    | MethodInvocationNotMethodName WS "(" WS [ArgumentList WS] ")"
+<MethodInvocationNotMethodName>
+    = (TypeName | ExpressionName | Primary | [TypeName WS "." WS] "super") WS "." WS [TypeArguments WS] Identifier
 ArgumentList
     = Expression {WS "," WS Expression}
 MethodReference
-    = ExpressionName WS "::" WS [TypeArguments WS] Identifier
-    | Primary WS "::" WS [TypeArguments WS] Identifier
-    | ReferenceType WS "::" WS [TypeArguments WS] Identifier
-    | "super" WS "::" WS [TypeArguments WS] Identifier
-    | TypeName WS "." WS "super" WS "::" WS [TypeArguments WS] Identifier
-    | ClassType WS "::" WS [TypeArguments WS] "new"
-    | ArrayType WS "::" WS "new"
+    = (ExpressionName | Primary | ReferenceType | "super") WS "::" WS [TypeArguments WS] Identifier
+    | (ClassType | ArrayType) WS "::" WS [TypeArguments WS] "new"
+    | TypeName       WS "."  WS "super" WS "::" WS [TypeArguments WS] Identifier
 Expression
     = LambdaExpression
     | AssignmentExpression
@@ -812,7 +789,7 @@ LambdaParameters
     | Identifier
 LambdaParameterList
     = LambdaParameter WS {"," WS LambdaParameter}
-    | Identifier WS {"," WS Identifier}
+    | Identifier      WS {"," WS Identifier}
 LambdaParameter
     = {VariableModifier WS} LambdaParameterType WS VariableDeclaratorId
     | VariableArityParameter
@@ -835,56 +812,34 @@ AssignmentOperator
     = "=" | "*=" | "/=" | "%=" | "+=" | "-=" | "<<=" | ">>=" | ">>>=" | "&=" | "^=" | "|="
 ConditionalExpression
     = ConditionalOrExpression
-    | ConditionalOrExpression WS "?" WS Expression WS ":" WS ConditionalExpression
-    | ConditionalOrExpression WS "?" WS Expression WS ":" WS LambdaExpression
+    | ConditionalOrExpression WS "?" WS Expression WS ":" WS (ConditionalExpression | LambdaExpression)
 ConditionalOrExpression
-    = ConditionalAndExpression
-    | ConditionalOrExpression WS "||" WS ConditionalAndExpression
+    = [ ConditionalOrExpression WS "||" WS ] ConditionalAndExpression
 ConditionalAndExpression
-    = InclusiveOrExpression
-    | ConditionalAndExpression WS "&&" WS InclusiveOrExpression
+    = [ ConditionalAndExpression WS "&&" WS ] InclusiveOrExpression
 InclusiveOrExpression
-    = ExclusiveOrExpression
-    | InclusiveOrExpression WS "|" WS ExclusiveOrExpression
+    = [ InclusiveOrExpression WS "|" WS ] ExclusiveOrExpression
 ExclusiveOrExpression
-    = AndExpression
-    | ExclusiveOrExpression WS "^" WS AndExpression
+    = [ ExclusiveOrExpression WS "^" WS ] AndExpression
 AndExpression
-    = EqualityExpression
-    | AndExpression WS "&" WS EqualityExpression
+    = [ AndExpression WS "&" WS ] EqualityExpression
 EqualityExpression
-    = RelationalExpression
-    | EqualityExpression WS "==" WS RelationalExpression
-    | EqualityExpression WS "!=" WS RelationalExpression
+    = [ EqualityExpression WS ("==" | "!=") WS ] RelationalExpression
 RelationalExpression
-    = ShiftExpression
-    | RelationalExpression WS "<" WS ShiftExpression
-    | RelationalExpression WS ">" WS ShiftExpression
-    | RelationalExpression WS "<=" WS ShiftExpression
-    | RelationalExpression WS ">=" WS ShiftExpression
+    = [ RelationalExpression WS ("<" | ">" | "<=" | ">=") WS ] ShiftExpression
     | InstanceofExpression
 InstanceofExpression
-    = RelationalExpression WS "instanceof" WS ReferenceType
-    | RelationalExpression WS "instanceof" WS Pattern
+    = RelationalExpression WS "instanceof" WS (ReferenceType | Pattern)
 ShiftExpression
-    = AdditiveExpression
-    | ShiftExpression WS "<<" WS AdditiveExpression
-    | ShiftExpression WS ">>" WS AdditiveExpression
-    | ShiftExpression WS ">>>" WS AdditiveExpression
+    = [ ShiftExpression WS ("<<" | ">>" | ">>>") WS ] AdditiveExpression
 AdditiveExpression
-    = MultiplicativeExpression
-    | AdditiveExpression WS "+" WS MultiplicativeExpression
-    | AdditiveExpression WS "-" WS MultiplicativeExpression
+    = [ AdditiveExpression WS ("+" | "-") WS ] MultiplicativeExpression
 MultiplicativeExpression
-    = UnaryExpression
-    | MultiplicativeExpression WS "*" WS UnaryExpression
-    | MultiplicativeExpression WS "/" WS UnaryExpression
-    | MultiplicativeExpression WS "%" WS UnaryExpression
+    = [ MultiplicativeExpression WS ("*" | "/" | "%") WS ] UnaryExpression
 UnaryExpression
     = PreIncrementExpression
     | PreDecrementExpression
-    | "+" WS UnaryExpression
-    | "-" WS UnaryExpression
+    | ("+" | "-") WS UnaryExpression
     | UnaryExpressionNotPlusMinus
 PreIncrementExpression
     = "++" WS UnaryExpression
@@ -907,8 +862,7 @@ PostDecrementExpression
     = PostfixExpression WS "--"
 CastExpression
     = "(" WS PrimitiveType WS ")" WS UnaryExpression
-    | "(" WS ReferenceType {AdditionalBound} WS ")" WS UnaryExpressionNotPlusMinus
-    | "(" WS ReferenceType {AdditionalBound} WS ")" WS LambdaExpression
+    | "(" WS ReferenceType {AdditionalBound} WS ")" WS (UnaryExpressionNotPlusMinus | LambdaExpression)
 SwitchExpression
     = "switch" WS "(" WS Expression WS ")" WS SwitchBlock
 ConstantExpression
