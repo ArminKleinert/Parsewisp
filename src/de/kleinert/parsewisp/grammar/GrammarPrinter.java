@@ -69,6 +69,7 @@ import java.util.stream.Collectors;
 public interface GrammarPrinter {
     /**
      * Returns a default GrammarPrinter.
+     *
      * @return A GrammarPrinter.
      */
     static GrammarPrinter getDefault() {
@@ -89,6 +90,7 @@ public interface GrammarPrinter {
             }
         };
     }
+
     /**
      * Runs {@link #productionToString(Sym, Rule)} on each rule in the grammar. The starting rule is always printed first.
      *
@@ -116,7 +118,7 @@ public interface GrammarPrinter {
      * <pre>
      * {@code
      * printer.escape("'abc'", '\''); // => \'abc\'
-     * printer.escape("\"a88b\nc\"\\", '\''); // ?> "a88b\nc"\\
+     * printer.escape("\"a88b\nc\"\\", '\''); // => "a88b\nc"\\
      * }
      * </pre>
      *
@@ -341,7 +343,8 @@ public interface GrammarPrinter {
      * @return A string-representation of the rule.
      * @since 0.9.7
      */
-    default @NotNull String eofToString(final @NotNull EOFTerm rule) {
+    default @NotNull String eofToString(
+            @SuppressWarnings("unused") final @NotNull EOFTerm rule) {
         return EOFTerm.text();
     }
 
@@ -354,7 +357,8 @@ public interface GrammarPrinter {
      * @return A string-representation of the rule,
      * @since 0.9.7
      */
-    default @NotNull String epsToString(final @NotNull EpsilonTerm rule) {
+    default @NotNull String epsToString(
+            @SuppressWarnings("unused") final @NotNull EpsilonTerm rule) {
         return "ε";
     }
 
@@ -461,7 +465,7 @@ public interface GrammarPrinter {
      * @since 0.9.7
      */
     default @NotNull String regexpToString(final @NotNull RegexTerm rule) {
-        return "#\"" + rule.getRegexp().pattern() + "\"";
+        return "#\"" + escape(rule.getRegexp().pattern(), '"') + "\"";
     }
 
     /**
@@ -487,7 +491,10 @@ public interface GrammarPrinter {
      * @since 0.9.7
      */
     default @NotNull String strTermToString(final @NotNull StringTerm rule) {
-        return '"' + escape(rule.getString(), '"') + '"';
+        var sb = new StringBuilder();
+        if (rule.isCaseInsensitive()) sb.append('%').append('i');
+        sb.append('"').append(escape(rule.getString(), '"')).append('"');
+        return sb.toString();
     }
 
     /**

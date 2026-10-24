@@ -212,7 +212,7 @@ public final class CfgGrammar extends GrammarBuilder {
         //final Pattern regex = Pattern.compile("[a-zA-Z][a-zA-Z0-9_]*");
 
         return specialSequence(
-                "matches " + regex + " but is not reserved for other purposes",
+                "string which starts with a unicode-letter and continues with a sequence of unicode-letters or numbers",
                 text -> {
                     final @NotNull Matcher matcher = regex.matcher(text);
                     if (!matcher.lookingAt()) {

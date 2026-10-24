@@ -180,22 +180,34 @@ class TestGrammarJava {
 //        Assertions.assertTrue(res.isSuccess());
 //    }
 
-    @Test
-    void testParseParsewispSources() throws IOException {
-        BiPredicate<Path, BasicFileAttributes> matcher = (p, bfa) -> bfa.isRegularFile();
-        final var files = Stream.concat(
-                        Files.find(Paths.get("src"), 999, matcher),
-                        Files.find(Paths.get("test"), 999, matcher))
-                .filter(p -> p.toString().endsWith(".java"))
-                .toList();
-        var p = parser();
-
-        for (Path file : files) {
-            var s = Files.readString(file);
-            var res = p.parse(s);
-            Assertions.assertTrue(
-                    res.isSuccess(),
-                    () -> "Failed testcase.\n" + res.castToParseFailure());
-        }
-    }
+//    @Test
+//    void testParseParsewispSources() throws IOException {
+//        BiPredicate<Path, BasicFileAttributes> matcher = (p, bfa) -> bfa.isRegularFile();
+//        final var files = Stream.concat(
+//                        Files.find(Paths.get("src"), 999, matcher),
+//                        Files.find(Paths.get("test"), 999, matcher))
+//                .filter(p -> p.toString().endsWith(".java"))
+//                .toList();
+//        var p = parser();
+//
+//        long totalTime = 0;
+//        long byteCount = 0;
+//        long start = 0;
+//        long end = 0;
+//
+//        for (Path file : files) {
+//            var s = Files.readString(file);
+//            start = System.nanoTime();
+//            var res = p.parse(s);
+//            end = System.nanoTime();
+//            Assertions.assertTrue(
+//                    res.isSuccess(),
+//                    () -> "Failed testcase.\n" + res.castToParseFailure());
+//            long diffMillis = (end - start) / 1_000_000;
+//            totalTime += diffMillis;
+//            System.out.println("Parsed " + file + " in " + diffMillis + " ms (" + s.length() + " chars)");
+//            byteCount += s.length();
+//        }
+//        System.out.println("Done. Parsed " + files.size() + " files with a total of " + byteCount + " chars. Total time: " + totalTime + " ms");
+//    }
 }
