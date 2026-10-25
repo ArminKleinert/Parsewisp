@@ -10,13 +10,13 @@ import java.util.stream.Stream;
  * A list-like type of generic elements. It is used to differentiate from other List types.
  * Elements can be added and iterated upon. Each addition creates a new instance.
  * <p>
- * These lists are outwardly purely functional. They are also intended to be intermediate structures and thus do not need to override {@link Object#equals(Object)} ()}, {@link Object#hashCode()}, or {@link Object#toString()}.
+ * These lists are outwardly purely functional. They are also intended to be intermediate structures and thus do not need to override {@link Object#equals(Object)}, {@link Object#hashCode()}, or {@link Object#toString()}.
  * <p>
  * It is advised that users of this library do not use this type directly.
  *
  * @since 0.9.7
  */
-public class FlatResultSeq {
+public final class FlatResultSeq {
     private static FlatResultSeq EMPTY = null;
 
     private final @NotNull FlatResultSeq head;
@@ -118,6 +118,7 @@ public class FlatResultSeq {
 
         for (var h = this; h.size > 0; h = h.head) {
             if (h.nodeContent instanceof FlatResultSeq) {
+                //noinspection PatternVariableCanBeUsed
                 var frs = (FlatResultSeq) h.nodeContent;
                 backwardsIndex = frs.flatten(list, backwardsIndex); // recursive call
             } else {
