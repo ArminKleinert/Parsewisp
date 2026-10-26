@@ -1,6 +1,6 @@
 package de.kleinert.parsewisp.parsing;
 
-import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.TrampolineListenerKey;
+import de.kleinert.parsewisp.trampoline.TrampolineListenerKey;
 
 import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.reduction.ReductionType;

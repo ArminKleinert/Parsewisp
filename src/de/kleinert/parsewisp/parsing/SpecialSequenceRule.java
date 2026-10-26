@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
-import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.TrampolineListenerKey;
+import de.kleinert.parsewisp.trampoline.TrampolineListenerKey;
 
 /**
  * Represents a special sequence. The typical EBNF-notation is {@code ?...?} where {@code ...} stands for some free-form text.

@@ -1,9 +1,8 @@
 package de.kleinert.parsewisp.parsing;
 
-import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.TrampolineListenerKey;
+import de.kleinert.parsewisp.trampoline.TrampolineListenerKey;
 
 import de.kleinert.parsewisp.reduction.ReductionType;
-import de.kleinert.parsewisp.trampoline.TrampolineListenerNode;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -35,7 +34,7 @@ public final class OptionalRule extends RuleWithChild {
     @Override
     public void parse(final int index, final @NotNull Gll runner) {
         final @NotNull Rule rule = getRule();
-        final @NotNull TrampolineListenerNode.TrampolineListenerKey nodeKeyForOpt =
+        final @NotNull TrampolineListenerKey nodeKeyForOpt =
                 new TrampolineListenerKey(index, this);
         runner.pushListener(
                 new TrampolineListenerKey(index, rule),
@@ -47,7 +46,7 @@ public final class OptionalRule extends RuleWithChild {
     @Override
     public void fullParse(final int index, final @NotNull Gll runner) {
         final @NotNull Rule rule = getRule();
-        final @NotNull TrampolineListenerNode.TrampolineListenerKey thisNodeKey = new TrampolineListenerKey(index, this);
+        final @NotNull TrampolineListenerKey thisNodeKey = new TrampolineListenerKey(index, this);
         runner.pushFullListener(new TrampolineListenerKey(index, rule), runner.nodeListener(thisNodeKey));
         if (index == runner.tramp().getText().length()) {
             runner.pushSuccessMessageWithoutValue(thisNodeKey, index);

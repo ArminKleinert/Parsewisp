@@ -13,7 +13,7 @@ import de.kleinert.parsewisp.result.success.ParseMessage;
 import de.kleinert.parsewisp.result.failure.*;
 import de.kleinert.parsewisp.trampoline.*;
 
-import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.TrampolineListenerKey;
+import de.kleinert.parsewisp.trampoline.TrampolineListenerKey;
 
 import de.kleinert.parsewisp.trampoline.Tramp;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +54,7 @@ public final class Gll {
     }
 
     private @NotNull TrampolineListenerNode getOrCreateListenerNode(
-            final @NotNull TrampolineListenerNode.TrampolineListenerKey nodeKey) {
+            final @NotNull TrampolineListenerKey nodeKey) {
         @Nullable TrampolineListenerNode node = tramp.getNode(nodeKey);
 
         if (node != null)
@@ -66,21 +66,21 @@ public final class Gll {
     }
 
     private boolean listenerExists_Q(
-            final @NotNull TrampolineListenerNode.TrampolineListenerKey nodeKey) {
+            final @NotNull TrampolineListenerKey nodeKey) {
         TrampolineListenerNode node = tramp.getNode(nodeKey);
         if (node == null) return false;
         return !node.listeners().isEmpty();
     }
 
     private boolean fullListenerExists_Q(
-            final @NotNull TrampolineListenerNode.TrampolineListenerKey nodeKey) {
+            final @NotNull TrampolineListenerKey nodeKey) {
         final TrampolineListenerNode node = tramp.getNode(nodeKey);
         if (node == null) return false;
         return !node.listeners().isEmpty() || !node.fullListeners().isEmpty();
     }
 
     void pushNegativeListener(
-            final @NotNull TrampolineListenerNode.TrampolineListenerKey creator,
+            final @NotNull TrampolineListenerKey creator,
             final @NotNull NegativeListener negativeListener) {
         tramp.pushNegativeListener(creator, negativeListener);
     }
@@ -159,7 +159,7 @@ public final class Gll {
     }
 
     void pushListener(
-            final @NotNull TrampolineListenerNode.TrampolineListenerKey nodeKey,
+            final @NotNull TrampolineListenerKey nodeKey,
             final @NotNull Listener listener) {
         final boolean listenerAlreadyExists = listenerExists_Q(nodeKey);
         final @NotNull TrampolineListenerNode node = getOrCreateListenerNode(nodeKey);
@@ -177,7 +177,7 @@ public final class Gll {
     }
 
     void pushFullListener(
-            final @NotNull TrampolineListenerNode.TrampolineListenerKey nodeKey,
+            final @NotNull TrampolineListenerKey nodeKey,
             final @NotNull Listener listener) {
         //GllParsers.pushFullListenerCallback.invoke(tramp, nodeKey, listener);
         final var fullListenerAlreadyExists = fullListenerExists_Q(nodeKey);
@@ -199,7 +199,7 @@ public final class Gll {
      * (Full listeners only get notified about full results)
      */
     private void pushResultHelper(
-            final @NotNull TrampolineListenerNode.TrampolineListenerKey nodeKey,
+            final @NotNull TrampolineListenerKey nodeKey,
             @NotNull ParseMessage result) {
         final @NotNull TrampolineListenerNode node = getOrCreateListenerNode(nodeKey);
         final @NotNull Rule rule = nodeKey.rule();
@@ -247,14 +247,14 @@ public final class Gll {
     }
 
     void pushErrorMessage(
-            final @NotNull TrampolineListenerNode.TrampolineListenerKey nodeKey,
+            final @NotNull TrampolineListenerKey nodeKey,
             final @NotNull ParseFailureNode result,
             final int end) {
         pushResultHelper(nodeKey, ParseMessage.create(end, result));
     }
 
     void pushSuccessMessage(
-            final @NotNull TrampolineListenerNode.TrampolineListenerKey nodeKey,
+            final @NotNull TrampolineListenerKey nodeKey,
             final @NotNull String result,
             final int end) {
         final @NotNull ParseMessage aps = ParseMessage.create(end, result);
@@ -262,13 +262,13 @@ public final class Gll {
     }
 
     void pushSuccessMessageWithoutValue(
-            final @NotNull TrampolineListenerNode.TrampolineListenerKey nodeKey,
+            final @NotNull TrampolineListenerKey nodeKey,
             final int end) {
         pushResultHelper(nodeKey, ParseMessage.create(end));
     }
 
     void pushSuccessMessage(
-            final @NotNull TrampolineListenerNode.TrampolineListenerKey nodeKey,
+            final @NotNull TrampolineListenerKey nodeKey,
             final @NotNull FlatResultSeq result,
             final int end) {
         final @NotNull ParseMessage aps = ParseMessage.create(end, result);
@@ -276,14 +276,14 @@ public final class Gll {
     }
 
     void pushSuccessAgainWithNewKey(
-            final @NotNull TrampolineListenerNode.TrampolineListenerKey nodeKey,
+            final @NotNull TrampolineListenerKey nodeKey,
             final @NotNull ParseMessage message
     ) {
         pushResultHelper(nodeKey, message);
     }
 
     void fail(
-            final @NotNull TrampolineListenerNode.TrampolineListenerKey nodeKey,
+            final @NotNull TrampolineListenerKey nodeKey,
             final int index,
             final @NotNull Rule rule,
             final boolean untilEnd) {
@@ -328,7 +328,7 @@ public final class Gll {
     }
 
     @NotNull Listener nodeListener(
-            final @NotNull TrampolineListenerNode.TrampolineListenerKey nodeKey) {
+            final @NotNull TrampolineListenerKey nodeKey) {
         return result -> pushResultHelper(nodeKey, result);
     }
 

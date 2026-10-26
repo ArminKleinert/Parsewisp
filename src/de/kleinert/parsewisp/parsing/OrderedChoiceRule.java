@@ -3,7 +3,7 @@ package de.kleinert.parsewisp.parsing;
 import de.kleinert.parsewisp.functions.Listener;
 import de.kleinert.parsewisp.reduction.ReductionType;
 
-import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.TrampolineListenerKey;
+import de.kleinert.parsewisp.trampoline.TrampolineListenerKey;
 
 import org.jetbrains.annotations.NotNull;
 

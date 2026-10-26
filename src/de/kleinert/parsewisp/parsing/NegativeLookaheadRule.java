@@ -3,7 +3,7 @@ package de.kleinert.parsewisp.parsing;
 import de.kleinert.parsewisp.reduction.ReductionType;
 import org.jetbrains.annotations.NotNull;
 
-import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.TrampolineListenerKey;
+import de.kleinert.parsewisp.trampoline.TrampolineListenerKey;
 
 import de.kleinert.parsewisp.trampoline.TrampolineListenerNode;
 
@@ -36,7 +36,7 @@ public final class NegativeLookaheadRule extends RuleWithChild {
 
     private boolean resultExists_Q(
             final @NotNull Gll runner,
-            final @NotNull TrampolineListenerNode.TrampolineListenerKey nodeKey) {
+            final @NotNull TrampolineListenerKey nodeKey) {
         final TrampolineListenerNode node = runner.tramp().getNode(nodeKey);
 
         if (node == null)

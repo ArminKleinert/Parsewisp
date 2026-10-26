@@ -1,6 +1,5 @@
 package de.kleinert.parsewisp.trampoline;
 
-import de.kleinert.parsewisp.collections.IntMap;
 import de.kleinert.parsewisp.grammar.Grammar;
 import de.kleinert.parsewisp.functions.*;
 import de.kleinert.parsewisp.parsing.StringTerm;
@@ -11,10 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.TreeMap;
-
-import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.TrampolineListenerKey;
 
 /**
  * This class carries the inner state during the parsing process. It should not be used directly.
@@ -136,7 +132,7 @@ public final class Tramp {
      * @param negativeListener The listener procedure.
      * @since 0.9.7
      */
-    public void pushNegativeListener(final @NotNull TrampolineListenerNode.TrampolineListenerKey creator,
+    public void pushNegativeListener(final @NotNull TrampolineListenerKey creator,
                                      final @NotNull NegativeListener negativeListener) {
         var present = negativeListeners.get(creator.index());
         if (present == null) {

@@ -3,14 +3,13 @@ package de.kleinert.parsewisp.parsing;
 import de.kleinert.parsewisp.collections.FlatResultSeq;
 import de.kleinert.parsewisp.functions.Listener;
 import de.kleinert.parsewisp.reduction.ReductionType;
-import de.kleinert.parsewisp.trampoline.TrampolineListenerNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.kleinert.parsewisp.trampoline.TrampolineListenerNode.TrampolineListenerKey;
+import de.kleinert.parsewisp.trampoline.TrampolineListenerKey;
 
 /**
  * This class represents a concatenation of productions, written as {@code p1 p2 p3 ...} (where p1, p2, etc. are instances of {@link Rule}).
@@ -81,7 +80,7 @@ public final class ConcatRule extends RuleWithManyChildren {
 
     private @NotNull Listener catListener(final @NotNull FlatResultSeq resultsSoFar,
                                           final @NotNull List<Rule> parserSequence,
-                                          final @NotNull TrampolineListenerNode.TrampolineListenerKey nodeKey,
+                                          final @NotNull TrampolineListenerKey nodeKey,
                                           final @NotNull Gll runner) {
         return result -> {
             final @Nullable Object parsedResult = result.getResult();
@@ -105,7 +104,7 @@ public final class ConcatRule extends RuleWithManyChildren {
 
     private @NotNull Listener catFullListener(final @NotNull FlatResultSeq resultsSoFar,
                                               final @NotNull List<Rule> parserSequence,
-                                              final @NotNull TrampolineListenerNode.TrampolineListenerKey nodeKey,
+                                              final @NotNull TrampolineListenerKey nodeKey,
                                               final @NotNull Gll runner) {
         return result -> {
             final @Nullable var parsedResult = result.getResult();
