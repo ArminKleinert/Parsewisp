@@ -5,7 +5,7 @@ import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.error.ParserCreationFailure;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
 import de.kleinert.parsewisp.parser_options.ParsingOptions;
-import de.kleinert.parsewisp.parser_options.Unhide;
+import de.kleinert.parsewisp.parser_options.UnhideOptions;
 import de.kleinert.parsewisp.result.Node;
 import de.kleinert.parsewisp.testutil.PT;
 import de.kleinert.parsewisp.result.ParseTree;
@@ -91,7 +91,7 @@ class ParsewispTest {
     @Test
     void testUnhideOptionsNone() {
         var p = Parsewisp.parser("S = 'a' <B> C <D> 'a'\nB = 'b'+\n<C> = 'c'\n<D> = 'd'");
-        var opts = ParsingOptions.getDefault().withUnhide(Unhide.UnhideOptions.NONE);
+        var opts = ParsingOptions.getDefault().withUnhide(UnhideOptions.NONE);
         var tree = PT.create("S", "a", "c", "a");
         Assertions.assertEquals(tree, p.parse("abcda", opts));
     }
@@ -99,7 +99,7 @@ class ParsewispTest {
     @Test
     void testUnhideOptionsTags() {
         var p = Parsewisp.parser("S = 'a' <B> C <D> 'a'\nB = 'b'+\n<C> = 'c'\n<D> = 'd'");
-        var opts = ParsingOptions.getDefault().withUnhide(Unhide.UnhideOptions.TAGS);
+        var opts = ParsingOptions.getDefault().withUnhide(UnhideOptions.TAGS);
         var tree = PT.create("S", "a", PT.create("C", "c"), "a");
         Assertions.assertEquals(tree, p.parse("abcda", opts));
     }
@@ -107,7 +107,7 @@ class ParsewispTest {
     @Test
     void testUnhideOptionsContent() {
         var p = Parsewisp.parser("S = 'a' <B> C <D> 'a'\nB = 'b'+\n<C> = 'c'\n<D> = 'd'");
-        var opts = ParsingOptions.getDefault().withUnhide(Unhide.UnhideOptions.CONTENT);
+        var opts = ParsingOptions.getDefault().withUnhide(UnhideOptions.CONTENT);
         var tree = PT.create("S", "a", PT.create("B", "b"), "c", "d", "a");
         Assertions.assertEquals(tree, p.parse("abcda", opts));
     }
@@ -115,7 +115,7 @@ class ParsewispTest {
     @Test
     void testUnhideOptionsAll() {
         var p = Parsewisp.parser("S = 'a' <B> C <D> 'a'\nB = 'b'+\n<C> = 'c'\n<D> = 'd'");
-        var opts = ParsingOptions.getDefault().withUnhide(Unhide.UnhideOptions.ALL);
+        var opts = ParsingOptions.getDefault().withUnhide(UnhideOptions.ALL);
         var tree = PT.create("S", "a", PT.create("B", "b"), PT.create("C", "c"), PT.create("D", "d"), "a");
         Assertions.assertEquals(tree, p.parse("abcda", opts));
     }
@@ -126,15 +126,15 @@ class ParsewispTest {
 
         Assertions.assertEquals(
                 PT.create("S", "a", "c", "a"),
-                p.parse("abcda", ParsingOptions.getDefault().withUnhide(Unhide.UnhideOptions.NONE)));
+                p.parse("abcda", ParsingOptions.getDefault().withUnhide(UnhideOptions.NONE)));
 
         Assertions.assertEquals(
                 PT.create("S", "a", PT.create("C", "c"), "a"),
-                p.parse("abcda", ParsingOptions.getDefault().withUnhide(Unhide.UnhideOptions.TAGS)));
+                p.parse("abcda", ParsingOptions.getDefault().withUnhide(UnhideOptions.TAGS)));
 
         Assertions.assertEquals(
                 PT.create("S", "a", PT.create("B", "b"), "c", "d", "a"),
-                p.parse("abcda", ParsingOptions.getDefault().withUnhide(Unhide.UnhideOptions.CONTENT)));
+                p.parse("abcda", ParsingOptions.getDefault().withUnhide(UnhideOptions.CONTENT)));
 
         Assertions.assertEquals(
                 PT.create("S",
@@ -143,7 +143,7 @@ class ParsewispTest {
                         PT.create("C", "c"),
                         PT.create("D", "d"),
                         "a"),
-                p.parse("abcda", ParsingOptions.getDefault().withUnhide(Unhide.UnhideOptions.ALL)));
+                p.parse("abcda", ParsingOptions.getDefault().withUnhide(UnhideOptions.ALL)));
     }
 
     @Test

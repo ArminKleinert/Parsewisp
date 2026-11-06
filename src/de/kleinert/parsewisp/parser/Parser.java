@@ -43,7 +43,7 @@ public record Parser(@NotNull Grammar grammar,
         return startProduction;
     }
 
-    private @NotNull Parser unhideParser(final @NotNull Unhide.UnhideOptions unhide) {
+    private @NotNull Parser unhideParser(final @NotNull UnhideOptions unhide) {
         return switch (unhide) {
             case NONE -> this;
             case CONTENT -> withGrammar(Unhide.unhideContent(grammar()));

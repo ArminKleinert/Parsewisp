@@ -1,7 +1,5 @@
 package de.kleinert.parsewisp.parser_options;
 
-import static de.kleinert.parsewisp.parser_options.Unhide.UnhideOptions;
-
 import de.kleinert.parsewisp.*;
 import de.kleinert.parsewisp.parser.Parser;
 import de.kleinert.parsewisp.parsing.RegexTerm;

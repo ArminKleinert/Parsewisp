@@ -49,8 +49,9 @@ public final class FlatResultSeq {
      * @since 0.9.7
      */
     public static @NotNull FlatResultSeq make() {
-        if (EMPTY == null) EMPTY = new FlatResultSeq();
-        return EMPTY;
+//        if (EMPTY == null) EMPTY = new FlatResultSeq();
+//        return EMPTY;
+        return new FlatResultSeq();
     }
 
     /**
@@ -112,7 +113,7 @@ public final class FlatResultSeq {
      * @return The next index.
      * @since 0.9.7
      */
-    private int flatten(Object[] list, int backwardsIndex) {
+    private int flatten(final Object @NotNull [] list, int backwardsIndex) {
         if (isEmpty())
             return backwardsIndex;
 

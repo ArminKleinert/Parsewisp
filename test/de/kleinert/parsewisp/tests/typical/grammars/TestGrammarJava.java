@@ -11,9 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
@@ -211,7 +209,7 @@ class TestGrammarJava {
                     () -> "Failed testcase.\n" + res.castToParseFailure());
             long diffMillis = (end - start) / 1_000_000;
             totalTime += diffMillis;
-            System.out.println("Parsed " + file + " in " + diffMillis + " ms (" + s.length() + " chars)");
+//            System.out.println("Parsed " + file + " in " + diffMillis + " ms (" + s.length() + " chars)");
             byteCount += s.length();
 
             var parent = file.toFile().getParent();
