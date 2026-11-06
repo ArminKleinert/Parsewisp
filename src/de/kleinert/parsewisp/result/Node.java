@@ -9,13 +9,13 @@ import org.jetbrains.annotations.Nullable;
  * <ul>
  *     <li>{@link NodeString} wraps String.</li>
  *     <li>{@link NodeParseTree} wraps {@link ParseTree}.</li>
- *     <li>{@link NodeFail} wraps {@link ParseFailureNode}. This happens only if failures are embedded in parse trees.</li>
+ *     <li>{@link NodeImpl} wraps {@link ParseFailureNode}. This happens only if failures are embedded in parse trees.</li>
  *     <li>{@link NodeTreeTag} wraps {@link String} (or anything else that represents text) and must be the head of a parse tree.</li>
  * </ul>
  *
  * @since 0.9.7
  */
-public sealed interface Node permits Node.NodeFail, Node.NodeParseTree, Node.NodeString, Node.NodeTreeTag {
+public sealed interface Node permits Node.NodeImpl, Node.NodeParseTree, Node.NodeString, Node.NodeTreeTag {
     /**
      * Takes an object and returns a node representing that object.
      *
@@ -27,11 +27,8 @@ public sealed interface Node permits Node.NodeFail, Node.NodeParseTree, Node.Nod
         if (o == null) throw new IllegalArgumentException("Input cannot be null.");
         if (o instanceof ParseTree) return new NodeParseTree((ParseTree) o);
         if (o instanceof String) return new NodeString((String) o);
-        if (o instanceof ParseFailureNode) return new NodeFail((ParseFailureNode) o);
         if (o instanceof Node) return (Node) o;
-        if (o instanceof Sym)
-            throw new IllegalArgumentException("Node.of should not be used on Symbols. Use NodeTreeTag explicitly.");
-        throw new IllegalArgumentException(o.getClass().toString());
+        return new NodeImpl(o);
     }
 
     /**
@@ -50,7 +47,7 @@ public sealed interface Node permits Node.NodeFail, Node.NodeParseTree, Node.Nod
      * @since 0.9.7
      */
     default @NotNull String string() {
-        return ((NodeString) this).content();
+        return (String)content();
     }
 
     /**
@@ -61,7 +58,7 @@ public sealed interface Node permits Node.NodeFail, Node.NodeParseTree, Node.Nod
      * @since 0.9.7
      */
     default @NotNull ParseTree tree() {
-        return ((NodeParseTree) this).content();
+        return (ParseTree)content();
     }
 
     /**
@@ -104,12 +101,12 @@ public sealed interface Node permits Node.NodeFail, Node.NodeParseTree, Node.Nod
     }
 
     /**
-     * Wraps a {@link ParseFailureNode} and is only used to embed failures into the tree.
+     * Wraps an object and can be used to embed failures into the tree.
      *
      * @param content The inner object.
      * @since 0.9.7
      */
-    record NodeFail(@NotNull ParseFailureNode content) implements Node {
+    record NodeImpl(@NotNull Object content) implements Node {
         @Override
         public @NotNull String toString() {
             return content().toString();

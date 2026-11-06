@@ -22,11 +22,8 @@ public final class Transform {
             final @NotNull Node node,
             final @NotNull Map<@NotNull Sym, @NotNull Function<@NotNull List<Object>, Object>> transformMap
     ) {
-        if (node instanceof Node.NodeTreeTag) return ((Node.NodeTreeTag) node).content();
-        if (node instanceof Node.NodeString) return ((Node.NodeString) node).content();
-        if (node instanceof Node.NodeFail) return ((Node.NodeFail) node).content();
         if (node instanceof Node.NodeParseTree) return transform(((Node.NodeParseTree) node).content(), transformMap);
-        throw new IllegalArgumentException("Invalid node: " + node + " of type " + node.getClass());
+        return node.content();
     }
 
     private static Object transform(
@@ -35,7 +32,8 @@ public final class Transform {
     ) {
         var tagSym = parseTree.getTag().content();
         var transformFn = transformMap.get(tagSym);
-        var transformedNodes = parseTree.getContent().stream().map(node -> transform(node, transformMap)).toList();
+        var transformedNodes = parseTree.getContent().stream()
+                .map(node -> transform(node, transformMap)).toList();
         if (transformFn != null) {
             return transformFn.apply(transformedNodes);
         } else {

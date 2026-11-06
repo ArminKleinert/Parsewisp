@@ -1,5 +1,6 @@
 package de.kleinert.parsewisp.viz;
 
+import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.grammar.Grammar;
 import de.kleinert.parsewisp.grammar.GrammarPrinter;
 import de.kleinert.parsewisp.parsing.Rule;
@@ -41,7 +42,7 @@ public final class Viztool {
         parseRes.stream().skip(1)
                 .mapToInt(child -> dumpParseTreeHelp(
                         printer,
-                        child instanceof Node.NodeParseTree ? ((Node.NodeParseTree) child).content() : List.of(child),
+                        child.content() instanceof ParseTree ? (ParseTree) child.content() : List.of(child),
                         count))
                 .forEach(childId -> printer.append(String.valueOf(currentId))
                         .append(" -> ")
@@ -52,13 +53,14 @@ public final class Viztool {
 
     private static @NotNull String getLabel(final @NotNull Node node) {
         final @NotNull String label;
-        if (node instanceof Node.NodeString) {
-            label = ((Node.NodeString) node).content();
-        } else if (node instanceof Node.NodeTreeTag) {
-            label = ((Node.NodeTreeTag) node).content().name();
-        } else if (node instanceof Node.NodeFail) {
+        final @NotNull var nodeContent = node.content();
+        if (nodeContent instanceof String) {
+            label = (String)nodeContent;
+        } else if (nodeContent instanceof Sym) {
+            label = ((Sym)nodeContent).name();
+        } else if (nodeContent instanceof ParseFailureNode) {
             throw new IllegalStateException("Cannot create parse-tree visualization for " + node + " (TODO).");
-        } else if (node instanceof Node.NodeParseTree) {
+        } else if (nodeContent instanceof ParseTree) {
             throw new IllegalStateException("This case should be handled in dumpParseTreeHelp.");
         } else {
             throw new IllegalStateException(node.getClass().getName());

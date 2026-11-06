@@ -198,7 +198,7 @@ public final class ParseTree implements List<@NotNull Node>, ParseResult {
                 continue;
             }
 
-            final @NotNull var subTree = ((Node.NodeParseTree) e).content();
+            final @NotNull var subTree = (ParseTree) e.content();
 
             if (subTree.tag.equals(NULL_TAG)) {
                 entries.addAll(subTree.getContent());
@@ -228,12 +228,11 @@ public final class ParseTree implements List<@NotNull Node>, ParseResult {
         }
 
         for (@NotNull Node node : content) {
-            if (node instanceof Node.NodeParseTree) {
-                l[i++] = ((Node.NodeParseTree) node).content().toRawList();
-            } else if (node instanceof Node.NodeTreeTag || node instanceof Node.NodeString || node instanceof Node.NodeFail) {
-                l[i++] = node.content();
+            var c = node.content();
+            if (c instanceof ParseTree) {
+                l[i++] = ((ParseTree) c).toRawList();
             } else {
-                throw new IllegalArgumentException(node.getClass().toString());
+                l[i++] = c;
             }
         }
 

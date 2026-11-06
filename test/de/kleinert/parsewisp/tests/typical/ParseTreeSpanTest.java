@@ -2,7 +2,6 @@ package de.kleinert.parsewisp.tests.typical;
 
 import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.testutil.PT;
-import de.kleinert.parsewisp.result.ParseTree;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +26,7 @@ class ParseTreeSpanTest {
     void testInSubTree() {
         var p = Parsewisp.parser("S = 'b' A 'n'\nA = 'Aa'");
         var tree = p.parse("bAan").castToParseSuccess();
-        var subTree = (ParseTree) tree.getContent().get(1).content();
+        var subTree = tree.getNode(1).tree();
 
         Assertions.assertEquals(PT.create("A", "Aa"), subTree);
         Assertions.assertEquals(1, subTree.getSpanStart());
