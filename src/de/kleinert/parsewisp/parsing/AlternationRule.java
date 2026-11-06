@@ -96,10 +96,10 @@ public final class AlternationRule extends RuleWithManyChildren {
 
     @Override
     public void parse(final int index, final @NotNull Gll runner) {
-        var listener = runner.nodeListener(new TrampolineListenerKey(index, this));
+        var listener = runner.nodeListener(makeKey(index, this));
         for (final @NotNull Rule rule : getRules()) {
             runner.pushListener(
-                    new TrampolineListenerKey(index, rule),
+                    makeKey(index, rule),
                     listener
             );
         }
@@ -107,10 +107,10 @@ public final class AlternationRule extends RuleWithManyChildren {
 
     @Override
     public void fullParse(final int index, final @NotNull Gll runner) {
-        var listener = runner.nodeListener(new TrampolineListenerKey(index, this));
+        var listener = runner.nodeListener(makeKey(index, this));
         for (final @NotNull Rule rule : getRules()) {
             runner.pushFullListener(
-                    new TrampolineListenerKey(index, rule),
+                    makeKey(index, rule),
                     listener
             );
         }

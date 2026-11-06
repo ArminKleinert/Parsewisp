@@ -32,9 +32,9 @@ public final class LookaheadRule extends RuleWithChild {
 
     @Override
     public void parse(final int index, final @NotNull Gll runner) {
-        final @NotNull Rule rule = getRule();
-        final @NotNull var nodeKey = new TrampolineListenerKey(index, this);
-        runner.pushListener(new TrampolineListenerKey(index, rule),
+        final @NotNull var rule = getRule();
+        final @NotNull var nodeKey = makeKey(index, this);
+        runner.pushListener(makeKey(index, rule),
                 ignored -> runner.pushSuccessMessageWithoutValue(nodeKey, index));
     }
 
@@ -44,7 +44,7 @@ public final class LookaheadRule extends RuleWithChild {
             parse(index, runner);
         } else if (!(rule instanceof EpsilonTerm || rule instanceof EOFTerm)) {
             runner.fail(
-                    new TrampolineListenerKey(index, this),
+                    makeKey(index, this),
                     index, this, false);
         }
     }

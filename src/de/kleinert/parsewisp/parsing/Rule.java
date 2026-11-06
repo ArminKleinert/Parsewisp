@@ -159,4 +159,8 @@ public abstract sealed class Rule
     public String toString() {
         return (GrammarPrinter.getDefault()).ruleToString(this);
     }
+
+    protected static @NotNull TrampolineListenerKey makeKey(int index, @NotNull Rule rule) {
+        return new TrampolineListenerKey(index, rule);
+    }
 }

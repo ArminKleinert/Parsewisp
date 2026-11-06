@@ -89,8 +89,8 @@ public final class ExclusionRule extends RuleWithManyChildren {
 
     @Override
     public void parse(final int index, final @NotNull Gll runner) {
-        final @NotNull TrampolineListenerKey nodeKeyForThis = new TrampolineListenerKey(index, this);
-        final @NotNull TrampolineListenerKey nodeKeyForExpect = new TrampolineListenerKey(index, expected);
+        final @NotNull var nodeKeyForThis = makeKey(index, this);
+        final @NotNull var nodeKeyForExpect = makeKey(index, expected);
 
         runner.pushListener(
                 nodeKeyForExpect,
@@ -108,8 +108,8 @@ public final class ExclusionRule extends RuleWithManyChildren {
 
     @Override
     public void fullParse(final int index, final @NotNull Gll runner) {
-        final @NotNull TrampolineListenerKey nodeKeyForThis = new TrampolineListenerKey(index, this);
-        final @NotNull TrampolineListenerKey nodeKeyForExpect = new TrampolineListenerKey(index, expected);
+        final @NotNull var nodeKeyForThis = makeKey(index, this);
+        final @NotNull var nodeKeyForExpect = makeKey(index, expected);
 
         runner.pushListener(
                 nodeKeyForExpect,

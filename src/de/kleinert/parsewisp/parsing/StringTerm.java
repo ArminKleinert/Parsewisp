@@ -48,7 +48,7 @@ public final class StringTerm extends Terminal {
         final int end = Integer.min(text.length(), index + string.length());
         final @NotNull String head = text.substring(index, end);
 
-        final @NotNull TrampolineListenerKey nodeKey = new TrampolineListenerKey(index, this);
+        final @NotNull var nodeKey = makeKey(index, this);
         if (caseInsensitive ? string.equalsIgnoreCase(head) : string.equals(head)) {
             runner.pushSuccessMessage(nodeKey, string, end);
         } else {
@@ -62,7 +62,7 @@ public final class StringTerm extends Terminal {
         final @NotNull var text = runner.tramp().getText();
         final var end = Integer.min(text.length(), string.length() + index);
         final @NotNull var head = text.substring(index, end);
-        final @NotNull TrampolineListenerKey nodeKey = new TrampolineListenerKey(index, this);
+        final @NotNull var nodeKey = makeKey(index, this);
         if (text.length() == end && (caseInsensitive ? string.equalsIgnoreCase(head) : string.equals(head))) {
             runner.pushSuccessMessage(nodeKey, string, end);
         } else {

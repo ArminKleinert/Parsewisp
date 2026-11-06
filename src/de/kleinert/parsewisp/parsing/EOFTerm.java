@@ -46,9 +46,9 @@ public final class EOFTerm extends Terminal {
     @Override
     public void fullParse(final int index, final @NotNull Gll runner) {
         if (index == runner.tramp().getText().length())
-            runner.pushSuccessMessageWithoutValue(new TrampolineListenerKey(index, this), index);
+            runner.pushSuccessMessageWithoutValue(makeKey(index, this), index);
         else
-            runner.fail(new TrampolineListenerKey(index, this), index, this, true);
+            runner.fail(makeKey(index, this), index, this, true);
     }
 
     @Override

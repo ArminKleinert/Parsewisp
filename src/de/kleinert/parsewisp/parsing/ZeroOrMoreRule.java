@@ -35,11 +35,11 @@ public final class ZeroOrMoreRule extends RuleWithChild {
 
     @Override
     public void parse(final int index, final @NotNull Gll runner) {
-        final @NotNull Rule rule = getRule();
-        final @NotNull TrampolineListenerKey nodeKeyForStar =
-                new TrampolineListenerKey(index, this);
+        final @NotNull var rule = getRule();
+        final @NotNull var nodeKeyForStar =
+                makeKey(index, this);
         runner.pushListener(
-                new TrampolineListenerKey(index, rule),
+                makeKey(index, rule),
                 OnceOrMoreRule.plusListener(FlatResultSeq.make(), rule, index, nodeKeyForStar, runner)
         );
         runner.pushSuccessMessageWithoutValue(nodeKeyForStar, index);
@@ -47,15 +47,15 @@ public final class ZeroOrMoreRule extends RuleWithChild {
 
     @Override
     public void fullParse(final int index, final @NotNull Gll runner) {
-        final @NotNull Rule rule = getRule();
-        final @NotNull TrampolineListenerKey nodeKeyForStar =
-                new TrampolineListenerKey(index, this);
+        final @NotNull var rule = getRule();
+        final @NotNull var nodeKeyForStar =
+                makeKey(index, this);
         if (index == runner.tramp().getText().length()) {
             runner.pushSuccessMessageWithoutValue(nodeKeyForStar, index);
             return;
         }
         runner.pushListener(
-                new TrampolineListenerKey(index, rule),
+                makeKey(index, rule),
                 OnceOrMoreRule.plusFullListener(FlatResultSeq.make(), rule, index, nodeKeyForStar, runner));
     }
 

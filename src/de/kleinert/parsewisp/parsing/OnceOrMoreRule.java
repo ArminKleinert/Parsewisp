@@ -37,8 +37,8 @@ public final class OnceOrMoreRule extends RuleWithChild {
     public void parse(final int index, final @NotNull Gll runner) {
         final @NotNull Rule rule = getRule();
         runner.pushListener(
-                new TrampolineListenerKey(index, rule),
-                plusListener(FlatResultSeq.make(), rule, index, new TrampolineListenerKey(index, this), runner)
+                makeKey(index, rule),
+                plusListener(FlatResultSeq.make(), rule, index, makeKey(index, this), runner)
         );
     }
 
@@ -46,8 +46,8 @@ public final class OnceOrMoreRule extends RuleWithChild {
     public void fullParse(final int index, final @NotNull Gll runner) {
         final @NotNull Rule rule = getRule();
         runner.pushListener(
-                new TrampolineListenerKey(index, rule),
-                plusFullListener(FlatResultSeq.make(), rule, index, new TrampolineListenerKey(index, this), runner)
+                makeKey(index, rule),
+                plusFullListener(FlatResultSeq.make(), rule, index, makeKey(index, this), runner)
         );
     }
 
@@ -70,7 +70,7 @@ public final class OnceOrMoreRule extends RuleWithChild {
                 return;
             }
             runner.pushListener(
-                    new TrampolineListenerKey(continueIndex, rule),
+                    makeKey(continueIndex, rule),
                     plusListener(newResultsSoFar, rule, continueIndex, nodeKey, runner));
             runner.pushSuccessMessage(nodeKey, newResultsSoFar, continueIndex);
         };
@@ -98,7 +98,7 @@ public final class OnceOrMoreRule extends RuleWithChild {
                 runner.pushSuccessMessage(nodeKey, newResultsSoFar, continueIndex);
             } else {
                 runner.pushListener(
-                        new TrampolineListenerKey(continueIndex, rule),
+                        makeKey(continueIndex, rule),
                         plusFullListener(newResultsSoFar, rule, continueIndex, nodeKey, runner));
             }
         };

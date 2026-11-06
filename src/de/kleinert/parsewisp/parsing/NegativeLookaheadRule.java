@@ -47,9 +47,9 @@ public final class NegativeLookaheadRule extends RuleWithChild {
 
     @Override
     public void parse(final int index, final @NotNull Gll runner) {
-        final @NotNull Rule rule = getRule();
-        final @NotNull TrampolineListenerKey nodeKey = new TrampolineListenerKey(index, rule);
-        final @NotNull var thisNodeKey = new TrampolineListenerKey(index, this);
+        final @NotNull var rule = getRule();
+        final @NotNull var nodeKey = makeKey(index, rule);
+        final @NotNull var thisNodeKey = makeKey(index, this);
 
         if (resultExists_Q(runner, nodeKey)) {
             runner.fail(thisNodeKey, index, this, false);

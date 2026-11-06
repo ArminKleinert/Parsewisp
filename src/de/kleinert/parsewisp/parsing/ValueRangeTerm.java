@@ -55,7 +55,7 @@ public final class ValueRangeTerm extends Terminal {
         final int lo = getLo();
         final int hi = getHi();
         final int end = text.length();
-        final @NotNull TrampolineListenerKey nodeKey = new TrampolineListenerKey(index, this);
+        final @NotNull var nodeKey = makeKey(index, this);
 
         if (index >= text.length()) {
             runner.fail(nodeKey, index, this, expectEnd);

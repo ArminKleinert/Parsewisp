@@ -47,23 +47,23 @@ public final class NonTerminal extends SimpleRule {
 
     @Override
     public void parse(final int index, final @NotNull Gll runner) {
-        final @Nullable Rule rule = runner.tramp().getGrammar().getProduction(this.getKeyword());
+        final @Nullable var rule = runner.tramp().getGrammar().getProduction(this.getKeyword());
         if (rule == null)
             throw new IllegalStateException("Cannot use non terminal " + this.getKeyword() + " Availability should be checked when initializing parser.");
         runner.pushListener(
-                new TrampolineListenerKey(index, rule),
-                runner.nodeListener(new TrampolineListenerKey(index, this))
+                makeKey(index, rule),
+                runner.nodeListener(makeKey(index, this))
         );
     }
 
     @Override
     public void fullParse(final int index, final @NotNull Gll runner) {
-        final @Nullable Rule rule = runner.tramp().getGrammar().getProduction(this.getKeyword());
+        final @Nullable var rule = runner.tramp().getGrammar().getProduction(this.getKeyword());
         if (rule == null)
             throw new IllegalStateException("Cannot use non terminal " + this.getKeyword() + " Availability should be checked when initializing parser.");
         runner.pushFullListener(
-                new TrampolineListenerKey(index, rule),
-                runner.nodeListener(new TrampolineListenerKey(index, this)));
+                makeKey(index, rule),
+                runner.nodeListener(makeKey(index, this)));
     }
 
     @Override

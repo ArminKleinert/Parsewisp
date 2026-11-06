@@ -67,8 +67,8 @@ public final class VariableRepetitionRule extends RuleWithChild {
     @Override
     public void parse(final int index, final @NotNull Gll runner) {
         final @NotNull var rule = getRule();
-        final @NotNull var nodeKeyForThis = new TrampolineListenerKey(index, this);
-        final @NotNull var nodeKeyForInnerRule = new TrampolineListenerKey(index, rule);
+        final @NotNull var nodeKeyForThis = makeKey(index, this);
+        final @NotNull var nodeKeyForInnerRule = makeKey(index, rule);
         if (getMin() == 0) {
             runner.pushSuccessMessageWithoutValue(nodeKeyForInnerRule, index);
         }
@@ -83,11 +83,11 @@ public final class VariableRepetitionRule extends RuleWithChild {
     @Override
     public void fullParse(final int index, final @NotNull Gll runner) {
         final @NotNull var rule = getRule();
-        final @NotNull var nodeKeyForThis = new TrampolineListenerKey(index, this);
-        final @NotNull var nodeKeyForInnerRule = new TrampolineListenerKey(index, rule);
+        final @NotNull var nodeKeyForThis = makeKey(index, this);
+        final @NotNull var nodeKeyForInnerRule = makeKey(index, rule);
         final @NotNull var emptyResults = FlatResultSeq.make();
         if (getMin() == 0) {
-            runner.pushSuccessMessageWithoutValue(new TrampolineListenerKey(index, this), index);
+            runner.pushSuccessMessageWithoutValue(makeKey(index, this), index);
         }
         if (getMax() == 0) {
             return;
@@ -125,7 +125,7 @@ public final class VariableRepetitionRule extends RuleWithChild {
 
             if (newNResultsSoFar < repRule.getMax()) {
                 runner.pushListener(
-                        new TrampolineListenerKey(continueIndex, repRule.getRule()),
+                        makeKey(continueIndex, repRule.getRule()),
                         repListener(newResultsSoFar, newNResultsSoFar, repRule, nodeKey, runner, continueIndex)
                 );
             }
@@ -155,7 +155,7 @@ public final class VariableRepetitionRule extends RuleWithChild {
                     final @NotNull var listener = repFullListener(
                             newResultsSoFar, newNResultsSoFar,
                             rule, minimum, maximum, nodeKey, runner);
-                    runner.pushListener(new TrampolineListenerKey(continueIndex, rule), listener);
+                    runner.pushListener(makeKey(continueIndex, rule), listener);
                 } else {
                     runner.fail(nodeKey, continueIndex, this, true);
                 }

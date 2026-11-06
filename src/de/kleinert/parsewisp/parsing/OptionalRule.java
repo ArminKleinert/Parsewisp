@@ -33,11 +33,11 @@ public final class OptionalRule extends RuleWithChild {
 
     @Override
     public void parse(final int index, final @NotNull Gll runner) {
-        final @NotNull Rule rule = getRule();
-        final @NotNull TrampolineListenerKey nodeKeyForOpt =
-                new TrampolineListenerKey(index, this);
+        final @NotNull var rule = getRule();
+        final @NotNull var nodeKeyForOpt =
+                makeKey(index, this);
         runner.pushListener(
-                new TrampolineListenerKey(index, rule),
+                makeKey(index, rule),
                 runner.nodeListener(nodeKeyForOpt)
         );
         runner.pushSuccessMessageWithoutValue(nodeKeyForOpt, index);
@@ -45,9 +45,9 @@ public final class OptionalRule extends RuleWithChild {
 
     @Override
     public void fullParse(final int index, final @NotNull Gll runner) {
-        final @NotNull Rule rule = getRule();
-        final @NotNull TrampolineListenerKey thisNodeKey = new TrampolineListenerKey(index, this);
-        runner.pushFullListener(new TrampolineListenerKey(index, rule), runner.nodeListener(thisNodeKey));
+        final @NotNull var rule = getRule();
+        final @NotNull var thisNodeKey = makeKey(index, this);
+        runner.pushFullListener(makeKey(index, rule), runner.nodeListener(thisNodeKey));
         if (index == runner.tramp().getText().length()) {
             runner.pushSuccessMessageWithoutValue(thisNodeKey, index);
         } else {

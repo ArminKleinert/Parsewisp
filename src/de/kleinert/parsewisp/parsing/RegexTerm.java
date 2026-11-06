@@ -78,11 +78,11 @@ public final class RegexTerm extends Terminal {
      */
     @Override
     public void parse(final int index, final @NotNull Gll runner) {
-        final @NotNull Pattern regexp = getRegexp();
-        final @NotNull String text = runner.tramp().getText();
-        final @NotNull String subString = text.substring(index);
-        final @NotNull TrampolineListenerKey nodeKey = new TrampolineListenerKey(index, this);
-        final @Nullable String firstMatch = reMatchAtFront(regexp, subString);
+        final @NotNull var regexp = getRegexp();
+        final @NotNull var text = runner.tramp().getText();
+        final @NotNull var subString = text.substring(index);
+        final @NotNull var nodeKey = makeKey(index, this);
+        final @Nullable var firstMatch = reMatchAtFront(regexp, subString);
 
         if (firstMatch == null) {
             runner.fail(nodeKey, index, this, false);
@@ -106,12 +106,12 @@ public final class RegexTerm extends Terminal {
 
     @Override
     public void fullParse(final int index, final @NotNull Gll runner) {
-        final @NotNull Pattern regexp = this.getRegexp();
-        final @NotNull String text = runner.tramp().getText();
-        final @NotNull String substring = text.substring(index);
-        final @Nullable String match = reMatchAtFront(regexp, substring);
+        final @NotNull var regexp = this.getRegexp();
+        final @NotNull var text = runner.tramp().getText();
+        final @NotNull var substring = text.substring(index);
+        final @Nullable var match = reMatchAtFront(regexp, substring);
         final int desiredLength = text.length() - index;
-        final @NotNull TrampolineListenerKey nodeKey = new TrampolineListenerKey(index, this);
+        final @NotNull var nodeKey = makeKey(index, this);
         if (match != null && match.length() == desiredLength) {
             runner.pushSuccessMessage(nodeKey, match, text.length());
         } else {

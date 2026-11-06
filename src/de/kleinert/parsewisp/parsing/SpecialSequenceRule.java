@@ -65,8 +65,8 @@ public final class SpecialSequenceRule extends SimpleRule {
 
     @Override
     public void parse(final int index, final @NotNull Gll runner) {
-        final @NotNull String text = runner.tramp().getText().substring(index);
-        final @NotNull TrampolineListenerKey nodeKey = new TrampolineListenerKey(index, this);
+        final @NotNull var text = runner.tramp().getText().substring(index);
+        final @NotNull var nodeKey = makeKey(index, this);
         var res = function.apply(text);
 
         if (res.isEmpty()) {
@@ -79,8 +79,8 @@ public final class SpecialSequenceRule extends SimpleRule {
 
     @Override
     public void fullParse(final int index, final @NotNull Gll runner) {
-        final @NotNull String text = runner.tramp().getText().substring(index);
-        final @NotNull TrampolineListenerKey nodeKey = new TrampolineListenerKey(index, this);
+        final @NotNull var text = runner.tramp().getText().substring(index);
+        final @NotNull var nodeKey = makeKey(index, this);
         var res = function.apply(text);
 
         if (res.isEmpty()) {

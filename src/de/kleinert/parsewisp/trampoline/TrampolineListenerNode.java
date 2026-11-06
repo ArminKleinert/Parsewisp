@@ -25,5 +25,4 @@ public record TrampolineListenerNode(@NotNull List<Listener> listeners,
     public TrampolineListenerNode() {
         this(new ArrayList<>(), new ArrayList<>(), new LinkedHashSet<>(), new LinkedHashSet<>());
     }
-
 }
