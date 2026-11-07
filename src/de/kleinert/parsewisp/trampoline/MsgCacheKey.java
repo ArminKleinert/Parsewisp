@@ -10,5 +10,5 @@ import org.jetbrains.annotations.NotNull;
  * @param listener The listener.
  * @since 0.9.7
  */
-public record TrampolineMsgCacheKey(int index, @NotNull Listener listener) {
+public record MsgCacheKey(int index, @NotNull Listener listener) {
 }

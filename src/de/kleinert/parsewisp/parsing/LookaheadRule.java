@@ -3,8 +3,6 @@ package de.kleinert.parsewisp.parsing;
 import de.kleinert.parsewisp.reduction.ReductionType;
 import org.jetbrains.annotations.NotNull;
 
-import de.kleinert.parsewisp.trampoline.TrampolineListenerKey;
-
 /**
  * This class represents the ABNF "lookahead" operator {@code &p} (where p is an instance of {@link Rule}).
  *

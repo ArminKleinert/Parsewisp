@@ -15,14 +15,14 @@ import java.util.*;
  * @param fullResults   Successes (or failures) for full listeners.
  * @since 0.9.7
  */
-public record TrampolineListenerNode(@NotNull List<Listener> listeners,
-                                     @NotNull List<Listener> fullListeners,
-                                     @NotNull LinkedHashSet<ParseMessage> results,
-                                     @NotNull LinkedHashSet<ParseMessage> fullResults) {
+public record ListenerNode(@NotNull List<Listener> listeners,
+                           @NotNull List<Listener> fullListeners,
+                           @NotNull LinkedHashSet<ParseMessage> results,
+                           @NotNull LinkedHashSet<ParseMessage> fullResults) {
     /**
      * Creates a new instance.
      */
-    public TrampolineListenerNode() {
+    public ListenerNode() {
         this(new ArrayList<>(), new ArrayList<>(), new LinkedHashSet<>(), new LinkedHashSet<>());
     }
 }

@@ -7,8 +7,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
-import de.kleinert.parsewisp.trampoline.TrampolineListenerKey;
-
 /**
  * Represents a special sequence. The typical EBNF-notation is {@code ?...?} where {@code ...} stands for some free-form text.
  * For example, {@code S = ?any whitespace except newline?} means what it says. This allows some interaction with the program around the parser.

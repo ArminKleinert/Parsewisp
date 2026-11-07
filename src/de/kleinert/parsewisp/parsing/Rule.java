@@ -1,6 +1,6 @@
 package de.kleinert.parsewisp.parsing;
 
-import de.kleinert.parsewisp.trampoline.TrampolineListenerKey;
+import de.kleinert.parsewisp.trampoline.ListenerKey;
 
 import de.kleinert.parsewisp.collections.FlatResultSeq;
 import de.kleinert.parsewisp.grammar.GrammarPrinter;
@@ -57,7 +57,7 @@ public abstract sealed class Rule
     /**
      * Runs the rule from the provided index. The text is in the arguments.
      * <p>
-     * Results (successes and failures) are saved using {@link Gll#pushSuccessMessage(TrampolineListenerKey, FlatResultSeq, int)} or {@link Gll#fail(TrampolineListenerKey, int, Rule, boolean)} or some similar function.
+     * Results (successes and failures) are saved using {@link Gll#pushSuccessMessage(ListenerKey, FlatResultSeq, int)} or {@link Gll#fail(ListenerKey, int, Rule, boolean)} or some similar function.
      *
      * @param index  The start index.
      * @param runner Helper structure.
@@ -68,7 +68,7 @@ public abstract sealed class Rule
     /**
      * Runs the rule from the provided index. The text is in the arguments. Unlike {@link Rule#parse(int, Gll)}, this method tries to parse the text from the index until the end. If the string can't be matched to the end, results in a failure.
      * <p>
-     * Results (successes and failures) are saved using {@link Gll#pushSuccessMessage(TrampolineListenerKey, String, int)} or {@link Gll#fail(TrampolineListenerKey, int, Rule, boolean)} or some similar function.
+     * Results (successes and failures) are saved using {@link Gll#pushSuccessMessage(ListenerKey, String, int)} or {@link Gll#fail(ListenerKey, int, Rule, boolean)} or some similar function.
      *
      * @param index  The start index.
      * @param runner Helper structure.
@@ -160,7 +160,14 @@ public abstract sealed class Rule
         return (GrammarPrinter.getDefault()).ruleToString(this);
     }
 
-    protected static @NotNull TrampolineListenerKey makeKey(int index, @NotNull Rule rule) {
-        return new TrampolineListenerKey(index, rule);
+    /**
+     * A wrapper for the constructor of {@link ListenerKey}.
+     *
+     * @param index The index.
+     * @param rule  The rule.
+     * @return A new {@link ListenerKey}.
+     */
+    protected static @NotNull ListenerKey makeKey(int index, @NotNull Rule rule) {
+        return new ListenerKey(index, rule);
     }
 }

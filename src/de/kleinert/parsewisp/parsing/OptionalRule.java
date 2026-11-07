@@ -1,7 +1,5 @@
 package de.kleinert.parsewisp.parsing;
 
-import de.kleinert.parsewisp.trampoline.TrampolineListenerKey;
-
 import de.kleinert.parsewisp.reduction.ReductionType;
 import org.jetbrains.annotations.NotNull;
 

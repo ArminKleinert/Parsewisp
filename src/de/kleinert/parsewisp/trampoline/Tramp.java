@@ -26,8 +26,8 @@ public final class Tramp {
     private int generation;
     private final @NotNull TreeMap<@NotNull Integer, @NotNull ArrayList<NegativeListener>> negativeListeners;
     //private final @NotNull IntMap<@NotNull NegativeListener> negativeListeners;
-    private final @NotNull LinkedHashMap<@NotNull TrampolineMsgCacheKey, @NotNull Integer> msgCache;
-    private final @NotNull LinkedHashMap<@NotNull TrampolineListenerKey, @NotNull TrampolineListenerNode> nodes;
+    private final @NotNull LinkedHashMap<@NotNull MsgCacheKey, @NotNull Integer> msgCache;
+    private final @NotNull LinkedHashMap<@NotNull ListenerKey, @NotNull ListenerNode> nodes;
     private @Nullable ParseMessage success;
     private @Nullable ParseFailure failure;
 
@@ -132,7 +132,7 @@ public final class Tramp {
      * @param negativeListener The listener procedure.
      * @since 0.9.7
      */
-    public void pushNegativeListener(final @NotNull TrampolineListenerKey creator,
+    public void pushNegativeListener(final @NotNull ListenerKey creator,
                                      final @NotNull NegativeListener negativeListener) {
         var present = negativeListeners.get(creator.index());
         if (present == null) {
@@ -213,7 +213,7 @@ public final class Tramp {
      * @return The generation.
      * @since 0.9.7
      */
-    public int getFromMsgCache(final @NotNull TrampolineMsgCacheKey key, final int defaultVal) {
+    public int getFromMsgCache(final @NotNull MsgCacheKey key, final int defaultVal) {
         return msgCache.getOrDefault(key, defaultVal);
     }
 
@@ -224,7 +224,7 @@ public final class Tramp {
      * @param defaultVal The generation the listener is for.
      * @since 0.9.7
      */
-    public void addToMsgCache(final @NotNull TrampolineMsgCacheKey key, final int defaultVal) {
+    public void addToMsgCache(final @NotNull MsgCacheKey key, final int defaultVal) {
         msgCache.put(key, defaultVal);
     }
 
@@ -255,7 +255,7 @@ public final class Tramp {
      * @return The node or null.
      * @since 0.9.7
      */
-    public @Nullable TrampolineListenerNode getNode(final @NotNull TrampolineListenerKey nodeKey) {
+    public @Nullable ListenerNode getNode(final @NotNull ListenerKey nodeKey) {
         return nodes.get(nodeKey);
     }
 
@@ -266,8 +266,8 @@ public final class Tramp {
      * @param node The node.
      * @since 0.9.7
      */
-    public void addToNodes(final @NotNull TrampolineListenerKey key,
-                           final @NotNull TrampolineListenerNode node) {
+    public void addToNodes(final @NotNull ListenerKey key,
+                           final @NotNull ListenerNode node) {
         nodes.put(key, node);
     }
 

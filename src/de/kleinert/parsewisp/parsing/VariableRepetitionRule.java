@@ -1,6 +1,6 @@
 package de.kleinert.parsewisp.parsing;
 
-import de.kleinert.parsewisp.trampoline.TrampolineListenerKey;
+import de.kleinert.parsewisp.trampoline.ListenerKey;
 
 import de.kleinert.parsewisp.collections.FlatResultSeq;
 import de.kleinert.parsewisp.functions.Listener;
@@ -100,7 +100,7 @@ public final class VariableRepetitionRule extends RuleWithChild {
     private @NotNull Listener repListener(final @NotNull FlatResultSeq resultsSoFar,
                                           final int nResultsSoFar,
                                           final @NotNull VariableRepetitionRule repRule,
-                                          final @NotNull TrampolineListenerKey nodeKey,
+                                          final @NotNull ListenerKey nodeKey,
                                           final @NotNull Gll runner,
                                           final int prevIndex) {
         return result -> {
@@ -137,7 +137,7 @@ public final class VariableRepetitionRule extends RuleWithChild {
                                               final @NotNull Rule rule,
                                               final int minimum,
                                               final int maximum,
-                                              final @NotNull TrampolineListenerKey nodeKey,
+                                              final @NotNull ListenerKey nodeKey,
                                               final @NotNull Gll runner) {
         return result -> {
             final @Nullable var parsedResult = result.getResult();

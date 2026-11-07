@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import de.kleinert.parsewisp.trampoline.TrampolineListenerKey;
-
 /**
  * Describes the "Syntactic exception" or "except" operator. That is the {@code (p1 - p2)} operator in EBNF (where p1 and p2 are instances of {@link Rule}).
  * <p>

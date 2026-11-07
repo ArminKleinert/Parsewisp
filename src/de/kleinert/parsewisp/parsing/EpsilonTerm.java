@@ -5,8 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import de.kleinert.parsewisp.trampoline.TrampolineListenerKey;
-
 /**
  * This class represents the empty parse epsilon. It can typically be written in the following ways: "Epsilon", "epsilon", "EPSILON", "eps", "ε"
  * <br/>

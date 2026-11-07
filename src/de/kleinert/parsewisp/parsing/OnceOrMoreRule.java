@@ -1,6 +1,6 @@
 package de.kleinert.parsewisp.parsing;
 
-import de.kleinert.parsewisp.trampoline.TrampolineListenerKey;
+import de.kleinert.parsewisp.trampoline.ListenerKey;
 
 import de.kleinert.parsewisp.collections.FlatResultSeq;
 import de.kleinert.parsewisp.functions.Listener;
@@ -55,7 +55,7 @@ public final class OnceOrMoreRule extends RuleWithChild {
     static Listener plusListener(final @NotNull FlatResultSeq resultsSoFar,
                                  final @NotNull Rule rule,
                                  final int prevIndex,
-                                 final @NotNull TrampolineListenerKey nodeKey,
+                                 final @NotNull ListenerKey nodeKey,
                                  final @NotNull Gll runner) {
         return result -> {
             final @Nullable Object parsedResult = result.getResult();
@@ -81,7 +81,7 @@ public final class OnceOrMoreRule extends RuleWithChild {
     static Listener plusFullListener(final @NotNull FlatResultSeq resultsSoFar,
                                      final @NotNull Rule rule,
                                      final int prevIndex,
-                                     final @NotNull TrampolineListenerKey nodeKey,
+                                     final @NotNull ListenerKey nodeKey,
                                      final @NotNull Gll runner) {
         return result -> {
             final @Nullable var parsedResult = result.getResult();
