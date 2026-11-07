@@ -28,8 +28,8 @@ class GrammarBuilderTest {
         var gFromGB = new GrammarBuilder() {
             @Override
             protected void make() {
-                addProduction("NUMBER", alternationGuaranteeDistinctAndNotEmpty(Stream.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9").map(this::stringCS).toList()));
-                addProduction("S", cat(nt("NUMBER"), zeroOrMore(nt(Sym.sym("NUMBER")))));
+                addProduction("NUMBER", altUnsafe(Stream.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9").map(this::stringCS).toList()));
+                addProduction("S", cat(nt("NUMBER"), rep(nt(Sym.sym("NUMBER")))));
                 setStartProduction(Sym.sym("S"));
             }
         }.build();
@@ -57,7 +57,7 @@ class GrammarBuilderTest {
             @Override
             protected void make() {
                 addProduction("S", cat(nt("NUMBER"), zeroOrMore(nt(Sym.sym("NUMBER")))));
-                addProduction("NUMBER", alternationGuaranteeDistinctAndNotEmpty(Stream.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9").map(this::stringCS).toList()));
+                addProduction("NUMBER", altUnsafe(Stream.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9").map(this::stringCS).toList()));
             }
         }.build();
 
@@ -81,13 +81,13 @@ class GrammarBuilderTest {
                 addProduction("D", cat(regex("[0-9_]"), zeroOrMore(regex("[0-9_]"))));
                 addProduction("E", cat(rep(regex("[0-9_]"), 1), rep(regex("[0-9_]"), 0), zeroOrMore(regex("[0-9_]"))));
                 addProduction("F", repMin(alt(numVal('0', '9'), numVal(0x5F), numVal(0x60)), 1));
-                addProduction("G", onceOrMore(alternationGuaranteeDistinctAndNotEmpty(Stream.concat(
+                addProduction("G", onceOrMore(altUnsafe(Stream.concat(
                                 IntStream.range('0', '9' + 1).boxed(),
                                 Stream.of((int) '_'))
                         .map(i -> String.valueOf((char) i.intValue()))
                         .map(s -> StringTerm.create(s, false))
                         .collect(Collectors.toList()))));
-                addProduction("H", onceOrMore(alternationGuaranteeDistinctAndNotEmpty(Stream.concat(
+                addProduction("H", onceOrMore(altUnsafe(Stream.concat(
                                 IntStream.range('0', '9' + 1).boxed(),
                                 Stream.of((int) '_'))
                         .map(i -> String.valueOf((char) i.intValue()))
@@ -114,5 +114,23 @@ class GrammarBuilderTest {
                         PT.create("S", PT.create("K", "9", "9"))),
                 Parsewisp.parser(gFromGB, ParserCreationOptions.getDefault()).parses("99"));
         Assertions.assertEquals(List.of(PT.create("S")), p.parses(""));
+    }
+
+    @Test
+    void testWithTransform() {
+        var gFromGB = new GrammarBuilder() {
+            @Override
+            protected void make() {
+                addProduction("S", zeroOrMore(transform(cat(regex("[0-9]+"), opt(string(" ")).hideInResult()), (r, i) -> Long.parseLong((String) r.get(0)))));
+                setStartProduction(Sym.sym("S"));
+            }
+        }.build();
+
+        var p = Parsewisp.parser(gFromGB, ParserCreationOptions.getDefault().withStartProduction(Sym.sym("S")));
+        var text = "123 456 789";
+        Assertions.assertEquals(
+                PT.create("S", 123L, 456L, 789L),
+                p.parse(text)
+        );
     }
 }

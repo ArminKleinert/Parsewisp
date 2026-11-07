@@ -151,7 +151,8 @@ public final class ParseTree implements List<@NotNull Node>, ParseResult {
         } else if (content instanceof List<?>) {
             afs = ((List<?>) content).stream().map(Node::of).toList();
         } else {
-            throw new IllegalArgumentException(content.getClass().toString());
+            //throw new IllegalArgumentException(content.getClass().toString());
+            afs = List.of(Node.of(content));
         }
         return create(new Node.NodeTreeTag(tag), afs, spanStart, spanEnd);
     }

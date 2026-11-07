@@ -262,6 +262,14 @@ public final class Gll {
         pushResultHelper(nodeKey, aps);
     }
 
+    void pushSuccessMessage(
+            final @NotNull ListenerKey nodeKey,
+            final @NotNull Object result,
+            final int end) {
+        final @NotNull ParseMessage aps = ParseMessage.create(end, result);
+        pushResultHelper(nodeKey, aps);
+    }
+
     void pushSuccessMessageWithoutValue(
             final @NotNull ListenerKey nodeKey,
             final int end) {

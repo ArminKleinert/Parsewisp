@@ -87,7 +87,7 @@ public final class AlternationRule extends RuleWithManyChildren {
      * @return A rule.
      * @since 0.9.7
      */
-    public static @NotNull AlternationRule createGuaranteeDistinctAndNotEmpty(
+    public static @NotNull AlternationRule altUnsafe(
             final @NotNull List<Rule> rules) {
         return new AlternationRule(defaultHidden, defaultReductionType, rules);
     }

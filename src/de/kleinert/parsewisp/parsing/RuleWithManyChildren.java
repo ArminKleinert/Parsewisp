@@ -71,8 +71,8 @@ public sealed abstract class RuleWithManyChildren
         if (!getClass().equals(o.getClass())) return false;
         if (hashCode() != o.hashCode()) return false;
         final @NotNull var that = (RuleWithManyChildren) o;
+        if (isHiddenInResult() != that.isHiddenInResult()) return false;
         if (!Objects.equals(getReduction(), that.getReduction())) return false;
-        if (!Objects.equals(isHiddenInResult(), that.isHiddenInResult())) return false;
         return Objects.equals(getRules(), that.getRules());
     }
 

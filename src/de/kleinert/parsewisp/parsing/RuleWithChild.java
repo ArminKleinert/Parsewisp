@@ -12,7 +12,7 @@ import java.util.Objects;
  */
 public sealed abstract class RuleWithChild
         extends Rule
-        permits LookaheadRule, NegativeLookaheadRule, OptionalRule, OnceOrMoreRule, VariableRepetitionRule, ZeroOrMoreRule {
+        permits LookaheadRule, NegativeLookaheadRule, OnceOrMoreRule, OptionalRule, TransformRule, VariableRepetitionRule, ZeroOrMoreRule {
     private long bufferedHashCode = Long.MIN_VALUE;
 
     /**
@@ -58,8 +58,8 @@ public sealed abstract class RuleWithChild
         if (!getClass().equals(o.getClass())) return false;
         if (hashCode() != o.hashCode()) return false;
         final @NotNull var that = (RuleWithChild) o;
+        if (isHiddenInResult() != that.isHiddenInResult()) return false;
         if (!Objects.equals(getReduction(), that.getReduction())) return false;
-        if (!Objects.equals(isHiddenInResult(), that.isHiddenInResult())) return false;
         return Objects.equals(getRule(), that.getRule());
     }
 

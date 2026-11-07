@@ -84,7 +84,7 @@ public final class CfgGrammar extends GrammarBuilder {
 
     private @NotNull Rule makeCfgFactorRhs() {
         final @NotNull Rule rulesRule =
-                alternationGuaranteeDistinctAndNotEmpty(
+                altUnsafe(
                         List.of(nt("string"), /// {@link #makeCfgStringRhs}
                                 nt("regexp"), /// {@link #makeCfgRegexRhs}
                                 nt("opt"), /// {@link #makeCfgOptRhs}
@@ -124,7 +124,7 @@ public final class CfgGrammar extends GrammarBuilder {
      * @return A {@link Rule}.
      */
     private @NotNull Rule makeCfgRuleSeparatorRhs() {
-        return alternationGuaranteeDistinctAndNotEmpty(List.of(
+        return altUnsafe(List.of(
                 stringCS(":="), stringCS("::="), stringCS("=/"),
                 stringCS("="), stringCS(":")));
     }
@@ -170,7 +170,7 @@ public final class CfgGrammar extends GrammarBuilder {
         final @NotNull Pattern singleQuotedString = regexDoc(
                 singleQuoteStringPrefixed, "Prefixed single-quoted string");
 
-        return alternationGuaranteeDistinctAndNotEmpty(List.of(
+        return altUnsafe(List.of(
                 doubleQuoteStringRegexRule,
                 regex(singleQuotedString)));
     }
@@ -186,7 +186,7 @@ public final class CfgGrammar extends GrammarBuilder {
         final @NotNull Pattern doubleQuotedRegex =
                 regexDoc("#\\\"[^\\\"\\\\]*(?:\\\\.[^\\\"\\\\]*)*\\\"", "Double-quoted regexp");
         final @NotNull Rule rulesRule =
-                alternationGuaranteeDistinctAndNotEmpty(
+                altUnsafe(
                         List.of(regex(singleQuotedRegex),
                                 regex(doubleQuotedRegex)));
         return rulesRule;
@@ -194,7 +194,7 @@ public final class CfgGrammar extends GrammarBuilder {
 
     private @NotNull Rule makeCfgRulesOrParserRhs() {
         final @NotNull Rule rulesRule =
-                alternationGuaranteeDistinctAndNotEmpty(
+                altUnsafe(
                         List.of(nt("rules"), /// {@link #makeCfgRulesRhs}
                                 altOrOrdNt /// {@link #makeCfgAltOrOrdRhs}
                         ))
@@ -337,7 +337,7 @@ public final class CfgGrammar extends GrammarBuilder {
     }
 
     private @NotNull Rule makeCfgAltOrOrdRhs() {
-        final @NotNull Rule rulesRule = alternationGuaranteeDistinctAndNotEmpty(
+        final @NotNull Rule rulesRule = altUnsafe(
                 List.of(nt("alt"), /// {@link #makeCfgAltRhs}
                         nt("ord") /// {@link #makeCfgOrdRhs}
                 )).mergeToTop();
@@ -359,7 +359,7 @@ public final class CfgGrammar extends GrammarBuilder {
         final @NotNull Rule optWs = nt("opt-whitespace"); /// {@link #makeCfgOptWhitespaceRhs}
         final @NotNull Rule rulesRule =
                 concatNoEpsilonMoreThan1(
-                        List.of(alternationGuaranteeDistinctAndNotEmpty(
+                        List.of(altUnsafe(
                                         List.of(ntNt, /// {@link #makeCfgNtRhs}
                                                 nt("hide-nt") /// {@link #makeCfgHideNtRhs}
                                         )),
@@ -367,11 +367,11 @@ public final class CfgGrammar extends GrammarBuilder {
                                 nt("rule-separator").hideInResult(), /// {@link #makeCfgRuleSeparatorRhs}
                                 optWhitespace,
                                 altOrOrdNt, /// {@link #makeCfgAltOrOrdRhs}
-                                alternationGuaranteeDistinctAndNotEmpty(
+                                altUnsafe(
                                         List.of(optWs,
                                                 concatNoEpsilonMoreThan1(
                                                         List.of(optWs,
-                                                                alternationGuaranteeDistinctAndNotEmpty(
+                                                                altUnsafe(
                                                                         List.of(string(";"),
                                                                                 string("."))),
                                                                 optWs))))
@@ -423,7 +423,7 @@ public final class CfgGrammar extends GrammarBuilder {
      * @return A {@link Rule}.
      */
     private @NotNull Rule makeCfgCatRhs() {
-        final @NotNull Rule factorLookNeg = alternationGuaranteeDistinctAndNotEmpty(List.of(
+        final @NotNull Rule factorLookNeg = altUnsafe(List.of(
                 factorNt, /// {@link #makeCfgFactorRhs}
                 nt("look"), /// {@link #makeCfgLookRhs}
                 nt("neg"), /// {@link #makeCfgNegRhs}
@@ -451,7 +451,7 @@ public final class CfgGrammar extends GrammarBuilder {
                         List.of(factorLookNeg, optWhitespace,
                                 string("-").hideInResult(),
                                 optWhitespace,
-                                alternationGuaranteeDistinctAndNotEmpty(List.of(factorLookNeg, nt("exclude")))));
+                                altUnsafe(List.of(factorLookNeg, nt("exclude")))));
         return rulesRule;
     }
 

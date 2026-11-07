@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -378,6 +379,18 @@ public abstract class GrammarBuilder {
     }
 
     /**
+     * Creates a {@link TransformRule}.
+     *
+     * @param rule      The rule.
+     * @param transform The transformer function for the result.
+     * @return The new rule.
+     * @since 0.9.7
+     */
+    protected final @NotNull Rule transform(final @NotNull Rule rule, final @NotNull BiFunction<List<Object>, Integer, Object> transform) {
+        return TransformRule.create(rule, transform);
+    }
+
+    /**
      * Create a copy of the input for which {@link Rule#isHiddenInResult} returns true.
      *
      * @param o The input.
@@ -519,9 +532,9 @@ public abstract class GrammarBuilder {
      * @return A rule.
      * @since 0.9.7
      */
-    protected final @NotNull AlternationRule alternationGuaranteeDistinctAndNotEmpty(
+    protected final @NotNull AlternationRule altUnsafe(
             final @NotNull List<Rule> rules) {
-        return AlternationRule.createGuaranteeDistinctAndNotEmpty(rules);
+        return AlternationRule.altUnsafe(rules);
     }
 
     /**
@@ -560,6 +573,18 @@ public abstract class GrammarBuilder {
     protected final @NotNull Rule rep(
             final @NotNull Rule rule, final int min, final int max) {
         return VariableRepetitionRule.create((rule), min, max);
+    }
+
+    /**
+     * Equivalent to {@link #zeroOrMore(Rule)}.
+     *
+     * @param rule The rule to repeat.
+     * @return A rule.
+     * @since 0.9.7
+     */
+    protected final @NotNull Rule rep(
+            final @NotNull Rule rule) {
+        return zeroOrMore(rule);
     }
 
     /**

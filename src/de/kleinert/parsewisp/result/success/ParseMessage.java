@@ -78,6 +78,18 @@ public final class ParseMessage {
     }
 
     /**
+     * Creates an instance wrapping any type that is not covered by any of the other variants of this factory-method..
+     *
+     * @param index  The last index of the previous parse, exclusive.
+     * @param result The object.
+     * @return The object wrapped into an instance of this class.
+     * @since 0.9.7
+     */
+    public static @NotNull ParseMessage create(final int index, final @NotNull Object result) {
+        return new ParseMessage(index, result);
+    }
+
+    /**
      * Creates an instance wrapping a ParseFailureNode.
      *
      * @param index  The last index of the previous parse, exclusive.
