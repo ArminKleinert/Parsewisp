@@ -121,7 +121,7 @@ class GrammarBuilderTest {
         var gFromGB = new GrammarBuilder() {
             @Override
             protected void make() {
-                addProduction("S", zeroOrMore(transform(cat(regex("[0-9]+"), opt(string(" ")).hideInResult()), (r, i) -> Long.parseLong((String) r.get(0)))));
+                addProduction("S", zeroOrMore(transform(cat(regex("[0-9]+"), opt(string(" ")).hideInResult()), (r, i) -> List.of(Long.parseLong((String) r.get(0))))));
                 setStartProduction(Sym.sym("S"));
             }
         }.build();

@@ -386,7 +386,7 @@ public abstract class GrammarBuilder {
      * @return The new rule.
      * @since 0.9.7
      */
-    protected final @NotNull Rule transform(final @NotNull Rule rule, final @NotNull BiFunction<List<Object>, Integer, Object> transform) {
+    protected final @NotNull Rule transform(final @NotNull Rule rule, final @NotNull BiFunction<List<Object>, Integer, List<Object>> transform) {
         return TransformRule.create(rule, transform);
     }
 

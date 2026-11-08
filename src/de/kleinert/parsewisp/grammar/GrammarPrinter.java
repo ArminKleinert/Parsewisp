@@ -58,6 +58,7 @@ import java.util.stream.Collectors;
  *     <tr><td>{@link RegexTerm}</td><td>{@link #regexpToString(RegexTerm)}</td><td>{@code #"..."} (Hash-symbol and then the pattern between double-quotes)</td></tr>
  *     <tr><td>{@link SpecialSequenceRule}</td><td>{@link #specialToString(SpecialSequenceRule)}</td><td>{@code ?...?} (The description between question-marks)</td></tr>
  *     <tr><td>{@link StringTerm}</td><td>{@link #strTermToString(StringTerm)}</td><td>{@code "..."} (The string in double-quotes)</td></tr>
+ *     <tr><td>{@link TransformRule}</td><td>{@link #transformerToString(TransformRule)}</td><td>No special notation.</td></tr>
  *     <tr><td>{@link ValueRangeTerm}</td><td>{@link #valRangeToString(ValueRangeTerm)}</td><td>{@code %x...-...} (ABNF hexadecimal format)</td></tr>
  *     <tr><td>{@link VariableRepetitionRule}</td><td>{@link #repToString(VariableRepetitionRule)}</td><td>{@code n*m rule} (minimum STAR maximum followed by the rule)</td></tr>
  *     <tr><td>{@link ZeroOrMoreRule}</td><td>{@link #zeroOrMoreToString(ZeroOrMoreRule)}</td><td>{@code rule*} (The rule followed by a "*")</td></tr>
@@ -169,7 +170,7 @@ public interface GrammarPrinter {
      * @since 0.9.7
      */
     default int precedence(final @NotNull Rule rule) {
-        if (rule instanceof AlternationRule || rule instanceof OrderedChoiceRule)
+        if (rule instanceof AlternationRule || rule instanceof OrderedChoiceRule || rule instanceof TransformRule)
             return 100;
         if (rule instanceof ConcatRule)
             return 80;
@@ -291,6 +292,8 @@ public interface GrammarPrinter {
             s = strTermToString((StringTerm) rule);
         } else if (rule instanceof ValueRangeTerm) {
             s = valRangeToString((ValueRangeTerm) rule);
+        } else if (rule instanceof TransformRule) {
+            s = transformerToString((TransformRule) rule);
         } else {
             throw new IllegalArgumentException("Unsupported rule type: " + rule);
         }
@@ -509,6 +512,19 @@ public interface GrammarPrinter {
     default @NotNull String valRangeToString(final @NotNull ValueRangeTerm rule) {
         if (rule.getLo() == rule.getHi()) return String.format("%%x%X", rule.getLo());
         return String.format("%%x%X-%X", rule.getLo(), rule.getHi());
+    }
+
+    /**
+     * Prints a {@link TransformRule}.
+     * <p>
+     * Default format: {@code rule}
+     *
+     * @param rule The rule.
+     * @return A string-representation of the rule.
+     * @since 0.9.7
+     */
+    default @NotNull String transformerToString(final @NotNull TransformRule rule) {
+        return ruleToString(rule);
     }
 
     /**
