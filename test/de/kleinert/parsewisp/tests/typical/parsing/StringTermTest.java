@@ -15,7 +15,7 @@ import java.util.Map;
 
 class StringTermTest {
     @Test
-    void testParse() {
+    void parse() {
         var g = new Grammar(Sym.sym("S"), new LinkedHashMap<>(Map.of(
                 Sym.sym("S"), ConcatRule.create(List.of(
                         StringTerm.create("a", false),
@@ -26,7 +26,7 @@ class StringTermTest {
     }
 
     @Test
-    void testFullParse() {
+    void fullParse() {
         var g = new Grammar(Sym.sym("S"), new LinkedHashMap<>(Map.of(
                 Sym.sym("S"), ConcatRule.create(List.of(
                         StringTerm.create("a", false),

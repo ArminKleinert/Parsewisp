@@ -17,7 +17,7 @@ import java.util.Map;
 
 class TransformRuleTest {
     @Test
-    void testParse() {
+    void parse() {
         var g = new Grammar(Sym.sym("S"), new LinkedHashMap<>(Map.of(
                 Sym.sym("S"), ConcatRule.create(List.of(
                         TransformRule.create(
@@ -33,7 +33,7 @@ class TransformRuleTest {
     }
 
     @Test
-    void testParse1() {
+    void parse1() {
         var g = new Grammar(Sym.sym("S"), new LinkedHashMap<>(Map.of(
                 Sym.sym("S"), ConcatRule.create(List.of(
                         TransformRule.create(
@@ -48,7 +48,7 @@ class TransformRuleTest {
     }
 
     @Test
-    void testFullParse() {
+    void fullParse() {
         var g = new Grammar(Sym.sym("S"), new LinkedHashMap<>(Map.of(
                 Sym.sym("S"), ConcatRule.create(List.of(
                         StringTerm.create("abc", false),

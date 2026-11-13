@@ -14,7 +14,7 @@ import java.util.Objects;
  * @since 0.9.7
  */
 public final class EpsilonTerm extends Terminal {
-    private static final @NotNull EpsilonTerm epsilon = new EpsilonTerm(defaultHidden, defaultReductionType);
+    //private static final @NotNull EpsilonTerm epsilon = new EpsilonTerm(defaultHidden, defaultReductionType);
 
     private EpsilonTerm(final boolean hide, final @NotNull ReductionType red) {
         super(hide, red);
@@ -27,7 +27,8 @@ public final class EpsilonTerm extends Terminal {
      * @since 0.9.7
      */
     public static @NotNull EpsilonTerm getDefault() {
-        return epsilon;
+        //return epsilon;
+        return new EpsilonTerm(defaultHidden, defaultReductionType);
     }
 
     @Override
