@@ -7,6 +7,7 @@ import java.util.Objects;
 
 /**
  * Represents an ABNF value range.
+ *
  * @since 0.9.7
  */
 public final class ValueRangeTerm extends Terminal {

@@ -1,10 +1,8 @@
-package de.kleinert.parsewisp.parsing;
+package de.kleinert.parsewisp.tests.typical.parsing;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class LookaheadRuleTest {
+class NegativeLookaheadRuleTest {
 
     @Test
     void create() {
@@ -19,14 +17,14 @@ class LookaheadRuleTest {
     }
 
     @Test
+    void withRule() {
+    }
+
+    @Test
     void withHideTag() {
     }
 
     @Test
     void withReduction() {
-    }
-
-    @Test
-    void withRule() {
     }
 }

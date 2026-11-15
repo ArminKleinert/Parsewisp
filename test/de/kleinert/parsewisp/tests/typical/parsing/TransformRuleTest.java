@@ -17,6 +17,10 @@ import java.util.Map;
 
 class TransformRuleTest {
     @Test
+    void create() {
+    }
+
+    @Test
     void parse() {
         var g = new Grammar(Sym.sym("S"), new LinkedHashMap<>(Map.of(
                 Sym.sym("S"), ConcatRule.create(List.of(
@@ -61,5 +65,17 @@ class TransformRuleTest {
                 PT.create("S", "abc", "d", "e", "f"),
                 p.parse("abcdef")
         );
+    }
+
+    @Test
+    void withRule() {
+    }
+
+    @Test
+    void withHideTag() {
+    }
+
+    @Test
+    void withReduction() {
     }
 }

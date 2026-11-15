@@ -1,15 +1,14 @@
-package de.kleinert.parsewisp.parsing;
+package de.kleinert.parsewisp.tests.typical.parsing;
 
+import de.kleinert.parsewisp.parsing.EOFTerm;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class EpsilonTermTest {
+class EOFTermTest {
 
     @Test
     void getDefault() {
-        Assertions.assertEquals(EpsilonTerm.getDefault(), EpsilonTerm.getDefault());
+        Assertions.assertEquals(EOFTerm.getDefault(), EOFTerm.getDefault());
     }
 
     @Test

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 /**
- * This class represents the empty parse epsilon. It can typically be written in the following ways: "Epsilon", "epsilon", "EPSILON", "eps", "ε"
+ * This class represents the empty parse epsilon. It can typically be written in the following ways: "Epsilon", "epsilon", "EPSILON", "eps", "ε" or as the empty string "".
  * <br/>
  * When parsing, the process depends on whether a full parse is being done (matching to the end of the input):
  * If yes, success if the end of input has been reached, fail otherwise. If no, always success.

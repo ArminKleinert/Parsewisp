@@ -1,10 +1,8 @@
-package de.kleinert.parsewisp.parsing;
+package de.kleinert.parsewisp.tests.typical.parsing;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class RegexTermTest {
+class VariableRepetitionRuleTest {
 
     @Test
     void create() {
@@ -19,7 +17,15 @@ class RegexTermTest {
     }
 
     @Test
-    void getRegexp() {
+    void getMin() {
+    }
+
+    @Test
+    void getMax() {
+    }
+
+    @Test
+    void withRule() {
     }
 
     @Test

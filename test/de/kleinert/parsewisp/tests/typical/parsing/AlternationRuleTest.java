@@ -1,29 +1,22 @@
-package de.kleinert.parsewisp.parsing;
+package de.kleinert.parsewisp.tests.typical.parsing;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class ExclusionRuleTest {
+class AlternationRuleTest {
 
     @Test
     void create() {
     }
 
     @Test
+    void altUnsafe() {
+    }
+    @Test
     void parse() {
     }
 
     @Test
     void fullParse() {
-    }
-
-    @Test
-    void getExpected() {
-    }
-
-    @Test
-    void getExcluded() {
     }
 
     @Test

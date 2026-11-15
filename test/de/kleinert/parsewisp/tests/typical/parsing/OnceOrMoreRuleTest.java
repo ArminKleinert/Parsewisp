@@ -1,10 +1,8 @@
-package de.kleinert.parsewisp.parsing;
+package de.kleinert.parsewisp.tests.typical.parsing;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class ZeroOrMoreRuleTest {
+class OnceOrMoreRuleTest {
 
     @Test
     void create() {
