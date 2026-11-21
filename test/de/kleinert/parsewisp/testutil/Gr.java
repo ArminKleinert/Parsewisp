@@ -11,7 +11,7 @@ import java.util.LinkedHashMap;
 /**
  * Helper class for creating Grammars for test cases.
  */
-public class Gr {
+public final class Gr {
     private Gr() {
     }
 

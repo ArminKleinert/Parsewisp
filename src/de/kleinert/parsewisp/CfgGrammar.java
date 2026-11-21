@@ -235,13 +235,13 @@ public final class CfgGrammar extends GrammarBuilder {
      * @return A {@link Rule}.
      */
     private @NotNull Rule makeCfgRepRhs() {
-        final @NotNull Rule repRegexChoice =
-                regex(Pattern.compile("\\d+(?:\\*\\d*)?|\\*\\d+"));
+        final @NotNull Rule regDigits =
+                regex(Pattern.compile("\\{\\d*(,\\d*)?}"));
         final @NotNull Rule rulesRule =
                 concatNoEpsilonMoreThan1(List.of(
-                        repRegexChoice,
+                        factorNt, /// {@link #makeCfgFactorRhs}
                         optWhitespace,
-                        factorNt /// {@link #makeCfgFactorRhs}
+                        regDigits
                 ));
         return rulesRule;
     }

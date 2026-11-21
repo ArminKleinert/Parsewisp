@@ -33,10 +33,10 @@ class CornerCasesTests {
 
         Assertions.assertEquals(
                 PT.create("S", "a", PT.create("E"), "b"),
-                Parsewisp.parser("S = 'a' 1*3 E 'b'\nE = eps").parse("ab"));
+                Parsewisp.parser("S = 'a' E {1,3} 'b'\nE = eps").parse("ab"));
         Assertions.assertEquals(
                 PT.create("S", "a", PT.create("E"), PT.create("E"), "b"),
-                Parsewisp.parser("S = 'a' 2*3 E 'b'\nE = eps").parse("ab"));
+                Parsewisp.parser("S = 'a' E {2,3} 'b'\nE = eps").parse("ab"));
     }
 
     @Test
@@ -45,7 +45,7 @@ class CornerCasesTests {
                 Set.of(PT.create("S", "a", PT.create("E"), "b"),
                         PT.create("S", "a", PT.create("E"), PT.create("E"), "b"),
                         PT.create("S", "a", PT.create("E"), PT.create("E"), PT.create("E"), "b")),
-                new HashSet<>(Parsewisp.parser("S = 'a' 1*3 E 'b'\nE = eps").parses(
+                new HashSet<>(Parsewisp.parser("S = 'a' E {1,3} 'b'\nE = eps").parses(
                         "ab",
                         ParsingOptions.getDefault().withStopEarlyOnEmptyRepetition(false))));
     }

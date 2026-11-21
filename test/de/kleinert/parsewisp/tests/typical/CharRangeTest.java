@@ -98,11 +98,11 @@ class CharRangeTest {
         Assertions.assertEquals(tree, Parsewisp.parser("S = %x1F381-1F381+", options).parse(text));
         Assertions.assertEquals(tree, Parsewisp.parser("S = %x1F381*", options).parse(text));
         Assertions.assertEquals(tree, Parsewisp.parser("S = %x1F381-1F381*", options).parse(text));
-        Assertions.assertEquals(tree, Parsewisp.parser("S = 1*3 %x1F381", options).parse(text));
-        Assertions.assertEquals(tree, Parsewisp.parser("S = 1*3 %x1F381-1F381", options).parse(text));
-        Assertions.assertEquals(tree, Parsewisp.parser("S = *3 %x1F381", options).parse(text));
-        Assertions.assertEquals(tree, Parsewisp.parser("S = *3 %x1F381-1F381", options).parse(text));
-        Assertions.assertEquals(tree, Parsewisp.parser("S = 1* %x1F381", options).parse(text));
-        Assertions.assertEquals(tree, Parsewisp.parser("S = 1* %x1F381-1F381", options).parse(text));
+        Assertions.assertEquals(tree, Parsewisp.parser("S = %x1F381 {1,3}", options).parse(text));
+        Assertions.assertEquals(tree, Parsewisp.parser("S = %x1F381-1F381 {1,3}", options).parse(text));
+        Assertions.assertEquals(tree, Parsewisp.parser("S = %x1F381 {,3}", options).parse(text));
+        Assertions.assertEquals(tree, Parsewisp.parser("S = %x1F381-1F381 {,3}", options).parse(text));
+        Assertions.assertEquals(tree, Parsewisp.parser("S = %x1F381 {1,}", options).parse(text));
+        Assertions.assertEquals(tree, Parsewisp.parser("S = %x1F381-1F381 {1,}", options).parse(text));
     }
 }

@@ -187,13 +187,12 @@ class RulesAvailableDefaultTest {
 
     @Test
     void variableRepetitionSimpleTest() {
-        Assertions.assertDoesNotThrow(() -> Parsewisp.parser("S = 1*5 \"a\""));
-        Assertions.assertDoesNotThrow(() -> Parsewisp.parser("S = 1* \"a\""));
-        Assertions.assertDoesNotThrow(() -> Parsewisp.parser("S = *5 \"a\""));
+        Assertions.assertDoesNotThrow(() -> Parsewisp.parser("S = \"a\"{1,5}"));
+        Assertions.assertDoesNotThrow(() -> Parsewisp.parser("S = \"a\"{1,}"));
+        Assertions.assertDoesNotThrow(() -> Parsewisp.parser("S = \"a\"{,5}"));
+        Assertions.assertDoesNotThrow(() -> Parsewisp.parser("S = \"a\"{}"));
 
-        Assertions.assertThrows(ParserCreationFailure.class, () -> Parsewisp.parser("S = * \"a\""));
-
-        var p = Parsewisp.parser("S = 1*3 \"a\" \"b\"");
+        var p = Parsewisp.parser("S = \"a\"{1,3} \"b\"");
         Assertions.assertTrue(p.parse("a").isFailure());
         Assertions.assertTrue(p.parse("b").isFailure());
         Assertions.assertEquals(PT.create("S", "a", "b"), p.parse("ab"));

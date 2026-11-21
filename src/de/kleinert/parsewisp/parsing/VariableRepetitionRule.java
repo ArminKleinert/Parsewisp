@@ -12,12 +12,12 @@ import java.util.Objects;
 
 /**
  * A class representing the ABNF counted repetition operator.
- * There are multiple variants, depending on the syntax (where n1 and n2 are integers, and p is an instance of {@link Rule}):
+ * There are multiple variants, depending on the syntax (where n and m are integers, and p is an instance of {@link Rule}):
  * <ul>
- *     <li>Repeat a minimum of {@code n1} times and a maximum of {@code n2} times: {@code n1*n2 p}</li>
- *     <li>Repeat a minimum of {@code n1} times: {@code n1* p}</li>
- *     <li>Repeat a maximum of {@code n1} times: {@code *n1 p}</li>
- *     <li>Repeat exactly of {@code n1} times: {@code n1 p}</li>
+ *     <li>Repeat a minimum of {@code n} times and a maximum of {@code m} times: {@code p{n,m}}</li>
+ *     <li>Repeat a minimum of {@code n} times: {@code p{n,}}</li>
+ *     <li>Repeat a maximum of {@code m} times: {@code p{,m}}</li>
+ *     <li>Repeat exactly of {@code n} times: {@code p{n}}</li>
  * </ul>
  *
  * @since 0.9.7

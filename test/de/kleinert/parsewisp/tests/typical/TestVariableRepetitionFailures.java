@@ -28,7 +28,7 @@ class TestVariableRepetitionFailures {
         var partialOpts = ParsingOptions.getDefault().withPartial(true);
         var creationOpts = ParserCreationOptions.getDefault();
         var repeated_a = Parsewisp.parser("""
-                        S = 0*6 'a' 'a'
+                        S = 'a'{0,6} 'a'
                         """,
                 creationOpts);
         //System.out.println(repeated_a);
@@ -48,7 +48,7 @@ class TestVariableRepetitionFailures {
         var partialOpts = ParsingOptions.getDefault().withPartial(true);
         var creationOpts = ParserCreationOptions.getDefault();
         var repeated_a = Parsewisp.parser("""
-                        S = 'a' 0*6 'a'
+                        S = 'a' 'a'{0,6}
                         """,
                 creationOpts);
         //System.out.println(repeated_a);
@@ -69,7 +69,7 @@ class TestVariableRepetitionFailures {
         var partialOpts = ParsingOptions.getDefault().withPartial(true);
         var creationOpts = ParserCreationOptions.getDefault();
         var repeated_a = Parsewisp.parser("""
-                        S = 1*6 'a'
+                        S = 'a'{1,6}
                         """,
                 creationOpts);
         //System.out.println(repeated_a);
@@ -77,7 +77,7 @@ class TestVariableRepetitionFailures {
     }
     @Test
     void parseRepetitionMinMax() {
-            final @NotNull var p = Parsewisp.parser("S = 2*4 'a'");
+            final @NotNull var p = Parsewisp.parser("S = 'a' {2,4}");
             Assertions.assertTrue(p.parse("").isFailure());
             Assertions.assertTrue(p.parse("a").isFailure());
             Assertions.assertEquals(PT.create("S", "a", "a"), p.parse("aa"));
@@ -88,14 +88,14 @@ class TestVariableRepetitionFailures {
     @Test
     void createRepetitionParserFailure() {
         // Negative minimum
-        Assertions.assertThrows(ParserCreationFailure.class, () -> Parsewisp.parser("S = -1*2 'a'"));
+        Assertions.assertThrows(ParserCreationFailure.class, () -> Parsewisp.parser("S = 'a' {-1,6}"));
         // Negative maximum
-        Assertions.assertThrows(ParserCreationFailure.class, () -> Parsewisp.parser("S = *-1 'a'"));
+        Assertions.assertThrows(ParserCreationFailure.class, () -> Parsewisp.parser("S = 'a' {,-1}"));
         // Negative minimum
-        Assertions.assertThrows(ParserCreationFailure.class, () -> Parsewisp.parser("S = -1* 'a'"));
+        Assertions.assertThrows(ParserCreationFailure.class, () -> Parsewisp.parser("S = 'a' {-1,}"));
         // Negative exact
-        Assertions.assertThrows(ParserCreationFailure.class, () -> Parsewisp.parser("S = -1 'a'"));
+        Assertions.assertThrows(ParserCreationFailure.class, () -> Parsewisp.parser("S = 'a' {-1}"));
         // Minimum greater than maximum
-        Assertions.assertThrows(ParserCreationFailure.class, () -> Parsewisp.parser("S = 4*2 'a'"));
+        Assertions.assertThrows(ParserCreationFailure.class, () -> Parsewisp.parser("S = 'a' {4,2}"));
     }
 }

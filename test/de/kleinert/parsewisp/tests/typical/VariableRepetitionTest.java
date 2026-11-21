@@ -16,7 +16,7 @@ class VariableRepetitionTest {
     @Test
     void parseRepetitionMinimumOnly() {
         {
-            final @NotNull var p = Parsewisp.parser("S = 2* 'a'");
+            final @NotNull var p = Parsewisp.parser("S = 'a' {2,}");
             Assertions.assertTrue(p.parse("").isFailure());
             Assertions.assertTrue(p.parse("a").isFailure());
             Assertions.assertEquals(PT.create("S", "a", "a"), p.parse("aa"));
@@ -29,7 +29,7 @@ class VariableRepetitionTest {
     @Test
     void parseRepetitionMaximumOnly() {
         {
-            final @NotNull var p = Parsewisp.parser("S = *2 'a'");
+            final @NotNull var p = Parsewisp.parser("S = 'a' {,2}");
             Assertions.assertEquals(PT.create("S"), p.parse(""));
             Assertions.assertEquals(PT.create("S", "a"), p.parse("a"));
             Assertions.assertEquals(PT.create("S", "a", "a"), p.parse("aa"));
@@ -38,7 +38,7 @@ class VariableRepetitionTest {
             Assertions.assertTrue(p.parse("aaaaa").isFailure());
         }
         {
-            final @NotNull var p = Parsewisp.parser("S = *0 'a'");
+            final @NotNull var p = Parsewisp.parser("S = 'a' {,0}");
             Assertions.assertEquals(PT.create("S"), p.parse(""));
             Assertions.assertTrue(p.parse("a").isFailure());
             Assertions.assertTrue(p.parse("aa").isFailure());
@@ -51,7 +51,7 @@ class VariableRepetitionTest {
     @Test
     void parseRepetitionMinMax() {
         {
-            final @NotNull var p = Parsewisp.parser("S = 2*4 'a'");
+            final @NotNull var p = Parsewisp.parser("S = 'a' {2,4}");
             Assertions.assertTrue(p.parse("").isFailure());
             Assertions.assertTrue(p.parse("a").isFailure());
             Assertions.assertEquals(PT.create("S", "a", "a"), p.parse("aa"));
@@ -60,7 +60,7 @@ class VariableRepetitionTest {
             Assertions.assertTrue(p.parse("aaaaa").isFailure());
         }
         {
-            final @NotNull var p = Parsewisp.parser("S = 0*0 'a'");
+            final @NotNull var p = Parsewisp.parser("S = 'a' {0,0}");
             Assertions.assertEquals(PT.create("S"), p.parse(""));
             Assertions.assertTrue(p.parse("a").isFailure());
             Assertions.assertTrue(p.parse("aa").isFailure());
@@ -72,7 +72,7 @@ class VariableRepetitionTest {
 
     @Test
     void parseRepetitionExact() {
-        final @NotNull var p = Parsewisp.parser("S = 2 'a'");
+        final @NotNull var p = Parsewisp.parser("S = 'a' {2}");
         Assertions.assertTrue(p.parse("").isFailure());
         Assertions.assertTrue(p.parse("a").isFailure());
         Assertions.assertEquals(PT.create("S", "a", "a"), p.parse("aa"));
@@ -95,7 +95,7 @@ class VariableRepetitionTest {
 
         var creationOpts = ParserCreationOptions.getDefault();
         var repeated_a = Parsewisp.parser("""
-                        S = 'a' 0*6 'a'
+                        S = 'a' 'a' {0,6}
                         """,
                 creationOpts);
         Assertions.assertEquals(treesPartial, new HashSet<>(repeated_a.parses(text, partialOpts)));
@@ -116,7 +116,7 @@ class VariableRepetitionTest {
 
         var creationOpts = ParserCreationOptions.getDefault();
         var repeated_a = Parsewisp.parser("""
-                        S = 1*6 'a'
+                        S = 'a' {1,6}
                         """,
                 creationOpts);
         Assertions.assertEquals(treesPartial, new HashSet<>(repeated_a.parses(text, partialOpts)));

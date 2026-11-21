@@ -51,7 +51,7 @@ class RuleAlternativesTests {
 
     @Test
     void variableRepeatMin() {
-        var p1 = Parsewisp.parser("S = 4* \"a\"");
+        var p1 = Parsewisp.parser("S = \"a\"{4,}");
         var p2 = Parsewisp.parser("S = \"a\" \"a\" \"a\" \"a\" {\"a\"}");
         Assertions.assertEquals(p1.parse("aaaa"), p2.parse("aaaa"));
         Assertions.assertEquals(p1.parse("aaaaaa"), p2.parse("aaaaaa"));
@@ -59,7 +59,7 @@ class RuleAlternativesTests {
 
     @Test
     void variableRepeatMax() {
-        var p1 = Parsewisp.parser("S = *4 \"a\"");
+        var p1 = Parsewisp.parser("S = \"a\"{,4}");
         var p2 = Parsewisp.parser("S = \"a\"? \"a\"? \"a\"? \"a\"?");
         Assertions.assertEquals(p1.parse(""), p2.parse(""));
         Assertions.assertEquals(p1.parse("aa"), p2.parse("aa"));
@@ -68,7 +68,7 @@ class RuleAlternativesTests {
 
     @Test
     void variableRepeatMinMax() {
-        var p1 = Parsewisp.parser("S = 2*4 \"a\"");
+        var p1 = Parsewisp.parser("S = \"a\"{2,4}");
         var p2 = Parsewisp.parser("S = \"a\" \"a\" \"a\"? \"a\"?");
         Assertions.assertEquals(p1.parse("aa"), p2.parse("aa"));
         Assertions.assertEquals(p1.parse("aaaa"), p2.parse("aaaa"));

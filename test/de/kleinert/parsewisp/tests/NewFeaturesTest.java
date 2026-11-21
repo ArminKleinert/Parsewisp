@@ -22,8 +22,10 @@ import java.util.regex.Pattern;
 class NewFeaturesTest {
     @Test
     void t10 () {
-        var pattern = Parsewisp.parser("WS = (#'\\s+' | '//' #'[^\\n]*' ('\\n' | EOF) | #'/\\*.*\\*/') WS?");
-        System.out.println(pattern.parse("/* abc */ // a\n //"));
+        Parsewisp.parser("S = 'a'{2}");
+        Parsewisp.parser("S = 'a'{2,}");
+        Parsewisp.parser("S = 'a'{,2}");
+        Parsewisp.parser("S = 'a'{2,3}");
     }
     @Test
     void test00() {

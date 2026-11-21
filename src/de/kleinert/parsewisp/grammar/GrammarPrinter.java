@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
  * <pre>
  * {@code
  * var p = Parsewisp.parser(
- *         """
- *         S = P S | eps
- *         P = "(" S* ")"
- *         """); // A variant of the grammar of balanced parentheses
+ *     """
+ *     S = P S | eps
+ *     P = "(" S* ")"
+ *     """); // A variant of the grammar of balanced parentheses
  * System.out.println(p.show()); // Use default printer.
  * }
  * </pre>
@@ -31,8 +31,8 @@ import java.util.stream.Collectors;
  * <pre>
  * {@code
  * var p = Parsewisp.parser(
- *         "S = P S | eps ; P = \"(\" S* \")\" ;",
- *         ParserCreationOptions.getDefault().withPrinter(new GrammarPrinter())); // << Or pass another printer
+ *     "S = P S | eps ; P = \"(\" S* \")\" ;",
+ *     ParserCreationOptions.getDefault().withPrinter(new GrammarPrinter())); // << Or pass another printer
  *
  * System.out.println(new GrammarPrinter().toString(p.grammar())); // Use specific printer.
  * }
@@ -60,7 +60,7 @@ import java.util.stream.Collectors;
  *     <tr><td>{@link StringTerm}</td><td>{@link #strTermToString(StringTerm)}</td><td>{@code "..."} (The string in double-quotes)</td></tr>
  *     <tr><td>{@link TransformRule}</td><td>{@link #transformerToString(TransformRule)}</td><td>No special notation.</td></tr>
  *     <tr><td>{@link ValueRangeTerm}</td><td>{@link #valRangeToString(ValueRangeTerm)}</td><td>{@code %x...-...} (ABNF hexadecimal format)</td></tr>
- *     <tr><td>{@link VariableRepetitionRule}</td><td>{@link #repToString(VariableRepetitionRule)}</td><td>{@code n*m rule} (minimum STAR maximum followed by the rule)</td></tr>
+ *     <tr><td>{@link VariableRepetitionRule}</td><td>{@link #repToString(VariableRepetitionRule)}</td><td>{@code rule{n,m}} (minimum STAR maximum followed by the rule)</td></tr>
  *     <tr><td>{@link ZeroOrMoreRule}</td><td>{@link #zeroOrMoreToString(ZeroOrMoreRule)}</td><td>{@code rule*} (The rule followed by a "*")</td></tr>
  *     </tbody>
  * </table>
@@ -205,31 +205,31 @@ public interface GrammarPrinter {
      * Example: {@link AlternationRule} has a higher precedence than {@link ConcatRule}, so an alternation of concatenations would print the concatenations in parentheses.
      * <pre>
      * {@code
-     *         // As a grammar, this would be `S = "a" "b" | "c" "d"` or the equivalent `S = ("a" "b") | ("c" "d")`
-     *         var rule0 = AlternationRule.create(List.of(
-     *                 ConcatRule.create(List.of(
-     *                         StringTerm.create("a", false),
-     *                         StringTerm.create("b", false))),
-     *                 ConcatRule.create(List.of(
-     *                         StringTerm.create("c", false),
-     *                         StringTerm.create("d", false)))
-     *         ));
-     *         System.out.println(printer.ruleToString(rule0)); // => "a" "b" | "c" "d"
+     *     // As a grammar, this would be `S = "a" "b" | "c" "d"` or the equivalent `S = ("a" "b") | ("c" "d")`
+     *     var rule0 = AlternationRule.create(List.of(
+     *             ConcatRule.create(List.of(
+     *                     StringTerm.create("a", false),
+     *                     StringTerm.create("b", false))),
+     *             ConcatRule.create(List.of(
+     *                     StringTerm.create("c", false),
+     *                     StringTerm.create("d", false)))
+     *     ));
+     *     System.out.println(printer.ruleToString(rule0)); // => "a" "b" | "c" "d"
      * }
      * </pre>
      * But if a concatenation contains two alternations, parentheses are required.
      * <pre>
      * {@code
-     *         // As a grammar, this would be `S = ("a" | "b") ("c" | "d")`
-     *         var rule1 = ConcatRule.create(List.of(
-     *                 AlternationRule.create(List.of(
-     *                         StringTerm.create("a", false),
-     *                         StringTerm.create("b", false))),
-     *                 AlternationRule.create(List.of(
-     *                         StringTerm.create("c", false),
-     *                         StringTerm.create("d", false)))
-     *         ));
-     *         System.out.println(printer.ruleToString(rule1)); // => ("a" | "b") ("c" | "d")
+     *     // As a grammar, this would be `S = ("a" | "b") ("c" | "d")`
+     *     var rule1 = ConcatRule.create(List.of(
+     *             AlternationRule.create(List.of(
+     *                     StringTerm.create("a", false),
+     *                     StringTerm.create("b", false))),
+     *             AlternationRule.create(List.of(
+     *                     StringTerm.create("c", false),
+     *                     StringTerm.create("d", false)))
+     *     ));
+     *     System.out.println(printer.ruleToString(rule1)); // => ("a" | "b") ("c" | "d")
      * }
      * </pre>
      *
@@ -530,14 +530,14 @@ public interface GrammarPrinter {
     /**
      * Prints a {@link VariableRepetitionRule}.
      * <p>
-     * Default format: {@code min*max rule}
+     * Default format: {@code rule{min,max}}
      *
      * @param rule The rule.
      * @return A string-representation of the rule.
      * @since 0.9.7
      */
     default @NotNull String repToString(final @NotNull VariableRepetitionRule rule) {
-        return rule.getMin() + "*" + rule.getMax() + parens(rule, rule.getRule());
+        return  parens(rule, rule.getRule())+"{"+rule.getMin() + "," + rule.getMax()+"}";
     }
 
     /**

@@ -22,6 +22,7 @@ final class Cfg {
 
     /**
      * Returns a default creator.
+     *
      * @param options Input options.
      * @return An instance of {@link Cfg}.
      */
@@ -34,38 +35,39 @@ final class Cfg {
         Grammar grammarGrammar;
 
         private GrammarBuild(final @NotNull ParserCreationOptions options,
-                     final @NotNull String spec,
-                     final @NotNull Grammar grammarGrammar) {
+                             final @NotNull String spec,
+                             final @NotNull Grammar grammarGrammar) {
             super(options.getRedefinitionOption());
             this.spec = spec;
             this.grammarGrammar = grammarGrammar;
         }
 
         private @NotNull Rule buildRepRule(final @NotNull ParseTree tree) {
-            final @NotNull var partsUncut = (String) tree.getContent().get(0).content();
-            @NotNull var parts = partsUncut.split("\\*");
-            if (parts.length == 1) {
-                // Format at this point is [0-9]+\\* or \\*[0-9]+ or [0-9]+
+            @NotNull var partsUncut = ((String) tree.getContent().get(1).content());
+            partsUncut = partsUncut.substring(1, partsUncut.length() - 1); // Cut away "{" and "}"
+            @NotNull var parts = partsUncut.split(",");
+            if (partsUncut.isEmpty()) { // The input was only "{}"
+                parts = new String[]{"", ""};
+            } else if (parts.length == 1) {
+                // Format at this point is "[0-9]+" or "[0-9]+," or ",[0-9]+" or "[0-9]+,[0-9]+"
                 final @NotNull var temp = new String[]{"", ""};
-                if (partsUncut.charAt(0) == '*') { // Only maximum provided (e.g. `*n p`)
+                if (partsUncut.charAt(0) == ',') { // Only maximum provided (e.g. `p{,m}`)
                     temp[1] = parts[0];
-                } else if (partsUncut.charAt(partsUncut.length() - 1) == '*') {// Only minimum provided (e.g. `n* p`
+                } else if (partsUncut.charAt(partsUncut.length() - 1) == ',') {// Only minimum provided (e.g. `p{n,}`
                     temp[0] = parts[0];
-                } else { // Only an exact number is given: Both minimum and maximum. (e.g. `n p`).
+                } else { // Only an exact number is given: Both minimum and maximum. (e.g. `p{n}`).
                     temp[0] = parts[0];
                     temp[1] = temp[0];
                 }
                 parts = temp;
-            } else if (parts.length == 0) { // The input was only "*"
-                parts = new String[]{"", ""};
-            } else if (parts.length > 2) { // The input included more than one "*"
+            } else if (parts.length > 2) {
                 throw new IllegalArgumentException("Invalid format for repetition rule: " + partsUncut);
             }
             // If none of the cases were true, the input had the usual format [0-9]+\\*[0-9]+
             final int min = parts[0].isBlank() ? 0 : Integer.parseInt(parts[0]);
             final int max = parts[1].isBlank() ? Integer.MAX_VALUE : Integer.parseInt(parts[1]);
             final @NotNull var repeatedRule =
-                    (Rule) buildRule((ParseTree) tree.getContent().get(1).content());
+                    (Rule) buildRule((ParseTree) tree.getContent().get(0).content());
             return rep(repeatedRule, min, max);
         }
 
