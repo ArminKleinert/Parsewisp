@@ -57,7 +57,7 @@ public final class ConcatRule extends RuleWithManyChildren {
      * @return A concatenation rule.
      * @since 0.9.7
      */
-    public static @NotNull ConcatRule createNoEpsilonMoreThan1(
+    public static @NotNull ConcatRule createDirect(
             final @NotNull List<Rule> rules) {
         return new ConcatRule(defaultHidden, defaultReductionType, rules);
     }

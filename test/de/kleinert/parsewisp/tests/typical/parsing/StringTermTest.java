@@ -14,9 +14,9 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 class StringTermTest {
-    StringTerm simpleRuleForTests = StringTerm.createDirect("a", false);
-    StringTerm simple_a = StringTerm.createDirect("a", false);
-    StringTerm simple_b = StringTerm.createDirect("b", false);
+    private final StringTerm simpleRuleForTests = StringTerm.createDirect("a", false);
+    private final StringTerm simple_a = StringTerm.createDirect("a", false);
+    private final StringTerm simple_b = StringTerm.createDirect("b", false);
 
     private StringTerm make(String s, boolean cs) {
         return StringTerm.createDirect(s, cs);
@@ -108,15 +108,17 @@ class StringTermTest {
 
     @Test
     void parse() {
-        var g = Gr.grammar("S", ConcatRule.create(List.of(simple_a, simple_b)));
-        var p = Parsewisp.parser(g); // Will use parse(...) for "a" and fullParse(...) for "b"
+        // Case-sensitive.
+        // Will use parse(...) for "a" and fullParse(...) for "b"
+        var p = Parsewisp.parser(Gr.grammar("S", ConcatRule.create(List.of(simple_a, simple_b))));
         Assertions.assertEquals(PT.create("S", "a", "b"), p.parse("ab"));
 
-        var gCI = Gr.grammar("S", ConcatRule.create(List.of(
+        // Case-insensitive.
+        // Will use parse(...) for "a" and fullParse(...) for "b"
+        var pCI = Parsewisp.parser(Gr.grammar("S", ConcatRule.create(List.of(
                 make("a", true),
                 make("b", true)
-        )));
-        var pCI = Parsewisp.parser(gCI); // Will use parse(...) for "a" and fullParse(...) for "b"
+        ))));
         Assertions.assertEquals(PT.create("S", "a", "b"), pCI.parse("ab"));
         Assertions.assertEquals(PT.create("S", "a", "b"), pCI.parse("Ab"));
         Assertions.assertEquals(PT.create("S", "a", "b"), pCI.parse("aB"));
@@ -125,36 +127,33 @@ class StringTermTest {
 
     @Test
     void parseError() {
-        var g = Gr.grammar("S", ConcatRule.create(List.of(simple_a, simple_b)));
-        var p = Parsewisp.parser(g); // Will use parse(...) for "a" and fullParse(...) for "b"
+        // Will use parse(...) for "a" and fullParse(...) for "b"
+        var p = Parsewisp.parser(Gr.grammar("S", ConcatRule.create(List.of(simple_a, simple_b))));
         Assertions.assertTrue(p.parse("b").isFailure());
     }
 
     @Test
     void fullParseSingle() {
-        var g = Gr.grammar("S", simple_a);
-        var p = Parsewisp.parser(g); // Will use parse(...) for "a" and fullParse(...) for "b"
+        // Case-sensitive.
+        var p = Parsewisp.parser(Gr.grammar("S", simple_a));
         Assertions.assertEquals(PT.create("S", "a"), p.parse("a"));
 
-        var gCI = Gr.grammar("S", make("a", true));
-        var pCI = Parsewisp.parser(gCI); // Will use parse(...) for "a" and fullParse(...) for "b"
+        // Case-insensitive.
+        var pCI = Parsewisp.parser(Gr.grammar("S", make("a", true)));
         Assertions.assertEquals(PT.create("S", "a"), pCI.parse("a"));
         Assertions.assertEquals(PT.create("S", "a"), pCI.parse("A"));
     }
 
     @Test
     void fullParseConcat() {
-        {
-            var g = Gr.grammar("S", ConcatRule.create(List.of(simple_a, simple_b)));
-            var p = Parsewisp.parser(g);
-            Assertions.assertEquals(PT.create("S", "a", "b"), p.parse("ab"));
-        }
+        var p = Parsewisp.parser(Gr.grammar(
+                "S", ConcatRule.create(List.of(simple_a, simple_b))));
+        Assertions.assertEquals(PT.create("S", "a", "b"), p.parse("ab"));
     }
 
     @Test
     void fullParseError() {
-        var g = Gr.grammar("S", simple_a);
-        var p = Parsewisp.parser(g); // Will use parse(...) for "a" and fullParse(...) for "b"
+        var p = Parsewisp.parser(Gr.grammar("S", simple_a)); // Will use parse(...) for "a" and fullParse(...) for "b"
         Assertions.assertTrue(p.parse("").isFailure());
     }
 
@@ -207,7 +206,7 @@ class StringTermTest {
                 Gr.grammar("S", simple_a.withHideTag(false)));
         Assertions.assertEquals(PT.create("S", "a"), pShow.parse("a"));
 
-        // With explicit hide, also not hidden
+        // With explicit hide
         var pHide = Parsewisp.parser(
                 Gr.grammar("S", simple_a.withHideTag(true)));
         Assertions.assertEquals(PT.create("S"), pHide.parse("a"));
@@ -247,6 +246,7 @@ class StringTermTest {
                         "A", simple_a.withReduction(ReductionType.taggedTreeReduction(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("S", PT.create("B", "a")), pMerge3.parse("a"));
 
+        // Add parse tree from a rule which doesn't appear in the grammar.
         var pMerge4 = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),

@@ -465,7 +465,7 @@ public abstract class GrammarBuilder {
      */
     protected @NotNull ConcatRule concatNoEpsilonMoreThan1(
             final @NotNull List<Rule> rules) {
-        return ConcatRule.createNoEpsilonMoreThan1(rules);
+        return ConcatRule.createDirect(rules);
     }
 
     /**
