@@ -20,9 +20,9 @@ import java.util.function.Predicate;
  * Example
  * <pre>
  * {@code
- *         var p = Parsewisp.parser("S := #'[0-9]+' - '11'"); // Any positive number except 11.
- *         println(p.parse("12"));  // [:S, 12]
- *         println(p.parse("11"));  // Failure
+ *     var p = Parsewisp.parser("S := #'[0-9]+' - '11'"); // Any positive number except 11.
+ *     println(p.parse("12"));  // [:S, 12]
+ *     println(p.parse("11"));  // Failure
  * }
  * </pre>
  * See also: <a href="https://www.iso.org/standard/26153.html">ISO/IEC 14977:1996</a> and <a href="https://stackoverflow.com/a/35138946">an explanation on StackOverflow</a>.

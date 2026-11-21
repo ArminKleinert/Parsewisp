@@ -101,7 +101,7 @@ class EOFTermTest {
         // Default.
         Assertions.assertEquals(
                 eof,
-                eof.withReduction(ReductionType.standardInitialReduction()));
+                eof.withReduction(ReductionType.initial()));
 
         // Default: Don't merge up
         var pDefault = Parsewisp.parser(
@@ -114,20 +114,20 @@ class EOFTermTest {
         var pMerge = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", eof.withReduction(ReductionType.standardIntermediateReduction())));
+                        "A", eof.withReduction(ReductionType.merging())));
         Assertions.assertEquals(PT.create("S"), pMerge.parse(""));
 
         // Add to parse tree with potentially different name (Top-level)
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
-                        "S", eof.withReduction(ReductionType.taggedTreeReduction(Sym.sym("B")))));
+                        "S", eof.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("B"), pMerge2.parse(""));
 
         // Add to parse tree with potentially different name (Nested)
         var pMerge3 = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", eof.withReduction(ReductionType.taggedTreeReduction(Sym.sym("B")))));
+                        "A", eof.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("S", PT.create("B")), pMerge3.parse(""));
 
         // Add parse tree from a rule which doesn't appear in the grammar.
@@ -135,7 +135,7 @@ class EOFTermTest {
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", ConcatRule.create(List.of(
-                                eof.withReduction(ReductionType.taggedTreeReduction(Sym.sym("B"))),
+                                eof.withReduction(ReductionType.taggedTree(Sym.sym("B"))),
                                 eof
                         ))));
         Assertions.assertEquals(

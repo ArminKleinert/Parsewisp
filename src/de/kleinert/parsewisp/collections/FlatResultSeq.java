@@ -81,9 +81,9 @@ public final class FlatResultSeq {
      *
      * <pre>
      * {@code
-     * var frs12 = FlatResultSeq.make().appendOrConcat(1).appendOrConcat(2); // (content=2, head=(content=1, head=EMPTY))
-     * var frs1212 = frs12.appendOrConcat(frs12); // (content=frs12, head=frs12)
-     * var frs12123 = frs12.appendOrConcat(frs12).appendOrConcat(3); // (content=3, head=(content=frs12, head=frs12))
+     *     var frs12 = FlatResultSeq.make().appendOrConcat(1).appendOrConcat(2); // (content=2, head=(content=1, head=EMPTY))
+     *     var frs1212 = frs12.appendOrConcat(frs12); // (content=frs12, head=frs12)
+     *     var frs12123 = frs12.appendOrConcat(frs12).appendOrConcat(3); // (content=3, head=(content=frs12, head=frs12))
      * }
      * </pre>
      * <p>

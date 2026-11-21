@@ -1,9 +1,6 @@
 package de.kleinert.parsewisp.viz;
 
 import de.kleinert.parsewisp.Sym;
-import de.kleinert.parsewisp.grammar.Grammar;
-import de.kleinert.parsewisp.grammar.GrammarPrinter;
-import de.kleinert.parsewisp.parsing.Rule;
 import de.kleinert.parsewisp.result.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,17 +8,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Provides a utility for creating pictures of parse trees. If the trees become too large, the generation might fail.
  * <pre>
  * {@code
- *   var text = "...";
- *   var p = Parsewisp.parser("...");
- *   var rule = Parsewisp.parse(p, text).castToParseSuccess();
- *   println(Viztool.dumpParseTree("vizoutput", rule));
+ *     var text = "...";
+ *     var p = Parsewisp.parser("...");
+ *     var rule = Parsewisp.parse(p, text).castToParseSuccess();
+ *     println(Viztool.dumpParseTree("vizoutput", rule));
  * }
  * </pre>
  * The tool <b>dot</b> must be installed.
@@ -73,10 +69,10 @@ public final class Viztool {
      * Example:
      * <pre>
      * {@code
-     *   var text = "abc";
-     *   var p = Parsewisp.parser("S : A 'bc'\nA : 'a'");
-     *   var rule = Parsewisp.parse(p, text).castToParseSuccess(); // Parse tree [:S, [:A, 'a'], 'bc']
-     *   println(Viztool.dumpParseTree("vizoutput", rule));
+     *     var text = "abc";
+     *     var p = Parsewisp.parser("S : A 'bc'\nA : 'a'");
+     *     var rule = Parsewisp.parse(p, text).castToParseSuccess(); // Parse tree [:S, [:A, 'a'], 'bc']
+     *     println(Viztool.dumpParseTree("vizoutput", rule));
      * }
      * </pre>
      *

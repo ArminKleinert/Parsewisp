@@ -1,0 +1,136 @@
+package de.kleinert.parsewisp.tests.typical;
+
+import de.kleinert.parsewisp.Parsewisp;
+import de.kleinert.parsewisp.Sym;
+import de.kleinert.parsewisp.grammar.Grammar;
+import de.kleinert.parsewisp.parsing.ConcatRule;
+import de.kleinert.parsewisp.parsing.NonTerminal;
+import de.kleinert.parsewisp.parsing.Rule;
+import de.kleinert.parsewisp.parsing.StringTerm;
+import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.testutil.Gr;
+import de.kleinert.parsewisp.testutil.PT;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+
+class ReductionTypeTest {
+
+    @Test
+    void standardIntermediateReduction() {
+        // Merge upwards
+        var pMerge = Parsewisp.parser(
+                Gr.grammarS("S",
+                        "S", NonTerminal.create(Sym.sym("A")),
+                        "A", StringTerm.createDirect("a", false)
+                                .withReduction(ReductionType.merging())));
+        Assertions.assertEquals(PT.create("S", "a"), pMerge.parse("a"));
+    }
+
+    @Test
+    void standardInitialReduction() {
+        // Default: Don't merge up
+        var pDefault = Parsewisp.parser(
+                Gr.grammarS("S",
+                        "S", NonTerminal.create(Sym.sym("A")),
+                        "A", StringTerm.createDirect("a", false)));
+        Assertions.assertEquals(PT.create("S", PT.create("A", "a")), pDefault.parse("a"));
+
+        // Same as default, but explicit
+        var pMerge = Parsewisp.parser(
+                Gr.grammarS("S",
+                        "S", NonTerminal.create(Sym.sym("A")),
+                        "A", StringTerm.createDirect("a", false)
+                                .withReduction(ReductionType.initial())));
+        Assertions.assertEquals(PT.create("S", PT.create("A", "a")), pMerge.parse("a"));
+    }
+
+    @Test
+    void taggedTreeReduction() {
+        // Add to parse tree with potentially different name (Top-level)
+        var pMerge2 = Parsewisp.parser(
+                Gr.grammarS("S",
+                        "S", StringTerm.createDirect("a", false)
+                                .withReduction(ReductionType.taggedTree(Sym.sym("B")))));
+        Assertions.assertEquals(PT.create("B", "a"), pMerge2.parse("a"));
+
+        // Add to parse tree with potentially different name (Nested)
+        var pMerge3 = Parsewisp.parser(
+                Gr.grammarS("S",
+                        "S", NonTerminal.create(Sym.sym("A")),
+                        "A", StringTerm.createDirect("a", false)
+                                .withReduction(ReductionType.taggedTree(Sym.sym("B")))));
+        Assertions.assertEquals(PT.create("S", PT.create("B", "a")), pMerge3.parse("a"));
+
+        // Create a parse tree which wouldn't be obvious from the grammar.
+        var pMerge4 = Parsewisp.parser(
+                Gr.grammarS("S",
+                        "S", NonTerminal.create(Sym.sym("A")),
+                        "A", ConcatRule.create(List.of(
+                                StringTerm.createDirect("a", false)
+                                        .withReduction(ReductionType.taggedTree(Sym.sym("B"))),
+                                StringTerm.createDirect("b", false)
+                        ))));
+        Assertions.assertEquals(
+                PT.create("S", PT.create("A", PT.create("B", "a"), "b")),
+                pMerge4.parse("ab"));
+    }
+
+    @Test
+    void withReduction() {
+        var r = StringTerm.createDirect("a", false);
+
+        var g = new LinkedHashMap<Sym, Rule>(2);
+        g.put(Sym.sym("S"), NonTerminal.create(Sym.sym("A")));
+
+        // Default: Don't merge up
+        // This gives the normal output: [:S, [:A, "a"]]
+        g.put(Sym.sym("A"), r.withReduction(ReductionType.initial()));
+        var pDefault = Parsewisp.parser(new Grammar(Sym.sym("S"), g));
+        System.out.println(pDefault.parse("a")); //>> [:S, [:A, "a"]]
+
+        // Merge upwards
+        // This hides the :A tag in the tree.
+        g.put(Sym.sym("A"), r.withReduction(ReductionType.merging()));
+        var pMerge = Parsewisp.parser(new Grammar(Sym.sym("S"), g));
+        System.out.println(pMerge.parse("a")); //>> [:S, "a"]
+
+        // Add to parse tree with potentially different name (Top-level)
+        // This can be used to replace the tag with any symbol.
+        // It could be used to emulate some playing around with precedence
+        // rules like some other parser libraries provide.
+        g.put(Sym.sym("A"), r.withReduction(ReductionType.taggedTree(Sym.sym("B"))));
+        var pRename = Parsewisp.parser(new Grammar(Sym.sym("S"), g));
+        System.out.println(pRename.parse("a")); //>> [:S, [:B, "a"]]
+    }
+
+    @Test
+    void withReductionInitial() {
+        var g = new LinkedHashMap<Sym, Rule>(2);
+        g.put(Sym.sym("S"), NonTerminal.create(Sym.sym("A")));
+        g.put(Sym.sym("A"), StringTerm.createDirect("a", false).withReduction(ReductionType.initial()));
+        var pDefault = Parsewisp.parser(new Grammar(Sym.sym("S"), g));
+        System.out.println(pDefault.parse("a")); //>> [:S, [:A, "a"]]
+    }
+
+    @Test
+    void withReductionMerge() {
+        var g = new LinkedHashMap<Sym, Rule>(2);
+        g.put(Sym.sym("S"), NonTerminal.create(Sym.sym("A")));
+        g.put(Sym.sym("A"), StringTerm.createDirect("a", false).withReduction(ReductionType.merging()));
+        var pMerge = Parsewisp.parser(new Grammar(Sym.sym("S"), g));
+        System.out.println(pMerge.parse("a")); //>> [:S, "a"]
+    }
+
+    @Test
+    void withReductionTaggedTree() {
+        var g = new LinkedHashMap<Sym, Rule>(2);
+        g.put(Sym.sym("S"), NonTerminal.create(Sym.sym("A")));
+        g.put(Sym.sym("A"), StringTerm.createDirect("a", false)
+                .withReduction(ReductionType.taggedTree(Sym.sym("B"))));
+        var pRename = Parsewisp.parser(new Grammar(Sym.sym("S"), g));
+        System.out.println(pRename.parse("a")); //>> [:S, [:B, "a"]]
+    }
+}

@@ -37,7 +37,6 @@ class TestGrammarJava {
         var g = p.grammar();
         var stats = g.analyze();
         System.out.println(stats.getUnusedNTs());
-        var var = g.analyze();
     }
 
     @Test
@@ -169,54 +168,54 @@ class TestGrammarJava {
         Assertions.assertTrue(res.isSuccess());
     }
 
-//    @Test
-//    void testWhichIsWayTooBig() {
-//        var text = """
-//                package de.kleinert.parsewisp.tests.typical.rules_available;
-//                class RulesAvailableGeneralizedTests {
-//                """;
-//        text += "private static void doNothing(List opts, boolean run) {}".repeat(5000);
-//        text += "}";
-//        var res = parser().parse(text);
-//        Assertions.assertTrue(res.isSuccess());
-//    }
+    @Test
+    void testWhichIsWayTooBig() {
+        var text = """
+                package de.kleinert.parsewisp.tests.typical.rules_available;
+                class RulesAvailableGeneralizedTests {
+                """;
+        text += "private static void doNothing(List opts, boolean run) {}".repeat(2500); // Note: Maximum repeat as of 2026.11.21: 3537
+        text += "}";
+        var res = parser().parse(text);
+        Assertions.assertTrue(res.isSuccess());
+    }
 
-//    @Test
-//    void testParseParsewispSources() throws IOException {
-//        BiPredicate<Path, BasicFileAttributes> matcher = (p, bfa) -> bfa.isRegularFile();
-//        final var files = Stream.concat(
-//                        Files.find(Paths.get("src"), 999, matcher),
-//                        Files.find(Paths.get("test"), 999, matcher))
-//                .filter(p -> p.toString().endsWith(".java"))
-//                .sorted()
-//                .toList();
-//        var p = parser();
-//
-//        long totalTime = 0;
-//        long byteCount = 0;
-//        long start;
-//        long end;
-//
-//        var counts = new LinkedHashMap<String, Long>();
-//
-//        for (Path file : files) {
-//            var s = Files.readString(file);
-//            start = System.nanoTime();
-//            var res = p.parse(s);
-//            end = System.nanoTime();
-//            Assertions.assertTrue(
-//                    res.isSuccess(),
-//                    () -> "Failed testcase.\n" + res.castToParseFailure());
-//            long diffMillis = (end - start) / 1_000_000;
-//            totalTime += diffMillis;
-////            System.out.println("Parsed " + file + " in " + diffMillis + " ms (" + s.length() + " chars)");
-//            byteCount += s.length();
-//
-//            var parent = file.toFile().getParent();
-//            counts.putIfAbsent(parent, 0L);
-//            counts.computeIfPresent(parent, (ignore, l) -> l+1L);
-//        }
-//        System.out.println("Done. Parsed " + files.size() + " files with a total of " + byteCount + " chars. Total time: " + totalTime + " ms");
-//        System.out.println("Counts: " + counts);
-//    }
+    @Test
+    void testParseParsewispSources() throws IOException {
+        BiPredicate<Path, BasicFileAttributes> matcher = (p, bfa) -> bfa.isRegularFile();
+        final var files = Stream.concat(
+                        Files.find(Paths.get("src"), 999, matcher),
+                        Files.find(Paths.get("test"), 999, matcher))
+                .filter(p -> p.toString().endsWith(".java"))
+                .sorted()
+                .toList();
+        var p = parser();
+
+        long totalTime = 0;
+        long byteCount = 0;
+        long start;
+        long end;
+
+        var counts = new LinkedHashMap<String, Long>();
+
+        for (Path file : files) {
+            var s = Files.readString(file);
+            start = System.nanoTime();
+            var res = p.parse(s);
+            end = System.nanoTime();
+            Assertions.assertTrue(
+                    res.isSuccess(),
+                    () -> "Failed testcase.\n" + res.castToParseFailure());
+            long diffMillis = (end - start) / 1_000_000;
+            totalTime += diffMillis;
+//            System.out.println("Parsed " + file + " in " + diffMillis + " ms (" + s.length() + " chars)");
+            byteCount += s.length();
+
+            var parent = file.toFile().getParent();
+            counts.putIfAbsent(parent, 0L);
+            counts.computeIfPresent(parent, (ignore, l) -> l+1L);
+        }
+        System.out.println("Done. Parsed " + files.size() + " files with a total of " + byteCount + " chars. Total time: " + totalTime + " ms");
+        System.out.println("Counts: " + counts);
+    }
 }

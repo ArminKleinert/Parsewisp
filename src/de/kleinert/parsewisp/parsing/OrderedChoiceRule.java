@@ -37,7 +37,7 @@ public final class OrderedChoiceRule extends RuleWithManyChildren {
 
     private OrderedChoiceRule(final @NotNull Rule rule1,
                               final @NotNull Rule rule2) {
-        this(defaultHidden, ReductionType.standardInitialReduction(), rule1, rule2);
+        this(defaultHidden, ReductionType.initial(), rule1, rule2);
     }
 
     private static @NotNull OrderedChoiceRule setupParsers(

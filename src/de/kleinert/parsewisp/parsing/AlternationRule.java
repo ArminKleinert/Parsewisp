@@ -16,28 +16,28 @@ import java.util.List;
  * Example
  * <pre>
  * {@code
- *         // Accepts the language {"a", "b", "ab"}
- *         var p = Parsewisp.parser("S := 'a' | 'b' | 'ab'");
- *         println(p.parse("a"));  // [:S, a]
- *         println(p.parse("b"));  // [:S, b]
- *         println(p.parse("ab")); // [:S, ab]
+ *     // Accepts the language {"a", "b", "ab"}
+ *     var p = Parsewisp.parser("S := 'a' | 'b' | 'ab'");
+ *     println(p.parse("a"));  // [:S, a]
+ *     println(p.parse("b"));  // [:S, b]
+ *     println(p.parse("ab")); // [:S, ab]
  * }
  * </pre>
  * <p>
  * Alternatively, the {@link ParserCreationOptions} class allows an alternative notation for defining alternations:
  * <pre>
  * {@code
- *         var opts = Parsewisp.ParserCreationOptions
- *                 .getDefault()
- *                 .withRedefinitionOption(Grammar.RedefinitionOption.CHOICE);
- *         var p = Parsewisp.parser("""
- *                 S : 'a'
- *                 S : 'b'
- *                 S : 'ab'
- *                 """, opts);
- *         println(p.parse("a"));  // [:S, a]
- *         println(p.parse("b"));  // [:S, b]
- *         println(p.parse("ab")); // [:S, ab]
+ *     var opts = Parsewisp.ParserCreationOptions
+ *             .getDefault()
+ *             .withRedefinitionOption(Grammar.RedefinitionOption.CHOICE);
+ *     var p = Parsewisp.parser("""
+ *             S : 'a'
+ *             S : 'b'
+ *             S : 'ab'
+ *             """, opts);
+ *     println(p.parse("a"));  // [:S, a]
+ *     println(p.parse("b"));  // [:S, b]
+ *     println(p.parse("ab")); // [:S, ab]
  * }
  * </pre>
  *

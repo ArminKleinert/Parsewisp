@@ -209,14 +209,13 @@ public class ParserCreationOptions {
      * Creates a new instance using the most common whitespace parser.
      * <pre>
      * {@code
+     *     // With whitespace parser:
+     *     var p = Parsewisp.parser("S = ('a' | 'b')*");
+     *     println(p.parse("a b      a\tb\na")); // Error
      *
-     *   // With whitespace parser:
-     *   var p = Parsewisp.parser("S = ('a' | 'b')*");
-     *   println(p.parse("a b      a\tb\na")); // Error
-     *
-     *   // With whitespace parser:
-     *   var p = Parsewisp.parser("S = ('a' | 'b')*", Parsewisp.ParserCreationOptions.newWithStandardWhitespace());
-     *   println(p.parse("a b      a\tb\na")); // [:S, a, b, a, b, a]
+     *     // With whitespace parser:
+     *     var p = Parsewisp.parser("S = ('a' | 'b')*", Parsewisp.ParserCreationOptions.newWithStandardWhitespace());
+     *     println(p.parse("a b      a\tb\na")); // [:S, a, b, a, b, a]
      * }
      * </pre>
      *

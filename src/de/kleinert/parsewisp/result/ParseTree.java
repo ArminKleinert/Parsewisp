@@ -48,9 +48,9 @@ public final class ParseTree implements List<@NotNull Node>, ParseResult {
      *
      * <pre>
      * {@code
-     *   var pt = Parsewisp.parser("S := 'a' 'b' 'c'").parse("abc");
-     *   println(pt); // [:S, a, b, c]
-     *   println(pt.castToParseSuccess().getTag().content()); // :S
+     *     var pt = Parsewisp.parser("S := 'a' 'b' 'c'").parse("abc");
+     *     println(pt); // [:S, a, b, c]
+     *     println(pt.castToParseSuccess().getTag().content()); // :S
      * }
      * </pre>
      *
@@ -66,9 +66,9 @@ public final class ParseTree implements List<@NotNull Node>, ParseResult {
      *
      * <pre>
      * {@code
-     *   var pt = Parsewisp.parser("S := 'a' 'b' 'c'").parse("abc");
-     *   println(pt); // [:S, a, b, c]
-     *   println(pt.castToParseSuccess().getContent()); // [a, b, c]
+     *     var pt = Parsewisp.parser("S := 'a' 'b' 'c'").parse("abc");
+     *     println(pt); // [:S, a, b, c]
+     *     println(pt.castToParseSuccess().getContent()); // [a, b, c]
      * }
      * </pre>
      *
@@ -244,11 +244,11 @@ public final class ParseTree implements List<@NotNull Node>, ParseResult {
      * The starting index in the input string of the parse (inclusive).
      * <pre>
      * {@code
-     *         var p = Parsewisp.parser("S = 'b' A 'n'\nA = 'A'");
-     *         var tree = p.parse("bAn").castToParseSuccess();
-     *         System.out.println(tree.toString());            // [:S, b, [:A, A], n]
-     *         System.out.println(tree.getSpanStart());        // 0
-     *         System.out.println(tree.getSpanEndExclusive()); // 3
+     *     var p = Parsewisp.parser("S = 'b' A 'n'\nA = 'A'");
+     *     var tree = p.parse("bAn").castToParseSuccess();
+     *     System.out.println(tree.toString());            // [:S, b, [:A, A], n]
+     *     System.out.println(tree.getSpanStart());        // 0
+     *     System.out.println(tree.getSpanEndExclusive()); // 3
      * }
      * </pre>
      *
@@ -263,11 +263,11 @@ public final class ParseTree implements List<@NotNull Node>, ParseResult {
      * The end index in the input string of the parse (exclusive).
      * <pre>
      * {@code
-     *         var p = Parsewisp.parser("S = 'b' A 'n'\nA = 'A'");
-     *         var tree = p.parse("bAn").castToParseSuccess();
-     *         System.out.println(tree.toString());            // [:S, b, [:A, A], n]
-     *         System.out.println(tree.getSpanStart());        // 0
-     *         System.out.println(tree.getSpanEndExclusive()); // 3
+     *     var p = Parsewisp.parser("S = 'b' A 'n'\nA = 'A'");
+     *     var tree = p.parse("bAn").castToParseSuccess();
+     *     System.out.println(tree.toString());            // [:S, b, [:A, A], n]
+     *     System.out.println(tree.getSpanStart());        // 0
+     *     System.out.println(tree.getSpanEndExclusive()); // 3
      * }
      * </pre>
      *
@@ -282,14 +282,14 @@ public final class ParseTree implements List<@NotNull Node>, ParseResult {
      * Given a string (hopefully the one this tree was parsed from), will output the substring which is covered by this tree.
      * <pre>
      * {@code
-     *         var p = Parsewisp.parser("S = 'b' A 'n'\nA = 'Aa'");
-     *         var tree = p.parse("bAan").castToParseSuccess();
-     *         var subTree = (ParseTree) tree.getContent().get(1).content();
-     *         System.out.println(tree);                            // [:S, b, [:A, Aa], n]
-     *         System.out.println(subTree);                         // [:A, Aa]
-     *         System.out.println(subTree.getSpanStart());          // 1
-     *         System.out.println(subTree.getSpanEndExclusive());   // 3
-     *         System.out.println(subTree.containedString("bAan")); // Optional[Aa]
+     *     var p = Parsewisp.parser("S = 'b' A 'n'\nA = 'Aa'");
+     *     var tree = p.parse("bAan").castToParseSuccess();
+     *     var subTree = (ParseTree) tree.getContent().get(1).content();
+     *     System.out.println(tree);                            // [:S, b, [:A, Aa], n]
+     *     System.out.println(subTree);                         // [:A, Aa]
+     *     System.out.println(subTree.getSpanStart());          // 1
+     *     System.out.println(subTree.getSpanEndExclusive());   // 3
+     *     System.out.println(subTree.containedString("bAan")); // Optional[Aa]
      * }
      * </pre>
      *

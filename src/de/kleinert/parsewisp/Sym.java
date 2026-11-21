@@ -13,9 +13,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * interning and O(1) comparisons via the build-in {@code ==} operator.
  * <p>
  * {@code
- * Sym k1 = Sym.sym(str);
- * Sym k2 = Sym.sym(str);
- * k1 == k2 // Guarantied to be true.
+ *     Sym k1 = Sym.sym(str);
+ *     Sym k2 = Sym.sym(str);
+ *     k1 == k2 // Guarantied to be true.
  * }
  *
  * @since 0.9.7

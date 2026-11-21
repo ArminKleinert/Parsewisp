@@ -203,7 +203,7 @@ public final class Gll {
         if (rule.isHiddenInResult()) {
             result = result.reset();
         }
-        if (rule.getReduction().getReductionType() != ReductionType.ReductionTypesAvailable.INITIAL) {
+        if (rule.getReduction().getReductionType() != ReductionType.Type.INITIAL) {
             final ParseTree tree = ParseTree.create(
                     rule.getReduction().getKey(), result.getResult(),
                     nodeKey.index(), result.index());

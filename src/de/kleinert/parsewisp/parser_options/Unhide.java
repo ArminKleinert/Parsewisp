@@ -14,21 +14,21 @@ import java.util.LinkedHashMap;
  * As an example, take the grammar
  * <pre>
  * {@code
- *      S   = 'a' <B> C <D> 'a'
- *      B   = 'b'+
- *      <C> = 'c'
- *      <D> = 'd'
+ *     S   = 'a' <B> C <D> 'a'
+ *     B   = 'b'+
+ *     <C> = 'c'
+ *     <D> = 'd'
  * }
  * </pre>
  * Now, parsing the text {@code "abcda"}, the expected tree would be {@code [:S, "a", "c", "a"]}. Where the {@code B} subtree is completely hidden, {@code C} is flattened (merged into {@code S}) and {@code D} is also completely hidden.
  * <pre>
  * {@code
- *      var p = Parsewisp.parser("S = 'a' <B> C <D> 'a'\nB = 'b'+\n<C> = 'c'\n<D> = 'd'");
+ *     var p = Parsewisp.parser("S = 'a' <B> C <D> 'a'\nB = 'b'+\n<C> = 'c'\n<D> = 'd'");
  *
- *      Parsewisp.parse(p, "abcda", ParsingOptions.getDefault().withUnhide(UnhideOptions.NONE));    // [:S, "a", "c", "a"]
- *      Parsewisp.parse(p, "abcda", ParsingOptions.getDefault().withUnhide(UnhideOptions.TAGS));    // [:S, "a", [:C, "c"], "a"]
- *      Parsewisp.parse(p, "abcda", ParsingOptions.getDefault().withUnhide(UnhideOptions.CONTENT)); // [:S, "a", [:B, "b"], "c", "d", "a"]
- *      Parsewisp.parse(p, "abcda", ParsingOptions.getDefault().withUnhide(UnhideOptions.ALL));     // [:S, "a", [:B, "b"], [:C, "c"], [:D, "d"], "a"]
+ *     Parsewisp.parse(p, "abcda", ParsingOptions.getDefault().withUnhide(UnhideOptions.NONE));    // [:S, "a", "c", "a"]
+ *     Parsewisp.parse(p, "abcda", ParsingOptions.getDefault().withUnhide(UnhideOptions.TAGS));    // [:S, "a", [:C, "c"], "a"]
+ *     Parsewisp.parse(p, "abcda", ParsingOptions.getDefault().withUnhide(UnhideOptions.CONTENT)); // [:S, "a", [:B, "b"], "c", "d", "a"]
+ *     Parsewisp.parse(p, "abcda", ParsingOptions.getDefault().withUnhide(UnhideOptions.ALL));     // [:S, "a", [:B, "b"], [:C, "c"], [:D, "d"], "a"]
  * }
  * </pre>
  *
@@ -66,7 +66,7 @@ public class Unhide {
         final @NotNull LinkedHashMap<Sym, Rule> res = new LinkedHashMap<>();
         for (final @NotNull var symRuleEntry : grammar.entrySet()) {
             final @NotNull var key = symRuleEntry.getKey();
-            final @NotNull var reduction = ReductionType.taggedTreeReduction(key);
+            final @NotNull var reduction = ReductionType.taggedTree(key);
             final @NotNull var pUnhide = symRuleEntry.getValue().withReduction(reduction);
             res.put(key, pUnhide);
         }
@@ -85,7 +85,7 @@ public class Unhide {
         final @NotNull LinkedHashMap<Sym, Rule> res = new LinkedHashMap<>();
         for (final @NotNull var symRuleEntry : grammar.entrySet()) {
             final @NotNull var key = symRuleEntry.getKey();
-            final @NotNull var reduction = ReductionType.taggedTreeReduction(key);
+            final @NotNull var reduction = ReductionType.taggedTree(key);
             final @NotNull var p = symRuleEntry.getValue().includeInResult().withReduction(reduction);
             res.put(key, p);
         }

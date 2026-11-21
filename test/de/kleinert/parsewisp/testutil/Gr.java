@@ -12,6 +12,14 @@ import java.util.LinkedHashMap;
  * Helper class for creating Grammars for test cases.
  */
 public class Gr {
+    private Gr() {
+    }
+
+    /**
+     * Helper method for creating Grammars for test cases.
+     * @param g Input.
+     * @return A grammar.
+     */
     public static @NotNull Grammar grammar(Object... g) {
         if (g.length == 0 || (g.length & 1) == 1)
             throw new IllegalArgumentException();
@@ -27,6 +35,12 @@ public class Gr {
         return new Grammar(start, lhm);
     }
 
+    /**
+     * Helper method for creating Grammars for test cases.
+     * @param startName Name of the start sym.
+     * @param g Input.
+     * @return A grammar.
+     */
     public static @NotNull Grammar grammarS(String startName, Object... g) {
         if (g.length == 0 || (g.length & 1) == 1)
             throw new IllegalArgumentException();

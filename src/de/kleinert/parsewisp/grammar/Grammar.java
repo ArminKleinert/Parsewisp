@@ -294,16 +294,16 @@ public final class Grammar extends LinkedHashMap<@NotNull Sym, Rule> {
          * Sometimes, a grammar can be non-productive, meaning that it would technically not produce an output for any input. For example, the following:
          * <pre>
          * {@code
-         *         S = A S
-         *         A = epsilon
+         *     S = A S
+         *     A = epsilon
          * }
          * </pre>
          * With a naive algorithm, the parser could never terminate. You can check for this case by using the following:
          * <pre>
          * {@code
-         *         var parser1 = Parsewisp.parser("S = A S ; A = epsilon ;");
-         *         var analysis1 = parser1.grammar().analyze();
-         *         System.out.println(analysis1.isProductive(Sym.sym("S"))); // false
+         *     var parser1 = Parsewisp.parser("S = A S ; A = epsilon ;");
+         *     var analysis1 = parser1.grammar().analyze();
+         *     System.out.println(analysis1.isProductive(Sym.sym("S"))); // false
          * }
          * </pre>
          *

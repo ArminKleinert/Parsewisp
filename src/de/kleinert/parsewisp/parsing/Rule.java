@@ -26,7 +26,7 @@ public abstract sealed class Rule
      *
      * @since 0.9.7
      */
-    protected static final ReductionType defaultReductionType = ReductionType.standardInitialReduction();
+    protected static final ReductionType defaultReductionType = ReductionType.initial();
 
     /**
      * Whether to hide the rule in the output.
@@ -144,7 +144,7 @@ public abstract sealed class Rule
      * @since 0.9.7
      */
     public @NotNull Rule mergeToTop() {
-        return withReduction(ReductionType.standardIntermediateReduction());
+        return withReduction(ReductionType.merging());
     }
 
     // Force children to override this.

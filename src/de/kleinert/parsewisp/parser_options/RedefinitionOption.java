@@ -8,9 +8,9 @@ import de.kleinert.parsewisp.parsing.AlternationRule;
  * Consider the following grammar:
  * <pre>
  * {@code
- *      S = A
- *      S = B
- *      S = C
+ *     S = A
+ *     S = B
+ *     S = C
  * }
  * </pre>
  * The question this class tries to answer is "what to do?". The parser knows thanks to these options.

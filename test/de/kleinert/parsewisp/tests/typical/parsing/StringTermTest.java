@@ -217,7 +217,7 @@ class StringTermTest {
         // Default.
         Assertions.assertEquals(
                 simpleRuleForTests,
-                simpleRuleForTests.withReduction(ReductionType.standardInitialReduction()));
+                simpleRuleForTests.withReduction(ReductionType.initial()));
 
         // Default: Don't merge up
         var pDefault = Parsewisp.parser(
@@ -230,20 +230,20 @@ class StringTermTest {
         var pMerge = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", simple_a.withReduction(ReductionType.standardIntermediateReduction())));
+                        "A", simple_a.withReduction(ReductionType.merging())));
         Assertions.assertEquals(PT.create("S", "a"), pMerge.parse("a"));
 
         // Add to parse tree with potentially different name (Top-level)
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
-                        "S", simple_a.withReduction(ReductionType.taggedTreeReduction(Sym.sym("B")))));
+                        "S", simple_a.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("B", "a"), pMerge2.parse("a"));
 
         // Add to parse tree with potentially different name (Nested)
         var pMerge3 = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", simple_a.withReduction(ReductionType.taggedTreeReduction(Sym.sym("B")))));
+                        "A", simple_a.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("S", PT.create("B", "a")), pMerge3.parse("a"));
 
         // Add parse tree from a rule which doesn't appear in the grammar.
@@ -251,7 +251,7 @@ class StringTermTest {
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", ConcatRule.create(List.of(
-                                simple_a.withReduction(ReductionType.taggedTreeReduction(Sym.sym("B"))),
+                                simple_a.withReduction(ReductionType.taggedTree(Sym.sym("B"))),
                                 make("b", false)
                         ))));
         Assertions.assertEquals(

@@ -13,14 +13,14 @@ import java.util.stream.Stream;
  * This class provides limited utility for interacting with the host environment and can modify the parse tree
  * <pre>
  * {@code
- *         var g = new Grammar(Sym.sym("S"), new LinkedHashMap<>(Map.of(
- *                 Sym.sym("S"), ConcatRule.create(List.of(
- *                         TransformRule.create(
- *                                 StringTerm.create("abc", false),
- *                                 (r, i) -> List.of("a", "b", "c")
- *                         ))))));
- *         var p = Parsewisp.parser(g);
- *         System.out.println(p.parse("abc")); // [:S, "a", "b", "c"]
+ *     var g = new Grammar(Sym.sym("S"), new LinkedHashMap<>(Map.of(
+ *             Sym.sym("S"), ConcatRule.create(List.of(
+ *                     TransformRule.create(
+ *                             StringTerm.create("abc", false),
+ *                             (r, i) -> List.of("a", "b", "c")
+ *                     ))))));
+ *     var p = Parsewisp.parser(g);
+ *     System.out.println(p.parse("abc")); // [:S, "a", "b", "c"]
  * }
  * </pre>
  *

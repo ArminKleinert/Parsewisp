@@ -46,45 +46,45 @@ public final class Transform {
      *
      * <pre>
      * {@code
-     *         var p = Parsewisp.parser("""
-     *                 S := NUM ('+' NUM)*
-     *                 NUM := #'\\d+'
-     *                 """);
-     *         var tree = p.parse("1+2+3").castToParseSuccess();
+     *     var p = Parsewisp.parser("""
+     *             S := NUM ('+' NUM)*
+     *             NUM := #'\\d+'
+     *             """);
+     *     var tree = p.parse("1+2+3").castToParseSuccess();
      *
-     *         Map<Sym,Function<List<Object>, Object>> transformMap = Map.of(
-     *                 Sym.sym("S"), o -> o.stream()
-     *                         .filter(it -> !it.equals("+")) // If the token is "+", ignore.
-     *                         .map(it -> (String) it) // Treat each as String.
-     *                         .mapToInt(Integer::parseInt) // Parse each String to Int.
-     *                         .sum(), // Sum.
-     *                 Sym.sym("NUM"), List::getFirst
-     *         );
-     *         Function<Object, Integer> finalizer = (o) -> (Integer)o;
+     *     Map<Sym,Function<List<Object>, Object>> transformMap = Map.of(
+     *             Sym.sym("S"), o -> o.stream()
+     *                     .filter(it -> !it.equals("+")) // If the token is "+", ignore.
+     *                     .map(it -> (String) it) // Treat each as String.
+     *                     .mapToInt(Integer::parseInt) // Parse each String to Int.
+     *                     .sum(), // Sum.
+     *             Sym.sym("NUM"), List::getFirst
+     *     );
+     *     Function<Object, Integer> finalizer = (o) -> (Integer)o;
      *
-     *         // The tree is [:S, [:NUM, "1"], "+", [:NUM, "2"], "+", [:NUM, "3"]].
-     *         // The transformation sees the tag :S and looks up the function. It starts walking the content.
-     *         //   The content is [[:NUM, "1"], "+", [:NUM, "2"], "+", [:NUM, "3"]].
-     *         //   First, `.filter(it -> !it.equals("+"))` removes all occurences of "+".
-     *         //   The content is now [[:NUM, "1"], [:NUM, "2"], [:NUM, "3"]].
-     *         //   While walking, `List::getFirst` is applied to the content of each subtree.
-     *         //   The content is now ["1", "2", "3"].
-     *         //   The function applies `Integer::parseInt` to each element.
-     *         //   The content is now [1, 2, 3].
-     *         //   The function now sums up the numbers: 1+2+3 = 6.
-     *         //   Lastly, the finalizer is applied, casting the default to an Integer.
-     *         Assertions.assertEquals(
-     *                 Integer.valueOf(6),
-     *                 Transform.transform(tree, transformMap, finalizer));
+     *     // The tree is [:S, [:NUM, "1"], "+", [:NUM, "2"], "+", [:NUM, "3"]].
+     *     // The transformation sees the tag :S and looks up the function. It starts walking the content.
+     *     //   The content is [[:NUM, "1"], "+", [:NUM, "2"], "+", [:NUM, "3"]].
+     *     //   First, `.filter(it -> !it.equals("+"))` removes all occurences of "+".
+     *     //   The content is now [[:NUM, "1"], [:NUM, "2"], [:NUM, "3"]].
+     *     //   While walking, `List::getFirst` is applied to the content of each subtree.
+     *     //   The content is now ["1", "2", "3"].
+     *     //   The function applies `Integer::parseInt` to each element.
+     *     //   The content is now [1, 2, 3].
+     *     //   The function now sums up the numbers: 1+2+3 = 6.
+     *     //   Lastly, the finalizer is applied, casting the default to an Integer.
+     *     Assertions.assertEquals(
+     *             Integer.valueOf(6),
+     *             Transform.transform(tree, transformMap, finalizer));
      * }
      * </pre>
      * Simplified pseudocode for the above:
      * <pre>
      * {@code
-     *         Map<Sym,Function<List<Object>, Object>> transformMap = Map.of(
-     *                 Sym.sym("S"), o -> o.filter(it != "+").map(it.toInt()).sum(),
-     *                 Sym.sym("NUM"), List::getFirst
-     *         );
+     *     Map<Sym,Function<List<Object>, Object>> transformMap = Map.of(
+     *             Sym.sym("S"), o -> o.filter(it != "+").map(it.toInt()).sum(),
+     *             Sym.sym("NUM"), List::getFirst
+     *     );
      * }
      * </pre>
      * <p>
@@ -92,26 +92,26 @@ public final class Transform {
      * In this case, all nodes in the content MUST have a corresponding {@link Node} wrapper ({@link ParseTree} or {@link String})!
      * <pre>
      * {@code
-     *         var p = Parsewisp.parser("""
-     *                 S := A
-     *                 A := NUM ('+' NUM)*
-     *                 NUM := #'\\d+'
-     *                 """);
-     *         var tree = p.parse("1+2+3").castToParseSuccess();
+     *     var p = Parsewisp.parser("""
+     *             S := A
+     *             A := NUM ('+' NUM)*
+     *             NUM := #'\\d+'
+     *             """);
+     *     var tree = p.parse("1+2+3").castToParseSuccess();
      *
-     *         Map<Sym,Function<List<Object>, Object>> transformMap = Map.of(
-     *                 Sym.sym("A"), o -> String.valueOf(o.stream()
-     *                         .filter(it -> !it.equals("+")) // If the token is "+", ignore.
-     *                         .map(it -> (String) it) // Treat each as String.
-     *                         .mapToInt(Integer::parseInt) // Parse each String to Int.
-     *                         .sum()), // Sum.
-     *                 Sym.sym("NUM"), List::getFirst
-     *         );
-     *         Function<Object, Integer> finalizer = (o) -> (Integer)o;
+     *     Map<Sym,Function<List<Object>, Object>> transformMap = Map.of(
+     *             Sym.sym("A"), o -> String.valueOf(o.stream()
+     *                     .filter(it -> !it.equals("+")) // If the token is "+", ignore.
+     *                     .map(it -> (String) it) // Treat each as String.
+     *                     .mapToInt(Integer::parseInt) // Parse each String to Int.
+     *                     .sum()), // Sum.
+     *             Sym.sym("NUM"), List::getFirst
+     *     );
+     *     Function<Object, Integer> finalizer = (o) -> (Integer)o;
      *
-     *         Assertions.assertEquals(
-     *                 ParseTree.create("S", "6"),
-     *                 Transform.transform(tree, transformMap));
+     *     Assertions.assertEquals(
+     *             ParseTree.create("S", "6"),
+     *             Transform.transform(tree, transformMap));
      * }
      * </pre>
      *

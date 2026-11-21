@@ -95,7 +95,7 @@ class EpsilonTermTest {
         // Default.
         Assertions.assertEquals(
                 eps,
-                eps.withReduction(ReductionType.standardInitialReduction()));
+                eps.withReduction(ReductionType.initial()));
 
         // Default: Don't merge up
         var pDefault = Parsewisp.parser(
@@ -108,20 +108,20 @@ class EpsilonTermTest {
         var pMerge = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", eps.withReduction(ReductionType.standardIntermediateReduction())));
+                        "A", eps.withReduction(ReductionType.merging())));
         Assertions.assertEquals(PT.create("S"), pMerge.parse(""));
 
         // Add to parse tree with potentially different name (Top-level)
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
-                        "S", eps.withReduction(ReductionType.taggedTreeReduction(Sym.sym("B")))));
+                        "S", eps.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("B"), pMerge2.parse(""));
 
         // Add to parse tree with potentially different name (Nested)
         var pMerge3 = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", eps.withReduction(ReductionType.taggedTreeReduction(Sym.sym("B")))));
+                        "A", eps.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("S", PT.create("B")), pMerge3.parse(""));
 
         // Add parse tree from a rule which doesn't appear in the grammar.
@@ -129,7 +129,7 @@ class EpsilonTermTest {
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", ConcatRule.create(List.of(
-                                eps.withReduction(ReductionType.taggedTreeReduction(Sym.sym("B"))),
+                                eps.withReduction(ReductionType.taggedTree(Sym.sym("B"))),
                                 eps
                         ))));
         Assertions.assertEquals(

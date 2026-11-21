@@ -23,25 +23,25 @@ import java.util.stream.Stream;
  * In the following example, two equivalent grammars and parsers are constructed from a string and from a builder. The assertions show that the grammars are equal and that the parsers give equivalent outputs.
  * <pre>
  * {@code
- *         var gFromString = Parsewisp.parser("""
- *                         S = NUMBER NUMBER*
- *                         NUMBER = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
- *                         """)
- *                 .grammar();
- *         var gFromGB = new GrammarBuilder(ParserCreationOptions.getDefault()) {
- *             @Override
- *             public void make() {
- *                 addProduction("S", cat(nt("NUMBER"), zeroOrMore(nt(Sym.sym("NUMBER")))));
- *                 addProduction("NUMBER", alt("0", "1", "2", "3", "4", "5", "6", "7", "8", "9"));
- *             }
- *         }.build();
+ *     var gFromString = Parsewisp.parser("""
+ *                     S = NUMBER NUMBER*
+ *                     NUMBER = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+ *                     """)
+ *             .grammar();
+ *     var gFromGB = new GrammarBuilder(ParserCreationOptions.getDefault()) {
+ *         @Override
+ *         public void make() {
+ *             addProduction("S", cat(nt("NUMBER"), zeroOrMore(nt(Sym.sym("NUMBER")))));
+ *             addProduction("NUMBER", alt("0", "1", "2", "3", "4", "5", "6", "7", "8", "9"));
+ *         }
+ *     }.build();
  *
- *         Assertions.assertEquals(gFromString, gFromGB);
+ *     Assertions.assertEquals(gFromString, gFromGB);
  *
- *         var pFromString = Parsewisp.parser(gFromString, ParserCreationOptions.getDefault().withStartProduction(Sym.sym("S")));
- *         var pFromGB = Parsewisp.parser(gFromGB, ParserCreationOptions.getDefault().withStartProduction(Sym.sym("S")));
- *         var text = "0123456789";
- *         Assertions.assertEquals(pFromString.parse(text), pFromGB.parse(text));
+ *     var pFromString = Parsewisp.parser(gFromString, ParserCreationOptions.getDefault().withStartProduction(Sym.sym("S")));
+ *     var pFromGB = Parsewisp.parser(gFromGB, ParserCreationOptions.getDefault().withStartProduction(Sym.sym("S")));
+ *     var text = "0123456789";
+ *     Assertions.assertEquals(pFromString.parse(text), pFromGB.parse(text));
  * }
  * </pre>
  * <p>
@@ -710,7 +710,7 @@ public abstract class GrammarBuilder {
                 // Hide the terminal in the output.
                 // It still appears in the tree, but is flattened into the concatenation.
                 rules.add(originalRule.withReduction(
-                        ReductionType.standardIntermediateReduction()));
+                        ReductionType.merging()));
                 result = cat(rules).withReduction(originalRule.getReduction());
             } else {
                 rules.add(originalRule);
@@ -740,7 +740,7 @@ public abstract class GrammarBuilder {
 
         final @NotNull Rule startWithoutReduction = (
                 finalGrammar.get(start)
-                        .withReduction(ReductionType.standardInitialReduction()));
+                        .withReduction(ReductionType.initial()));
         final @NotNull Rule newStartComb =
                 cat(List.of(startWithoutReduction, wsRule))
                         .withReduction(finalGrammar.get(start).getReduction());

@@ -116,16 +116,16 @@ public record ParsingOptions(
      * Example:
      * <pre>
      * {@code
-     *      // The grammar has these two, unrelated productions. The first production is A. So that is the production the parser uses.
-     *      //    A := 'a'
-     *      //    B := 'b'
-     *      var p = Parsewisp.parser("A := 'a'\nB := 'b'");
+     *     // The grammar has these two, unrelated productions. The first production is A. So that is the production the parser uses.
+     *     //    A := 'a'
+     *     //    B := 'b'
+     *     var p = Parsewisp.parser("A := 'a'\nB := 'b'");
      *
-     *      println(p.parse("a")); // Success: [:A, a]
-     *      println(p.parse("b")); // Failure: 'b' could not be parsed from production A.
+     *     println(p.parse("a")); // Success: [:A, a]
+     *     println(p.parse("b")); // Failure: 'b' could not be parsed from production A.
      *
-     *      // With the start production explicitly changed, it works:
-     *      println(p.parse("b", Parsewisp.ParsingOptions.getDefault().withStart(Keyword.intern("B")))); // [:B, b]
+     *     // With the start production explicitly changed, it works:
+     *     println(p.parse("b", Parsewisp.ParsingOptions.getDefault().withStart(Keyword.intern("B")))); // [:B, b]
      * }
      * </pre>
      * This can be useful if the grammar has multiple unrelated parts.
@@ -148,14 +148,14 @@ public record ParsingOptions(
      * The option only applies when requesting the full parse forest (e.g. {@link Parser#parses(String, ParsingOptions)}), but not when only a single parse is requested (e.g. {@link Parser#parse(String, ParsingOptions)}).
      * <pre>
      * {@code
-     *      var p = Parsewisp.parser("S := 'a'+");
-     *      println(p.parses("aa")); // [[:S, a, a]]
+     *     var p = Parsewisp.parser("S := 'a'+");
+     *     println(p.parses("aa")); // [[:S, a, a]]
      *
-     *      var opts = Parsewisp.ParsingOptions.getDefault().withPartialSetTo(true);
-     *      println(p.parses("aa", opts)); // [[:S, a], [:S, a, a]]
+     *     var opts = Parsewisp.ParsingOptions.getDefault().withPartialSetTo(true);
+     *     println(p.parses("aa", opts)); // [[:S, a], [:S, a, a]]
      *
-     *      // The option has no effect on single parse:
-     *      println(p.parse("aa", opts)); // [:S, a, a]
+     *     // The option has no effect on single parse:
+     *     println(p.parse("aa", opts)); // [:S, a, a]
      * }
      * </pre>
      *
@@ -175,10 +175,10 @@ public record ParsingOptions(
      * Consider the following grammar:
      * <pre>
      * {@code
-     *   S   = 'a' <B> C <D> 'e' (* Expects the string "abcde", but will hide the substrings parsed by productions B and D *)
-     *   B   = 'b'
-     *   <C> = 'c' (* Expects the string "c", but will "flatten" itself into the output. *)
-     *   <D> = 'd' (* Same as C *)
+     *     S   = 'a' <B> C <D> 'e' (* Expects the string "abcde", but will hide the substrings parsed by productions B and D *)
+     *     B   = 'b'
+     *     <C> = 'c' (* Expects the string "c", but will "flatten" itself into the output. *)
+     *     <D> = 'd' (* Same as C *)
      * }
      * </pre>
      * Explanation: Production S expects the string {@code "abcde"}, but the outputs of productions B and D will be hidden. The result of production C will be shown in the output without the associated tag "C".
@@ -186,25 +186,25 @@ public record ParsingOptions(
      * Now the code:
      * <pre>
      * {@code
-     *   var p = Parsewisp.parser("S = 'a' <B> C <D> 'a'\nB = 'b'+\n<C> = 'c'\n<D> = 'd'");
+     *     var p = Parsewisp.parser("S = 'a' <B> C <D> 'a'\nB = 'b'+\n<C> = 'c'\n<D> = 'd'");
      *
-     *   // No options.
-     *   println("Default => " + p.parse("abcda"));       // [:S, a, c, a]
+     *     // No options.
+     *     println("Default => " + p.parse("abcda"));       // [:S, a, c, a]
      *
-     *   var opts = Parsewisp.ParsingOptions.getDefault();
-     *   println("Default => " + p.parse("abcda"));       // [:S, a, c, a]
+     *     var opts = Parsewisp.ParsingOptions.getDefault();
+     *     println("Default => " + p.parse("abcda"));       // [:S, a, c, a]
      *
-     *   opts = opts.withUnhide(Parsewisp.UnhideOptions.none);
-     *   println("none    => " + p.parse("abcda", opts)); // [:S, a, c, a]
+     *     opts = opts.withUnhide(Parsewisp.UnhideOptions.none);
+     *     println("none    => " + p.parse("abcda", opts)); // [:S, a, c, a]
      *
-     *   opts = opts.withUnhide(Parsewisp.UnhideOptions.tags);
-     *   println("tags    => " + p.parse("abcda", opts)); // [:S, a, [:C, c], a]
+     *     opts = opts.withUnhide(Parsewisp.UnhideOptions.tags);
+     *     println("tags    => " + p.parse("abcda", opts)); // [:S, a, [:C, c], a]
      *
-     *   opts = opts.withUnhide(Parsewisp.UnhideOptions.content);
-     *   println("content => " + p.parse("abcda", opts)); // [:S, a, [:B, b], c, d, a]
+     *     opts = opts.withUnhide(Parsewisp.UnhideOptions.content);
+     *     println("content => " + p.parse("abcda", opts)); // [:S, a, [:B, b], c, d, a]
      *
-     *   opts = opts.withUnhide(Parsewisp.UnhideOptions.all);
-     *   println("all     => " + p.parse("abcda", opts)); // [:S, a, [:B, b], [:C, c], [:D, d], a]
+     *     opts = opts.withUnhide(Parsewisp.UnhideOptions.all);
+     *     println("all     => " + p.parse("abcda", opts)); // [:S, a, [:B, b], [:C, c], [:D, d], a]
      * }
      * </pre>
      *
@@ -223,17 +223,17 @@ public record ParsingOptions(
      *
      * <pre>
      * {@code
-     *      var p = Parsewisp.parser("S := #'a'+");
-     *      var text = "ab";
+     *     var p = Parsewisp.parser("S := #'a'+");
+     *     var text = "ab";
      *
-     *      // A normal parse results in a failure.
-     *      println(p.parse("ab").castToParseFailure().contentsToString());
-     *      // => [1, [ParseFailureReason[rule=#"a", reasonString=null, untilEndOfInput=false, tag=regex]], 1, 2, ab]
+     *     // A normal parse results in a failure.
+     *     println(p.parse("ab").castToParseFailure().contentsToString());
+     *     // => [1, [ParseFailureReason[rule=#"a", reasonString=null, untilEndOfInput=false, tag=regex]], 1, 2, ab]
      *
-     *      // With the total option, a parsetree is returned, potentially providing more information about the failure.
-     *      var opts = Parsewisp.ParsingOptions.getDefault().withTotal(true);
-     *      println(p.parse("ab", opts));
-     *      // => [:S, "a", [:failure, could not parse "b" at 1..2]]
+     *     // With the total option, a parsetree is returned, potentially providing more information about the failure.
+     *     var opts = Parsewisp.ParsingOptions.getDefault().withTotal(true);
+     *     println(p.parse("ab", opts));
+     *     // => [:S, "a", [:failure, could not parse "b" at 1..2]]
      * }
      * </pre>
      *

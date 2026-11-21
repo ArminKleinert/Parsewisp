@@ -158,7 +158,7 @@ class RegexTermTest {
         // Default.
         Assertions.assertEquals(
                 digit,
-                digit.withReduction(ReductionType.standardInitialReduction()));
+                digit.withReduction(ReductionType.initial()));
 
         // Default: Don't merge up
         var pDefault = Parsewisp.parser(
@@ -171,20 +171,20 @@ class RegexTermTest {
         var pMerge = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", digit.withReduction(ReductionType.standardIntermediateReduction())));
+                        "A", digit.withReduction(ReductionType.merging())));
         Assertions.assertEquals(PT.create("S", "1"), pMerge.parse("1"));
 
         // Add to parse tree with potentially different name (Top-level)
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
-                        "S", digit.withReduction(ReductionType.taggedTreeReduction(Sym.sym("B")))));
+                        "S", digit.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("B", "1"), pMerge2.parse("1"));
 
         // Add to parse tree with potentially different name (Nested)
         var pMerge3 = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", digit.withReduction(ReductionType.taggedTreeReduction(Sym.sym("B")))));
+                        "A", digit.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("S", PT.create("B", "1")), pMerge3.parse("1"));
 
         // Add parse tree from a rule which doesn't appear in the grammar.
@@ -192,7 +192,7 @@ class RegexTermTest {
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", ConcatRule.create(List.of(
-                                digit.withReduction(ReductionType.taggedTreeReduction(Sym.sym("B"))),
+                                digit.withReduction(ReductionType.taggedTree(Sym.sym("B"))),
                                 digit
                         ))));
         Assertions.assertEquals(
