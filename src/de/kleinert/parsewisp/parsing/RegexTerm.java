@@ -40,8 +40,8 @@ public final class RegexTerm extends Terminal {
      */
     public static @NotNull Rule create(final @NotNull Pattern regexp) {
         var s = regexp.pattern();
-        if (s.chars().allMatch(Character::isLetterOrDigit))
-            return StringTerm.create(s, false);
+        if (regexp.flags() == 0 && s.chars().allMatch(Character::isLetterOrDigit))
+            return StringTerm.createDirect(s, false);
         return new RegexTerm(defaultHidden, defaultReductionType, regexp);
     }
 
