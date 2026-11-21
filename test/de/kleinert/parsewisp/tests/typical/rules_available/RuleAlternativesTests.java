@@ -35,13 +35,6 @@ class RuleAlternativesTests {
     }
 
     @Test
-    void epsilonReplacements() {
-        var p1 = Parsewisp.parser("S = ε");
-        var p2 = Parsewisp.parser("S = \"\"");
-        Assertions.assertEquals(p1.parse(""), p2.parse(""));
-    }
-
-    @Test
     void valueRangeReplacements() {
         var p2 = Parsewisp.parser("S = #\"[\\x{41}-\\x{5a}]\"");
         var p3 = Parsewisp.parser("S = \"A\" | \"B\" | \"C\" | \"D\" | \"E\" | \"F\" | \"G\" | \"H\" | \"I\" | \"J\" | \"K\" | \"L\" | \"M\" | \"N\" | \"O\" | \"P\" | \"Q\" | \"R\" | \"S\" | \"T\" | \"U\" | \"V\" | \"W\" | \"X\" | \"Y\" | \"Z\"");
@@ -87,19 +80,5 @@ class RuleAlternativesTests {
         var p2 = Parsewisp.parser("S = {\"a\"}");
         Assertions.assertEquals(p1.parse(""), p2.parse(""));
         Assertions.assertEquals(p1.parse("aaaa"), p2.parse("aaaa"));
-    }
-
-    @Test
-    void epsilon() {
-        {
-            var p1 = Parsewisp.parser("S = \"a\" ε");
-            var p2 = Parsewisp.parser("S = \"a\" \"\"", ParserCreationOptions.getDefault());
-            Assertions.assertEquals(p1.parse("a"), p2.parse("a"));
-        }
-        {
-            var p1 = Parsewisp.parser("S = ε");
-            var p2 = Parsewisp.parser("S = \"\"", ParserCreationOptions.getDefault());
-            Assertions.assertEquals(p1.parse(""), p2.parse(""));
-        }
     }
 }

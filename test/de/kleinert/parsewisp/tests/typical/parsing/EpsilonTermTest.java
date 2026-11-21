@@ -1,8 +1,6 @@
 package de.kleinert.parsewisp.tests.typical.parsing;
 
 import de.kleinert.parsewisp.Parsewisp;
-import de.kleinert.parsewisp.Sym;
-import de.kleinert.parsewisp.grammar.Grammar;
 import de.kleinert.parsewisp.parsing.ConcatRule;
 import de.kleinert.parsewisp.parsing.EpsilonTerm;
 import de.kleinert.parsewisp.parsing.StringTerm;
@@ -11,10 +9,7 @@ import de.kleinert.parsewisp.testutil.PT;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.text.ParseException;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 class EpsilonTermTest {
 
@@ -25,11 +20,10 @@ class EpsilonTermTest {
 
     @Test
     void parse() {
-        var g = new Grammar(Sym.sym("S"), new LinkedHashMap<>(Map.of(
-                Sym.sym("S"), ConcatRule.create(List.of(
+        var g = Gr.grammar(
+                "S", ConcatRule.create(List.of(
                         EpsilonTerm.getDefault(),
-                        StringTerm.create("b", false)))
-        )));
+                        StringTerm.create("b", false))));
         var p = Parsewisp.parser(g); // Will use parse(...) for epsilon and fullParse(...) for "b"
         Assertions.assertEquals(
                 PT.create("S", "b"),
@@ -39,9 +33,10 @@ class EpsilonTermTest {
 
     @Test
     void fullParsePart() {
-        var g = Gr.grammar(Map.of("S", ConcatRule.create(List.of(
-                StringTerm.create("a", false),
-                EpsilonTerm.getDefault()))));
+        var g = Gr.grammar(
+                "S", ConcatRule.create(List.of(
+                        StringTerm.create("a", false),
+                        EpsilonTerm.getDefault())));
         var p = Parsewisp.parser(g); // Will use parse(...) for "a" and fullParse(...) for epsilon
         Assertions.assertEquals(
                 PT.create("S", "a"),
@@ -53,8 +48,8 @@ class EpsilonTermTest {
 
     @Test
     void fullParse() {
-        var g = Gr.grammar(Map.of("S", ConcatRule.create(List.of(
-                EpsilonTerm.getDefault()))));
+        var g = Gr.grammar(
+                "S", ConcatRule.create(List.of(EpsilonTerm.getDefault())));
         var p = Parsewisp.parser(g);
         Assertions.assertEquals(
                 PT.create("S"),
@@ -63,9 +58,22 @@ class EpsilonTermTest {
     }
 
     @Test
+    void parseError() {        //TODO
+    }
+
+    @Test
+    void fullParseSingle() {        //TODO
+    }
+
+
+    @Test
+    void fullParseConcat() {//TODO
+    }
+
+    @Test
     void fullParseError() {
-        var g = Gr.grammar(Map.of("S", ConcatRule.create(List.of(
-                EpsilonTerm.getDefault()))));
+        var g = Gr.grammar(
+                "S", ConcatRule.create(List.of(EpsilonTerm.getDefault())));
         var p = Parsewisp.parser(g);
 
         Assertions.assertTrue(p.parse("a").isFailure());

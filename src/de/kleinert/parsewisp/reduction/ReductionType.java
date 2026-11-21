@@ -18,8 +18,8 @@ import java.util.Objects;
  * @since 0.9.7
  */
 public final class ReductionType {
-    private static ReductionType standardIntermediateReduction = null;
-    private static ReductionType standardInitialReduction = null;
+    private static ReductionType intermediateReduction = null;
+    private static ReductionType initialReduction = null;
 
     /**
      * The default output format for intermediate operations. It has the following properties:
@@ -33,10 +33,10 @@ public final class ReductionType {
      * @since 0.9.7
      */
     public static @NotNull ReductionType standardIntermediateReduction() {
-        if (standardIntermediateReduction == null)
-            standardIntermediateReduction =
+        if (intermediateReduction == null)
+            intermediateReduction =
                     new ReductionType(ParseTree.NULL_TAG.content(), ReductionTypesAvailable.INTERMEDIATE, true);
-        return standardIntermediateReduction;
+        return intermediateReduction;
     }
 
     /**
@@ -51,10 +51,10 @@ public final class ReductionType {
      * @since 0.9.7
      */
     public static @NotNull ReductionType standardInitialReduction() {
-        if (standardInitialReduction == null)
-            standardInitialReduction =
+        if (initialReduction == null)
+            initialReduction =
                     new ReductionType(ParseTree.NULL_TAG.content(), ReductionTypesAvailable.INITIAL, true);
-        return standardInitialReduction;
+        return initialReduction;
     }
 
     /**
@@ -100,20 +100,20 @@ public final class ReductionType {
      * @return A new output descriptor.
      * @since 0.9.7
      */
-    public static @NotNull ReductionType defaultNonRawReduction(final @NotNull Sym key) {
+    public static @NotNull ReductionType taggedTreeReduction(final @NotNull Sym key) {
         return new ReductionType(key, ReductionTypesAvailable.TAGGED_PARSE_TREE, false);
     }
 
-    /**
-     * Default output format for final operations whose key is legal for output.
-     *
-     * @param key The production's name.
-     * @return A new output descriptor.
-     * @since 0.9.7
-     */
-    public static @NotNull ReductionType nonTerminalReduction(final @NotNull Sym key) {
-        return defaultNonRawReduction(key);
-    }
+//    /**
+//     * Default output format for final operations whose key is legal for output.
+//     *
+//     * @param key The production's name.
+//     * @return A new output descriptor.
+//     * @since 0.9.7
+//     */
+//    public static @NotNull ReductionType nonTerminalReduction(final @NotNull Sym key) {
+//        return taggedTreeReduction(key);
+//    }
 
     @Override
     public boolean equals(final Object o) {
@@ -177,7 +177,7 @@ public final class ReductionType {
             final @NotNull var key = prod.getKey();
             @NotNull var value = prod.getValue();
             if (value.getReduction().getReductionType() == ReductionTypesAvailable.INITIAL) {
-                value = value.withReduction(ReductionType.defaultNonRawReduction(key));
+                value = value.withReduction(ReductionType.taggedTreeReduction(key));
             }
             prod.setValue(value);
         }

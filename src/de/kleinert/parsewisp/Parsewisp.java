@@ -11,6 +11,7 @@ import java.util.Map;
 
 /**
  * The main interface for interacting with the library.
+ *
  * @since 0.9.7
  */
 public final class Parsewisp {
@@ -74,17 +75,22 @@ public final class Parsewisp {
             throw new ParserCreationFailure("The start production " + options.getStartProduction() + " is not in the grammar.");
 
         try {
-            var builder = new GrammarBuilder() {
-                @Override
-                protected void make() {
-                    addAllProductions(grammar.entrySet());
-                }
-            };
+            Grammar g;
+            if (options.getStartProduction() == null && !options.doCheckCorrectness() && options.getWhitespaceParser() == null) {
+                g = grammar;
+            } else {
+                var builder = new GrammarBuilder() {
+                    @Override
+                    protected void make() {
+                        addAllProductions(grammar.entrySet());
+                    }
+                };
 
-            var g = builder.buildWithWhitespace(
-                    options.getStartProduction(),
-                    options.getWhitespaceParser(),
-                    options.doCheckCorrectness());
+                g = builder.buildWithWhitespace(
+                        options.getStartProduction(),
+                        options.getWhitespaceParser(),
+                        options.doCheckCorrectness());
+            }
 
             return new Parser(g, g.getStartSym(), options.getPrinter());
         } catch (IllegalGrammarException exception) {

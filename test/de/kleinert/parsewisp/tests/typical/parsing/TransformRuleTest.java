@@ -52,6 +52,10 @@ class TransformRuleTest {
     }
 
     @Test
+    void parseError() {        //TODO
+    }
+
+    @Test
     void fullParse() {
         var g = new Grammar(Sym.sym("S"), new LinkedHashMap<>(Map.of(
                 Sym.sym("S"), ConcatRule.create(List.of(
@@ -65,6 +69,22 @@ class TransformRuleTest {
                 PT.create("S", "abc", "d", "e", "f"),
                 p.parse("abcdef")
         );
+    }
+
+    @Test
+    void fullParseSingle() {        //TODO
+    }
+
+    @Test
+    void fullParseConcat() {//TODO
+    }
+
+    @Test
+    void fullParseError() {//TODO
+    }
+
+    @Test
+    void getRule() {//TODO
     }
 
     @Test

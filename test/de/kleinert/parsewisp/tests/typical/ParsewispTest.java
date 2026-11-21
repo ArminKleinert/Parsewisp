@@ -303,23 +303,9 @@ class ParsewispTest {
             Assertions.assertEquals(PT.create("S", "AB"), res);
         }
         {
-            final @NotNull var p = Parsewisp.parser("S = ''");
-            final @NotNull var res = p.parse("", ParsingOptions.getDefault());
-            Assertions.assertEquals(PT.create("S"), res);
-        }
-    }
-
-    @Test
-    void parsePartial() {
-        {
-            final @NotNull var p = Parsewisp.parser("S = ''");
-            final @NotNull var res = p.parse("", ParsingOptions.getDefault());
-            Assertions.assertEquals(PT.create("S"), res);
-        }
-        {
-            final @NotNull var p = Parsewisp.parser("S = 'AB'");
-            final @NotNull var res = p.parse("AB", ParsingOptions.getDefault());
-            Assertions.assertEquals(PT.create("S", "AB"), res);
+            final @NotNull var p = Parsewisp.parser("S = 'a'");
+            final @NotNull var res = p.parse("a", ParsingOptions.getDefault());
+            Assertions.assertEquals(PT.create("S", "a"), res);
         }
     }
 

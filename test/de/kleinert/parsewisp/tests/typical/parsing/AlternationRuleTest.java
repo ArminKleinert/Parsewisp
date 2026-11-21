@@ -3,7 +3,6 @@ package de.kleinert.parsewisp.tests.typical.parsing;
 import org.junit.jupiter.api.Test;
 
 class AlternationRuleTest {
-
     @Test
     void create() {
     }
@@ -11,12 +10,29 @@ class AlternationRuleTest {
     @Test
     void altUnsafe() {
     }
+
     @Test
-    void parse() {
+    void parse() {        //TODO
     }
 
     @Test
-    void fullParse() {
+    void parseError() {        //TODO
+    }
+
+    @Test
+    void fullParseSingle() {        //TODO
+    }
+
+    @Test
+    void fullParseConcat() {//TODO
+    }
+
+    @Test
+    void fullParseError() {//TODO
+    }
+
+    @Test
+    void getRules() {//TODO
     }
 
     @Test

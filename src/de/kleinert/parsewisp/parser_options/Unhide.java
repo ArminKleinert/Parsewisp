@@ -66,7 +66,7 @@ public class Unhide {
         final @NotNull LinkedHashMap<Sym, Rule> res = new LinkedHashMap<>();
         for (final @NotNull var symRuleEntry : grammar.entrySet()) {
             final @NotNull var key = symRuleEntry.getKey();
-            final @NotNull var reduction = ReductionType.nonTerminalReduction(key);
+            final @NotNull var reduction = ReductionType.taggedTreeReduction(key);
             final @NotNull var pUnhide = symRuleEntry.getValue().withReduction(reduction);
             res.put(key, pUnhide);
         }
@@ -85,7 +85,7 @@ public class Unhide {
         final @NotNull LinkedHashMap<Sym, Rule> res = new LinkedHashMap<>();
         for (final @NotNull var symRuleEntry : grammar.entrySet()) {
             final @NotNull var key = symRuleEntry.getKey();
-            final @NotNull var reduction = ReductionType.nonTerminalReduction(key);
+            final @NotNull var reduction = ReductionType.taggedTreeReduction(key);
             final @NotNull var p = symRuleEntry.getValue().includeInResult().withReduction(reduction);
             res.put(key, p);
         }

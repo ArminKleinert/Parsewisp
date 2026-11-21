@@ -11,11 +11,40 @@ class ConcatRuleTest {
     @Test
     void createNoEpsilonMoreThan1() {
     }
+
     @Test
-    void parse() {
+    void parse() {        //TODO
     }
 
     @Test
-    void fullParse() {
+    void parseError() {        //TODO
+    }
+
+    @Test
+    void fullParseSingle() {        //TODO
+    }
+
+    @Test
+    void fullParseConcat() {//TODO
+    }
+
+    @Test
+    void fullParseError() {//TODO
+    }
+
+    @Test
+    void getRules() {//TODO
+    }
+
+    @Test
+    void withHideTag() {
+    }
+
+    @Test
+    void withReduction() {
+    }
+
+    @Test
+    void withRules() {
     }
 }

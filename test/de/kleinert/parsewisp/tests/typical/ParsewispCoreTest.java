@@ -229,9 +229,9 @@ class ParsewispCoreTest {
     @Test
     void testParserAsFunction() {
         var text = "aaaa";
-        var grammar = "S = 'a' S / '' ";
+        var grammar = "S = 'a' S / 'a' ";
         var tree =
-                PT.create("S", "a", PT.create("S", "a", PT.create("S", "a", PT.create("S", "a", PT.create("S")))));
+                PT.create("S", "a", PT.create("S", "a", PT.create("S", "a", PT.create("S", "a"))));
 
         Assertions.assertEquals(tree, Parsewisp.parser(grammar).parse(text));
     }
@@ -241,7 +241,11 @@ class ParsewispCoreTest {
         var text = "aaaa";
         var grammar = "S = S 'a' / ε";
         var tree =
-                PT.create("S", PT.create("S", PT.create("S", PT.create("S", PT.create("S"), "a"), "a"), "a"), "a");
+                PT.create("S",
+                        PT.create("S",
+                                PT.create("S",
+                                        PT.create("S",
+                                                PT.create("S"), "a"), "a"), "a"), "a");
 
         Assertions.assertEquals(tree, Parsewisp.parser(grammar).parse(text));
     }

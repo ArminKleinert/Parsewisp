@@ -30,10 +30,13 @@ public final class Grammar extends LinkedHashMap<@NotNull Sym, Rule> {
      * @since 0.9.7
      */
     public Grammar(final @NotNull Sym startSym, final @NotNull LinkedHashMap<? extends Sym, ? extends Rule> m) {
-        super(m);
+        super(m.size(), 1.0f);
 
         if (m.isEmpty())
             throw new IllegalArgumentException("Empty grammar.");
+
+        super.put(startSym, m.get(startSym));
+        super.putAll(m);
 
         this.startSym = startSym;
     }

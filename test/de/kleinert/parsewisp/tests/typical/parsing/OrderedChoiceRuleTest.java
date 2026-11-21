@@ -9,11 +9,27 @@ class OrderedChoiceRuleTest {
     }
 
     @Test
-    void parse() {
+    void parse() {        //TODO
     }
 
     @Test
-    void fullParse() {
+    void parseError() {        //TODO
+    }
+
+    @Test
+    void fullParseSingle() {        //TODO
+    }
+
+    @Test
+    void fullParseConcat() {//TODO
+    }
+
+    @Test
+    void fullParseError() {//TODO
+    }
+
+    @Test
+    void getRules() {//TODO
     }
 
     @Test

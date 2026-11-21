@@ -27,6 +27,7 @@ public final class StringTerm extends Terminal {
 
     /**
      * Create a new instance. Depending on the implementation, allows for buffering or create a different type of rule.
+     * The implementation is allowed to create other types of rules, like {@link RegexTerm} or {@link EpsilonTerm}.
      *
      * @param string          The string to match.
      * @param caseInsensitive True if the casing doesn't matter, false if it does matter.
@@ -34,8 +35,22 @@ public final class StringTerm extends Terminal {
      * @since 0.9.7
      */
     public static @NotNull Rule create(final @NotNull String string, final boolean caseInsensitive) {
-        if (string.isEmpty())
+        if (string.isEmpty()) {
             return EpsilonTerm.getDefault();
+        }
+        return new StringTerm(defaultHidden, defaultReductionType, string, caseInsensitive);
+    }
+
+    /**
+     * Create a new instance. Depending on the implementation, allows for buffering.
+     * Unlike {@link #create(String, boolean)}, the output must be a {@link StringTerm} and can not be replaced by other types.
+     *
+     * @param string          The string to match.
+     * @param caseInsensitive True if the casing doesn't matter, false if it does matter.
+     * @return A rule.
+     * @since 0.9.7
+     */
+    public static @NotNull StringTerm createDirect(final @NotNull String string, final boolean caseInsensitive) {
         return new StringTerm(defaultHidden, defaultReductionType, string, caseInsensitive);
     }
 
@@ -105,7 +120,7 @@ public final class StringTerm extends Terminal {
         return hide == that.hide
                 && Objects.equals(red, that.red)
                 && Objects.equals(string, that.getString())
-                && caseInsensitive == that.caseInsensitive;
+                && (string.isEmpty() || caseInsensitive == that.caseInsensitive);
     }
 
     @Override
