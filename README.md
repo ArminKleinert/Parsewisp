@@ -96,17 +96,20 @@ These are priorities that directly impact the usage.
 
 ### Extended options
 
-| Category                           | Notations                                         | Example          | Note            |
-|------------------------------------|---------------------------------------------------|------------------|-----------------|
-| Variable repetition (zero or more) | `*`                                               | `* A`            | ABNF, see below |
-| Variable repetition (n or more)    | `n*`                                              | `5* A`           | ABNF            |
-| Variable repetition (zero to m)    | `*m`                                              | `*5 A`           | ABNF            |
-| Variable repetition (n to m)       | `n*m`                                             | `5*19 A`         | ABNF            |
-| Variable repetition (exactly n)    | `n`                                               | `5 A`            | ABNF            |
-| Value range                        | `%xXXXX[-XXXX]`, `%bBBBB[-BBBB]`, `%dDDDD[-DDDD]` | `%x41-5a`        | ABNF            |
-| ABNF core rules                    | See below.                                        |                  |                 |
-| Explicit string case sensitivity   | `%i"..."` `%s"..."` (and `%i'...'` `%s'...'`)     | `%i"A"`, `%s"A"` | ABNF            |
-| Exclusion / Exception              | `-`                                               | `A - B`          | EBNF            |
+| Category                           | Notations                               | Example          | Note                    |
+|------------------------------------|-----------------------------------------|------------------|-------------------------|
+| Variable repetition (zero or more) | `{,}`                                   | `A{,}`           | ABNF, see below         |
+| Variable repetition (n or more)    | `{n,`                                   | `A{5,}`          | ABNF                    |
+| Variable repetition (zero to m)    | `{,m}`                                  | `A{,5}`          | ABNF                    |
+| Variable repetition (n to m)       | `{n,m}`                                 | `A{5,19}`        | ABNF                    |
+| Variable repetition (exactly n)    | `{n}`                                   | `A{5}`           | ABNF                    |
+| Value range (Binary)               | `%bBBBB[-BBBB]`                         | `%x41-5a`        | ABNF                    |
+| Value range (Decimal)              | `%dDDDD[-DDDD]`                         | `%x41-5a`        | ABNF                    |
+| Value range (Hex)                  | `%xXXXX[-XXXX]`                         | `%x41-5a`        | ABNF                    |
+| Explicit string case sensitivity   | `%i"..."` `%s"..."` `%i'...'` `%s'...'` | `%i"A"`, `%s"A"` | ABNF                    |
+| Exclusion / Exception              | `-`                                     | `A - B`          | EBNF                    |
+| Special sequence                   | No notation                             | No notation      | No notation, but useful |
+| Transform                          | No notation                             | No notation      | No notation, but useful |
 
 - For available value range formats, see [the specification](https://datatracker.ietf.org/doc/html/rfc5234#autoid-11).
 - For available ABNF core rules, see [the specification](https://datatracker.ietf.org/doc/html/rfc5234#autoid-25).

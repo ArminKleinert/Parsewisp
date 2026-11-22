@@ -50,7 +50,7 @@ class ExclusionTest {
     void basicTest4() {
         var opts = ParserCreationOptions.getDefault();
 
-        // Allow 1, 11 and 111, but not 11..
+        // Allow 1, 11 and 111, but not 11.
         var p = Parsewisp.parser("S = (\"1\" | \"11\" | \"111\") - \"11\"", opts);
 
         Assertions.assertEquals(PT.create("S", "1"), p.parse("1"));
