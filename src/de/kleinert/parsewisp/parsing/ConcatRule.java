@@ -40,7 +40,7 @@ public final class ConcatRule extends RuleWithManyChildren {
         var compressedResult = new ArrayList<Rule>();
 
         for (@NotNull Rule rule : rules) {
-            if (rule instanceof ConcatRule cc) {
+            if (rule instanceof ConcatRule cc && !cc.isHiddenInResult() && cc.red.equals(defaultReductionType)) {
                 compressedResult.addAll(cc.getRules());
             } else {
                 compressedResult.add(rule);
@@ -51,7 +51,8 @@ public final class ConcatRule extends RuleWithManyChildren {
     }
 
     /**
-     * Like {@link #create(List)}, except it assumes that (1) the input includes no epsilons and (2) there are at least two rules in the input. This makes the method perform fewer optimizations, saving a miniscule amount of time.
+     * Like {@link #create(List)}, except it assumes that (1) the input includes no epsilons and (2) there are at least two rules in the input.
+     * This makes the method perform fewer optimizations, saving a miniscule amount of time.
      *
      * @param rules The rules.
      * @return A concatenation rule.
