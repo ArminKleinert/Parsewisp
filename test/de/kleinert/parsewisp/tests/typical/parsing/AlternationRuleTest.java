@@ -19,7 +19,6 @@ class AlternationRuleTest {
     private final Rule string_a = StringTerm.createDirect("a", false);
     private final Rule string_b = StringTerm.createDirect("b", false);
 
-
     @Test
     void create() {
         Assertions.assertEquals(
@@ -165,12 +164,30 @@ class AlternationRuleTest {
     @Test
     void withRules() {
         var i = List.of(string_a, string_b);
+        var r = AlternationRule.altUnsafe(i);
+
+        // Expected
+        Assertions.assertEquals(i, r.getRules());
+
+        var ni = List.of(string_a, StringTerm.createDirect("c", false));
+        var nr = r.withRules(ni);
+
+        // The new rule.
+        Assertions.assertEquals(ni, nr.getRules());
+
+        // Original left untouched.
+        Assertions.assertEquals(i, r.getRules());
+    }
+
+    @Test
+    void withRulesPreservesHideAndRed() {
+        var i = List.of(string_a, string_b);
         var r = AlternationRule
                 .altUnsafe(i)
                 .withHideTag(true)
                 .withReduction(ReductionType.taggedTree(Sym.sym("A")));
 
-        // As expected.
+        // Expected
         Assertions.assertEquals(i, r.getRules());
 
         // Create a new rule, check whether hide and reduction are still unchanged.

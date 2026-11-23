@@ -78,7 +78,10 @@ class EOFTermTest {
         Assertions.assertFalse(eof.includeInResult().isHiddenInResult());
         Assertions.assertTrue(eof.withHideTag(true).isHiddenInResult());
         Assertions.assertTrue(eof.hideInResult().isHiddenInResult());
+    }
 
+    @Test
+    void withHideTagParse() {
         // Alternative names give equivalent output
         Assertions.assertEquals(eof.withHideTag(false), eof.includeInResult());
         Assertions.assertEquals(eof.withHideTag(true), eof.hideInResult());
@@ -109,14 +112,20 @@ class EOFTermTest {
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", eof));
         Assertions.assertEquals(PT.create("S", PT.create("A")), pDefault.parse(""));
+    }
 
+    @Test
+    void withReductionMergeUp() {
         // Merge upwards
         var pMerge = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", eof.withReduction(ReductionType.merging())));
         Assertions.assertEquals(PT.create("S"), pMerge.parse(""));
+    }
 
+    @Test
+    void withReductionTaggedTree() {
         // Add to parse tree with potentially different name (Top-level)
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
@@ -129,7 +138,10 @@ class EOFTermTest {
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", eof.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("S", PT.create("B")), pMerge3.parse(""));
+    }
 
+    @Test
+    void withReductionNotDirectRhs() {
         // Add parse tree from a rule which doesn't appear in the grammar.
         var pMerge4 = Parsewisp.parser(
                 Gr.grammarS("S",

@@ -36,6 +36,8 @@ class LookaheadRuleTest {
     void withHideTag() {
     }
 
+    @Test void withHideTagParse() {}
+
     @Test
     void withReduction() {
     }
@@ -43,4 +45,8 @@ class LookaheadRuleTest {
     @Test
     void withRule() {
     }
+
+    @Test void withReductionMergeUp() {}
+    @Test void withReductionTaggedTree() {}
+    @Test void withReductionNotDirectRhs() {}
 }

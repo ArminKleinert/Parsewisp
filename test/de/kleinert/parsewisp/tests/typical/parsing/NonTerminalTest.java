@@ -37,9 +37,15 @@ class NonTerminalTest {
     void withHideTag() {
     }
 
+    @Test void withHideTagParse() {}
+
     @Test
     void withReduction() {
     }
+
+    @Test void withReductionMergeUp() {}
+    @Test void withReductionTaggedTree() {}
+    @Test void withReductionNotDirectRhs() {}
 
     @Test
     void testEquals() {

@@ -195,7 +195,10 @@ class StringTermTest {
         // Alternative names give equivalent output
         Assertions.assertEquals(simpleRuleForTests.withHideTag(false), simpleRuleForTests.includeInResult());
         Assertions.assertEquals(simpleRuleForTests.withHideTag(true), simpleRuleForTests.hideInResult());
+    }
 
+    @Test
+    void withHideTagParse() {
         // By default, not hidden in output
         var pDefault = Parsewisp.parser(
                 Gr.grammar("S", simple_a));
@@ -225,14 +228,20 @@ class StringTermTest {
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", simple_a));
         Assertions.assertEquals(PT.create("S", PT.create("A", "a")), pDefault.parse("a"));
+    }
 
+    @Test
+    void withReductionMergeUp() {
         // Merge upwards
         var pMerge = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", simple_a.withReduction(ReductionType.merging())));
         Assertions.assertEquals(PT.create("S", "a"), pMerge.parse("a"));
+    }
 
+    @Test
+    void withReductionTaggedTree() {
         // Add to parse tree with potentially different name (Top-level)
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
@@ -245,7 +254,10 @@ class StringTermTest {
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", simple_a.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("S", PT.create("B", "a")), pMerge3.parse("a"));
+    }
 
+    @Test
+    void withReductionNotDirectRhs() {
         // Add parse tree from a rule which doesn't appear in the grammar.
         var pMerge4 = Parsewisp.parser(
                 Gr.grammarS("S",

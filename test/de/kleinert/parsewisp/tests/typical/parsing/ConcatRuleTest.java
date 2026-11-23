@@ -233,12 +233,30 @@ class ConcatRuleTest {
     @Test
     void withRules() {
         var i = List.of(string_a, string_a, string_a, string_a);
+        var r = (ConcatRule) ConcatRule.create(i);
+
+        // Expected
+        Assertions.assertEquals(i, r.getRules());
+
+        var ni = List.of(string_a, StringTerm.createDirect("c", false));
+        var nr = r.withRules(ni);
+
+        // The new rule.
+        Assertions.assertEquals(ni, nr.getRules());
+
+        // Original left untouched.
+        Assertions.assertEquals(i, r.getRules());
+    }
+
+    @Test
+    void withRulesPreservesHideAndRed() {
+        var i = List.of(string_a, string_a, string_a, string_a);
         var r = (ConcatRule) ConcatRule
                 .create(i)
                 .withHideTag(true)
                 .withReduction(ReductionType.taggedTree(Sym.sym("A")));
 
-        // As expected.
+        // Expected
         Assertions.assertEquals(i, r.getRules());
 
         // Create a new rule, check whether hide and reduction are still unchanged.
@@ -273,6 +291,10 @@ class ConcatRuleTest {
         // Alternative names give equivalent output
         Assertions.assertEquals(simpleRuleForTests.withHideTag(false), simpleRuleForTests.includeInResult());
         Assertions.assertEquals(simpleRuleForTests.withHideTag(true), simpleRuleForTests.hideInResult());
+    }
+
+    @Test void withHideTagParse() {
+        var simpleRuleForTests = ConcatRule.createDirect(List.of(string_a, string_a));
 
         // By default, not hidden in output
         var pDefault = Parsewisp.parser(
@@ -287,8 +309,7 @@ class ConcatRuleTest {
         // With explicit hide
         var pHide = Parsewisp.parser(
                 Gr.grammar("S", simpleRuleForTests.withHideTag(true)));
-        Assertions.assertEquals(PT.create("S"), pHide.parse("aa"));
-    }
+        Assertions.assertEquals(PT.create("S"), pHide.parse("aa"));}
 
     @Test
     void withReduction() {
@@ -338,4 +359,8 @@ class ConcatRuleTest {
                 PT.create("S", PT.create("A", PT.create("B", "a", "a"), "b")),
                 pMerge4.parse("aab"));
     }
+
+    @Test void withReductionMergeUp() {}
+    @Test void withReductionTaggedTree() {}
+    @Test void withReductionNotDirectRhs() {}
 }

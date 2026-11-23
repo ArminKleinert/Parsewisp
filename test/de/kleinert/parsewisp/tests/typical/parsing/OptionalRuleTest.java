@@ -101,6 +101,26 @@ class OptionalRuleTest {
         var ni = StringTerm.create("b", false);
         var nr = r.withRule(ni);
         Assertions.assertEquals(ni, nr.getRule());
+
+        // Original left untouched.
+        Assertions.assertEquals(i, r.getRule());
+    }
+
+    @Test
+    void withRulePreservesHideAndRed() {
+        var i = StringTerm.create("a", false);
+        var r = (OptionalRule) OptionalRule
+                .create(i)
+                .withHideTag(true)
+                .withReduction(ReductionType.taggedTree(Sym.sym("A")));
+
+        // As expected.
+        Assertions.assertEquals(i, r.getRule());
+
+        // Create a new rule, check whether hide and reduction are still unchanged.
+        var ni = StringTerm.create("b", false);
+        var nr = r.withRule(ni);
+        Assertions.assertEquals(ni, nr.getRule());
         Assertions.assertEquals(r.isHiddenInResult(), nr.isHiddenInResult());
         Assertions.assertEquals(r.getReduction(), nr.getReduction());
 
@@ -127,7 +147,10 @@ class OptionalRuleTest {
         // Alternative names give equivalent output
         Assertions.assertEquals(a_or_nay.withHideTag(false), a_or_nay.includeInResult());
         Assertions.assertEquals(a_or_nay.withHideTag(true), a_or_nay.hideInResult());
+    }
 
+    @Test
+    void withHideTagParse() {
         // By default, not hidden in output
         var pDefault = Parsewisp.parser(
                 Gr.grammar("S", a_or_nay));
@@ -161,7 +184,10 @@ class OptionalRuleTest {
                         "A", a_or_nay));
         Assertions.assertEquals(PT.create("S", PT.create("A")), pDefault.parse(""));
         Assertions.assertEquals(PT.create("S", PT.create("A", "a")), pDefault.parse("a"));
+    }
 
+    @Test
+    void withReductionMergeUp() {
         // Merge upwards
         var pMerge = Parsewisp.parser(
                 Gr.grammarS("S",
@@ -169,7 +195,10 @@ class OptionalRuleTest {
                         "A", a_or_nay.withReduction(ReductionType.merging())));
         Assertions.assertEquals(PT.create("S"), pMerge.parse(""));
         Assertions.assertEquals(PT.create("S", "a"), pMerge.parse("a"));
+    }
 
+    @Test
+    void withReductionTaggedTree() {
         // Add to parse tree with potentially different name (Top-level)
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
@@ -184,7 +213,10 @@ class OptionalRuleTest {
                         "A", a_or_nay.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("S", PT.create("B")), pMerge3.parse(""));
         Assertions.assertEquals(PT.create("S", PT.create("B", "a")), pMerge3.parse("a"));
+    }
 
+    @Test
+    void withReductionNotDirectRhs() {
         // Add parse tree from a rule which doesn't appear in the grammar.
         var pMerge4 = Parsewisp.parser(
                 Gr.grammarS("S",

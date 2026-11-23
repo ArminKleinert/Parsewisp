@@ -89,6 +89,24 @@ class OnceOrMoreRuleTest {
 
     @Test
     void withRule() {
+        var i = string_a;
+        var r = (OnceOrMoreRule) OnceOrMoreRule.create(i);
+
+        // Expected
+        Assertions.assertEquals(i, r.getRule());
+
+        var ni = StringTerm.createDirect("c", false);
+        var nr = r.withRule(ni);
+
+        // The new rule.
+        Assertions.assertEquals(ni, nr.getRule());
+
+        // Original left untouched.
+        Assertions.assertEquals(i, r.getRule());
+    }
+
+    @Test
+    void withRulePreservesHideAndRed() {
         var i = StringTerm.create("a", false);
         var r = (OnceOrMoreRule) OnceOrMoreRule
                 .create(i)
@@ -128,7 +146,9 @@ class OnceOrMoreRuleTest {
         // Alternative names give equivalent output
         Assertions.assertEquals(rep_a.withHideTag(false), rep_a.includeInResult());
         Assertions.assertEquals(rep_a.withHideTag(true), rep_a.hideInResult());
+    }
 
+    @Test void withHideTagParse() {
         // By default, not hidden in output
         var pDefault = Parsewisp.parser(
                 Gr.grammar("S", rep_a));
@@ -142,8 +162,7 @@ class OnceOrMoreRuleTest {
         // With explicit hide
         var pHide = Parsewisp.parser(
                 Gr.grammar("S", rep_a.withHideTag(true)));
-        Assertions.assertEquals(PT.create("S"), pHide.parse("a"));
-    }
+        Assertions.assertEquals(PT.create("S"), pHide.parse("a"));}
 
     @Test
     void withReduction() {
@@ -158,14 +177,16 @@ class OnceOrMoreRuleTest {
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", rep_a));
         Assertions.assertEquals(PT.create("S", PT.create("A", "a")), pDefault.parse("a"));
+    }
 
+    @Test void withReductionMergeUp() {
         // Merge upwards
         var pMerge = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", rep_a.withReduction(ReductionType.merging())));
-        Assertions.assertEquals(PT.create("S", "a"), pMerge.parse("a"));
-
+        Assertions.assertEquals(PT.create("S", "a"), pMerge.parse("a"));}
+    @Test void withReductionTaggedTree() {
         // Add to parse tree with potentially different name (Top-level)
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
@@ -177,8 +198,8 @@ class OnceOrMoreRuleTest {
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", rep_a.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
-        Assertions.assertEquals(PT.create("S", PT.create("B", "a")), pMerge3.parse("a"));
-
+        Assertions.assertEquals(PT.create("S", PT.create("B", "a")), pMerge3.parse("a"));}
+    @Test void withReductionNotDirectRhs() {
         // Add parse tree from a rule which doesn't appear in the grammar.
         var pMerge4 = Parsewisp.parser(
                 Gr.grammarS("S",
@@ -189,6 +210,5 @@ class OnceOrMoreRuleTest {
                         ))));
         Assertions.assertEquals(
                 PT.create("S", PT.create("A", PT.create("B", "a"), "b")),
-                pMerge4.parse("ab"));
-    }
+                pMerge4.parse("ab"));}
 }

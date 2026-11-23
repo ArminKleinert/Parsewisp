@@ -122,6 +122,24 @@ class OrderedChoiceRuleTest {    private final Rule string_a = StringTerm.create
     @Test
     void withRules() {
         var i = List.of(string_a, string_b);
+        var r = (OrderedChoiceRule)OrderedChoiceRule.create(i);
+
+        // Expected
+        Assertions.assertEquals(i, r.getRules());
+
+        var ni = List.of(string_a, StringTerm.createDirect("c", false));
+        var nr = r.withRules(ni);
+
+        // The new rule.
+        Assertions.assertEquals(ni, nr.getRules());
+
+        // Original left untouched.
+        Assertions.assertEquals(i, r.getRules());
+    }
+
+    @Test
+    void withRulesPreservesHideAndRed() {
+        var i = List.of(string_a, string_b);
         var r = (OrderedChoiceRule)OrderedChoiceRule
                 .create(i)
                 .withHideTag(true)
@@ -162,6 +180,10 @@ class OrderedChoiceRuleTest {    private final Rule string_a = StringTerm.create
         // Alternative names give equivalent output
         Assertions.assertEquals(simpleRuleForTests.withHideTag(false), simpleRuleForTests.includeInResult());
         Assertions.assertEquals(simpleRuleForTests.withHideTag(true), simpleRuleForTests.hideInResult());
+    }
+
+    @Test void withHideTagParse() {
+        var simpleRuleForTests = (OrderedChoiceRule)OrderedChoiceRule.create(List.of(string_a, string_b));
 
         // By default, not hidden in output
         var pDefault = Parsewisp.parser(
@@ -176,8 +198,7 @@ class OrderedChoiceRuleTest {    private final Rule string_a = StringTerm.create
         // With explicit hide
         var pHide = Parsewisp.parser(
                 Gr.grammar("S", simpleRuleForTests.withHideTag(true)));
-        Assertions.assertEquals(PT.create("S"), pHide.parse("a"));
-    }
+        Assertions.assertEquals(PT.create("S"), pHide.parse("a"));}
 
     @Test
     void withReduction() {
@@ -194,14 +215,18 @@ class OrderedChoiceRuleTest {    private final Rule string_a = StringTerm.create
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", simpleRuleForTests));
         Assertions.assertEquals(PT.create("S", PT.create("A", "a")), pDefault.parse("a"));
+    }
 
+    @Test void withReductionMergeUp() {
+        var simpleRuleForTests = (OrderedChoiceRule)OrderedChoiceRule.create(List.of(string_a, string_b));
         // Merge upwards
         var pMerge = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", simpleRuleForTests.withReduction(ReductionType.merging())));
-        Assertions.assertEquals(PT.create("S", "a"), pMerge.parse("a"));
-
+        Assertions.assertEquals(PT.create("S", "a"), pMerge.parse("a"));}
+    @Test void withReductionTaggedTree() {
+        var simpleRuleForTests = (OrderedChoiceRule)OrderedChoiceRule.create(List.of(string_a, string_b));
         // Add to parse tree with potentially different name (Top-level)
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
@@ -213,9 +238,10 @@ class OrderedChoiceRuleTest {    private final Rule string_a = StringTerm.create
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", simpleRuleForTests.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
-        Assertions.assertEquals(PT.create("S", PT.create("B", "a")), pMerge3.parse("a"));
-
+        Assertions.assertEquals(PT.create("S", PT.create("B", "a")), pMerge3.parse("a"));}
+    @Test void withReductionNotDirectRhs() {
         // Add parse tree from a rule which doesn't appear in the grammar.
+        var simpleRuleForTests = (OrderedChoiceRule)OrderedChoiceRule.create(List.of(string_a, string_b));
         var pMerge4 = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
@@ -225,9 +251,7 @@ class OrderedChoiceRuleTest {    private final Rule string_a = StringTerm.create
                         ))));
         Assertions.assertEquals(
                 PT.create("S", PT.create("A", PT.create("B", "a"), "b")),
-                pMerge4.parse("ab"));
-    }
-
+                pMerge4.parse("ab"));}
 
     @Test
     void multipleParsesTest1() {

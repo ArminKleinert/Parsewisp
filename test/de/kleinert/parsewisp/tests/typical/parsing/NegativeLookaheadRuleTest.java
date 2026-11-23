@@ -36,6 +36,8 @@ class NegativeLookaheadRuleTest {
     void withRule() {
     }
 
+    @Test void withHideTagParse() {}
+
     @Test
     void withHideTag() {
     }
@@ -43,4 +45,8 @@ class NegativeLookaheadRuleTest {
     @Test
     void withReduction() {
     }
+
+    @Test void withReductionMergeUp() {}
+    @Test void withReductionTaggedTree() {}
+    @Test void withReductionNotDirectRhs() {}
 }

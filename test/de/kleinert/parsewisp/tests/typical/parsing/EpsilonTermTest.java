@@ -76,7 +76,9 @@ class EpsilonTermTest {
         // Alternative names give equivalent output
         Assertions.assertEquals(eps.withHideTag(false), eps.includeInResult());
         Assertions.assertEquals(eps.withHideTag(true), eps.hideInResult());
+    }
 
+    @Test void withHideTagParse() {
         // By default, not hidden in output, but this type adds nothing to the tree
         var pDefault = Parsewisp.parser(Gr.grammar("S", eps));
         Assertions.assertEquals(PT.create("S"), pDefault.parse(""));
@@ -87,8 +89,7 @@ class EpsilonTermTest {
 
         // With explicit hide
         var pHide = Parsewisp.parser(Gr.grammar("S", eps.withHideTag(true)));
-        Assertions.assertEquals(PT.create("S"), pHide.parse(""));
-    }
+        Assertions.assertEquals(PT.create("S"), pHide.parse(""));}
 
     @Test
     void withReduction() {
@@ -103,14 +104,16 @@ class EpsilonTermTest {
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", eps));
         Assertions.assertEquals(PT.create("S", PT.create("A")), pDefault.parse(""));
+    }
 
+    @Test void withReductionMergeUp() {
         // Merge upwards
         var pMerge = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", eps.withReduction(ReductionType.merging())));
-        Assertions.assertEquals(PT.create("S"), pMerge.parse(""));
-
+        Assertions.assertEquals(PT.create("S"), pMerge.parse(""));}
+    @Test void withReductionTaggedTree() {
         // Add to parse tree with potentially different name (Top-level)
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
@@ -122,8 +125,8 @@ class EpsilonTermTest {
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", eps.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
-        Assertions.assertEquals(PT.create("S", PT.create("B")), pMerge3.parse(""));
-
+        Assertions.assertEquals(PT.create("S", PT.create("B")), pMerge3.parse(""));}
+    @Test void withReductionNotDirectRhs() {
         // Add parse tree from a rule which doesn't appear in the grammar.
         var pMerge4 = Parsewisp.parser(
                 Gr.grammarS("S",
@@ -134,6 +137,5 @@ class EpsilonTermTest {
                         ))));
         Assertions.assertEquals(
                 PT.create("S", PT.create("A", PT.create("B"))),
-                pMerge4.parse(""));
-    }
+                pMerge4.parse(""));}
 }

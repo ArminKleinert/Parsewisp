@@ -61,7 +61,7 @@ class ZeroOrMoreRuleTest {
         var p = Parsewisp.parser(Gr.grammar("S", rep_a));
         Assertions.assertEquals(PT.create("S"), p.parse(""));
         Assertions.assertEquals(PT.create("S", "a"), p.parse("a"));
-        Assertions.assertEquals(PT.create("S", "a","a","a"), p.parse("aaa"));
+        Assertions.assertEquals(PT.create("S", "a", "a", "a"), p.parse("aaa"));
     }
 
     @Test
@@ -71,7 +71,7 @@ class ZeroOrMoreRuleTest {
         Assertions.assertEquals(PT.create("S", "a", "a"), pN.parse("aa"));
         Assertions.assertEquals(PT.create("S", "a", "a", "a"), pN.parse("aaa"));
 
-        var pM = Parsewisp.parser(Gr.grammar("S", ConcatRule.create(List.of(rep_a,rep_a))));
+        var pM = Parsewisp.parser(Gr.grammar("S", ConcatRule.create(List.of(rep_a, rep_a))));
         Assertions.assertEquals(PT.create("S"), pM.parse(""));
         Assertions.assertEquals(PT.create("S", "a"), pM.parse("a"));
         Assertions.assertEquals(PT.create("S", "a", "a"), pM.parse("aa"));
@@ -92,6 +92,27 @@ class ZeroOrMoreRuleTest {
 
     @Test
     void withRule() {
+        var i = string_a;
+        var r = (ZeroOrMoreRule) ZeroOrMoreRule
+                .create(i)
+                .withHideTag(true)
+                .withReduction(ReductionType.taggedTree(Sym.sym("A")));
+
+        // Expected
+        Assertions.assertEquals(i, r.getRule());
+
+        var ni = StringTerm.createDirect("c", false);
+        var nr = r.withRule(ni);
+
+        // The new rule.
+        Assertions.assertEquals(ni, nr.getRule());
+
+        // Original left untouched.
+        Assertions.assertEquals(i, r.getRule());
+    }
+
+    @Test
+    void withRulePreservesHideAndRed() {
         var i = StringTerm.create("a", false);
         var r = (ZeroOrMoreRule) ZeroOrMoreRule
                 .create(i)
@@ -131,7 +152,10 @@ class ZeroOrMoreRuleTest {
         // Alternative names give equivalent output
         Assertions.assertEquals(rep_a.withHideTag(false), rep_a.includeInResult());
         Assertions.assertEquals(rep_a.withHideTag(true), rep_a.hideInResult());
+    }
 
+    @Test
+    void withHideTagParse() {
         // By default, not hidden in output
         var pDefault = Parsewisp.parser(
                 Gr.grammar("S", rep_a));
@@ -165,7 +189,10 @@ class ZeroOrMoreRuleTest {
                         "A", rep_a));
         Assertions.assertEquals(PT.create("S", PT.create("A")), pDefault.parse(""));
         Assertions.assertEquals(PT.create("S", PT.create("A", "a")), pDefault.parse("a"));
+    }
 
+    @Test
+    void withReductionMergeUp() {
         // Merge upwards
         var pMerge = Parsewisp.parser(
                 Gr.grammarS("S",
@@ -173,7 +200,10 @@ class ZeroOrMoreRuleTest {
                         "A", rep_a.withReduction(ReductionType.merging())));
         Assertions.assertEquals(PT.create("S"), pMerge.parse(""));
         Assertions.assertEquals(PT.create("S", "a"), pMerge.parse("a"));
+    }
 
+    @Test
+    void withReductionTaggedTree() {
         // Add to parse tree with potentially different name (Top-level)
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
@@ -188,7 +218,10 @@ class ZeroOrMoreRuleTest {
                         "A", rep_a.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("S", PT.create("B")), pMerge3.parse(""));
         Assertions.assertEquals(PT.create("S", PT.create("B", "a")), pMerge3.parse("a"));
+    }
 
+    @Test
+    void withReductionNotDirectRhs() {
         // Add parse tree from a rule which doesn't appear in the grammar.
         var pMerge4 = Parsewisp.parser(
                 Gr.grammarS("S",
