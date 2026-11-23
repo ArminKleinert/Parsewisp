@@ -54,7 +54,7 @@ binop       = "+" | "-" | "*" | "/" | "%"
 
 unop        = "!" | "-" | "*"
 
-<type>      = "int" stars?
+type        = "int" stars?
             | "char" stars?
 
 stars       = "*"+

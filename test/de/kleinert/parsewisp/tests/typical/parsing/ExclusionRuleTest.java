@@ -13,28 +13,36 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 class ExclusionRuleTest {
-    private final Rule word = RegexTerm.create(Pattern.compile("[a-zA-Z][a-zA-Z0-1_]*"));
-    private final Rule keywords = AlternationRule.create(List.of(
-            StringTerm.create("int", false),
-            StringTerm.create("float", false)));
-    private final Rule wordButNotKeyword = ExclusionRule.create(word, keywords);
+    private Rule word() {
+        return RegexTerm.create(Pattern.compile("[a-zA-Z][a-zA-Z0-1_]*"));
+    }
+
+    private Rule keywords() {
+        return AlternationRule.create(List.of(
+                StringTerm.create("int", false),
+                StringTerm.create("float", false)));
+    }
+
+    private Rule wordButNotKeyword() {
+        return ExclusionRule.create(word(), keywords());
+    }
 
     @Test
     void create() {
         Assertions.assertEquals(
-                ExclusionRule.create(word, keywords),
-                ExclusionRule.create(word, keywords));
+                ExclusionRule.create(word(), keywords()),
+                ExclusionRule.create(word(), keywords()));
 
         // The order matters
         Assertions.assertNotEquals(
-                ExclusionRule.create(keywords, word),
-                ExclusionRule.create(word, keywords));
+                ExclusionRule.create(keywords(), word()),
+                ExclusionRule.create(word(), keywords()));
     }
 
     @Test
     void createExcludedInclusion() {
         // create(...) is allowed to create an Epsilon if the inclusion and exclusion sides are the same.
-        var exSame = ExclusionRule.create(word, word);
+        var exSame = ExclusionRule.create(word(), word());
         Assertions.assertTrue(exSame instanceof ExclusionRule || exSame instanceof EpsilonTerm);
     }
 
@@ -42,7 +50,7 @@ class ExclusionRuleTest {
     void parse() {
         var p = Parsewisp.parser(Gr.grammar(
                 "S", ConcatRule.create(List.of(
-                        wordButNotKeyword,
+                        wordButNotKeyword(),
                         StringTerm.create(";", false) // Required so the exclusion calls "parse" instead of "fullParse".
                 ))));
         Assertions.assertEquals(
@@ -54,7 +62,7 @@ class ExclusionRuleTest {
     void parseError() {
         var p = Parsewisp.parser(Gr.grammar(
                 "S", ConcatRule.create(List.of(
-                        wordButNotKeyword,
+                        wordButNotKeyword(),
                         StringTerm.create(";", false) // Required so the exclusion calls "parse" instead of "fullParse".
                 ))));
         Assertions.assertTrue(p.parse("int;").isFailure()); // Matched by exclusion
@@ -63,7 +71,7 @@ class ExclusionRuleTest {
 
     @Test
     void fullParseSingle() {
-        var p = Parsewisp.parser(Gr.grammar("S", wordButNotKeyword));
+        var p = Parsewisp.parser(Gr.grammar("S", wordButNotKeyword()));
         Assertions.assertEquals(
                 PT.create("S", "anyword"),
                 p.parse("anyword"));
@@ -74,7 +82,7 @@ class ExclusionRuleTest {
         var p = Parsewisp.parser(Gr.grammar(
                 "S", ConcatRule.create(List.of(
                         StringTerm.create(";", false),
-                        wordButNotKeyword))));
+                        wordButNotKeyword()))));
         Assertions.assertEquals(
                 PT.create("S", ";", "anyword"),
                 p.parse(";anyword"));
@@ -82,56 +90,58 @@ class ExclusionRuleTest {
 
     @Test
     void fullParseError() {
-        var p = Parsewisp.parser(Gr.grammar("S", wordButNotKeyword));
+        var p = Parsewisp.parser(Gr.grammar("S", wordButNotKeyword()));
         Assertions.assertTrue(p.parse("int").isFailure()); // Matched by exclusion
         Assertions.assertTrue(p.parse("...").isFailure()); // Invalid for inclusion
     }
 
     @Test
     void getExpected() {
-        var r = (ExclusionRule) ExclusionRule.create(word, keywords);
-        Assertions.assertSame(word, r.getExpected());
+        var expected = word();
+        var r = (ExclusionRule) ExclusionRule.create(expected, keywords());
+        Assertions.assertSame(expected, r.getExpected());
     }
 
     @Test
     void getExcluded() {
-        var r = (ExclusionRule) ExclusionRule.create(word, keywords);
-        Assertions.assertSame(keywords, r.getExcluded());
+        var excluded = keywords();
+        var r = (ExclusionRule) ExclusionRule.create(word(), excluded);
+        Assertions.assertSame(excluded, r.getExcluded());
     }
 
     @Test
     void getRules() {
-        var r = (ExclusionRule) ExclusionRule.create(word, keywords);
-        Assertions.assertEquals(List.of(word, keywords), r.getRules());
+        var r = (ExclusionRule) ExclusionRule.create(word(), keywords());
+        Assertions.assertEquals(List.of(word(), keywords()), r.getRules());
     }
 
     @Test
     void withRulesRequiresExactlyTwo() {
-        var r = (ExclusionRule) ExclusionRule.create(word, keywords);
+        var r = (ExclusionRule) ExclusionRule.create(word(), keywords());
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> r.withRules(List.of()));
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> r.withRules(List.of(word)));
+                () -> r.withRules(List.of(word())));
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> r.withRules(List.of(
-                        word, keywords,
+                        word(), keywords(),
                         RegexTerm.create(Pattern.compile("[a-zA-Z]")))));
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> r.withRules(List.of(
-                        word, keywords,
+                        word(), keywords(),
                         RegexTerm.create(Pattern.compile("[a-zA-Z]")),
                         RegexTerm.create(Pattern.compile("[0-9]")))));
     }
 
     @Test
     void withRules() {
-        var i = List.of(word, keywords);
-        var r = (ExclusionRule) ExclusionRule.create(word, keywords);
+        var i = List.of(word(), keywords());
+        var r = (ExclusionRule) ExclusionRule.create(word(), keywords());
 
         // Expected
         Assertions.assertEquals(i, r.getRules());
 
-        var ni = List.of(word, StringTerm.createDirect("c", false));
+        var ni = List.of(word(), StringTerm.createDirect("c", false));
         var nr = r.withRules(ni);
 
         // The new rule.
@@ -143,9 +153,9 @@ class ExclusionRuleTest {
 
     @Test
     void withRulesPreservesHideAndRed() {
-        var i = List.of(word, keywords);
+        var i = List.of(word(), keywords());
         var r = (ExclusionRule) ExclusionRule
-                .create(word, keywords)
+                .create(word(), keywords())
                 .withHideTag(true)
                 .withReduction(ReductionType.taggedTree(Sym.sym("A")));
 
@@ -153,7 +163,7 @@ class ExclusionRuleTest {
         Assertions.assertEquals(i, r.getRules());
 
         // Create a new rule, check whether hide and reduction are still unchanged.
-        var ni = List.of(word, StringTerm.createDirect("c", false));
+        var ni = List.of(word(), StringTerm.createDirect("c", false));
         var nr = r.withRules(ni);
         Assertions.assertEquals(ni, nr.getRules());
         Assertions.assertEquals(r.isHiddenInResult(), nr.isHiddenInResult());
@@ -165,7 +175,7 @@ class ExclusionRuleTest {
 
     @Test
     void withHideTag() {
-        var simpleRuleForTests = (ExclusionRule) ExclusionRule.create(word, keywords);
+        var simpleRuleForTests = (ExclusionRule) ExclusionRule.create(word(), keywords());
 
         // By default, not hidden in result. May create a new object, but the output must be equal to the original.
         Assertions.assertEquals(simpleRuleForTests, simpleRuleForTests.withHideTag(false));
@@ -184,6 +194,11 @@ class ExclusionRuleTest {
         // Alternative names give equivalent output
         Assertions.assertEquals(simpleRuleForTests.withHideTag(false), simpleRuleForTests.includeInResult());
         Assertions.assertEquals(simpleRuleForTests.withHideTag(true), simpleRuleForTests.hideInResult());
+    }
+
+    @Test
+    void withHideTagParse() {
+        var simpleRuleForTests = (ExclusionRule) ExclusionRule.create(word(), keywords());
 
         // By default, not hidden in output
         var pDefault = Parsewisp.parser(
@@ -202,12 +217,8 @@ class ExclusionRuleTest {
     }
 
     @Test
-    void withHideTagParse() {
-    }
-
-    @Test
     void withReduction() {
-        var simpleRuleForTests = (ExclusionRule) ExclusionRule.create(word, keywords);
+        var simpleRuleForTests = (ExclusionRule) ExclusionRule.create(word(), keywords());
 
         // Default.
         Assertions.assertEquals(
@@ -224,7 +235,7 @@ class ExclusionRuleTest {
 
     @Test
     void withReductionMergeUp() {
-        var simpleRuleForTests = (ExclusionRule) ExclusionRule.create(word, keywords);
+        var simpleRuleForTests = (ExclusionRule) ExclusionRule.create(word(), keywords());
 
         // Merge upwards
         var pMerge = Parsewisp.parser(
@@ -236,7 +247,7 @@ class ExclusionRuleTest {
 
     @Test
     void withReductionTaggedTree() {
-        var simpleRuleForTests = (ExclusionRule) ExclusionRule.create(word, keywords);
+        var simpleRuleForTests = (ExclusionRule) ExclusionRule.create(word(), keywords());
 
         // Add to parse tree with potentially different name (Top-level)
         var pMerge2 = Parsewisp.parser(
@@ -254,7 +265,7 @@ class ExclusionRuleTest {
 
     @Test
     void withReductionNotDirectRhs() {
-        var simpleRuleForTests = (ExclusionRule) ExclusionRule.create(word, keywords);
+        var simpleRuleForTests = (ExclusionRule) ExclusionRule.create(word(), keywords());
 
         // Add parse tree from a rule which doesn't appear in the grammar.
         var pMerge4 = Parsewisp.parser(

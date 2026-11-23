@@ -24,8 +24,9 @@ class RegexTermTest {
         Assertions.assertEquals(PT.create("S", "ABC"), p.parse("ABC"));
     }
 
-    private final RegexTerm digit = (RegexTerm) RegexTerm.create(Pattern.compile("[0-9]"));
-    private final RegexTerm number = (RegexTerm) RegexTerm.create(Pattern.compile("[+\\-]?[0-9]+"));
+    private  RegexTerm digit()  {return(RegexTerm) RegexTerm.create(Pattern.compile("[0-9]"));
+}
+    private  RegexTerm number()  {return(RegexTerm) RegexTerm.create(Pattern.compile("[+\\-]?[0-9]+"));}
 
     @Test
     void create() {
@@ -42,25 +43,25 @@ class RegexTermTest {
 
     @Test
     void parse() {
-        var gD = Gr.grammar("S", ConcatRule.create(List.of(digit, digit)));
+        var gD = Gr.grammar("S", ConcatRule.create(List.of(digit(), digit())));
         var pD = Parsewisp.parser(gD);
         Assertions.assertEquals(PT.create("S", "1", "2"), pD.parse("12"));
 
-        var gN = Gr.grammar("S", ConcatRule.create(List.of(digit, number)));
+        var gN = Gr.grammar("S", ConcatRule.create(List.of(digit(), number())));
         var pN = Parsewisp.parser(gN);
         Assertions.assertEquals(PT.create("S", "1", "234"), pN.parse("1234"));
     }
 
     @Test
     void parseEager() {
-        var gN = Gr.grammar("S", ConcatRule.create(List.of(number, digit)));
+        var gN = Gr.grammar("S", ConcatRule.create(List.of(number(), digit())));
         var pN = Parsewisp.parser(gN);
         Assertions.assertTrue(pN.parse("1234").isFailure());
     }
 
     @Test
     void parseIncremental() {
-        var gN = Gr.grammar("S", ConcatRule.create(List.of(number, digit)));
+        var gN = Gr.grammar("S", ConcatRule.create(List.of(number(), digit())));
         var pN = Parsewisp.parser(gN);
         Assertions.assertEquals(
                 PT.create("S", "123", "4"),
@@ -69,7 +70,7 @@ class RegexTermTest {
 
     @Test
     void parseError() {
-        var g = Gr.grammar("S", ConcatRule.create(List.of(digit, digit)));
+        var g = Gr.grammar("S", ConcatRule.create(List.of(digit(), digit())));
         var p = Parsewisp.parser(g);
         Assertions.assertTrue(p.parse("-1").isFailure());
         Assertions.assertTrue(p.parse("1").isFailure());
@@ -78,7 +79,7 @@ class RegexTermTest {
 
     @Test
     void fullParseSingle() {
-        var g = Gr.grammar("S", number);
+        var g = Gr.grammar("S", number());
         var p = Parsewisp.parser(g);
         Assertions.assertEquals(PT.create("S", "1"), p.parse("1"));
         Assertions.assertEquals(PT.create("S", "123"), p.parse("123"));
@@ -88,18 +89,18 @@ class RegexTermTest {
 
     @Test
     void fullParseConcat() {
-        var gD = Gr.grammar("S", ConcatRule.create(List.of(digit, digit)));
+        var gD = Gr.grammar("S", ConcatRule.create(List.of(digit(), digit())));
         var pD = Parsewisp.parser(gD);
         Assertions.assertEquals(PT.create("S", "1", "2"), pD.parse("12"));
 
-        var gN = Gr.grammar("S", ConcatRule.create(List.of(digit, number)));
+        var gN = Gr.grammar("S", ConcatRule.create(List.of(digit(), number())));
         var pN = Parsewisp.parser(gN);
         Assertions.assertEquals(PT.create("S", "1", "234"), pN.parse("1234"));
     }
 
     @Test
     void fullParseError() {
-        var g = Gr.grammar("S", number);
+        var g = Gr.grammar("S", number());
         var p = Parsewisp.parser(g);
         Assertions.assertTrue(p.parse("").isFailure());
         Assertions.assertTrue(p.parse("a").isFailure());
@@ -120,39 +121,39 @@ class RegexTermTest {
     @Test
     void withHideTag() {
         // By default, not hidden in result. May create a new object, but the output must be equal to the original.
-        Assertions.assertEquals(digit, digit.withHideTag(false));
-        Assertions.assertEquals(digit, digit.includeInResult());
+        Assertions.assertEquals(digit(), digit().withHideTag(false));
+        Assertions.assertEquals(digit(), digit().includeInResult());
 
         // Same input -> Equivalent output
-        Assertions.assertEquals(digit.withHideTag(false), digit.withHideTag(false));
-        Assertions.assertEquals(digit.withHideTag(true), digit.withHideTag(true));
+        Assertions.assertEquals(digit().withHideTag(false), digit().withHideTag(false));
+        Assertions.assertEquals(digit().withHideTag(true), digit().withHideTag(true));
 
         // Alternative names give same output for isHiddenInResult()
-        Assertions.assertFalse(digit.withHideTag(false).isHiddenInResult());
-        Assertions.assertFalse(digit.includeInResult().isHiddenInResult());
-        Assertions.assertTrue(digit.withHideTag(true).isHiddenInResult());
-        Assertions.assertTrue(digit.hideInResult().isHiddenInResult());
+        Assertions.assertFalse(digit().withHideTag(false).isHiddenInResult());
+        Assertions.assertFalse(digit().includeInResult().isHiddenInResult());
+        Assertions.assertTrue(digit().withHideTag(true).isHiddenInResult());
+        Assertions.assertTrue(digit().hideInResult().isHiddenInResult());
 
         // Alternative names give equivalent output
-        Assertions.assertEquals(digit.withHideTag(false), digit.includeInResult());
-        Assertions.assertEquals(digit.withHideTag(true), digit.hideInResult());
+        Assertions.assertEquals(digit().withHideTag(false), digit().includeInResult());
+        Assertions.assertEquals(digit().withHideTag(true), digit().hideInResult());
     }
 
     @Test
     void withHideTagParse() {
         // By default, not hidden in output
         var pDefault = Parsewisp.parser(
-                Gr.grammar("S", digit));
+                Gr.grammar("S", digit()));
         Assertions.assertEquals(PT.create("S", "1"), pDefault.parse("1"));
 
         // With explicit show, also not hidden
         var pShow = Parsewisp.parser(
-                Gr.grammar("S", digit.withHideTag(false)));
+                Gr.grammar("S", digit().withHideTag(false)));
         Assertions.assertEquals(PT.create("S", "1"), pShow.parse("1"));
 
         // With explicit hide, also not hidden
         var pHide = Parsewisp.parser(
-                Gr.grammar("S", digit.withHideTag(true)));
+                Gr.grammar("S", digit().withHideTag(true)));
         Assertions.assertEquals(PT.create("S"), pHide.parse("1"));
     }
 
@@ -160,14 +161,14 @@ class RegexTermTest {
     void withReduction() {
         // Default.
         Assertions.assertEquals(
-                digit,
-                digit.withReduction(ReductionType.initial()));
+                digit(),
+                digit().withReduction(ReductionType.initial()));
 
         // Default: Don't merge up
         var pDefault = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", digit));
+                        "A", digit()));
         Assertions.assertEquals(PT.create("S", PT.create("A", "1")), pDefault.parse("1"));
     }
 
@@ -177,7 +178,7 @@ class RegexTermTest {
         var pMerge = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", digit.withReduction(ReductionType.merging())));
+                        "A", digit().withReduction(ReductionType.merging())));
         Assertions.assertEquals(PT.create("S", "1"), pMerge.parse("1"));
     }
 
@@ -186,14 +187,14 @@ class RegexTermTest {
         // Add to parse tree with potentially different name (Top-level)
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
-                        "S", digit.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
+                        "S", digit().withReduction(ReductionType.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("B", "1"), pMerge2.parse("1"));
 
         // Add to parse tree with potentially different name (Nested)
         var pMerge3 = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", digit.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
+                        "A", digit().withReduction(ReductionType.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("S", PT.create("B", "1")), pMerge3.parse("1"));
     }
 
@@ -204,8 +205,8 @@ class RegexTermTest {
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", ConcatRule.create(List.of(
-                                digit.withReduction(ReductionType.taggedTree(Sym.sym("B"))),
-                                digit
+                                digit().withReduction(ReductionType.taggedTree(Sym.sym("B"))),
+                                digit()
                         ))));
         Assertions.assertEquals(
                 PT.create("S", PT.create("A", PT.create("B", "1"), "2")),

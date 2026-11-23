@@ -15,8 +15,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 class EOFTermTest {
-    private final EOFTerm eof = EOFTerm.getDefault();
-
     @Test
     void getDefault() {
         Assertions.assertEquals(EOFTerm.getDefault(), EOFTerm.getDefault());
@@ -25,77 +23,77 @@ class EOFTermTest {
     @Test
     void parse() {
         var p2 = Parsewisp.parser(Gr.grammar(
-                "S", ConcatRule.createDirect(List.of(eof, eof))));
+                "S", ConcatRule.createDirect(List.of(EOFTerm.getDefault(), EOFTerm.getDefault()))));
         Assertions.assertEquals(PT.create("S"), p2.parse(""));
 
         var p3 = Parsewisp.parser(Gr.grammar(
-                "S", ConcatRule.createDirect(List.of(eof, eof, eof))));
+                "S", ConcatRule.createDirect(List.of(EOFTerm.getDefault(), EOFTerm.getDefault(), EOFTerm.getDefault()))));
         Assertions.assertEquals(PT.create("S"), p3.parse(""));
     }
 
     @Test
     void parseError() {
         var p = Parsewisp.parser(Gr.grammar(
-                "S", ConcatRule.createDirect(List.of(eof, StringTerm.create("a", false)))));
+                "S", ConcatRule.createDirect(List.of(EOFTerm.getDefault(), StringTerm.create("a", false)))));
         Assertions.assertTrue(p.parse("a").isFailure());
     }
 
     @Test
     void fullParseSingle() {
-        var p = Parsewisp.parser(Gr.grammar("S", eof));
+        var p = Parsewisp.parser(Gr.grammar("S", EOFTerm.getDefault()));
         Assertions.assertEquals(PT.create("S"), p.parse(""));
     }
 
     @Test
     void fullParseConcat() {
         var pE = Parsewisp.parser(Gr.grammar(
-                "S", ConcatRule.createDirect(List.of(eof, eof))));
+                "S", ConcatRule.createDirect(List.of(EOFTerm.getDefault(), EOFTerm.getDefault()))));
         Assertions.assertEquals(PT.create("S"), pE.parse(""));
 
         var pA = Parsewisp.parser(Gr.grammar(
-                "S", ConcatRule.createDirect(List.of(StringTerm.create("a", false), eof))));
+                "S", ConcatRule.createDirect(List.of(StringTerm.create("a", false), EOFTerm.getDefault()))));
         Assertions.assertEquals(PT.create("S", "a"), pA.parse("a"));
     }
 
     @Test
     void fullParseError() {
-        var p = Parsewisp.parser(Gr.grammar("S", eof));
+        var p = Parsewisp.parser(Gr.grammar("S", EOFTerm.getDefault()));
         Assertions.assertTrue(p.parse("a").isFailure());
     }
 
     @Test
     void withHideTag() {
         // By default, not hidden in result. May create a new object, but the output must be equal to the original.
-        Assertions.assertEquals(eof, eof.withHideTag(false));
-        Assertions.assertEquals(eof, eof.includeInResult());
+        Assertions.assertEquals(EOFTerm.getDefault(), EOFTerm.getDefault().withHideTag(false));
+        Assertions.assertEquals(EOFTerm.getDefault(), EOFTerm.getDefault().includeInResult());
 
         // Same input -> Equivalent output
-        Assertions.assertEquals(eof.withHideTag(false), eof.withHideTag(false));
-        Assertions.assertEquals(eof.withHideTag(true), eof.withHideTag(true));
+        Assertions.assertEquals(EOFTerm.getDefault().withHideTag(false), EOFTerm.getDefault().withHideTag(false));
+        Assertions.assertEquals(EOFTerm.getDefault().withHideTag(true), EOFTerm.getDefault().withHideTag(true));
 
         // Alternative names give same output for isHiddenInResult()
-        Assertions.assertFalse(eof.withHideTag(false).isHiddenInResult());
-        Assertions.assertFalse(eof.includeInResult().isHiddenInResult());
-        Assertions.assertTrue(eof.withHideTag(true).isHiddenInResult());
-        Assertions.assertTrue(eof.hideInResult().isHiddenInResult());
+        Assertions.assertFalse(EOFTerm.getDefault().withHideTag(false).isHiddenInResult());
+        Assertions.assertFalse(EOFTerm.getDefault().includeInResult().isHiddenInResult());
+        Assertions.assertTrue(EOFTerm.getDefault().withHideTag(true).isHiddenInResult());
+        Assertions.assertTrue(EOFTerm.getDefault().hideInResult().isHiddenInResult());
     }
 
     @Test
     void withHideTagParse() {
         // Alternative names give equivalent output
-        Assertions.assertEquals(eof.withHideTag(false), eof.includeInResult());
-        Assertions.assertEquals(eof.withHideTag(true), eof.hideInResult());
+        Assertions.assertEquals(EOFTerm.getDefault().withHideTag(false), EOFTerm.getDefault().includeInResult());
+        Assertions.assertEquals(EOFTerm.getDefault().withHideTag(true), EOFTerm.getDefault().hideInResult());
 
         // By default, not hidden in output, but this type adds nothing to the tree
-        var pDefault = Parsewisp.parser(Gr.grammar("S", eof));
+        var pDefault = Parsewisp.parser(Gr.grammar("S", EOFTerm.getDefault()));
         Assertions.assertEquals(PT.create("S"), pDefault.parse(""));
 
         // With explicit show, also not hidden, but this type adds nothing to the tree
-        var pShow = Parsewisp.parser(Gr.grammar("S", eof.withHideTag(false)));
+        var pShow = Parsewisp.parser(Gr.grammar("S", EOFTerm.getDefault().withHideTag(false)));
         Assertions.assertEquals(PT.create("S"), pShow.parse(""));
 
         // With explicit hide
-        var pHide = Parsewisp.parser(Gr.grammar("S", eof.withHideTag(true)));
+        var pHide = Parsewisp.parser(Gr.grammar("S", EOFTerm.getDefault().withHideTag(true)));
         Assertions.assertEquals(PT.create("S"), pHide.parse(""));
     }
 
@@ -103,14 +101,14 @@ class EOFTermTest {
     void withReduction() {
         // Default.
         Assertions.assertEquals(
-                eof,
-                eof.withReduction(ReductionType.initial()));
+                EOFTerm.getDefault(),
+                EOFTerm.getDefault().withReduction(ReductionType.initial()));
 
         // Default: Don't merge up
         var pDefault = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", eof));
+                        "A", EOFTerm.getDefault()));
         Assertions.assertEquals(PT.create("S", PT.create("A")), pDefault.parse(""));
     }
 
@@ -120,7 +118,7 @@ class EOFTermTest {
         var pMerge = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", eof.withReduction(ReductionType.merging())));
+                        "A", EOFTerm.getDefault().withReduction(ReductionType.merging())));
         Assertions.assertEquals(PT.create("S"), pMerge.parse(""));
     }
 
@@ -129,14 +127,14 @@ class EOFTermTest {
         // Add to parse tree with potentially different name (Top-level)
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
-                        "S", eof.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
+                        "S", EOFTerm.getDefault().withReduction(ReductionType.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("B"), pMerge2.parse(""));
 
         // Add to parse tree with potentially different name (Nested)
         var pMerge3 = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", eof.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
+                        "A", EOFTerm.getDefault().withReduction(ReductionType.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("S", PT.create("B")), pMerge3.parse(""));
     }
 
@@ -147,8 +145,8 @@ class EOFTermTest {
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", ConcatRule.create(List.of(
-                                eof.withReduction(ReductionType.taggedTree(Sym.sym("B"))),
-                                eof
+                                EOFTerm.getDefault().withReduction(ReductionType.taggedTree(Sym.sym("B"))),
+                                EOFTerm.getDefault()
                         ))));
         Assertions.assertEquals(
                 PT.create("S", PT.create("A", PT.create("B"))),

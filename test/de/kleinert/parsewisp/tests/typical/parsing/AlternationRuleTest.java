@@ -16,14 +16,19 @@ import java.util.Objects;
 import java.util.Set;
 
 class AlternationRuleTest {
-    private final Rule string_a = StringTerm.createDirect("a", false);
-    private final Rule string_b = StringTerm.createDirect("b", false);
+    private Rule string_a() {
+        return StringTerm.createDirect("a", false);
+    }
+
+    private Rule string_b() {
+        return StringTerm.createDirect("b", false);
+    }
 
     @Test
     void create() {
         Assertions.assertEquals(
-                AlternationRule.create(List.of(string_a, string_b)),
-                AlternationRule.create(List.of(string_a, string_b)));
+                AlternationRule.create(List.of(string_a(), string_b())),
+                AlternationRule.create(List.of(string_a(), string_b())));
     }
 
     @Test
@@ -43,18 +48,18 @@ class AlternationRuleTest {
         // create(...) called with only one element in the input list, it may return only that one element.
         // This behavior is not mandatory.
         Assertions.assertEquals(
-                AlternationRule.create(List.of(string_a)),
-                AlternationRule.create(List.of(string_a)));
+                AlternationRule.create(List.of(string_a())),
+                AlternationRule.create(List.of(string_a())));
 
         Assertions.assertEquals(
-                Parsewisp.parser(Gr.grammar("S", string_a)).parse("a"),
-                Parsewisp.parser(Gr.grammar("S", AlternationRule.create(List.of(string_a)))).parse("a"));
+                Parsewisp.parser(Gr.grammar("S", string_a())).parse("a"),
+                Parsewisp.parser(Gr.grammar("S", AlternationRule.create(List.of(string_a())))).parse("a"));
     }
 
     @Test
     void createManySimilar() {
         // If an element in the input is repeated, create(...) can (and should) make the inputs distinct.
-        var l = List.of(string_a, string_b, string_a, string_b, string_a, string_b, string_a, string_b);
+        var l = List.of(string_a(), string_b(), string_a(), string_b(), string_a(), string_b(), string_a(), string_b());
         var lDistinct = l.stream().distinct().toList();
         Assertions.assertTrue(
                 Objects.equals(AlternationRule.altUnsafe(lDistinct), AlternationRule.create(l))
@@ -68,11 +73,11 @@ class AlternationRuleTest {
     @Test
     void altUnsafe() {
         Assertions.assertEquals(
-                AlternationRule.altUnsafe(List.of(string_a, string_a, string_a)),
-                AlternationRule.altUnsafe(List.of(string_a, string_a, string_a)));
+                AlternationRule.altUnsafe(List.of(string_a(), string_a(), string_a())),
+                AlternationRule.altUnsafe(List.of(string_a(), string_a(), string_a())));
         Assertions.assertEquals(
-                AlternationRule.create(List.of(string_a, string_b)),
-                AlternationRule.altUnsafe(List.of(string_a, string_b)));
+                AlternationRule.create(List.of(string_a(), string_b())),
+                AlternationRule.altUnsafe(List.of(string_a(), string_b())));
 
         Assertions.assertEquals(
                 AlternationRule.altUnsafe(List.of()),
@@ -88,10 +93,10 @@ class AlternationRuleTest {
                 2,
                 AlternationRule.altUnsafe(List.of(EpsilonTerm.getDefault(), EpsilonTerm.getDefault())).getRules().size());
 
-        var flat = AlternationRule.altUnsafe(List.of(string_a, string_a, string_a, string_a));
-        var nest1 = AlternationRule.altUnsafe(List.of(AlternationRule.altUnsafe(List.of(string_a, string_a)), string_a, string_a));
-        var nest2 = AlternationRule.altUnsafe(List.of(string_a, AlternationRule.altUnsafe(List.of(string_a, string_a)), string_a));
-        var nest3 = AlternationRule.altUnsafe(List.of(string_a, string_a, AlternationRule.altUnsafe(List.of(string_a, string_a))));
+        var flat = AlternationRule.altUnsafe(List.of(string_a(), string_a(), string_a(), string_a()));
+        var nest1 = AlternationRule.altUnsafe(List.of(AlternationRule.altUnsafe(List.of(string_a(), string_a())), string_a(), string_a()));
+        var nest2 = AlternationRule.altUnsafe(List.of(string_a(), AlternationRule.altUnsafe(List.of(string_a(), string_a())), string_a()));
+        var nest3 = AlternationRule.altUnsafe(List.of(string_a(), string_a(), AlternationRule.altUnsafe(List.of(string_a(), string_a()))));
         Assertions.assertNotEquals(flat, nest1);
         Assertions.assertNotEquals(flat, nest2);
         Assertions.assertNotEquals(flat, nest3);
@@ -99,7 +104,7 @@ class AlternationRuleTest {
 
     @Test
     void parse() {
-        var p_ab = Parsewisp.parser(Gr.grammar("S", ConcatRule.create(List.of(AlternationRule.create(List.of(string_a, string_b)), string_a))));
+        var p_ab = Parsewisp.parser(Gr.grammar("S", ConcatRule.create(List.of(AlternationRule.create(List.of(string_a(), string_b())), string_a()))));
         Assertions.assertEquals(PT.create("S", "a", "a"), p_ab.parse("aa"));
         Assertions.assertEquals(PT.create("S", "b", "a"), p_ab.parse("ba"));
     }
@@ -107,7 +112,7 @@ class AlternationRuleTest {
     @Test
     void parseRepeatedCasesDoNotMakeDuplicateTrees() {
         // Tests the grammar `S = "a" | "a" | "a"` on input "a". The expectation is that it creates exactly one tree, not three different ones.
-        var p_a = Parsewisp.parser(Gr.grammar("S", ConcatRule.create(List.of(AlternationRule.create(List.of(string_a, string_a, string_a)), string_a))));
+        var p_a = Parsewisp.parser(Gr.grammar("S", ConcatRule.create(List.of(AlternationRule.create(List.of(string_a(), string_a(), string_a())), string_a()))));
         Assertions.assertEquals(
                 List.of(PT.create("S", "a", "a")),
                 p_a.parses("aa"));
@@ -115,20 +120,20 @@ class AlternationRuleTest {
 
     @Test
     void parseError() {
-        var p_ab = Parsewisp.parser(Gr.grammar("S", ConcatRule.create(List.of(AlternationRule.create(List.of(string_a, string_b)), string_a))));
+        var p_ab = Parsewisp.parser(Gr.grammar("S", ConcatRule.create(List.of(AlternationRule.create(List.of(string_a(), string_b())), string_a()))));
         Assertions.assertTrue(p_ab.parse("ca").isFailure());
     }
 
     @Test
     void fullParseSingle() {
-        var p_ab = Parsewisp.parser(Gr.grammar("S", AlternationRule.create(List.of(string_a, string_b))));
+        var p_ab = Parsewisp.parser(Gr.grammar("S", AlternationRule.create(List.of(string_a(), string_b()))));
         Assertions.assertEquals(PT.create("S", "a"), p_ab.parse("a"));
         Assertions.assertEquals(PT.create("S", "b"), p_ab.parse("b"));
     }
 
     @Test
     void fullParseConcat() {
-        var p_ab = Parsewisp.parser(Gr.grammar("S", ConcatRule.create(List.of(string_a, AlternationRule.create(List.of(string_a, string_b))))));
+        var p_ab = Parsewisp.parser(Gr.grammar("S", ConcatRule.create(List.of(string_a(), AlternationRule.create(List.of(string_a(), string_b()))))));
         Assertions.assertEquals(PT.create("S", "a", "a"), p_ab.parse("aa"));
         Assertions.assertEquals(PT.create("S", "a", "b"), p_ab.parse("ab"));
     }
@@ -136,7 +141,7 @@ class AlternationRuleTest {
     @Test
     void fullParseRepeatedCasesDoNotMakeDuplicateTrees() {
         // Tests the grammar `S = "a" | "a" | "a"` on input "a". The expectation is that it creates exactly one tree, not three different ones.
-        var p_a = Parsewisp.parser(Gr.grammar("S", AlternationRule.altUnsafe(List.of(string_a, string_a, string_a))));
+        var p_a = Parsewisp.parser(Gr.grammar("S", AlternationRule.altUnsafe(List.of(string_a(), string_a(), string_a()))));
         Assertions.assertEquals(
                 List.of(PT.create("S", "a")),
                 p_a.parses("a"));
@@ -144,32 +149,32 @@ class AlternationRuleTest {
 
     @Test
     void fullParseError() {
-        var p_ab = Parsewisp.parser(Gr.grammar("S", AlternationRule.create(List.of(string_a, string_b))));
+        var p_ab = Parsewisp.parser(Gr.grammar("S", AlternationRule.create(List.of(string_a(), string_b()))));
         Assertions.assertTrue(p_ab.parse("c").isFailure());
     }
 
     @Test
     void getRules() {
-        var flat = AlternationRule.altUnsafe(List.of(string_a, string_a, string_a, string_a));
-        var nest1 = AlternationRule.altUnsafe(List.of(AlternationRule.altUnsafe(List.of(string_a, string_a)), string_a, string_a));
-        var nest2 = AlternationRule.altUnsafe(List.of(string_a, AlternationRule.altUnsafe(List.of(string_a, string_a)), string_a));
-        var nest3 = AlternationRule.altUnsafe(List.of(string_a, string_a, AlternationRule.altUnsafe(List.of(string_a, string_a))));
+        var flat = AlternationRule.altUnsafe(List.of(string_a(), string_a(), string_a(), string_a()));
+        var nest1 = AlternationRule.altUnsafe(List.of(AlternationRule.altUnsafe(List.of(string_a(), string_a())), string_a(), string_a()));
+        var nest2 = AlternationRule.altUnsafe(List.of(string_a(), AlternationRule.altUnsafe(List.of(string_a(), string_a())), string_a()));
+        var nest3 = AlternationRule.altUnsafe(List.of(string_a(), string_a(), AlternationRule.altUnsafe(List.of(string_a(), string_a()))));
 
-        Assertions.assertEquals(List.of(string_a, string_a, string_a, string_a), flat.getRules());
-        Assertions.assertEquals(List.of(AlternationRule.altUnsafe(List.of(string_a, string_a)), string_a, string_a), nest1.getRules());
-        Assertions.assertEquals(List.of(string_a, AlternationRule.altUnsafe(List.of(string_a, string_a)), string_a), nest2.getRules());
-        Assertions.assertEquals(List.of(string_a, string_a, AlternationRule.altUnsafe(List.of(string_a, string_a))), nest3.getRules());
+        Assertions.assertEquals(List.of(string_a(), string_a(), string_a(), string_a()), flat.getRules());
+        Assertions.assertEquals(List.of(AlternationRule.altUnsafe(List.of(string_a(), string_a())), string_a(), string_a()), nest1.getRules());
+        Assertions.assertEquals(List.of(string_a(), AlternationRule.altUnsafe(List.of(string_a(), string_a())), string_a()), nest2.getRules());
+        Assertions.assertEquals(List.of(string_a(), string_a(), AlternationRule.altUnsafe(List.of(string_a(), string_a()))), nest3.getRules());
     }
 
     @Test
     void withRules() {
-        var i = List.of(string_a, string_b);
+        var i = List.of(string_a(), string_b());
         var r = AlternationRule.altUnsafe(i);
 
         // Expected
         Assertions.assertEquals(i, r.getRules());
 
-        var ni = List.of(string_a, StringTerm.createDirect("c", false));
+        var ni = List.of(string_a(), StringTerm.createDirect("c", false));
         var nr = r.withRules(ni);
 
         // The new rule.
@@ -181,7 +186,7 @@ class AlternationRuleTest {
 
     @Test
     void withRulesPreservesHideAndRed() {
-        var i = List.of(string_a, string_b);
+        var i = List.of(string_a(), string_b());
         var r = AlternationRule
                 .altUnsafe(i)
                 .withHideTag(true)
@@ -191,7 +196,7 @@ class AlternationRuleTest {
         Assertions.assertEquals(i, r.getRules());
 
         // Create a new rule, check whether hide and reduction are still unchanged.
-        var ni = List.of(string_a, StringTerm.createDirect("c", false));
+        var ni = List.of(string_a(), StringTerm.createDirect("c", false));
         var nr = r.withRules(ni);
         Assertions.assertEquals(ni, nr.getRules());
         Assertions.assertEquals(r.isHiddenInResult(), nr.isHiddenInResult());
@@ -203,7 +208,7 @@ class AlternationRuleTest {
 
     @Test
     void withHideTag() {
-        var simpleRuleForTests = AlternationRule.altUnsafe(List.of(string_a, string_b));
+        var simpleRuleForTests = AlternationRule.altUnsafe(List.of(string_a(), string_b()));
 
         // By default, not hidden in result. May create a new object, but the output must be equal to the original.
         Assertions.assertEquals(simpleRuleForTests, simpleRuleForTests.withHideTag(false));
@@ -241,7 +246,7 @@ class AlternationRuleTest {
 
     @Test
     void withReduction() {
-        var simpleRuleForTests = AlternationRule.altUnsafe(List.of(string_a, string_b));
+        var simpleRuleForTests = AlternationRule.altUnsafe(List.of(string_a(), string_b()));
 
         // Default.
         Assertions.assertEquals(
@@ -320,9 +325,9 @@ class AlternationRuleTest {
         final @NotNull var p = Parsewisp.parser(Gr.grammar(
                 "S", AlternationRule.altUnsafe(List.of(
                         ConcatRule.create(List.of(
-                                string_a, NonTerminal.create(Sym.sym("S")), string_a
+                                string_a(), NonTerminal.create(Sym.sym("S")), string_a()
                         )),
-                        string_a
+                        string_a()
                 ))));
 
         Assertions.assertEquals(
@@ -341,7 +346,7 @@ class AlternationRuleTest {
         // Tests the following grammar: `S = "a" | S S
         final @NotNull var p = Parsewisp.parser(Gr.grammar(
                 "S", AlternationRule.altUnsafe(List.of(
-                        string_a,
+                        string_a(),
                         ConcatRule.create(List.of(
                                 NonTerminal.create(Sym.sym("S")), NonTerminal.create(Sym.sym("S"))))
                 ))));

@@ -18,10 +18,6 @@ class StringTermTest {
     private final StringTerm simple_a = StringTerm.createDirect("a", false);
     private final StringTerm simple_b = StringTerm.createDirect("b", false);
 
-    private StringTerm make(String s, boolean cs) {
-        return StringTerm.createDirect(s, cs);
-    }
-
     @Test
     void create() {
         Assertions.assertEquals(
@@ -67,43 +63,43 @@ class StringTermTest {
     @Test
     void createDirect() {
         Assertions.assertEquals(
-                make("", false),
-                make("", false));
+                StringTerm.createDirect("", false),
+                StringTerm.createDirect("", false));
         Assertions.assertEquals(
-                make("", false),
-                make("", true));
+                StringTerm.createDirect("", false),
+                StringTerm.createDirect("", true));
         Assertions.assertEquals(
-                make("", true),
-                make("", false));
+                StringTerm.createDirect("", true),
+                StringTerm.createDirect("", false));
         Assertions.assertEquals(
-                make("", true),
-                make("", true));
+                StringTerm.createDirect("", true),
+                StringTerm.createDirect("", true));
 
         Assertions.assertEquals(
-                make("a", false),
-                make("a", false));
+                StringTerm.createDirect("a", false),
+                StringTerm.createDirect("a", false));
         Assertions.assertNotEquals(
-                make("a", false),
-                make("a", true));
+                StringTerm.createDirect("a", false),
+                StringTerm.createDirect("a", true));
         Assertions.assertNotEquals(
-                make("a", true),
-                make("a", false));
+                StringTerm.createDirect("a", true),
+                StringTerm.createDirect("a", false));
         Assertions.assertEquals(
-                make("a", true),
-                make("a", true));
+                StringTerm.createDirect("a", true),
+                StringTerm.createDirect("a", true));
 
         Assertions.assertNotEquals(
-                make("a", false),
-                make("b", false));
+                StringTerm.createDirect("a", false),
+                StringTerm.createDirect("b", false));
         Assertions.assertNotEquals(
-                make("a", false),
-                make("b", true));
+                StringTerm.createDirect("a", false),
+                StringTerm.createDirect("b", true));
         Assertions.assertNotEquals(
-                make("a", true),
-                make("b", false));
+                StringTerm.createDirect("a", true),
+                StringTerm.createDirect("b", false));
         Assertions.assertNotEquals(
-                make("a", true),
-                make("b", true));
+                StringTerm.createDirect("a", true),
+                StringTerm.createDirect("b", true));
     }
 
     @Test
@@ -116,8 +112,8 @@ class StringTermTest {
         // Case-insensitive.
         // Will use parse(...) for "a" and fullParse(...) for "b"
         var pCI = Parsewisp.parser(Gr.grammar("S", ConcatRule.create(List.of(
-                make("a", true),
-                make("b", true)
+                StringTerm.createDirect("a", true),
+                StringTerm.createDirect("b", true)
         ))));
         Assertions.assertEquals(PT.create("S", "a", "b"), pCI.parse("ab"));
         Assertions.assertEquals(PT.create("S", "a", "b"), pCI.parse("Ab"));
@@ -139,7 +135,7 @@ class StringTermTest {
         Assertions.assertEquals(PT.create("S", "a"), p.parse("a"));
 
         // Case-insensitive.
-        var pCI = Parsewisp.parser(Gr.grammar("S", make("a", true)));
+        var pCI = Parsewisp.parser(Gr.grammar("S", StringTerm.createDirect("a", true)));
         Assertions.assertEquals(PT.create("S", "a"), pCI.parse("a"));
         Assertions.assertEquals(PT.create("S", "a"), pCI.parse("A"));
     }
@@ -159,21 +155,21 @@ class StringTermTest {
 
     @Test
     void getString() {
-        Assertions.assertEquals("", make("", false).getString());
-        Assertions.assertEquals("", make("", true).getString());
-        Assertions.assertEquals("a", make("a", false).getString());
-        Assertions.assertEquals("a", make("a", true).getString());
+        Assertions.assertEquals("", StringTerm.createDirect("", false).getString());
+        Assertions.assertEquals("", StringTerm.createDirect("", true).getString());
+        Assertions.assertEquals("a", StringTerm.createDirect("a", false).getString());
+        Assertions.assertEquals("a", StringTerm.createDirect("a", true).getString());
 
-        Assertions.assertEquals("\"", make("\"", false).getString());
-        Assertions.assertEquals("\"", make("\"", true).getString());
+        Assertions.assertEquals("\"", StringTerm.createDirect("\"", false).getString());
+        Assertions.assertEquals("\"", StringTerm.createDirect("\"", true).getString());
     }
 
     @Test
     void isCaseInsensitive() {
-        Assertions.assertFalse(make("", false).isCaseInsensitive());
-        Assertions.assertTrue(make("", true).isCaseInsensitive());
-        Assertions.assertFalse(make("a", false).isCaseInsensitive());
-        Assertions.assertTrue(make("a", true).isCaseInsensitive());
+        Assertions.assertFalse(StringTerm.createDirect("", false).isCaseInsensitive());
+        Assertions.assertTrue(StringTerm.createDirect("", true).isCaseInsensitive());
+        Assertions.assertFalse(StringTerm.createDirect("a", false).isCaseInsensitive());
+        Assertions.assertTrue(StringTerm.createDirect("a", true).isCaseInsensitive());
     }
 
     @Test
@@ -264,7 +260,7 @@ class StringTermTest {
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", ConcatRule.create(List.of(
                                 simple_a.withReduction(ReductionType.taggedTree(Sym.sym("B"))),
-                                make("b", false)
+                                StringTerm.createDirect("b", false)
                         ))));
         Assertions.assertEquals(
                 PT.create("S", PT.create("A", PT.create("B", "a"), "b")),

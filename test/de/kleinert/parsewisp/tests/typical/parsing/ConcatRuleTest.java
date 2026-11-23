@@ -13,14 +13,15 @@ import java.util.List;
 import java.util.Objects;
 
 class ConcatRuleTest {
-
-    private final Rule string_a = StringTerm.createDirect("a", false);
+    private Rule string_a() {
+        return StringTerm.createDirect("a", false);
+    }
 
     @Test
     void create() {
         Assertions.assertEquals(
-                ConcatRule.create(List.of(string_a, string_a, string_a)),
-                ConcatRule.create(List.of(string_a, string_a, string_a)));
+                ConcatRule.create(List.of(string_a(), string_a(), string_a())),
+                ConcatRule.create(List.of(string_a(), string_a(), string_a())));
     }
 
     @Test
@@ -60,7 +61,7 @@ class ConcatRuleTest {
         );
 
         // create(...) is allowed to remove any epsilon terms.
-        var r = ((ConcatRule) ConcatRule.create(List.of(EpsilonTerm.getDefault(), string_a, EpsilonTerm.getDefault(), string_a, EpsilonTerm.getDefault())));
+        var r = ((ConcatRule) ConcatRule.create(List.of(EpsilonTerm.getDefault(), string_a(), EpsilonTerm.getDefault(), string_a(), EpsilonTerm.getDefault())));
         Assertions.assertTrue(r.getRules().size() >= 2); // At least the two string terms.
         Assertions.assertTrue(r.getRules().size() <= 5); // At max all five rules.
 
@@ -74,27 +75,27 @@ class ConcatRuleTest {
     void createOnlyOneElement() {
         // Only one element in list -> Parser must give equivalent output to the single element
         Assertions.assertEquals(
-                ConcatRule.create(List.of(string_a)),
-                ConcatRule.create(List.of(string_a)));
+                ConcatRule.create(List.of(string_a())),
+                ConcatRule.create(List.of(string_a())));
 
         Assertions.assertTrue(
                 Objects.equals(
-                ConcatRule.createDirect(List.of(string_a)),
-                ConcatRule.create(List.of(string_a)))
-                ||
-                        Objects.equals(string_a, ConcatRule.create(List.of(string_a))));
+                        ConcatRule.createDirect(List.of(string_a())),
+                        ConcatRule.create(List.of(string_a())))
+                        ||
+                        Objects.equals(string_a(), ConcatRule.create(List.of(string_a()))));
         Assertions.assertEquals(
-                Parsewisp.parser(Gr.grammar("S", string_a)).parse(""),
-                Parsewisp.parser(Gr.grammar("S", ConcatRule.create(List.of(string_a)))).parse(""));
+                Parsewisp.parser(Gr.grammar("S", string_a())).parse(""),
+                Parsewisp.parser(Gr.grammar("S", ConcatRule.create(List.of(string_a())))).parse(""));
     }
 
     @Test
     void createWithNested() {
         // Nested concatenation -> Parser must give equivalent output to a flat concatenation
-        var flat = ConcatRule.create(List.of(string_a, string_a, string_a, string_a));
-        var nest1 = ConcatRule.create(List.of(ConcatRule.create(List.of(string_a, string_a)), string_a, string_a));
-        var nest2 = ConcatRule.create(List.of(string_a, ConcatRule.create(List.of(string_a, string_a)), string_a));
-        var nest3 = ConcatRule.create(List.of(string_a, string_a, ConcatRule.create(List.of(string_a, string_a))));
+        var flat = ConcatRule.create(List.of(string_a(), string_a(), string_a(), string_a()));
+        var nest1 = ConcatRule.create(List.of(ConcatRule.create(List.of(string_a(), string_a())), string_a(), string_a()));
+        var nest2 = ConcatRule.create(List.of(string_a(), ConcatRule.create(List.of(string_a(), string_a())), string_a()));
+        var nest3 = ConcatRule.create(List.of(string_a(), string_a(), ConcatRule.create(List.of(string_a(), string_a()))));
         Assertions.assertEquals(
                 Parsewisp.parser(Gr.grammar("S", flat)).parse("aaaa"),
                 Parsewisp.parser(Gr.grammar("S", nest1)).parse("aaaa"));
@@ -109,11 +110,11 @@ class ConcatRuleTest {
     @Test
     void createDirect() {
         Assertions.assertEquals(
-                ConcatRule.createDirect(List.of(string_a, string_a, string_a)),
-                ConcatRule.createDirect(List.of(string_a, string_a, string_a)));
+                ConcatRule.createDirect(List.of(string_a(), string_a(), string_a())),
+                ConcatRule.createDirect(List.of(string_a(), string_a(), string_a())));
         Assertions.assertEquals(
-                ConcatRule.create(List.of(string_a, string_a, string_a)),
-                ConcatRule.createDirect(List.of(string_a, string_a, string_a)));
+                ConcatRule.create(List.of(string_a(), string_a(), string_a())),
+                ConcatRule.createDirect(List.of(string_a(), string_a(), string_a())));
 
         Assertions.assertEquals(
                 ConcatRule.createDirect(List.of()),
@@ -129,10 +130,10 @@ class ConcatRuleTest {
                 2,
                 ConcatRule.createDirect(List.of(EpsilonTerm.getDefault(), EpsilonTerm.getDefault())).getRules().size());
 
-        var flat = ConcatRule.createDirect(List.of(string_a, string_a, string_a, string_a));
-        var nest1 = ConcatRule.createDirect(List.of(ConcatRule.createDirect(List.of(string_a, string_a)), string_a, string_a));
-        var nest2 = ConcatRule.createDirect(List.of(string_a, ConcatRule.createDirect(List.of(string_a, string_a)), string_a));
-        var nest3 = ConcatRule.createDirect(List.of(string_a, string_a, ConcatRule.createDirect(List.of(string_a, string_a))));
+        var flat = ConcatRule.createDirect(List.of(string_a(), string_a(), string_a(), string_a()));
+        var nest1 = ConcatRule.createDirect(List.of(ConcatRule.createDirect(List.of(string_a(), string_a())), string_a(), string_a()));
+        var nest2 = ConcatRule.createDirect(List.of(string_a(), ConcatRule.createDirect(List.of(string_a(), string_a())), string_a()));
+        var nest3 = ConcatRule.createDirect(List.of(string_a(), string_a(), ConcatRule.createDirect(List.of(string_a(), string_a()))));
         Assertions.assertNotEquals(flat, nest1);
         Assertions.assertNotEquals(flat, nest2);
         Assertions.assertNotEquals(flat, nest3);
@@ -144,11 +145,11 @@ class ConcatRuleTest {
      */
     @Test
     void createDoesNotMergeConcatIfRedOrHidden() {
-        var c1 = ConcatRule.create(List.of(string_a, string_a))
+        var c1 = ConcatRule.create(List.of(string_a(), string_a()))
                 .withHideTag(true); // different hide-tag
-        var c2 = ConcatRule.create(List.of(string_a, string_a))
+        var c2 = ConcatRule.create(List.of(string_a(), string_a()))
                 .withReduction(ReductionType.taggedTree(Sym.sym("A"))); // reduction has changed
-        var c3 = ConcatRule.create(List.of(string_a, string_a))
+        var c3 = ConcatRule.create(List.of(string_a(), string_a()))
                 .withReduction(ReductionType.taggedTree(Sym.sym("B"))).withHideTag(true); // different reduction and hide-tag
 
         var cc = ConcatRule.create(List.of(c1, c2, c3));
@@ -173,8 +174,8 @@ class ConcatRuleTest {
     void parse() {
         var p = Parsewisp.parser(
                 Gr.grammarS("S",
-                        "S", ConcatRule.create(List.of(NonTerminal.create(Sym.sym("A")), string_a)), // Rule#fullParse for this concat.
-                        "A", ConcatRule.create(List.of(string_a, string_a)))); // << Rule#parse for this one.
+                        "S", ConcatRule.create(List.of(NonTerminal.create(Sym.sym("A")), string_a())), // Rule#fullParse for this concat.
+                        "A", ConcatRule.create(List.of(string_a(), string_a())))); // << Rule#parse for this one.
         Assertions.assertEquals(
                 PT.create("S", PT.create("A", "a", "a"), "a"),
                 p.parse("aaa"));
@@ -184,8 +185,8 @@ class ConcatRuleTest {
     void parseError() {
         var p = Parsewisp.parser(
                 Gr.grammarS("S",
-                        "S", ConcatRule.create(List.of(NonTerminal.create(Sym.sym("A")), string_a)), // Rule#fullParse for this concat.
-                        "A", ConcatRule.create(List.of(string_a, string_a)))); // << Rule#parse for this one.
+                        "S", ConcatRule.create(List.of(NonTerminal.create(Sym.sym("A")), string_a())), // Rule#fullParse for this concat.
+                        "A", ConcatRule.create(List.of(string_a(), string_a())))); // << Rule#parse for this one.
         Assertions.assertTrue(p.parse("").isFailure());
         Assertions.assertTrue(p.parse("baaa").isFailure());
     }
@@ -193,10 +194,10 @@ class ConcatRuleTest {
     @Test
     void fullParseSingle() {
         // Nested concatenation -> Parser must give equivalent output to a flat concatenation
-        var flat = ConcatRule.createDirect(List.of(string_a, string_a, string_a, string_a));
-        var nest1 = ConcatRule.createDirect(List.of(ConcatRule.createDirect(List.of(string_a, string_a)), string_a, string_a));
-        var nest2 = ConcatRule.createDirect(List.of(string_a, ConcatRule.createDirect(List.of(string_a, string_a)), string_a));
-        var nest3 = ConcatRule.createDirect(List.of(string_a, string_a, ConcatRule.createDirect(List.of(string_a, string_a))));
+        var flat = ConcatRule.createDirect(List.of(string_a(), string_a(), string_a(), string_a()));
+        var nest1 = ConcatRule.createDirect(List.of(ConcatRule.createDirect(List.of(string_a(), string_a())), string_a(), string_a()));
+        var nest2 = ConcatRule.createDirect(List.of(string_a(), ConcatRule.createDirect(List.of(string_a(), string_a())), string_a()));
+        var nest3 = ConcatRule.createDirect(List.of(string_a(), string_a(), ConcatRule.createDirect(List.of(string_a(), string_a()))));
         Assertions.assertEquals(
                 PT.create("S", "a", "a", "a", "a"),
                 Parsewisp.parser(Gr.grammar("S", flat)).parse("aaaa"));
@@ -213,32 +214,32 @@ class ConcatRuleTest {
 
     @Test
     void fullParseError() {
-        var p = Parsewisp.parser(Gr.grammar("S", string_a)); // Will use parse(...) for "a" and fullParse(...) for "b"
+        var p = Parsewisp.parser(Gr.grammar("S", string_a())); // Will use parse(...) for "a" and fullParse(...) for "b"
         Assertions.assertTrue(p.parse("").isFailure());
     }
 
     @Test
     void getRules() {
-        var flat = ConcatRule.createDirect(List.of(string_a, string_a, string_a, string_a));
-        var nest1 = ConcatRule.createDirect(List.of(ConcatRule.createDirect(List.of(string_a, string_a)), string_a, string_a));
-        var nest2 = ConcatRule.createDirect(List.of(string_a, ConcatRule.createDirect(List.of(string_a, string_a)), string_a));
-        var nest3 = ConcatRule.createDirect(List.of(string_a, string_a, ConcatRule.createDirect(List.of(string_a, string_a))));
+        var flat = ConcatRule.createDirect(List.of(string_a(), string_a(), string_a(), string_a()));
+        var nest1 = ConcatRule.createDirect(List.of(ConcatRule.createDirect(List.of(string_a(), string_a())), string_a(), string_a()));
+        var nest2 = ConcatRule.createDirect(List.of(string_a(), ConcatRule.createDirect(List.of(string_a(), string_a())), string_a()));
+        var nest3 = ConcatRule.createDirect(List.of(string_a(), string_a(), ConcatRule.createDirect(List.of(string_a(), string_a()))));
 
-        Assertions.assertEquals(List.of(string_a, string_a, string_a, string_a), flat.getRules());
-        Assertions.assertEquals(List.of(ConcatRule.createDirect(List.of(string_a, string_a)), string_a, string_a), nest1.getRules());
-        Assertions.assertEquals(List.of(string_a, ConcatRule.createDirect(List.of(string_a, string_a)), string_a), nest2.getRules());
-        Assertions.assertEquals(List.of(string_a, string_a, ConcatRule.createDirect(List.of(string_a, string_a))), nest3.getRules());
+        Assertions.assertEquals(List.of(string_a(), string_a(), string_a(), string_a()), flat.getRules());
+        Assertions.assertEquals(List.of(ConcatRule.createDirect(List.of(string_a(), string_a())), string_a(), string_a()), nest1.getRules());
+        Assertions.assertEquals(List.of(string_a(), ConcatRule.createDirect(List.of(string_a(), string_a())), string_a()), nest2.getRules());
+        Assertions.assertEquals(List.of(string_a(), string_a(), ConcatRule.createDirect(List.of(string_a(), string_a()))), nest3.getRules());
     }
 
     @Test
     void withRules() {
-        var i = List.of(string_a, string_a, string_a, string_a);
+        var i = List.of(string_a(), string_a(), string_a(), string_a());
         var r = (ConcatRule) ConcatRule.create(i);
 
         // Expected
         Assertions.assertEquals(i, r.getRules());
 
-        var ni = List.of(string_a, StringTerm.createDirect("c", false));
+        var ni = List.of(string_a(), StringTerm.createDirect("c", false));
         var nr = r.withRules(ni);
 
         // The new rule.
@@ -250,7 +251,7 @@ class ConcatRuleTest {
 
     @Test
     void withRulesPreservesHideAndRed() {
-        var i = List.of(string_a, string_a, string_a, string_a);
+        var i = List.of(string_a(), string_a(), string_a(), string_a());
         var r = (ConcatRule) ConcatRule
                 .create(i)
                 .withHideTag(true)
@@ -260,7 +261,7 @@ class ConcatRuleTest {
         Assertions.assertEquals(i, r.getRules());
 
         // Create a new rule, check whether hide and reduction are still unchanged.
-        var ni = List.of(string_a, string_a);
+        var ni = List.of(string_a(), string_a());
         var nr = r.withRules(ni);
         Assertions.assertEquals(ni, nr.getRules());
         Assertions.assertEquals(r.isHiddenInResult(), nr.isHiddenInResult());
@@ -272,7 +273,7 @@ class ConcatRuleTest {
 
     @Test
     void withHideTag() {
-        var simpleRuleForTests = ConcatRule.createDirect(List.of(string_a, string_a));
+        var simpleRuleForTests = ConcatRule.createDirect(List.of(string_a(), string_a()));
 
         // By default, not hidden in result. May create a new object, but the output must be equal to the original.
         Assertions.assertEquals(simpleRuleForTests, simpleRuleForTests.withHideTag(false));
@@ -293,8 +294,9 @@ class ConcatRuleTest {
         Assertions.assertEquals(simpleRuleForTests.withHideTag(true), simpleRuleForTests.hideInResult());
     }
 
-    @Test void withHideTagParse() {
-        var simpleRuleForTests = ConcatRule.createDirect(List.of(string_a, string_a));
+    @Test
+    void withHideTagParse() {
+        var simpleRuleForTests = ConcatRule.createDirect(List.of(string_a(), string_a()));
 
         // By default, not hidden in output
         var pDefault = Parsewisp.parser(
@@ -309,11 +311,12 @@ class ConcatRuleTest {
         // With explicit hide
         var pHide = Parsewisp.parser(
                 Gr.grammar("S", simpleRuleForTests.withHideTag(true)));
-        Assertions.assertEquals(PT.create("S"), pHide.parse("aa"));}
+        Assertions.assertEquals(PT.create("S"), pHide.parse("aa"));
+    }
 
     @Test
     void withReduction() {
-        var simpleRuleForTests = ConcatRule.createDirect(List.of(string_a, string_a));
+        var simpleRuleForTests = ConcatRule.createDirect(List.of(string_a(), string_a()));
 
         // Default.
         Assertions.assertEquals(
@@ -360,7 +363,15 @@ class ConcatRuleTest {
                 pMerge4.parse("aab"));
     }
 
-    @Test void withReductionMergeUp() {}
-    @Test void withReductionTaggedTree() {}
-    @Test void withReductionNotDirectRhs() {}
+    @Test
+    void withReductionMergeUp() {
+    }
+
+    @Test
+    void withReductionTaggedTree() {
+    }
+
+    @Test
+    void withReductionNotDirectRhs() {
+    }
 }

@@ -180,6 +180,7 @@ class TestGrammarJava {
         Assertions.assertTrue(res.isSuccess());
     }
 
+    @Test
     void testParseParsewispSources() throws IOException {
         BiPredicate<Path, BasicFileAttributes> matcher = (p, bfa) -> bfa.isRegularFile();
         final var files = Stream.concat(
@@ -207,7 +208,7 @@ class TestGrammarJava {
                     () -> "Failed testcase.\n" + res.castToParseFailure());
             long diffMillis = (end - start) / 1_000_000;
             totalTime += diffMillis;
-//            System.out.println("Parsed " + file + " in " + diffMillis + " ms (" + s.length() + " chars)");
+            System.out.println("Parsed " + file + " in " + diffMillis + " ms (" + s.length() + " chars)");
             byteCount += s.length();
 
             var parent = file.toFile().getParent();
