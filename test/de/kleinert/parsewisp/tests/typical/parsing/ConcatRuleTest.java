@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Objects;
 
 class ConcatRuleTest {
 
@@ -44,6 +45,20 @@ class ConcatRuleTest {
                 ConcatRule.create(List.of(EpsilonTerm.getDefault(), EpsilonTerm.getDefault())),
                 ConcatRule.create(List.of(EpsilonTerm.getDefault(), EpsilonTerm.getDefault())));
 
+        Assertions.assertTrue(
+                Objects.equals(
+                        ConcatRule.createDirect(List.of(EpsilonTerm.getDefault(), EpsilonTerm.getDefault())),
+                        ConcatRule.create(List.of(EpsilonTerm.getDefault(), EpsilonTerm.getDefault())))
+                        ||
+                        Objects.equals(
+                                ConcatRule.createDirect(List.of(EpsilonTerm.getDefault())),
+                                ConcatRule.create(List.of(EpsilonTerm.getDefault(), EpsilonTerm.getDefault())))
+                        ||
+                        Objects.equals(
+                                EpsilonTerm.getDefault(),
+                                ConcatRule.create(List.of(EpsilonTerm.getDefault(), EpsilonTerm.getDefault())))
+        );
+
         // create(...) is allowed to remove any epsilon terms.
         var r = ((ConcatRule) ConcatRule.create(List.of(EpsilonTerm.getDefault(), string_a, EpsilonTerm.getDefault(), string_a, EpsilonTerm.getDefault())));
         Assertions.assertTrue(r.getRules().size() >= 2); // At least the two string terms.
@@ -61,6 +76,13 @@ class ConcatRuleTest {
         Assertions.assertEquals(
                 ConcatRule.create(List.of(string_a)),
                 ConcatRule.create(List.of(string_a)));
+
+        Assertions.assertTrue(
+                Objects.equals(
+                ConcatRule.createDirect(List.of(string_a)),
+                ConcatRule.create(List.of(string_a)))
+                ||
+                        Objects.equals(string_a, ConcatRule.create(List.of(string_a))));
         Assertions.assertEquals(
                 Parsewisp.parser(Gr.grammar("S", string_a)).parse(""),
                 Parsewisp.parser(Gr.grammar("S", ConcatRule.create(List.of(string_a)))).parse(""));

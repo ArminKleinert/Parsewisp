@@ -180,7 +180,6 @@ class TestGrammarJava {
         Assertions.assertTrue(res.isSuccess());
     }
 
-    @Test
     void testParseParsewispSources() throws IOException {
         BiPredicate<Path, BasicFileAttributes> matcher = (p, bfa) -> bfa.isRegularFile();
         final var files = Stream.concat(

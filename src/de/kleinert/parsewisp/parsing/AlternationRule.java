@@ -6,6 +6,8 @@ import de.kleinert.parsewisp.reduction.ReductionType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -63,19 +65,25 @@ public final class AlternationRule extends RuleWithManyChildren {
         if (rules.size() == 1)
             return rules.get(0);
 
+        var uniques = new HashSet<Rule>();
         var compressedRules = new ArrayList<Rule>();
 
         for (@NotNull Rule rule : rules) {
-            if (rule instanceof AlternationRule cc && !cc.isHiddenInResult() && cc.red.equals(defaultReductionType)) {
+            if (!uniques.add(rule)) {
+                continue;
+            } else if (rule instanceof AlternationRule cc && !cc.isHiddenInResult() && cc.red.equals(defaultReductionType)) {
                 compressedRules.addAll(cc.getRules());
             } else {
                 compressedRules.add(rule);
             }
         }
 
+        if (compressedRules.size() == 1)
+            return rules.get(0);
+
         return new AlternationRule(
                 defaultHidden, defaultReductionType,
-                compressedRules.stream().distinct().toList());
+                Collections.unmodifiableList(compressedRules));
     }
 
     /**
