@@ -14,10 +14,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 class StringTermTest {
-    private final StringTerm simpleRuleForTests = StringTerm.createDirect("a", false);
-    private final StringTerm simple_a = StringTerm.createDirect("a", false);
-    private final StringTerm simple_b = StringTerm.createDirect("b", false);
-
     @Test
     void create() {
         Assertions.assertEquals(
@@ -104,6 +100,9 @@ class StringTermTest {
 
     @Test
     void parse() {
+        final StringTerm simple_a = StringTerm.createDirect("a", false);
+        final StringTerm simple_b = StringTerm.createDirect("b", false);
+
         // Case-sensitive.
         // Will use parse(...) for "a" and fullParse(...) for "b"
         var p = Parsewisp.parser(Gr.grammar("S", ConcatRule.create(List.of(simple_a, simple_b))));
@@ -123,6 +122,9 @@ class StringTermTest {
 
     @Test
     void parseError() {
+        final StringTerm simple_a = StringTerm.createDirect("a", false);
+        final StringTerm simple_b = StringTerm.createDirect("b", false);
+
         // Will use parse(...) for "a" and fullParse(...) for "b"
         var p = Parsewisp.parser(Gr.grammar("S", ConcatRule.create(List.of(simple_a, simple_b))));
         Assertions.assertTrue(p.parse("b").isFailure());
@@ -130,6 +132,8 @@ class StringTermTest {
 
     @Test
     void fullParseSingle() {
+        final StringTerm simple_a = StringTerm.createDirect("a", false);
+
         // Case-sensitive.
         var p = Parsewisp.parser(Gr.grammar("S", simple_a));
         Assertions.assertEquals(PT.create("S", "a"), p.parse("a"));
@@ -142,6 +146,9 @@ class StringTermTest {
 
     @Test
     void fullParseConcat() {
+        final StringTerm simple_a = StringTerm.createDirect("a", false);
+        final StringTerm simple_b = StringTerm.createDirect("b", false);
+
         var p = Parsewisp.parser(Gr.grammar(
                 "S", ConcatRule.create(List.of(simple_a, simple_b))));
         Assertions.assertEquals(PT.create("S", "a", "b"), p.parse("ab"));
@@ -149,6 +156,8 @@ class StringTermTest {
 
     @Test
     void fullParseError() {
+        final StringTerm simple_a = StringTerm.createDirect("a", false);
+
         var p = Parsewisp.parser(Gr.grammar("S", simple_a)); // Will use parse(...) for "a" and fullParse(...) for "b"
         Assertions.assertTrue(p.parse("").isFailure());
     }
@@ -174,6 +183,8 @@ class StringTermTest {
 
     @Test
     void withHideTag() {
+        final StringTerm simpleRuleForTests = StringTerm.createDirect("a", false);
+
         // By default, not hidden in result. May create a new object, but the output must be equal to the original.
         Assertions.assertEquals(simpleRuleForTests, simpleRuleForTests.withHideTag(false));
         Assertions.assertEquals(simpleRuleForTests, simpleRuleForTests.includeInResult());
@@ -195,6 +206,8 @@ class StringTermTest {
 
     @Test
     void withHideTagParse() {
+        final StringTerm simple_a = StringTerm.createDirect("a", false);
+
         // By default, not hidden in output
         var pDefault = Parsewisp.parser(
                 Gr.grammar("S", simple_a));
@@ -213,6 +226,9 @@ class StringTermTest {
 
     @Test
     void withReduction() {
+        final StringTerm simple_a = StringTerm.createDirect("a", false);
+        final StringTerm simpleRuleForTests = StringTerm.createDirect("a", false);
+
         // Default.
         Assertions.assertEquals(
                 simpleRuleForTests,
@@ -228,6 +244,8 @@ class StringTermTest {
 
     @Test
     void withReductionMergeUp() {
+        final StringTerm simple_a = StringTerm.createDirect("a", false);
+
         // Merge upwards
         var pMerge = Parsewisp.parser(
                 Gr.grammarS("S",
@@ -238,6 +256,8 @@ class StringTermTest {
 
     @Test
     void withReductionTaggedTree() {
+        final StringTerm simple_a = StringTerm.createDirect("a", false);
+
         // Add to parse tree with potentially different name (Top-level)
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
@@ -254,6 +274,8 @@ class StringTermTest {
 
     @Test
     void withReductionNotDirectRhs() {
+        final StringTerm simple_a = StringTerm.createDirect("a", false);
+
         // Add parse tree from a rule which doesn't appear in the grammar.
         var pMerge4 = Parsewisp.parser(
                 Gr.grammarS("S",

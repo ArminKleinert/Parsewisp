@@ -98,10 +98,7 @@ class ZeroOrMoreRuleTest {
     @Test
     void withRule() {
         var i = string_a();
-        var r = (ZeroOrMoreRule) ZeroOrMoreRule
-                .create(i)
-                .withHideTag(true)
-                .withReduction(ReductionType.taggedTree(Sym.sym("A")));
+        var r = (ZeroOrMoreRule) ZeroOrMoreRule.create(i);
 
         // Expected
         Assertions.assertEquals(i, r.getRule());

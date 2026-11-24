@@ -87,7 +87,7 @@ HexDigitsAndUnderscores
     = HexDigitOrUnderscore {HexDigitOrUnderscore}
 HexDigitOrUnderscore
     = HexDigit
-    "_"
+    | "_"
 
 OctalNumeral
     = "0" [Underscores] OctalDigits

@@ -29,7 +29,7 @@ class TransformRuleTest {
                                 (r, i) -> Arrays.asList(((String) r.get(0)).split(""))),
                         StringTerm.create("def", false)))
         )));
-        var p = Parsewisp.parser(g); // Will use parse(...) for "a" and fullParse(...) for "b"
+        var p = Parsewisp.parser(g);
         Assertions.assertEquals(
                 PT.create("S", "a", "b", "c", "def"),
                 p.parse("abcdef")
@@ -44,7 +44,7 @@ class TransformRuleTest {
                                 StringTerm.create("abc", false),
                                 (r, i) -> List.of("a", "b", "c")
                         ))))));
-        var p = Parsewisp.parser(g); // Will use parse(...) for "a" and fullParse(...) for "b"
+        var p = Parsewisp.parser(g);
         Assertions.assertEquals(
                 PT.create("S", "a", "b", "c"),
                 p.parse("abc")
@@ -64,7 +64,7 @@ class TransformRuleTest {
                                 StringTerm.create("def", false),
                                 (r, i) -> Arrays.asList(((String) r.get(0)).split("")))))
         )));
-        var p = Parsewisp.parser(g); // Will use parse(...) for "a" and fullParse(...) for "b"
+        var p = Parsewisp.parser(g);
         Assertions.assertEquals(
                 PT.create("S", "abc", "d", "e", "f"),
                 p.parse("abcdef")

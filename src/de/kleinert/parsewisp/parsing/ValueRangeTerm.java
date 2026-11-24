@@ -18,7 +18,9 @@ public final class ValueRangeTerm extends Terminal {
                            final @NotNull ReductionType red,
                            final int lo, final int hi) {
         super(hide, red);
-        if (lo > hi) throw new IllegalArgumentException();
+        if (lo > hi || lo < 0 || hi > 0x10FFFF)
+            throw new IllegalArgumentException(
+                    "low codepoint must be less than or equal to high codepoint. Both must be in range 0x00_0000 to 0x10_FFFF. (lo=" + lo + ", hi=" + hi + ")");
         this.lo = lo;
         this.hi = hi;
     }
@@ -33,9 +35,6 @@ public final class ValueRangeTerm extends Terminal {
      * @since 0.9.7
      */
     public static @NotNull Rule create(final int lo, final int hi) {
-        if (lo > hi)
-            throw new IllegalArgumentException();
-
         return new ValueRangeTerm(defaultHidden, defaultReductionType, lo, hi);
     }
 
