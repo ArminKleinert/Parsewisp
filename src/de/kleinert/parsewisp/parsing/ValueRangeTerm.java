@@ -49,10 +49,7 @@ public final class ValueRangeTerm extends Terminal {
     }
 
     private void parse(final int index, final @NotNull Gll runner, final boolean expectEnd) {
-        final @NotNull String text = runner.tramp().getText();
-        final int lo = getLo();
-        final int hi = getHi();
-        final int end = text.length();
+        final @NotNull var text = runner.tramp().getText();
         final @NotNull var nodeKey = makeKey(index, this);
 
         if (index >= text.length()) {
@@ -63,7 +60,7 @@ public final class ValueRangeTerm extends Terminal {
         final int codePoint = Character.codePointAt(text, index);
         final @NotNull String charString = new String(Character.toChars(codePoint));
 
-        boolean check = !expectEnd || (index + charString.length() == end);
+        boolean check = !expectEnd || (index + charString.length() == text.length());
         if (check && lo <= codePoint && codePoint <= hi) {
             runner.pushSuccessMessage(nodeKey, charString, index + charString.length());
         } else {

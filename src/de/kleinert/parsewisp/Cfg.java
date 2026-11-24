@@ -156,16 +156,6 @@ final class Cfg {
                         }
                         return string(strParser.processString(s));
                     }
-                    case "string-cs" -> {
-                        return stringCS(
-                                strParser.processString(
-                                        (String) tree.getContent().get(0).content()));
-                    }
-                    case "string-ci" -> {
-                        return stringCI(
-                                strParser.processString(
-                                        (String) tree.getContent().get(0).content()));
-                    }
                     case "regexp" -> {
                         return regex(
                                 strParser.processRegexp(

@@ -2,7 +2,6 @@ package de.kleinert.parsewisp.parsing;
 
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
 import de.kleinert.parsewisp.reduction.ReductionType;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -70,7 +69,7 @@ public final class AlternationRule extends RuleWithManyChildren {
 
         for (@NotNull Rule rule : rules) {
             if (!uniques.add(rule)) {
-                continue;
+                // continue;
             } else if (rule instanceof AlternationRule cc && !cc.isHiddenInResult() && cc.red.equals(defaultReductionType)) {
                 compressedRules.addAll(cc.getRules());
             } else {
@@ -102,22 +101,20 @@ public final class AlternationRule extends RuleWithManyChildren {
 
     @Override
     public void parse(final int index, final @NotNull Gll runner) {
-        var listener = runner.nodeListener(makeKey(index, this));
         for (final @NotNull Rule rule : getRules()) {
             runner.pushListener(
                     makeKey(index, rule),
-                    listener
+                    runner.nodeListener(makeKey(index, this))
             );
         }
     }
 
     @Override
     public void fullParse(final int index, final @NotNull Gll runner) {
-        var listener = runner.nodeListener(makeKey(index, this));
         for (final @NotNull Rule rule : getRules()) {
             runner.pushFullListener(
                     makeKey(index, rule),
-                    listener
+                    runner.nodeListener(makeKey(index, this))
             );
         }
     }

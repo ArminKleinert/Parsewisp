@@ -21,9 +21,9 @@ public final class EpsilonTerm extends Terminal {
     }
 
     /**
-     * The default is always buffered. {@link #getReduction()} and {@link #isHiddenInResult()} have their default values.
+     * A default instance of Epsilon. May be buffered, but does not have to.
      *
-     * @return The canonical instance of Epsilon.
+     * @return A default instance of Epsilon.
      * @since 0.9.7
      */
     public static @NotNull EpsilonTerm getDefault() {

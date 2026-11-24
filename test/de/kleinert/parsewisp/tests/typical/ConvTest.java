@@ -16,8 +16,8 @@ class ConvTest {
     private static @NotNull List<Object> toParseTreeHelper(final @NotNull List<?> o) {
         return o.stream().map(it -> {
             if (it instanceof String || it instanceof ParseFailureNode || it instanceof ParseTree) return it;
-            else if (it instanceof List<?>) return toParseTree((List<?>)it);
-            else if (it instanceof Map<?, ?>) return toParseTree((Map<?, ?>)it);
+            else if (it instanceof List<?>) return toParseTree((List<?>) it);
+            else if (it instanceof Map<?, ?>) return toParseTree((Map<?, ?>) it);
             else throw new IllegalArgumentException();
         }).toList();
     }
@@ -79,23 +79,22 @@ class ConvTest {
 
     @Test
     void mixedToTreeTest() {
-        {
-            var l = Map.of(
-                    Sym.sym("tag"), Sym.sym("S"),
-                    Sym.sym("content"), List.of("A", List.of(Sym.sym("S"), "A")));
-            var pt = toParseTree(l);
-            Assertions.assertEquals(
-                    PT.create("S", "A", PT.create("S", "A")),
-                    pt
-            );
-        }
-        {
-            var l = List.of(Sym.sym("S"), "A", Map.of(Sym.sym("tag"), Sym.sym("S"), Sym.sym("content"), List.of("A")));
-            var pt = toParseTree(l);
-            Assertions.assertEquals(
-                    PT.create("S", "A", PT.create("S", "A")),
-                    pt
-            );
-        }
+        var pt1 = toParseTree(Map.of(
+                Sym.sym("tag"), Sym.sym("S"),
+                Sym.sym("content"), List.of("A", List.of(Sym.sym("S"), "A"))));
+        Assertions.assertEquals(
+                PT.create("S", "A", PT.create("S", "A")),
+                pt1
+        );
+
+        var pt2 = toParseTree(List.of(
+                Sym.sym("S"),
+                "A",
+                Map.of(Sym.sym("tag"), Sym.sym("S"),
+                        Sym.sym("content"), List.of("A"))));
+        Assertions.assertEquals(
+                PT.create("S", "A", PT.create("S", "A")),
+                pt2
+        );
     }
 }

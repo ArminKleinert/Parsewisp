@@ -6,7 +6,6 @@ import de.kleinert.parsewisp.collections.FlatResultSeq;
 import de.kleinert.parsewisp.functions.Listener;
 import de.kleinert.parsewisp.reduction.ReductionType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a "once or more" parse. That is the {@code p+} operator (where p is an instance of {@link Rule}).
@@ -58,9 +57,8 @@ public final class OnceOrMoreRule extends RuleWithChild {
                                  final @NotNull ListenerKey nodeKey,
                                  final @NotNull Gll runner) {
         return result -> {
-            final @Nullable Object parsedResult = result.getResult();
             final int continueIndex = result.index();
-            final var newResultsSoFar = resultsSoFar.appendOrConcat(parsedResult);
+            final var newResultsSoFar = resultsSoFar.appendOrConcat(result.getResult());
             if (//runner.stopEarlyOnEmptyRepetition &&
                     continueIndex == prevIndex) {
                 if (resultsSoFar.isEmpty()) {
@@ -84,9 +82,8 @@ public final class OnceOrMoreRule extends RuleWithChild {
                                      final @NotNull ListenerKey nodeKey,
                                      final @NotNull Gll runner) {
         return result -> {
-            final @Nullable var parsedResult = result.getResult();
             final var continueIndex = result.index();
-            final var newResultsSoFar = resultsSoFar.appendOrConcat(parsedResult);
+            final var newResultsSoFar = resultsSoFar.appendOrConcat(result.getResult());
             if (continueIndex == prevIndex) {
                 if (resultsSoFar.isEmpty()) {
                     runner.pushSuccessMessage(nodeKey, newResultsSoFar, continueIndex);

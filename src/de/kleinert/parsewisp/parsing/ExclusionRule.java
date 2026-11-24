@@ -88,10 +88,9 @@ public final class ExclusionRule extends RuleWithManyChildren {
     @Override
     public void parse(final int index, final @NotNull Gll runner) {
         final @NotNull var nodeKeyForThis = makeKey(index, this);
-        final @NotNull var nodeKeyForExpect = makeKey(index, expected);
 
         runner.pushListener(
-                nodeKeyForExpect,
+                makeKey(index, expected),
                 expectedSuccess -> {
                     var substring = runner.tramp().getText().substring(index, expectedSuccess.index());
 
@@ -107,10 +106,9 @@ public final class ExclusionRule extends RuleWithManyChildren {
     @Override
     public void fullParse(final int index, final @NotNull Gll runner) {
         final @NotNull var nodeKeyForThis = makeKey(index, this);
-        final @NotNull var nodeKeyForExpect = makeKey(index, expected);
 
         runner.pushListener(
-                nodeKeyForExpect,
+                makeKey(index, expected),
                 expectedSuccess -> {
                     var substring = runner.tramp().getText().substring(index, expectedSuccess.index());
 

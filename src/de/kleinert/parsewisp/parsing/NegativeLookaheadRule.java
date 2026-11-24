@@ -27,8 +27,6 @@ public final class NegativeLookaheadRule extends RuleWithChild {
      * @since 0.9.7
      */
     public static @NotNull Rule create(final @NotNull Rule rule) {
-        if (rule instanceof EpsilonTerm)
-            return rule;
         return new NegativeLookaheadRule(defaultHidden, defaultReductionType, rule);
     }
 
@@ -45,8 +43,7 @@ public final class NegativeLookaheadRule extends RuleWithChild {
 
     @Override
     public void parse(final int index, final @NotNull Gll runner) {
-        final @NotNull var rule = getRule();
-        final @NotNull var nodeKey = makeKey(index, rule);
+        final @NotNull var nodeKey = makeKey(index, getRule());
         final @NotNull var thisNodeKey = makeKey(index, this);
 
         if (resultExists_Q(runner, nodeKey)) {

@@ -31,11 +31,9 @@ public final class OptionalRule extends RuleWithChild {
 
     @Override
     public void parse(final int index, final @NotNull Gll runner) {
-        final @NotNull var rule = getRule();
-        final @NotNull var nodeKeyForOpt =
-                makeKey(index, this);
+        final @NotNull var nodeKeyForOpt = makeKey(index, this);
         runner.pushListener(
-                makeKey(index, rule),
+                makeKey(index, getRule()),
                 runner.nodeListener(nodeKeyForOpt)
         );
         runner.pushSuccessMessageWithoutValue(nodeKeyForOpt, index);
@@ -43,9 +41,8 @@ public final class OptionalRule extends RuleWithChild {
 
     @Override
     public void fullParse(final int index, final @NotNull Gll runner) {
-        final @NotNull var rule = getRule();
         final @NotNull var thisNodeKey = makeKey(index, this);
-        runner.pushFullListener(makeKey(index, rule), runner.nodeListener(thisNodeKey));
+        runner.pushFullListener(makeKey(index, getRule()), runner.nodeListener(thisNodeKey));
         if (index == runner.tramp().getText().length()) {
             runner.pushSuccessMessageWithoutValue(thisNodeKey, index);
         } else {

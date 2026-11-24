@@ -56,14 +56,13 @@ public final class StringTerm extends Terminal {
 
     @Override
     public void parse(final int index, final @NotNull Gll runner) {
-        final @NotNull String string = getString();
-        final @NotNull String text = runner.tramp().getText();
-        final int end = Integer.min(text.length(), index + string.length());
-        final @NotNull String head = text.substring(index, end);
+        final @NotNull var text = runner.tramp().getText();
+        final var end = Integer.min(text.length(), index + getString().length());
+        final @NotNull var head = text.substring(index, end);
 
         final @NotNull var nodeKey = makeKey(index, this);
-        if (caseInsensitive ? string.equalsIgnoreCase(head) : string.equals(head)) {
-            runner.pushSuccessMessage(nodeKey, string, end);
+        if (caseInsensitive ? getString().equalsIgnoreCase(head) : getString().equals(head)) {
+            runner.pushSuccessMessage(nodeKey, getString(), end);
         } else {
             runner.fail(nodeKey, index, this, false);
         }
@@ -71,13 +70,12 @@ public final class StringTerm extends Terminal {
 
     @Override
     public void fullParse(final int index, final @NotNull Gll runner) {
-        final @NotNull var string = getString();
         final @NotNull var text = runner.tramp().getText();
-        final var end = Integer.min(text.length(), string.length() + index);
+        final var end = Integer.min(text.length(), getString().length() + index);
         final @NotNull var head = text.substring(index, end);
         final @NotNull var nodeKey = makeKey(index, this);
-        if (text.length() == end && (caseInsensitive ? string.equalsIgnoreCase(head) : string.equals(head))) {
-            runner.pushSuccessMessage(nodeKey, string, end);
+        if (text.length() == end && (caseInsensitive ? getString().equalsIgnoreCase(head) : getString().equals(head))) {
+            runner.pushSuccessMessage(nodeKey, getString(), end);
         } else {
             runner.fail(nodeKey, index, this, true);
         }

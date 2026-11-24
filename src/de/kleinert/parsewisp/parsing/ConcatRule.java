@@ -87,9 +87,8 @@ public final class ConcatRule extends RuleWithManyChildren {
                                           final @NotNull ListenerKey nodeKey,
                                           final @NotNull Gll runner) {
         return result -> {
-            final @Nullable Object parsedResult = result.getResult();
             final int continueIndex = result.index();
-            final @NotNull FlatResultSeq newResultsSoFar = resultsSoFar.appendOrConcat(parsedResult);
+            final @NotNull FlatResultSeq newResultsSoFar = resultsSoFar.appendOrConcat(result.getResult());
 
             if (parserSequence.isEmpty()) {
                 runner.pushSuccessMessage(nodeKey, newResultsSoFar, continueIndex);
@@ -111,9 +110,8 @@ public final class ConcatRule extends RuleWithManyChildren {
                                               final @NotNull ListenerKey nodeKey,
                                               final @NotNull Gll runner) {
         return result -> {
-            final @Nullable var parsedResult = result.getResult();
             final var continueIndex = result.index();
-            final @NotNull var newResultsSoFar = resultsSoFar.appendOrConcat(parsedResult);
+            final @NotNull var newResultsSoFar = resultsSoFar.appendOrConcat(result.getResult());
 
             if (!parserSequence.isEmpty()) {
                 var listenerKey = makeKey(continueIndex, parserSequence.get(0));

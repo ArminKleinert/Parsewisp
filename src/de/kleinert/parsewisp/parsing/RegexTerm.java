@@ -45,8 +45,7 @@ public final class RegexTerm extends Terminal {
         return new RegexTerm(defaultHidden, defaultReductionType, regexp);
     }
 
-    private static @Nullable String reMatchAtFront(final @NotNull Pattern regexp,
-                                                   final @NotNull CharSequence text) {
+    private @Nullable String reMatchAtFront(final @NotNull CharSequence text) {
         final @NotNull Matcher matcher = regexp.matcher(text);
         if (matcher.lookingAt()) return matcher.group();
         return null;
@@ -76,11 +75,9 @@ public final class RegexTerm extends Terminal {
      */
     @Override
     public void parse(final int index, final @NotNull Gll runner) {
-        final @NotNull var regexp = getRegexp();
-        final @NotNull var text = runner.tramp().getText();
-        final @NotNull var subString = text.substring(index);
+        final @NotNull var subString = runner.tramp().getText().substring(index);
         final @NotNull var nodeKey = makeKey(index, this);
-        final @Nullable var firstMatch = reMatchAtFront(regexp, subString);
+        final @Nullable var firstMatch = reMatchAtFront(subString);
 
         if (firstMatch == null) {
             runner.fail(nodeKey, index, this, false);
@@ -95,7 +92,7 @@ public final class RegexTerm extends Terminal {
         final int endIndexInSubString = firstMatch.length();
         runner.pushSuccessMessage(nodeKey, firstMatch, index + firstMatch.length());
         for (int end = endIndexInSubString; end >= 0; end--) {
-            @Nullable String match = reMatchAtFront(regexp, subString.substring(0, end));
+            @Nullable String match = reMatchAtFront(subString.substring(0, end));
             if (match != null) {
                 runner.pushSuccessMessage(nodeKey, match, index + match.length());
             }
@@ -104,10 +101,9 @@ public final class RegexTerm extends Terminal {
 
     @Override
     public void fullParse(final int index, final @NotNull Gll runner) {
-        final @NotNull var regexp = this.getRegexp();
         final @NotNull var text = runner.tramp().getText();
         final @NotNull var substring = text.substring(index);
-        final @Nullable var match = reMatchAtFront(regexp, substring);
+        final @Nullable var match = reMatchAtFront(substring);
         final int desiredLength = text.length() - index;
         final @NotNull var nodeKey = makeKey(index, this);
         if (match != null && match.length() == desiredLength) {

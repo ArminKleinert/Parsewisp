@@ -1,9 +1,7 @@
 package de.kleinert.parsewisp.testutil;
 
-import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.grammar.Grammar;
-import de.kleinert.parsewisp.parser.Parser;
 import de.kleinert.parsewisp.parsing.Rule;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,10 +53,5 @@ public final class Gr {
             lhm.put(key, val);
         } while (iter.hasNext());
         return new Grammar(start, lhm);
-    }
-
-    public static @NotNull Parser pars(String startName, Object... g) {
-        var grammar = grammarS(startName,g);
-        return Parsewisp.parser(grammar);
     }
 }

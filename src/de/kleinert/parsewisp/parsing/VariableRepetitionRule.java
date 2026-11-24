@@ -1,7 +1,6 @@
 package de.kleinert.parsewisp.parsing;
 
 import de.kleinert.parsewisp.trampoline.ListenerKey;
-
 import de.kleinert.parsewisp.collections.FlatResultSeq;
 import de.kleinert.parsewisp.functions.Listener;
 import de.kleinert.parsewisp.reduction.ReductionType;
@@ -66,35 +65,28 @@ public final class VariableRepetitionRule extends RuleWithChild {
 
     @Override
     public void parse(final int index, final @NotNull Gll runner) {
-        final @NotNull var rule = getRule();
-        final @NotNull var nodeKeyForThis = makeKey(index, this);
-        final @NotNull var nodeKeyForInnerRule = makeKey(index, rule);
-        if (getMin() == 0) {
-            runner.pushSuccessMessageWithoutValue(nodeKeyForInnerRule, index);
+        if (min == 0) {
+            runner.pushSuccessMessageWithoutValue(makeKey(index, this), index);
         }
-        if (getMax() == 0) {
+        if (max == 0) {
             return;
         }
         runner.pushListener(
-                nodeKeyForInnerRule,
-                repListener(FlatResultSeq.make(), 0, this, nodeKeyForThis, runner, index));
+                makeKey(index, getRule()),
+                repListener(FlatResultSeq.make(), 0, this, makeKey(index, this), runner, index));
     }
 
     @Override
     public void fullParse(final int index, final @NotNull Gll runner) {
-        final @NotNull var rule = getRule();
-        final @NotNull var nodeKeyForThis = makeKey(index, this);
-        final @NotNull var nodeKeyForInnerRule = makeKey(index, rule);
-        final @NotNull var emptyResults = FlatResultSeq.make();
-        if (getMin() == 0) {
+        if (min == 0) {
             runner.pushSuccessMessageWithoutValue(makeKey(index, this), index);
         }
-        if (getMax() == 0) {
+        if (max == 0) {
             return;
         }
         runner.pushListener(
-                nodeKeyForInnerRule,
-                repFullListener(emptyResults, 0, rule, getMin(), getMax(), nodeKeyForThis, runner));
+                makeKey(index, getRule()),
+                repFullListener(FlatResultSeq.make(), 0, getRule(), min, max, makeKey(index, this), runner));
     }
 
     private @NotNull Listener repListener(final @NotNull FlatResultSeq resultsSoFar,

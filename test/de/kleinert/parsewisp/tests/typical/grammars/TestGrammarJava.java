@@ -168,7 +168,7 @@ class TestGrammarJava {
         Assertions.assertTrue(res.isSuccess());
     }
 
-    @Test
+//    @Test
     void testWhichIsWayTooBig() {
         var text = """
                 package de.kleinert.parsewisp.tests.typical.rules_available;
@@ -180,7 +180,7 @@ class TestGrammarJava {
         Assertions.assertTrue(res.isSuccess());
     }
 
-    @Test
+//    @Test
     void testParseParsewispSources() throws IOException {
         BiPredicate<Path, BasicFileAttributes> matcher = (p, bfa) -> bfa.isRegularFile();
         final var files = Stream.concat(

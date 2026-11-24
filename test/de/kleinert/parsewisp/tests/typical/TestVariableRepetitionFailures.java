@@ -17,7 +17,6 @@ class TestVariableRepetitionFailures {
     void parseWithPartial1() {
         var text = "aaaaaa";
         var treesPartial = Set.of(
-                PT.create("S"),
                 PT.create("S", "a"),
                 PT.create("S", "a", "a"),
                 PT.create("S", "a", "a", "a"),
@@ -34,21 +33,22 @@ class TestVariableRepetitionFailures {
         //System.out.println(repeated_a);
         Assertions.assertEquals(treesPartial, new HashSet<>(repeated_a.parses(text, partialOpts)));
     }
+
     @Test
     void parseWithPartial2() {
-        var text = "aaaaaa";
+        var text = "baaaaa";
         var treesPartial = Set.of(
-                PT.create("S", "a"),
-                PT.create("S", "a", "a"),
-                PT.create("S", "a", "a", "a"),
-                PT.create("S", "a", "a", "a", "a"),
-                PT.create("S", "a", "a", "a", "a", "a"),
-                PT.create("S", "a", "a", "a", "a", "a", "a")
+                PT.create("S", "b"),
+                PT.create("S", "b", "a"),
+                PT.create("S", "b", "a", "a"),
+                PT.create("S", "b", "a", "a", "a"),
+                PT.create("S", "b", "a", "a", "a", "a"),
+                PT.create("S", "b", "a", "a", "a", "a", "a")
         );
         var partialOpts = ParsingOptions.getDefault().withPartial(true);
         var creationOpts = ParserCreationOptions.getDefault();
         var repeated_a = Parsewisp.parser("""
-                        S = 'a' 'a'{0,6}
+                        S = 'b' 'a'{0,6}
                         """,
                 creationOpts);
         //System.out.println(repeated_a);
@@ -75,16 +75,18 @@ class TestVariableRepetitionFailures {
         //System.out.println(repeated_a);
         Assertions.assertEquals(treesPartial, new HashSet<>(repeated_a.parses(text, partialOpts)));
     }
+
     @Test
     void parseRepetitionMinMax() {
-            final @NotNull var p = Parsewisp.parser("S = 'a' {2,4}");
-            Assertions.assertTrue(p.parse("").isFailure());
-            Assertions.assertTrue(p.parse("a").isFailure());
-            Assertions.assertEquals(PT.create("S", "a", "a"), p.parse("aa"));
-            Assertions.assertEquals(PT.create("S", "a", "a", "a"), p.parse("aaa"));
-            Assertions.assertEquals(PT.create("S", "a", "a", "a", "a"), p.parse("aaaa"));
-            Assertions.assertTrue(p.parse("aaaaa").isFailure());
+        final @NotNull var p = Parsewisp.parser("S = 'a' {2,4}");
+        Assertions.assertTrue(p.parse("").isFailure());
+        Assertions.assertTrue(p.parse("a").isFailure());
+        Assertions.assertEquals(PT.create("S", "a", "a"), p.parse("aa"));
+        Assertions.assertEquals(PT.create("S", "a", "a", "a"), p.parse("aaa"));
+        Assertions.assertEquals(PT.create("S", "a", "a", "a", "a"), p.parse("aaaa"));
+        Assertions.assertTrue(p.parse("aaaaa").isFailure());
     }
+
     @Test
     void createRepetitionParserFailure() {
         // Negative minimum

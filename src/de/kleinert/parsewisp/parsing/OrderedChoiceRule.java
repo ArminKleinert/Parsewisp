@@ -76,32 +76,22 @@ public final class OrderedChoiceRule extends RuleWithManyChildren {
 
     @Override
     public void parse(final int index, final @NotNull Gll runner) {
-        final @NotNull var rule1 = this.rule1;
-        final @NotNull var rule2 = this.rule2;
-        final @NotNull var nodeKeyForComb1 =
-                makeKey(index, rule1);
-        final @NotNull var nodeKeyForComb2 =
-                makeKey(index, rule2);
-        final @NotNull var listener =
-                runner.nodeListener(makeKey(index, this));
+        final @NotNull var nodeKeyForComb1 = makeKey(index, this.rule1);
+        final @NotNull var listener = runner.nodeListener(makeKey(index, this));
         runner.pushListener(nodeKeyForComb1, listener);
         runner.pushNegativeListener(
                 nodeKeyForComb1,
-                () -> runner.pushListener(nodeKeyForComb2, listener));
+                () -> runner.pushListener(makeKey(index, this.rule2), listener));
     }
 
     @Override
     public void fullParse(final int index, final @NotNull Gll runner) {
-        final @NotNull Rule rule1 = this.rule1;
-        final @NotNull Rule rule2 = this.rule2;
-        final @NotNull var nodeKeyForComb1 = makeKey(index, rule1);
-//        final @NotNull var nodeKeyForComb2 = makeKey(index, rule2);
-        final @NotNull var listener =
-                runner.nodeListener(makeKey(index, this));
+        final @NotNull var nodeKeyForComb1 = makeKey(index, this.rule1);
+        final @NotNull var listener = runner.nodeListener(makeKey(index, this));
         runner.pushFullListener(nodeKeyForComb1, listener);
         runner.pushNegativeListener(
                 nodeKeyForComb1,
-                () -> runner.pushFullListener(makeKey(index, rule2), listener));
+                () -> runner.pushFullListener(makeKey(index, this.rule2), listener));
     }
 
     @Override

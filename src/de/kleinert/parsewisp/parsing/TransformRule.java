@@ -103,7 +103,7 @@ public final class TransformRule extends RuleWithChild {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
-        TransformRule that = (TransformRule) o;
+        var that = (TransformRule) o;
         return transformer.equals(that.transformer);
     }
 
