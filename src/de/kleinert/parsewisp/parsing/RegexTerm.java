@@ -84,13 +84,14 @@ public final class RegexTerm extends Terminal {
             return;
         }
 
+        final int endIndexInSubString = firstMatch.length();
+
         if (!runner.iterativeDeepening()) {
-            runner.pushSuccessMessage(nodeKey, firstMatch, index + firstMatch.length());
+            runner.pushSuccessMessage(nodeKey, firstMatch, index + endIndexInSubString);
             return;
         }
 
-        final int endIndexInSubString = firstMatch.length();
-        runner.pushSuccessMessage(nodeKey, firstMatch, index + firstMatch.length());
+        runner.pushSuccessMessage(nodeKey, firstMatch, index + endIndexInSubString);
         for (int end = endIndexInSubString; end >= 0; end--) {
             @Nullable String match = reMatchAtFront(subString.substring(0, end));
             if (match != null) {
@@ -101,13 +102,11 @@ public final class RegexTerm extends Terminal {
 
     @Override
     public void fullParse(final int index, final @NotNull Gll runner) {
-        final @NotNull var text = runner.tramp().getText();
-        final @NotNull var substring = text.substring(index);
+        final @NotNull var substring = runner.tramp().getText().substring(index);
         final @Nullable var match = reMatchAtFront(substring);
-        final int desiredLength = text.length() - index;
         final @NotNull var nodeKey = makeKey(index, this);
-        if (match != null && match.length() == desiredLength) {
-            runner.pushSuccessMessage(nodeKey, match, text.length());
+        if (match != null && match.length() == substring.length()) {
+            runner.pushSuccessMessage(nodeKey, match, runner.tramp().getText().length());
         } else {
             runner.fail(nodeKey, index, this, true);
         }
