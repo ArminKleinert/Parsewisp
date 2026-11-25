@@ -12,9 +12,7 @@ import de.kleinert.parsewisp.result.*;
 import de.kleinert.parsewisp.result.success.ParseMessage;
 import de.kleinert.parsewisp.result.failure.*;
 import de.kleinert.parsewisp.trampoline.*;
-
 import de.kleinert.parsewisp.trampoline.ListenerKey;
-
 import de.kleinert.parsewisp.trampoline.Tramp;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -212,13 +210,12 @@ public final class Gll {
 
         final boolean reachedEndOfInput = tramp.getText().length() == result.index();
 
-
         final boolean resultExisted;
-        if (reachedEndOfInput)
+        if (reachedEndOfInput) {
             resultExisted = node.fullResults().add(result);
-        else
+        } else {
             resultExisted = node.results().add(result);
-
+        }
         if (!resultExisted) {
             return;
         }
@@ -262,14 +259,6 @@ public final class Gll {
         pushResultHelper(nodeKey, aps);
     }
 
-    void pushSuccessMessage(
-            final @NotNull ListenerKey nodeKey,
-            final @NotNull Object result,
-            final int end) {
-        final @NotNull ParseMessage aps = ParseMessage.create(end, result);
-        pushResultHelper(nodeKey, aps);
-    }
-
     void pushSuccessMessageWithoutValue(
             final @NotNull ListenerKey nodeKey,
             final int end) {
@@ -286,8 +275,7 @@ public final class Gll {
 
     void pushSuccessAgainWithNewKey(
             final @NotNull ListenerKey nodeKey,
-            final @NotNull ParseMessage message
-    ) {
+            final @NotNull ParseMessage message) {
         pushResultHelper(nodeKey, message);
     }
 
@@ -309,7 +297,6 @@ public final class Gll {
                     textLen);
         }
     }
-
 
     private @NotNull ParseFailureNode buildFailureNode(
             final @NotNull Sym key,

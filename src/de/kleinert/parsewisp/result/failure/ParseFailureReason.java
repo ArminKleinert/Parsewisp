@@ -11,14 +11,12 @@ import org.jetbrains.annotations.Nullable;
  * @param rule            The rule was parsed when the failure appeared.
  * @param reasonString    A string describing the failure. Please prefer {@link ParseFailureReason#failureReasonString}.
  * @param untilEndOfInput Whether the production that failed covered the entire input from beginning to end. When showing the object as a string, this adds the note "(followed by end of string)" or something similar.
- * @param tag             A symbol or string indicating the type of reason. E.g. lookahead, string terminal, regex terminal, etc.
  * @since 0.9.7
  */
 public record ParseFailureReason(
         @NotNull Rule rule,
         @Nullable String reasonString,
-        boolean untilEndOfInput,
-        @NotNull String tag) {
+        boolean untilEndOfInput) {
     /**
      * Representation of the failure reasonList as a string.
      *
@@ -28,16 +26,6 @@ public record ParseFailureReason(
     public String failureReasonString() {
         if (reasonString != null) return reasonString;
         return GrammarPrinter.getDefault().ruleToString(rule);
-    }
-
-    /**
-     * The tag of the production.
-     *
-     * @return The tag of the production.
-     * @since 0.9.7
-     */
-    public @NotNull String tag() {
-        return tag;
     }
 
     /**
@@ -60,39 +48,20 @@ public record ParseFailureReason(
      * @since 0.9.7
      */
     public static ParseFailureReason creatureFailReason(@NotNull Rule rule, boolean untilEnd, GrammarPrinter printer) {
-        @Nullable String str = null;
-        @NotNull String tag;
+        String str;
 
-        if (rule instanceof ValueRangeTerm) {
-            tag = "char";
-        } else if (rule instanceof EpsilonTerm || rule instanceof EOFTerm) {
-            tag = "epsilon";
+        if (rule instanceof EpsilonTerm || rule instanceof EOFTerm) {
             str = "end-of-string";
-        } else if (rule instanceof VariableRepetitionRule) {
-            tag = "rep";
         } else if (rule instanceof LookaheadRule) {
             str = untilEnd ? "end-of-string" : null;
-            tag = "look";
         } else if (rule instanceof NegativeLookaheadRule) {
             str = "NOT " + printer.ruleToString(((NegativeLookaheadRule) rule).getRule());
-            tag = "neg";
         } else if (rule instanceof ExclusionRule) {
             str = printer.ruleToString(((ExclusionRule) rule).getExpected()) + " but NOT " + printer.ruleToString(((ExclusionRule) rule).getExcluded());
-            tag = "exclude";
-        } else if (rule instanceof OptionalRule) {
-            tag = "optional";
-        } else if (rule instanceof RegexTerm) {
-            tag = "regex";
-        } else if (rule instanceof StringTerm) {
-            tag = "string";
-        } else if (rule instanceof SpecialSequenceRule) {
-            tag = "function";
         } else {
-            throw new IllegalArgumentException("Cannot create FailureReason for " + rule + " of class " + rule.getClass());
+            str = printer.ruleToString(rule);
         }
 
-        if (str == null) str = printer.ruleToString(rule);
-
-        return new ParseFailureReason(rule, str, untilEnd, tag);
+        return new ParseFailureReason(rule, str, untilEnd);
     }
 }

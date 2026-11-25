@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  * @since 0.9.7
  */
 public final class FlatResultSeq {
-    private static FlatResultSeq EMPTY = null;
+    //private static FlatResultSeq EMPTY = null;
 
     private final @NotNull FlatResultSeq head;
     private final @NotNull Object nodeContent;
@@ -89,7 +89,7 @@ public final class FlatResultSeq {
      * <p>
      * Flattening the sequence iterates backwards.
      * <p>
-     * <b>Example: {@code frs12123.stream} is called.</b>
+     * <b>Example: {@code frs12123.stream()} is called.</b>
      * <p>
      * First, an array is created: {@code new Object[frs12123.size()]}<br/>
      * The index is set to {@code frs12123.size()-1}

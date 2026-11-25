@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.LinkedHashMap;
 import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
@@ -168,19 +169,19 @@ class TestGrammarJava {
         Assertions.assertTrue(res.isSuccess());
     }
 
-//    @Test
+    @Test
     void testWhichIsWayTooBig() {
         var text = """
                 package de.kleinert.parsewisp.tests.typical.rules_available;
                 class RulesAvailableGeneralizedTests {
                 """;
-        text += "private static void doNothing(List opts, boolean run) {}".repeat(2500); // Note: Maximum repeat as of 2026.11.21: 3537
+        text += "private static void doNothing(List opts, boolean run) {}".repeat(1000); // Note: Maximum repeat as of 2026.11.21: 3537
         text += "}";
         var res = parser().parse(text);
         Assertions.assertTrue(res.isSuccess());
     }
 
-//    @Test
+    @Test
     void testParseParsewispSources() throws IOException {
         BiPredicate<Path, BasicFileAttributes> matcher = (p, bfa) -> bfa.isRegularFile();
         final var files = Stream.concat(
@@ -193,6 +194,8 @@ class TestGrammarJava {
 
         long totalTime = 0;
         long byteCount = 0;
+        long lineCount = 0;
+        long slocCount = 0;
         long start;
         long end;
 
@@ -208,14 +211,26 @@ class TestGrammarJava {
                     () -> "Failed testcase.\n" + res.castToParseFailure());
             long diffMillis = (end - start) / 1_000_000;
             totalTime += diffMillis;
-            System.out.println("Parsed " + file + " in " + diffMillis + " ms (" + s.length() + " chars)");
+
+            var lines = s.lines().count();
             byteCount += s.length();
+            lineCount += lines;
+
+            var sloc = s.lines()
+                    .map(String::trim)
+                    .filter(Predicate.not(l ->
+                            l.isBlank() || l.startsWith("*") || l.startsWith("//") || l.startsWith("/*")
+                                    || l.startsWith("package") || l.startsWith("import")))
+                    .count();
+            slocCount += sloc;
+
+            System.out.println("Parsed " + file + " in " + diffMillis + " ms (" + s.length() + " chars; " + lines + " lines; " + sloc + " sloc)");
 
             var parent = file.toFile().getParent();
             counts.putIfAbsent(parent, 0L);
-            counts.computeIfPresent(parent, (ignore, l) -> l+1L);
+            counts.computeIfPresent(parent, (ignore, l) -> l + 1L);
         }
-        System.out.println("Done. Parsed " + files.size() + " files with a total of " + byteCount + " chars. Total time: " + totalTime + " ms");
+        System.out.println("Done. Parsed " + files.size() + " files with a total of " + byteCount + " chars and " + lineCount + " lines (" + slocCount + " sloc). Total time: " + totalTime + " ms");
         System.out.println("Counts: " + counts);
     }
 }

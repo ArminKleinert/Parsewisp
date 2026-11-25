@@ -47,7 +47,7 @@ class GrammarBuilderTest {
         var pGrammarList = new LinkedHashMap<Sym, Rule>();
         pGrammarList.put(Sym.sym("S"),
                 ConcatRule.create(List.of(NonTerminal.create(Sym.sym("NUMBER")), ZeroOrMoreRule.create(NonTerminal.create(Sym.sym("NUMBER"))))));
-        pGrammarList.put(Sym.sym("NUMBER"), AlternationRule.create(Stream.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9").map(it -> StringTerm.create(it, false)).toList()));
+        pGrammarList.put(Sym.sym("NUMBER"), AlternationRule.create(Stream.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9").map(it -> StringTerm.create(it, true)).toList()));
         var pFromGrammar = Parsewisp.parser(
                         new Grammar(Sym.sym("S"), pGrammarList),
                         ParserCreationOptions.getDefault().withStartProduction(Sym.sym("S")))
@@ -57,7 +57,7 @@ class GrammarBuilderTest {
             @Override
             protected void make() {
                 addProduction("S", cat(nt("NUMBER"), zeroOrMore(nt(Sym.sym("NUMBER")))));
-                addProduction("NUMBER", altUnsafe(Stream.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9").map(this::stringCS).toList()));
+                addProduction("NUMBER", altUnsafe(Stream.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9").map(this::stringCI).toList()));
             }
         }.build();
 
