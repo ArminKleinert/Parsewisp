@@ -1,14 +1,24 @@
 package de.kleinert.parsewisp;
 
+import de.kleinert.parsewisp.error.IllegalGrammarException;
 import de.kleinert.parsewisp.error.ParserCreationFailure;
-import de.kleinert.parsewisp.grammar.*;
-import de.kleinert.parsewisp.parser_options.*;
-import de.kleinert.parsewisp.parsing.*;
-import de.kleinert.parsewisp.result.*;
+import de.kleinert.parsewisp.grammar.Grammar;
+import de.kleinert.parsewisp.grammar.GrammarBuilder;
+import de.kleinert.parsewisp.grammar.GrammarPrinter;
+import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
+import de.kleinert.parsewisp.parsing.EOFTerm;
+import de.kleinert.parsewisp.parsing.EpsilonTerm;
+import de.kleinert.parsewisp.parsing.Gll;
+import de.kleinert.parsewisp.parsing.Rule;
+import de.kleinert.parsewisp.result.Node;
+import de.kleinert.parsewisp.result.ParseFailure;
+import de.kleinert.parsewisp.result.ParseResult;
+import de.kleinert.parsewisp.result.ParseTree;
 import de.kleinert.parsewisp.util.StrParser;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * This class provides the means of creating a Grammar
@@ -40,6 +50,32 @@ final class Cfg {
             super(options.getRedefinitionOption());
             this.spec = spec;
             this.grammarGrammar = grammarGrammar;
+        }
+
+        private Map.Entry<Integer, Integer> parseRepMinMax(@NotNull String partsUncut) {
+            partsUncut = partsUncut.substring(1, partsUncut.length() - 1); // Cut away "{" and "}"
+            @NotNull var parts = partsUncut.split(",");
+            if (partsUncut.isEmpty()) { // The input was only "{}"
+                parts = new String[]{"", ""};
+            } else if (parts.length == 1) {
+                // Format at this point is "[0-9]+" or "[0-9]+," or ",[0-9]+" or "[0-9]+,[0-9]+"
+                final @NotNull var temp = new String[]{"", ""};
+                if (partsUncut.charAt(0) == ',') { // Only maximum provided (e.g. `p{,m}`)
+                    temp[1] = parts[0];
+                } else if (partsUncut.charAt(partsUncut.length() - 1) == ',') {// Only minimum provided (e.g. `p{n,}`
+                    temp[0] = parts[0];
+                } else { // Only an exact number is given: Both minimum and maximum. (e.g. `p{n}`).
+                    temp[0] = parts[0];
+                    temp[1] = temp[0];
+                }
+                parts = temp;
+            } else if (parts.length > 2) {
+                throw new IllegalArgumentException("Invalid format for repetition rule: " + partsUncut);
+            }
+            // If none of the cases were true, the input had the usual format [0-9]+\\*[0-9]+
+            final int min = parts[0].isBlank() ? 0 : Integer.parseInt(parts[0]);
+            final int max = parts[1].isBlank() ? Integer.MAX_VALUE : Integer.parseInt(parts[1]);
+            return Map.entry(min, max);
         }
 
         private @NotNull Rule buildRepRule(final @NotNull ParseTree tree) {
@@ -108,6 +144,12 @@ final class Cfg {
                     case "rule" -> {
                         return buildRuleRule(tree);
                     }
+                    case "ntOrEof" -> {
+                        var name = (String) tree.getContent().get(0).content();
+                        if (name.equals(EOFTerm.text()))
+                            return EOFTerm.getDefault();
+                        return nt(Sym.sym(name));
+                    }
                     case "nt" -> {
                         var name = (String) tree.getContent().get(0).content();
                         return nt(Sym.sym(name));
@@ -166,28 +208,17 @@ final class Cfg {
                         return neg((Rule) buildRule(
                                 (ParseTree) tree.getContent().get(0).content()));
                     }
-                    case "opt", "opt_query" -> {
+                    case "opt" -> {
                         return opt((Rule) buildRule(
                                 (ParseTree) tree.getContent().get(0).content()));
                     }
-                    case "star", "opt_rep" -> {
+                    case "opt_rep" -> {
                         return zeroOrMore((Rule) buildRule(
-                                (ParseTree) tree.getContent().get(0).content()));
-                    }
-                    case "plus" -> {
-                        return onceOrMore((Rule) buildRule(
                                 (ParseTree) tree.getContent().get(0).content()));
                     }
                     case "look" -> {
                         return look((Rule) buildRule(
                                 (ParseTree) tree.getContent().get(0).content()));
-                    }
-                    case "rep" -> {
-                        try {
-                            return buildRepRule(tree);
-                        } catch (IllegalArgumentException exception) {
-                            throw new ParserCreationFailure(exception);
-                        }
                     }
                     case "abnf-range" -> {
                         var content = tree.getContent();
@@ -213,12 +244,39 @@ final class Cfg {
                     case "exclude" -> {
                         var rule1 = (Rule) buildRule((ParseTree)
                                 tree.getContent().get(0).content());
+                        if (tree.getContent().size() == 1)
+                            return rule1;
+
                         var rule2 = (Rule) buildRule((ParseTree)
                                 tree.getContent().get(1).content());
                         return exclude(rule1, rule2);
                     }
-                    case "eof" -> {
-                        return EOFTerm.getDefault();
+//                    case "eof" -> {
+//                        return EOFTerm.getDefault();
+//                    }
+                    case "factor" -> {
+                        var ruleAndPostfixStringIter = tree.getContent().iterator();
+                        var rule = (Rule) buildRule((ParseTree) ruleAndPostfixStringIter.next().content());
+                        while (ruleAndPostfixStringIter.hasNext()) {
+                            var postfix = ruleAndPostfixStringIter.next().string();
+                            if (postfix.equals("?")) {
+                                rule = opt(rule);
+                            } else if (postfix.equals("*")) {
+                                rule = zeroOrMore(rule);
+                            } else if (postfix.equals("+")) {
+                                rule = onceOrMore(rule);
+                            } else if (postfix.startsWith("{")) {
+                                Map.Entry<Integer, Integer> minMax = parseRepMinMax(postfix);
+                                try {
+                                    rule = rep(rule, minMax.getKey(), minMax.getValue());
+                                } catch (IllegalArgumentException e) {
+                                    throw new ParserCreationFailure(e);
+                                }
+                            } else {
+                                throw new IllegalArgumentException();
+                            }
+                        }
+                        return rule;
                     }
                 }
                 throw new UnsupportedOperationException(tag);

@@ -93,19 +93,6 @@ class ExclusionTest {
         var opts = ParserCreationOptions.getDefault();
 
         // Any number. But any sequence of "1"s, except "11", is not allowed.
-        var p = Parsewisp.parser("S = #'[0-9]+' - #'[1]+' - '11'", opts);
-        Assertions.assertTrue(p.parse("1").isFailure());
-        Assertions.assertEquals(PT.create("S", "12"), p.parse("12"));
-        Assertions.assertEquals(PT.create("S", "11"), p.parse("11"));
-        Assertions.assertTrue(p.parse("1111").isFailure());
-        Assertions.assertEquals(PT.create("S", "2"), p.parse("2"));
-    }
-
-    @Test
-    void excludeFromExclusionR() {
-        var opts = ParserCreationOptions.getDefault();
-
-        // Any number. But any sequence of "1"s, except "11", is not allowed.
         var p = Parsewisp.parser("S = #'[0-9]+' - (#'[1]+' - '11')", opts);
         Assertions.assertTrue(p.parse("1").isFailure());
         Assertions.assertEquals(PT.create("S", "12"), p.parse("12"));

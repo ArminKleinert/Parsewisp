@@ -1,5 +1,6 @@
 package de.kleinert.parsewisp.tests;
 
+import de.kleinert.parsewisp.CfgGrammar;
 import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.grammar.GrammarPrinter;
 import de.kleinert.parsewisp.parser.Parser;
@@ -17,16 +18,22 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.regex.Pattern;
 
 class NewFeaturesTest {
     @Test
-    void t10 () {
-        Parsewisp.parser("S = 'a'{2}");
-        Parsewisp.parser("S = 'a'{2,}");
-        Parsewisp.parser("S = 'a'{,2}");
-        Parsewisp.parser("S = 'a'{2,3}");
+    void t10() {
+//        Parsewisp.parser("S = 'a'{2}");
+//        Parsewisp.parser("S = 'a'{2,}");
+//        Parsewisp.parser("S = 'a'{,2}");
+        var p = Parsewisp.parser("""
+                S = AB*
+                AB = A B
+                A = 'a'+
+                B = 'b'+
+                """);
+        System.out.println(p.show());
     }
+
     @Test
     void test00() {
         var p = Parsewisp.parser(
@@ -197,8 +204,8 @@ class NewFeaturesTest {
                     PT.create("S", PT.create("r1", "a"), PT.create("r2", "a")),
                     PT.create("S", PT.create("r2", "a"), PT.create("r2", "a"))
             );
-            System.out.println("Expect: "+possibleParses);
-            System.out.println("Have:   "+p.parses(text));
+            System.out.println("Expect: " + possibleParses);
+            System.out.println("Have:   " + p.parses(text));
         }
     }
 

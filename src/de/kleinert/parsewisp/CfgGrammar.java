@@ -1,217 +1,136 @@
 package de.kleinert.parsewisp;
 
-import de.kleinert.parsewisp.grammar.*;
-import de.kleinert.parsewisp.parsing.*;
-import de.kleinert.parsewisp.parser_options.*;
+import de.kleinert.parsewisp.grammar.Grammar;
+import de.kleinert.parsewisp.grammar.GrammarBuilder;
+import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
+import de.kleinert.parsewisp.parser_options.RedefinitionOption;
+import de.kleinert.parsewisp.parsing.EOFTerm;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * A builder for grammars for parsing context free grammars (CFGs).
+ * A builder for grammars with Parsewisp's default format.
  *
  * @since 0.9.7
  */
 public final class CfgGrammar extends GrammarBuilder {
-    final @NotNull ParserCreationOptions options;
-
-    private CfgGrammar(final @NotNull ParserCreationOptions options) {
+    CfgGrammar() {
         super(RedefinitionOption.ERROR);
-        this.options = options;
     }
 
-    private final @NotNull Rule optWhitespace =
-            makeCfgOptWhitespaceRhs().hideInResult();
+    @Override
+    protected void make() {
+        var cWsp = hide(nt("cWsp"));
 
-    private final Set<String> epsilonNames = Set.of("Epsilon", "epsilon", "EPSILON", "eps", "ε");
+        addProduction("rules", cat(List.of(
+                cWsp, onceOrMore(cat(nt("rule"), cWsp)))));
 
-    private final @NotNull NonTerminal factorNt = nt("factor");
+        addProduction("rule", cat(List.of(
+                alt(List.of(nt("nt"), nt("hide-nt"))),
+                cWsp,
+                altUnsafe(List.of(
+                        stringCS(":="), stringCS("::="), stringCS("=/"),
+                        stringCS("="), stringCS(":"))).hideInResult(),
+                cWsp,
+                nt("alt"),
+                opt(alt(List.of(string(";"), string(".")))))));
 
-    private final @NotNull NonTerminal ntNt = nt("nt");
-    private final @NotNull NonTerminal altOrOrdNt = nt("alt-or-ord");
+        addProduction("alt", cat(List.of(
+                nt("ord"),
+                cWsp,
+                zeroOrMore(cat(List.of(
+                        hide(string("|")),
+                        cWsp,
+                        nt("ord")))))));
 
-    private @NotNull Pattern regexDoc(final @NotNull String patternString, final @NotNull String comment) {
-        return Pattern.compile(patternString + "(?x) #" + comment);
-    }
+        addProduction("ord", cat(List.of(
+                nt("cat"),
+                cWsp,
+                zeroOrMore(cat(List.of(
+                        hide(string("/")),
+                        cWsp,
+                        nt("cat")))))));
 
-    private @NotNull Rule makeCfgRulesRhs() {
-        final @NotNull Rule rulesRule = concatNoEpsilonMoreThan1(
-                List.of(optWhitespace,
-                        onceOrMore(nt("rule")) /// {@link #makeCfgRuleRhs}
-                ))
-                .mergeToTop();
-        return rulesRule;
-    }
+        addProduction("cat", cat(List.of(
+                nt("term"),
+                zeroOrMore(cat(List.of(cWsp, nt("term")))))));
 
-    private @NotNull Rule makeCfgCommentRhs() {
-        final @NotNull Rule rulesRule =
-                concatNoEpsilonMoreThan1(
-                        List.of(string("(*"),
-                                onceOrMore(alt(
-                                        regex("(?s)(?:(?!\\(\\*|\\*\\)).)*(?x) # Comment text"),
-                                        nt("comment") /// {@link #makeCfgCommentRhs}
-                                )),
-                                string("*)")))
-                        .mergeToTop();
-        return rulesRule;
-    }
+        addProduction("term", altUnsafe(List.of(
+                nt("exclude"), nt("look"), nt("neg"))).mergeToTop());
 
-    private @NotNull Rule makeCfgOptWhitespaceRhs() {
-        final @NotNull Pattern ws = regexDoc("[,\\s]*", "optional whitespace");
-        final @NotNull Rule rulesRule =
-                concatNoEpsilonMoreThan1(
-                        List.of(regex(ws),
-                                zeroOrMore(concatNoEpsilonMoreThan1(
-                                        List.of(nt("comment"), /// {@link #makeCfgCommentRhs}
-                                                regex(ws)))
-                                )));
-        return rulesRule;
-    }
+        addProduction("exclude", cat(List.of(
+                nt("factor"), cWsp, opt(cat(List.of(string("-").hideInResult(), cWsp, nt("factor")))))));
 
-    /**
-     * Recognition of {@link EpsilonTerm}.
-     *
-     * @return A {@link Rule}.
-     */
-    private @NotNull Rule makeCfgEpsilonRhs() {
-        return specialSequence(
-                "One of " + epsilonNames,
-                text -> epsilonNames.stream().filter(text::startsWith).max(Comparator.comparingInt(String::length))
-        );
-    }
+        addProduction("look", cat(List.of(string("&").hideInResult(), cWsp, nt("factor"))));
+        addProduction("neg", cat(List.of(string("!").hideInResult(), cWsp, nt("factor"))));
 
-    private @NotNull Rule makeCfgFactorRhs() {
-        final @NotNull Rule rulesRule =
-                altUnsafe(
-                        List.of(nt("string"), /// {@link #makeCfgStringRhs}
-                                nt("regexp"), /// {@link #makeCfgRegexRhs}
-                                nt("opt"), /// {@link #makeCfgOptRhs}
-                                nt("opt_query"), /// {@link #makeCfgOptQueryRhs}
-                                nt("star"), /// {@link #makeCfgZeroOrMoreStarRhs}
-                                nt("opt_rep"), /// {@link #makeCfgZeroOrMoreStdRhs}
-                                nt("plus"), /// {@link #makeCfgPlusRhs}
-                                nt("paren"), /// {@link #makeCfgParenRhs}
-                                nt("hide"), /// {@link #makeCfgHideRhs}
-                                nt("epsilon"), /// {@link #makeCfgEpsilonRhs}
-                                nt("rep"), /// ABNF feature {@link #makeCfgRepRhs}
-                                nt("abnf-range"), /// ABNF feature {@link #makeABNFValueRange}
-                                nt("eof"), /// {@link #makeEofRhs}
-                                ntNt /// {@link #makeCfgNtRhs}
-                        ))
-                        .mergeToTop();
-        return rulesRule;
-    }
+        addProduction("factor", cat(List.of(
+                nt("primary"),
+                zeroOrMore(cat(List.of(
+                        cWsp,
+                        altUnsafe(List.of(
+                                string("?"), string("*"), string("+"),
+                                regex(Pattern.compile("\\{\\d*(,\\d*)?}")))))
+                )))));
 
-    /**
-     * Recognition of {@link OnceOrMoreRule}.
-     *
-     * @return A {@link Rule}.
-     */
-    private @NotNull Rule makeCfgPlusRhs() {
-        final @NotNull Rule rulesRule =
-                concatNoEpsilonMoreThan1(
-                        List.of(factorNt, /// {@link #makeCfgFactorRhs}
-                                optWhitespace,
-                                string("+").hideInResult()));
-        return rulesRule;
-    }
+//        addProduction("opt_query", cat(List.of(nt("primary"), cWsp, string("?"))));
+//        addProduction("star", cat(List.of(nt("primary"), cWsp, string("*"))));
+//        addProduction("plus", cat(List.of(nt("primary"), cWsp, string("+"))));
+//        addProduction("rep", cat(List.of(nt("primary"), cWsp, regex(Pattern.compile("\\{\\d*(,\\d*)?}")))));
 
-    /**
-     * Recognition of dividers. For example, that is "=" in "S = ...".
-     *
-     * @return A {@link Rule}.
-     */
-    private @NotNull Rule makeCfgRuleSeparatorRhs() {
-        return altUnsafe(List.of(
-                stringCS(":="), stringCS("::="), stringCS("=/"),
-                stringCS("="), stringCS(":")));
-    }
+        addProduction("primary", altUnsafe(List.of(
+                nt("string"), nt("regexp"), nt("opt"),
+                nt("opt_rep"), nt("paren"), nt("hide"),
+                nt("epsilon"), nt("abnf-range"), //nt("eof"),
+                nt("ntOrEof"))).mergeToTop());
 
-    private @NotNull Rule makeCfgParenRhs() {
-        final @NotNull Rule rulesRule =
-                concatNoEpsilonMoreThan1(
-                        List.of(string("(").hideInResult(),
-                                optWhitespace,
-                                altOrOrdNt, /// {@link #makeCfgAltOrOrdRhs}
-                                optWhitespace,
-                                string(")").hideInResult()));
-        return rulesRule;
-    }
+        addProduction("string", altUnsafe(List.of(
+                regex(Pattern.compile("(%[is])?\\\"[^\\\"\\\\]*(?:\\\\.[^\\\"\\\\]*)*\\\"")),
+                regex(Pattern.compile("(%[is])?'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'")))));
 
-    private @NotNull Rule makeCfgHideRhs() {
-        final @NotNull Rule rulesRule =
-                concatNoEpsilonMoreThan1(
-                        List.of(buffer(string("<").hideInResult()),
-                                optWhitespace,
-                                altOrOrdNt, /// {@link #makeCfgAltOrOrdRhs}
-                                optWhitespace,
-                                buffer(string(">").hideInResult())));
-        return rulesRule;
-    }
+        addProduction("regexp", altUnsafe(List.of(
+                regex(Pattern.compile("#'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'")),
+                regex(Pattern.compile("#\\\"[^\\\"\\\\]*(?:\\\\.[^\\\"\\\\]*)*\\\"")))));
 
+        addProduction("opt", cat(List.of(
+                string("[").hideInResult(), cWsp, nt("alt"), cWsp, string("]").hideInResult())));
 
-    /**
-     * Recognition of {@link StringTerm}.
-     *
-     * @return A {@link Rule}.
-     */
-    private @NotNull Rule makeCfgStringRhs() {
-        final @NotNull String doubleQuoteStringPrefixed =
-                "(%[is])?\\\"[^\\\"\\\\]*(?:\\\\.[^\\\"\\\\]*)*\\\"";
-        final @NotNull String singleQuoteStringPrefixed =
-                "(%[is])?'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'";
+        addProduction("opt_rep", cat(List.of(
+                string("{").hideInResult(), cWsp, nt("alt"), cWsp, string("}").hideInResult())));
 
-        final @NotNull Pattern doubleQuotedString = regexDoc(
-                doubleQuoteStringPrefixed, "Prefixed double-quoted string");
-        var doubleQuoteStringRegexRule = regex(doubleQuotedString);
+        addProduction("paren", cat(List.of(
+                string("(").hideInResult(), cWsp, nt("alt"), cWsp, string(")").hideInResult())));
 
-        final @NotNull Pattern singleQuotedString = regexDoc(
-                singleQuoteStringPrefixed, "Prefixed single-quoted string");
+        addProduction("hide", cat(List.of(
+                string("<").hideInResult(), cWsp, nt("alt"), cWsp, string(">").hideInResult())));
 
-        return altUnsafe(List.of(
-                doubleQuoteStringRegexRule,
-                regex(singleQuotedString)));
-    }
+        var epsTerms = List.of("Epsilon", "epsilon", "EPSILON", "eps", "ε");
+        addProduction("epsilon", specialSequence(
+                "One of " + epsTerms,
+                text -> {
+                    var longest = "";
+                    for (String epsTerm : epsTerms) {
+                        if (text.startsWith(epsTerm) && longest.length() < epsTerm.length()) {
+                            longest = epsTerm;
+                        }
+                    }
+                    if (longest.isEmpty()) return Optional.empty();
+                    return Optional.of(longest);
+                }
+        ));
 
-    /**
-     * Recognition of {@link RegexTerm}.
-     *
-     * @return A {@link Rule}.
-     */
-    private @NotNull Rule makeCfgRegexRhs() {
-        final @NotNull Pattern singleQuotedRegex =
-                regexDoc("#'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'", "Single-quoted regexp");
-        final @NotNull Pattern doubleQuotedRegex =
-                regexDoc("#\\\"[^\\\"\\\\]*(?:\\\\.[^\\\"\\\\]*)*\\\"", "Double-quoted regexp");
-        final @NotNull Rule rulesRule =
-                altUnsafe(
-                        List.of(regex(singleQuotedRegex),
-                                regex(doubleQuotedRegex)));
-        return rulesRule;
-    }
+        addProduction("abnf-range", regex(Pattern.compile(
+                "%b[01]+(\\-[01]+)?|%d[0-9]+(\\-[0-9]+)?|%x[0-9a-fA-F]+(\\-[0-9a-fA-F]+)?")));
 
-    private @NotNull Rule makeCfgRulesOrParserRhs() {
-        final @NotNull Rule rulesRule =
-                altUnsafe(
-                        List.of(nt("rules"), /// {@link #makeCfgRulesRhs}
-                                altOrOrdNt /// {@link #makeCfgAltOrOrdRhs}
-                        ))
-                        .mergeToTop();
-        return rulesRule;
-    }
+        addProduction("eof", string(EOFTerm.text()));
 
-    /**
-     * Recognition of {@link NonTerminal}.
-     *
-     * @return A {@link Rule}.
-     */
-    private @NotNull Rule makeCfgNtRhs() {
-        final Pattern regex = Pattern.compile("[^, \\r\\t\\n<>(){}\\[\\]+*?:=|'\"#&!;./%\\-0-9][^, \\r\\t\\n<>(){}\\[\\]+*?:=|'\"#&!;./%]*");
-        //final Pattern regex = Pattern.compile("[a-zA-Z][a-zA-Z0-9_]*");
-
-        return specialSequence(
+        final Pattern regex = Pattern.compile(
+                "[^, \\r\\t\\n<>(){}\\[\\]+*?:=|'\"#&!;./%\\-0-9][^, \\r\\t\\n<>(){}\\[\\]+*?:=|'\"#&!;./%]*");
+        addProduction("ntOrEof", specialSequence(
                 "string which starts with a unicode-letter and continues with a sequence of unicode-letters or numbers",
                 text -> {
                     final @NotNull Matcher matcher = regex.matcher(text);
@@ -219,309 +138,60 @@ public final class CfgGrammar extends GrammarBuilder {
                         return Optional.empty();
                     }
                     final String matched = matcher.group();
-                    if (epsilonNames.contains(matched)) {
+                    if (epsTerms.contains(matched)) {
+                        return Optional.empty();
+                    }
+//                    if (EOFTerm.text().equals(matched)) {
+//                        return Optional.empty();
+//                    }
+                    return Optional.of(matched);
+                }));
+
+        addProduction("nt", specialSequence(
+                "string which starts with a unicode-letter and continues with a sequence of unicode-letters or numbers",
+                text -> {
+                    final @NotNull Matcher matcher = regex.matcher(text);
+                    if (!matcher.lookingAt()) {
+                        return Optional.empty();
+                    }
+                    final String matched = matcher.group();
+                    if (epsTerms.contains(matched)) {
                         return Optional.empty();
                     }
                     if (EOFTerm.text().equals(matched)) {
                         return Optional.empty();
                     }
                     return Optional.of(matched);
-                });
+                }));
+
+        addProduction("hide-nt", cat(List.of(buffer(string("<").hideInResult()),
+                cWsp,
+                nt("nt"),
+                cWsp,
+                buffer(string(">").hideInResult()))));
+
+        addProduction("cWsp", hide(onceOrMore(alt(
+                nt("comment"),
+                regex(Pattern.compile("[,\\s]*"))))));
+
+        addProduction("comment", cat(List.of(
+                string("(*"),
+                onceOrMore(alt(
+                        regex("(?s)(?:(?!\\(\\*|\\*\\)).)*(?x) # Comment text"),
+                        nt("comment")
+                )),
+                string("*)"))));
     }
 
     /**
-     * Recognition of {@link VariableRepetitionRule}.
+     * Returns the base grammar for Parsewisp.
      *
-     * @return A {@link Rule}.
-     */
-    private @NotNull Rule makeCfgRepRhs() {
-        final @NotNull Rule regDigits =
-                regex(Pattern.compile("\\{\\d*(,\\d*)?}"));
-        final @NotNull Rule rulesRule =
-                concatNoEpsilonMoreThan1(List.of(
-                        factorNt, /// {@link #makeCfgFactorRhs}
-                        optWhitespace,
-                        regDigits
-                ));
-        return rulesRule;
-    }
-
-    /**
-     * Recognition of {@link LookaheadRule}.
-     *
-     * @return A {@link Rule}.
-     */
-    private @NotNull Rule makeCfgLookRhs() {
-        final @NotNull Rule rulesRule =
-                concatNoEpsilonMoreThan1(
-                        List.of(string("&").hideInResult(),
-                                optWhitespace,
-                                factorNt /// {@link #makeCfgFactorRhs}
-                        ));
-        return rulesRule;
-    }
-
-    /**
-     * Recognition of {@link NegativeLookaheadRule}.
-     *
-     * @return A {@link Rule}.
-     */
-    private @NotNull Rule makeCfgNegRhs() {
-        final @NotNull Rule rulesRule =
-                concatNoEpsilonMoreThan1(
-                        List.of(string("!").hideInResult(),
-                                optWhitespace,
-                                factorNt /// {@link #makeCfgFactorRhs}
-                        ));
-        return rulesRule;
-    }
-
-    /**
-     * Recognition of {@link ZeroOrMoreRule} with the pattern {@code {rule}}.
-     *
-     * @return A {@link Rule}.
-     */
-    private @NotNull Rule makeCfgZeroOrMoreStdRhs() {
-        final @NotNull Rule rule =
-                concatNoEpsilonMoreThan1(
-                        List.of(string("{").hideInResult(),
-                                optWhitespace,
-                                altOrOrdNt, /// {@link #makeCfgAltOrOrdRhs}
-                                optWhitespace,
-                                string("}").hideInResult()));
-        return rule;
-    }
-
-    /**
-     * Recognition of {@link ZeroOrMoreRule} with the pattern {@code rule*}.
-     *
-     * @return A {@link Rule}.
-     */
-    private @NotNull Rule makeCfgZeroOrMoreStarRhs() {
-        final @NotNull Rule rule =
-                concatNoEpsilonMoreThan1(
-                        List.of(factorNt, /// {@link #makeCfgFactorRhs}
-                                optWhitespace,
-                                string("*").hideInResult()));
-        return rule;
-    }
-
-    /**
-     * Recognition of {@link OptionalRule} with the pattern {@code [rule]}.
-     *
-     * @return A {@link Rule}.
-     */
-    private @NotNull Rule makeCfgOptRhs() {
-        final @NotNull Rule rule =
-                concatNoEpsilonMoreThan1(
-                        List.of(string("[").hideInResult(),
-                                optWhitespace,
-                                altOrOrdNt, /// {@link #makeCfgAltOrOrdRhs}
-                                optWhitespace,
-                                string("]").hideInResult()));
-        return rule;
-    }
-
-    /**
-     * Recognition of {@link OptionalRule} with the pattern {@code rule*}.
-     *
-     * @return A {@link Rule}.
-     */
-    private @NotNull Rule makeCfgOptQueryRhs() {
-        final @NotNull Rule rule =
-                concatNoEpsilonMoreThan1(
-                        List.of(factorNt, /// {@link #makeCfgFactorRhs}
-                                optWhitespace,
-                                string("?").hideInResult()));
-        return rule;
-    }
-
-    private @NotNull Rule makeCfgAltOrOrdRhs() {
-        final @NotNull Rule rulesRule = altUnsafe(
-                List.of(nt("alt"), /// {@link #makeCfgAltRhs}
-                        nt("ord") /// {@link #makeCfgOrdRhs}
-                )).mergeToTop();
-        return rulesRule;
-    }
-
-    private @NotNull Rule makeCfgHideNtRhs() {
-        final @NotNull Rule rulesRule =
-                concatNoEpsilonMoreThan1(
-                        List.of(buffer(string("<").hideInResult()),
-                                optWhitespace,
-                                ntNt, /// {@link #makeCfgNtRhs}
-                                optWhitespace,
-                                buffer(string(">").hideInResult())));
-        return rulesRule;
-    }
-
-    private @NotNull Rule makeCfgRuleRhs() {
-        final @NotNull Rule optWs = nt("opt-whitespace"); /// {@link #makeCfgOptWhitespaceRhs}
-        final @NotNull Rule rulesRule =
-                concatNoEpsilonMoreThan1(
-                        List.of(altUnsafe(
-                                        List.of(ntNt, /// {@link #makeCfgNtRhs}
-                                                nt("hide-nt") /// {@link #makeCfgHideNtRhs}
-                                        )),
-                                optWhitespace,
-                                nt("rule-separator").hideInResult(), /// {@link #makeCfgRuleSeparatorRhs}
-                                optWhitespace,
-                                altOrOrdNt, /// {@link #makeCfgAltOrOrdRhs}
-                                altUnsafe(
-                                        List.of(optWs,
-                                                concatNoEpsilonMoreThan1(
-                                                        List.of(optWs,
-                                                                altUnsafe(
-                                                                        List.of(string(";"),
-                                                                                string("."))),
-                                                                optWs))))
-                                        .hideInResult()));
-        return rulesRule;
-    }
-
-    /**
-     * Recognition of {@link OrderedChoiceRule}.
-     *
-     * @return A {@link Rule}.
-     */
-    private @NotNull Rule makeCfgOrdRhs() {
-        final @NotNull Rule catNt = nt("cat"); /// {@link #makeCfgCatRhs}
-        final @NotNull Rule rulesRule =
-                concatNoEpsilonMoreThan1(
-                        List.of(catNt,
-                                zeroOrMore(
-                                        concatNoEpsilonMoreThan1(
-                                                List.of(optWhitespace,
-                                                        string("/").hideInResult(),
-                                                        optWhitespace,
-                                                        catNt)))));
-        return rulesRule;
-    }
-
-    /**
-     * Recognition of {@link AlternationRule}.
-     *
-     * @return A {@link Rule}.
-     */
-    private @NotNull Rule makeCfgAltRhs() {
-        final @NotNull Rule catNt = nt("cat"); /// {@link #makeCfgCatRhs}
-        final @NotNull Rule rulesRule =
-                concatNoEpsilonMoreThan1(
-                        List.of(catNt,
-                                zeroOrMore(
-                                        concatNoEpsilonMoreThan1(
-                                                List.of(optWhitespace,
-                                                        string("|").hideInResult(),
-                                                        optWhitespace,
-                                                        catNt)))));
-        return rulesRule;
-    }
-
-    /**
-     * Recognition of {@link ConcatRule}.
-     *
-     * @return A {@link Rule}.
-     */
-    private @NotNull Rule makeCfgCatRhs() {
-        final @NotNull Rule factorLookNeg = altUnsafe(List.of(
-                factorNt, /// {@link #makeCfgFactorRhs}
-                nt("look"), /// {@link #makeCfgLookRhs}
-                nt("neg"), /// {@link #makeCfgNegRhs}
-                nt("exclude") /// {@link #makeCfgExclude}
-        ));
-        final @NotNull Rule rulesRule =
-                onceOrMore(
-                        concatNoEpsilonMoreThan1(
-                                List.of(optWhitespace,
-                                        factorLookNeg,
-                                        optWhitespace)));
-        return rulesRule;
-    }
-
-    /**
-     * Recognition of {@link ExclusionRule}.
-     *
-     * @return A {@link Rule}.
-     */
-    private @NotNull Rule makeCfgExclude() {
-        final @NotNull Rule factorLookNeg =
-                factorNt; /// {@link #makeCfgFactorRhs}
-        final @NotNull Rule rulesRule =
-                concatNoEpsilonMoreThan1(
-                        List.of(factorLookNeg, optWhitespace,
-                                string("-").hideInResult(),
-                                optWhitespace,
-                                altUnsafe(List.of(factorLookNeg, nt("exclude")))));
-        return rulesRule;
-    }
-
-    /**
-     * Recognition of {@link EOFTerm}.
-     *
-     * @return A {@link Rule}.
-     */
-    private @NotNull Rule makeEofRhs() {
-        return string(EOFTerm.text());
-    }
-
-    /**
-     * Recognition of {@link ValueRangeTerm}.
-     *
-     * @return A {@link Rule}.
-     */
-    private @NotNull Rule makeABNFValueRange() {
-        final Pattern regex = regexDoc(
-                "%b[01]+(\\-[01]+)?|%d[0-9]+(\\-[0-9]+)?|%x[0-9a-fA-F]+(\\-[0-9a-fA-F]+)?",
-                "ABNF Value Range"
-        );
-        return regex(regex);
-    }
-
-    @Override
-    protected void make() {
-        addProduction("rules", makeCfgRulesRhs());
-        addProduction("comment", makeCfgCommentRhs());
-        //addProduction("inside-comment"), g.makeCfgInsideCommentRhs());
-        addProduction("opt-whitespace", makeCfgOptWhitespaceRhs());
-        addProduction("rule-separator", makeCfgRuleSeparatorRhs());
-        addProduction("rule", makeCfgRuleRhs());
-        addProduction("nt", makeCfgNtRhs());
-        addProduction("hide-nt", makeCfgHideNtRhs());
-        addProduction("paren", makeCfgParenRhs());
-        addProduction("hide", makeCfgHideRhs());
-        addProduction("cat", makeCfgCatRhs());
-        addProduction("string", makeCfgStringRhs());
-        addProduction("epsilon", makeCfgEpsilonRhs());
-        addProduction("factor", makeCfgFactorRhs());
-        addProduction("rules-or-parser", makeCfgRulesOrParserRhs());
-        addProduction("alt-or-ord", makeCfgAltOrOrdRhs());
-        addProduction("alt", makeCfgAltRhs());
-        addProduction("ord", makeCfgOrdRhs()); // PEG extension.
-        addProduction("rep", makeCfgRepRhs()); // ABNF
-        addProduction("regexp", makeCfgRegexRhs());
-        addProduction("opt", makeCfgOptRhs());
-        addProduction("opt_query", makeCfgOptQueryRhs());
-        addProduction("star", makeCfgZeroOrMoreStarRhs());
-        addProduction("opt_rep", makeCfgZeroOrMoreStdRhs());
-        addProduction("plus", makeCfgPlusRhs());
-        addProduction("look", makeCfgLookRhs());
-        addProduction("neg", makeCfgNegRhs());
-        addProduction("abnf-range", makeABNFValueRange()); // ABNF
-        addProduction("exclude", makeCfgExclude());
-        addProduction("eof", makeEofRhs());
-    }
-
-    /**
-     * Returns the grammar, which is constructed based on the options provided.
-     * The grammar can match EBNF grammars, ABNF grammars, or (almost) any mix thereof.
-     * For more comprehensive documentation of each option, see {@link ParserCreationOptions}.
-     *
-     * @param options The options.
-     * @return The grammar.
+     * @param ignoredOptions The options.
+     * @return The base grammar for Parsewisp.
      * @since 0.9.7
      */
     @NotNull
-    public static Grammar makeCfg(final @NotNull ParserCreationOptions options) {
-        return new CfgGrammar(options).build();
+    public static Grammar makeCfg(final @NotNull ParserCreationOptions ignoredOptions) {
+        return new CfgGrammar().build();
     }
 }
