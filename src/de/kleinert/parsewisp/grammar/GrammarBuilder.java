@@ -463,7 +463,7 @@ public abstract class GrammarBuilder {
      * @return A {@link ConcatRule}.
      * @since 0.9.7
      */
-    protected @NotNull ConcatRule concatNoEpsilonMoreThan1(
+    protected @NotNull ConcatRule catUnsafe(
             final @NotNull List<Rule> rules) {
         return ConcatRule.createDirect(rules);
     }
@@ -485,7 +485,6 @@ public abstract class GrammarBuilder {
             final @NotNull Rule rule, final @NotNull Rule... rules) {
         final @NotNull List<@NotNull Rule> result = Stream
                 .concat(Stream.of(rule), Arrays.stream(rules))
-                .distinct()
                 .toList();
         return alt(result);
     }

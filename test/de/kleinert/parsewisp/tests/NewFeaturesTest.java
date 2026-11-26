@@ -25,12 +25,7 @@ class NewFeaturesTest {
 //        Parsewisp.parser("S = 'a'{2}");
 //        Parsewisp.parser("S = 'a'{2,}");
 //        Parsewisp.parser("S = 'a'{,2}");
-        var p = Parsewisp.parser("""
-                S = AB*
-                AB = A B
-                A = 'a'+
-                B = 'b'+
-                """);
+        var p = Parsewisp.parser(CfgGrammar.makeCfg());
         System.out.println(p.show());
     }
 

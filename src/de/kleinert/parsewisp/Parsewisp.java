@@ -41,7 +41,7 @@ public final class Parsewisp {
      */
     public static @NotNull Parser parser(final @NotNull String grammar,
                                          final @NotNull ParserCreationOptions options) {
-        var grammarForParsingGrammars = CfgGrammar.makeCfg(options);
+        var grammarForParsingGrammars = CfgGrammar.makeCfg();
         var g = Cfg.make(options).buildGrammar(grammar, grammarForParsingGrammars);
         return parser(g, options);
     }

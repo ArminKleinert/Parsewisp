@@ -524,7 +524,7 @@ public interface GrammarPrinter {
      * @since 0.9.7
      */
     default @NotNull String transformerToString(final @NotNull TransformRule rule) {
-        return ruleToString(rule);
+        return ruleToString(rule.getRule());
     }
 
     /**
