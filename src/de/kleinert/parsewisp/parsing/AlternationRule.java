@@ -68,11 +68,7 @@ public final class AlternationRule extends RuleWithManyChildren {
         var compressedRules = new ArrayList<Rule>();
 
         for (@NotNull Rule rule : rules) {
-            if (!uniques.add(rule)) {
-                // continue;
-            } else if (rule instanceof AlternationRule cc && !cc.isHiddenInResult() && cc.red.equals(defaultReductionType)) {
-                compressedRules.addAll(cc.getRules());
-            } else {
+            if (uniques.add(rule)) {
                 compressedRules.add(rule);
             }
         }

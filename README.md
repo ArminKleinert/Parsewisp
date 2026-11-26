@@ -1,4 +1,4 @@
-# Parsewisp 0.9.7
+# Parsewisp 0.9.8
 
 A tool to generate and use parsers for context-free grammars (CFGs) at runtime.
 
