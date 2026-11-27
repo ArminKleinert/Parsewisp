@@ -2,7 +2,7 @@ package de.kleinert.parsewisp.parsing;
 
 import de.kleinert.parsewisp.collections.FlatResultSeq;
 import de.kleinert.parsewisp.functions.Listener;
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -30,7 +30,7 @@ public final class TransformRule extends RuleWithChild {
     private final @NotNull BiFunction<List<Object>, Integer, List<Object>> transformer;
 
     private TransformRule(final boolean hide,
-                          final @NotNull ReductionType red,
+                          final @NotNull Reduction red,
                           final @NotNull Rule rule,
                           final @NotNull BiFunction<List<Object>, Integer, List<Object>> transformer) {
         super(hide, red, rule);
@@ -46,7 +46,7 @@ public final class TransformRule extends RuleWithChild {
      * @since 0.9.7
      */
     public static @NotNull Rule create(final @NotNull Rule rule, @NotNull BiFunction<List<Object>, Integer, List<Object>> transformer) {
-        return new TransformRule(defaultHidden, defaultReductionType, rule, transformer);
+        return new TransformRule(DEFAULT_HIDDEN, DEFAULT_REDUCTION, rule, transformer);
     }
 
     private static @NotNull FlatResultSeq frs(final List<Object> init) {
@@ -85,16 +85,16 @@ public final class TransformRule extends RuleWithChild {
 
     @Override
     public @NotNull TransformRule withRule(final @NotNull Rule rule) {
-        return new TransformRule(hide, red, rule, transformer);
+        return new TransformRule(hide, reduction, rule, transformer);
     }
 
     @Override
     public @NotNull TransformRule withHideTag(boolean hide) {
-        return isHiddenInResult() == hide ? this : new TransformRule(hide, red, rule, transformer);
+        return isHiddenInResult() == hide ? this : new TransformRule(hide, reduction, rule, transformer);
     }
 
     @Override
-    public @NotNull TransformRule withReduction(@NotNull ReductionType red) {
+    public @NotNull TransformRule withReduction(@NotNull Reduction red) {
         return getReduction() == red ? this : new TransformRule(hide, red, rule, transformer);
     }
 

@@ -6,7 +6,7 @@ import de.kleinert.parsewisp.parsing.ConcatRule;
 import de.kleinert.parsewisp.parsing.EOFTerm;
 import de.kleinert.parsewisp.parsing.NonTerminal;
 import de.kleinert.parsewisp.parsing.StringTerm;
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import de.kleinert.parsewisp.testutil.Gr;
 import de.kleinert.parsewisp.testutil.PT;
 import org.junit.jupiter.api.Assertions;
@@ -102,7 +102,7 @@ class EOFTermTest {
         // Default.
         Assertions.assertEquals(
                 EOFTerm.getDefault(),
-                EOFTerm.getDefault().withReduction(ReductionType.initial()));
+                EOFTerm.getDefault().withReduction(Reduction.initial()));
 
         // Default: Don't merge up
         var pDefault = Parsewisp.parser(
@@ -118,7 +118,7 @@ class EOFTermTest {
         var pMerge = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", EOFTerm.getDefault().withReduction(ReductionType.merging())));
+                        "A", EOFTerm.getDefault().withReduction(Reduction.merging())));
         Assertions.assertEquals(PT.create("S"), pMerge.parse(""));
     }
 
@@ -127,14 +127,14 @@ class EOFTermTest {
         // Add to parse tree with potentially different name (Top-level)
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
-                        "S", EOFTerm.getDefault().withReduction(ReductionType.taggedTree(Sym.sym("B")))));
+                        "S", EOFTerm.getDefault().withReduction(Reduction.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("B"), pMerge2.parse(""));
 
         // Add to parse tree with potentially different name (Nested)
         var pMerge3 = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", EOFTerm.getDefault().withReduction(ReductionType.taggedTree(Sym.sym("B")))));
+                        "A", EOFTerm.getDefault().withReduction(Reduction.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("S", PT.create("B")), pMerge3.parse(""));
     }
 
@@ -145,7 +145,7 @@ class EOFTermTest {
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", ConcatRule.create(List.of(
-                                EOFTerm.getDefault().withReduction(ReductionType.taggedTree(Sym.sym("B"))),
+                                EOFTerm.getDefault().withReduction(Reduction.taggedTree(Sym.sym("B"))),
                                 EOFTerm.getDefault()
                         ))));
         Assertions.assertEquals(

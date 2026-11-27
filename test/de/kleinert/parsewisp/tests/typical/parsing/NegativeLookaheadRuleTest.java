@@ -3,7 +3,7 @@ package de.kleinert.parsewisp.tests.typical.parsing;
 import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.parsing.*;
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import de.kleinert.parsewisp.testutil.Gr;
 import de.kleinert.parsewisp.testutil.PT;
 import org.junit.jupiter.api.Assertions;
@@ -122,7 +122,7 @@ class NegativeLookaheadRuleTest {
         var r = (NegativeLookaheadRule) NegativeLookaheadRule
                 .create(i)
                 .withHideTag(true)
-                .withReduction(ReductionType.taggedTree(Sym.sym("A")));
+                .withReduction(Reduction.taggedTree(Sym.sym("A")));
 
         // As expected.
         Assertions.assertEquals(i, r.getRule());
@@ -197,7 +197,7 @@ class NegativeLookaheadRuleTest {
         // Default.
         Assertions.assertEquals(
                 r,
-                r.withReduction(ReductionType.initial()));
+                r.withReduction(Reduction.initial()));
 
         // Default: Don't merge up
         var pDefault = Parsewisp.parser(
@@ -217,7 +217,7 @@ class NegativeLookaheadRuleTest {
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", NegativeLookaheadRule.create(StringTerm.create("b", false))
-                                .withReduction(ReductionType.merging())
+                                .withReduction(Reduction.merging())
                 ));
         Assertions.assertEquals(PT.create("S"), pMerge.parse(""));
     }
@@ -228,7 +228,7 @@ class NegativeLookaheadRuleTest {
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NegativeLookaheadRule.create(StringTerm.create("b", false))
-                                .withReduction(ReductionType.taggedTree(Sym.sym("B")))
+                                .withReduction(Reduction.taggedTree(Sym.sym("B")))
                 ));
         Assertions.assertEquals(PT.create("B"), pMerge2.parse(""));
 
@@ -237,7 +237,7 @@ class NegativeLookaheadRuleTest {
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", NegativeLookaheadRule.create(StringTerm.create("b", false))
-                                .withReduction(ReductionType.taggedTree(Sym.sym("B")))
+                                .withReduction(Reduction.taggedTree(Sym.sym("B")))
                 ));
         Assertions.assertEquals(PT.create("S", PT.create("B")), pMerge3.parse(""));
     }
@@ -251,7 +251,7 @@ class NegativeLookaheadRuleTest {
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", ConcatRule.create(List.of(
-                                r.withReduction(ReductionType.taggedTree(Sym.sym("B"))),
+                                r.withReduction(Reduction.taggedTree(Sym.sym("B"))),
                                 RegexTerm.create(Pattern.compile("[a-z]"))
                         ))));
         Assertions.assertEquals(

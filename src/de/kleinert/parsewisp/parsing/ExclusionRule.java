@@ -2,7 +2,7 @@ package de.kleinert.parsewisp.parsing;
 
 import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.grammar.Grammar;
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +40,7 @@ public final class ExclusionRule extends RuleWithManyChildren {
     // 4: Concatenation of string or regex terminals
     private final int mode;
 
-    private ExclusionRule(final boolean hide, final @NotNull ReductionType red,
+    private ExclusionRule(final boolean hide, final @NotNull Reduction red,
                           final @NotNull Rule expected,
                           final @NotNull Rule excluded) {
         super(hide, red, List.of(expected, excluded));
@@ -82,7 +82,7 @@ public final class ExclusionRule extends RuleWithManyChildren {
                                        final @NotNull Rule ruleExcluded) {
         if (Objects.equals(ruleExpected, ruleExcluded))
             return EpsilonTerm.getDefault();
-        return new ExclusionRule(defaultHidden, defaultReductionType, ruleExpected, ruleExcluded);
+        return new ExclusionRule(DEFAULT_HIDDEN, DEFAULT_REDUCTION, ruleExpected, ruleExcluded);
     }
 
     @Override
@@ -199,7 +199,7 @@ public final class ExclusionRule extends RuleWithManyChildren {
             tempG.put(
                     startSymbol,
                     ConcatRule.create(List.of(excluded, EOFTerm.getDefault())));
-            ReductionType.applyStandardReductionToProductions(tempG);
+            Reduction.applyStandardReductionToProductions(tempG);
 
             grammar = new Grammar(startSymbol, tempG);
 
@@ -234,7 +234,7 @@ public final class ExclusionRule extends RuleWithManyChildren {
     }
 
     @Override
-    public @NotNull ExclusionRule withReduction(final @NotNull ReductionType red) {
+    public @NotNull ExclusionRule withReduction(final @NotNull Reduction red) {
         return getReduction() == red ? this : new ExclusionRule(isHiddenInResult(), red, expected, excluded);
     }
 

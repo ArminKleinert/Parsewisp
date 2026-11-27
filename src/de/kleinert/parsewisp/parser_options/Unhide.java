@@ -3,7 +3,7 @@ package de.kleinert.parsewisp.parser_options;
 import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.grammar.Grammar;
 import de.kleinert.parsewisp.parsing.Rule;
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
@@ -66,7 +66,7 @@ public class Unhide {
         final @NotNull LinkedHashMap<Sym, Rule> res = new LinkedHashMap<>();
         for (final @NotNull var symRuleEntry : grammar.entrySet()) {
             final @NotNull var key = symRuleEntry.getKey();
-            final @NotNull var reduction = ReductionType.taggedTree(key);
+            final @NotNull var reduction = Reduction.taggedTree(key);
             final @NotNull var pUnhide = symRuleEntry.getValue().withReduction(reduction);
             res.put(key, pUnhide);
         }
@@ -85,7 +85,7 @@ public class Unhide {
         final @NotNull LinkedHashMap<Sym, Rule> res = new LinkedHashMap<>();
         for (final @NotNull var symRuleEntry : grammar.entrySet()) {
             final @NotNull var key = symRuleEntry.getKey();
-            final @NotNull var reduction = ReductionType.taggedTree(key);
+            final @NotNull var reduction = Reduction.taggedTree(key);
             final @NotNull var p = symRuleEntry.getValue().includeInResult().withReduction(reduction);
             res.put(key, p);
         }

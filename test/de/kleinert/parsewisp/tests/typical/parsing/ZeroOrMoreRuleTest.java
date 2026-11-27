@@ -3,7 +3,7 @@ package de.kleinert.parsewisp.tests.typical.parsing;
 import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.parsing.*;
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import de.kleinert.parsewisp.testutil.Gr;
 import de.kleinert.parsewisp.testutil.PT;
 import org.junit.jupiter.api.Assertions;
@@ -119,7 +119,7 @@ class ZeroOrMoreRuleTest {
         var r = (ZeroOrMoreRule) ZeroOrMoreRule
                 .create(i)
                 .withHideTag(true)
-                .withReduction(ReductionType.taggedTree(Sym.sym("A")));
+                .withReduction(Reduction.taggedTree(Sym.sym("A")));
 
         // As expected.
         Assertions.assertEquals(i, r.getRule());
@@ -182,7 +182,7 @@ class ZeroOrMoreRuleTest {
         // Default.
         Assertions.assertEquals(
                 rep_a(),
-                rep_a().withReduction(ReductionType.initial()));
+                rep_a().withReduction(Reduction.initial()));
 
         // Default: Don't merge up
         var pDefault = Parsewisp.parser(
@@ -199,7 +199,7 @@ class ZeroOrMoreRuleTest {
         var pMerge = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", rep_a().withReduction(ReductionType.merging())));
+                        "A", rep_a().withReduction(Reduction.merging())));
         Assertions.assertEquals(PT.create("S"), pMerge.parse(""));
         Assertions.assertEquals(PT.create("S", "a"), pMerge.parse("a"));
     }
@@ -209,7 +209,7 @@ class ZeroOrMoreRuleTest {
         // Add to parse tree with potentially different name (Top-level)
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
-                        "S", rep_a().withReduction(ReductionType.taggedTree(Sym.sym("B")))));
+                        "S", rep_a().withReduction(Reduction.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("B"), pMerge2.parse(""));
         Assertions.assertEquals(PT.create("B", "a"), pMerge2.parse("a"));
 
@@ -217,7 +217,7 @@ class ZeroOrMoreRuleTest {
         var pMerge3 = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", rep_a().withReduction(ReductionType.taggedTree(Sym.sym("B")))));
+                        "A", rep_a().withReduction(Reduction.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("S", PT.create("B")), pMerge3.parse(""));
         Assertions.assertEquals(PT.create("S", PT.create("B", "a")), pMerge3.parse("a"));
     }
@@ -229,7 +229,7 @@ class ZeroOrMoreRuleTest {
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", ConcatRule.create(List.of(
-                                rep_a().withReduction(ReductionType.taggedTree(Sym.sym("B"))),
+                                rep_a().withReduction(Reduction.taggedTree(Sym.sym("B"))),
                                 OptionalRule.create(StringTerm.create("b", false))
                         ))));
         Assertions.assertEquals(

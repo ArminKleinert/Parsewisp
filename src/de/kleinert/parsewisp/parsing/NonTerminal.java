@@ -1,7 +1,7 @@
 package de.kleinert.parsewisp.parsing;
 
 import de.kleinert.parsewisp.Sym;
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +16,7 @@ public final class NonTerminal extends SimpleRule {
     private final @NotNull Sym keyword;
 
     private NonTerminal(final boolean hide,
-                        final @NotNull ReductionType red,
+                        final @NotNull Reduction red,
                         final @NotNull Sym keyword) {
         super(hide, red);
         this.keyword = keyword;
@@ -30,7 +30,7 @@ public final class NonTerminal extends SimpleRule {
      * @since 0.9.7
      */
     public static @NotNull NonTerminal create(final @NotNull Sym keyword) {
-        return new NonTerminal(defaultHidden, defaultReductionType, keyword);
+        return new NonTerminal(DEFAULT_HIDDEN, DEFAULT_REDUCTION, keyword);
     }
 
     /**
@@ -66,11 +66,11 @@ public final class NonTerminal extends SimpleRule {
 
     @Override
     public @NotNull NonTerminal withHideTag(final boolean hide) {
-        return isHiddenInResult() == hide ? this : new NonTerminal(hide, red, keyword);
+        return isHiddenInResult() == hide ? this : new NonTerminal(hide, reduction, keyword);
     }
 
     @Override
-    public @NotNull NonTerminal withReduction(final @NotNull ReductionType red) {
+    public @NotNull NonTerminal withReduction(final @NotNull Reduction red) {
         return getReduction() == red ? this : new NonTerminal(hide, red, keyword);
     }
 
@@ -78,11 +78,11 @@ public final class NonTerminal extends SimpleRule {
     public boolean equals(Object o) {
         if (!(o instanceof NonTerminal that)) return false;
         if (this == that) return true;
-        return hide == that.hide && Objects.equals(red, that.red) && Objects.equals(keyword, that.keyword);
+        return hide == that.hide && Objects.equals(reduction, that.reduction) && Objects.equals(keyword, that.keyword);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(hide, red, keyword);
+        return Objects.hash(hide, reduction, keyword);
     }
 }

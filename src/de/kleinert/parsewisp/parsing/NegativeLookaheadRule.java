@@ -1,6 +1,6 @@
 package de.kleinert.parsewisp.parsing;
 
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import org.jetbrains.annotations.NotNull;
 
 import de.kleinert.parsewisp.trampoline.ListenerKey;
@@ -14,7 +14,7 @@ import de.kleinert.parsewisp.trampoline.ListenerKey;
  */
 public final class NegativeLookaheadRule extends RuleWithChild {
     private NegativeLookaheadRule(final boolean hide,
-                                  final @NotNull ReductionType red,
+                                  final @NotNull Reduction red,
                                   final @NotNull Rule rule) {
         super(hide, red, rule);
     }
@@ -27,7 +27,7 @@ public final class NegativeLookaheadRule extends RuleWithChild {
      * @since 0.9.7
      */
     public static @NotNull Rule create(final @NotNull Rule rule) {
-        return new NegativeLookaheadRule(defaultHidden, defaultReductionType, rule);
+        return new NegativeLookaheadRule(DEFAULT_HIDDEN, DEFAULT_REDUCTION, rule);
     }
 
     private boolean resultExists_Q(
@@ -68,16 +68,16 @@ public final class NegativeLookaheadRule extends RuleWithChild {
 
     @Override
     public @NotNull NegativeLookaheadRule withRule(final @NotNull Rule rule) {
-        return new NegativeLookaheadRule(hide, red, rule);
+        return new NegativeLookaheadRule(hide, reduction, rule);
     }
 
     @Override
     public @NotNull NegativeLookaheadRule withHideTag(boolean hide) {
-        return isHiddenInResult() == hide ? this : new NegativeLookaheadRule(hide, red, rule);
+        return isHiddenInResult() == hide ? this : new NegativeLookaheadRule(hide, reduction, rule);
     }
 
     @Override
-    public @NotNull NegativeLookaheadRule withReduction(@NotNull ReductionType red) {
+    public @NotNull NegativeLookaheadRule withReduction(@NotNull Reduction red) {
         return getReduction() == red ? this : new NegativeLookaheadRule(hide, red, rule);
     }
 }

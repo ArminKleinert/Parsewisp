@@ -1,6 +1,6 @@
 package de.kleinert.parsewisp.parsing;
 
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +21,7 @@ public final class OrderedChoiceRule extends RuleWithManyChildren {
     private final @NotNull Rule rule1;
     private final @NotNull Rule rule2;
 
-    private OrderedChoiceRule(final boolean hide, final @NotNull ReductionType red,
+    private OrderedChoiceRule(final boolean hide, final @NotNull Reduction red,
                               final @NotNull Rule rule1,
                               final @NotNull Rule rule2) {
         super(hide, red, List.of(rule1, rule2));
@@ -31,13 +31,13 @@ public final class OrderedChoiceRule extends RuleWithManyChildren {
 
     private OrderedChoiceRule(final @NotNull List<Rule> rules,
                               final boolean hide,
-                              final @NotNull ReductionType red) {
+                              final @NotNull Reduction red) {
         this(hide, red, setupParsers(rules).rule1, setupParsers(rules).rule2);
     }
 
     private OrderedChoiceRule(final @NotNull Rule rule1,
                               final @NotNull Rule rule2) {
-        this(defaultHidden, ReductionType.initial(), rule1, rule2);
+        this(DEFAULT_HIDDEN, Reduction.initial(), rule1, rule2);
     }
 
     private static @NotNull OrderedChoiceRule setupParsers(
@@ -70,7 +70,7 @@ public final class OrderedChoiceRule extends RuleWithManyChildren {
         var setup = setupParsers(distinctRules);
 
         return new OrderedChoiceRule(
-                defaultHidden, defaultReductionType,
+                DEFAULT_HIDDEN, DEFAULT_REDUCTION,
                 setup.rule1, setup.rule2);
     }
 
@@ -100,7 +100,7 @@ public final class OrderedChoiceRule extends RuleWithManyChildren {
     }
 
     @Override
-    public @NotNull OrderedChoiceRule withReduction(final @NotNull ReductionType red) {
+    public @NotNull OrderedChoiceRule withReduction(final @NotNull Reduction red) {
         return getReduction() == red ? this : new OrderedChoiceRule(isHiddenInResult(), red, rule1, rule2);
     }
 

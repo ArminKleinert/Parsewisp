@@ -1,7 +1,7 @@
 package de.kleinert.parsewisp.parsing;
 
 import de.kleinert.parsewisp.collections.FlatResultSeq;
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class ZeroOrMoreRule extends RuleWithChild {
     private ZeroOrMoreRule(final boolean hide,
-                           final @NotNull ReductionType red,
+                           final @NotNull Reduction red,
                            final @NotNull Rule rule) {
         super(hide, red, rule);
     }
@@ -28,7 +28,7 @@ public final class ZeroOrMoreRule extends RuleWithChild {
     public static @NotNull Rule create(final @NotNull Rule rule) {
         if (rule instanceof EpsilonTerm)
             return rule;
-        return new ZeroOrMoreRule(defaultHidden, defaultReductionType, rule);
+        return new ZeroOrMoreRule(DEFAULT_HIDDEN, DEFAULT_REDUCTION, rule);
     }
 
     @Override
@@ -55,16 +55,16 @@ public final class ZeroOrMoreRule extends RuleWithChild {
 
     @Override
     public @NotNull ZeroOrMoreRule withRule(final @NotNull Rule rule) {
-        return new ZeroOrMoreRule(hide, red, rule);
+        return new ZeroOrMoreRule(hide, reduction, rule);
     }
 
     @Override
     public @NotNull ZeroOrMoreRule withHideTag(boolean hide) {
-        return isHiddenInResult() == hide ? this : new ZeroOrMoreRule(hide, red, rule);
+        return isHiddenInResult() == hide ? this : new ZeroOrMoreRule(hide, reduction, rule);
     }
 
     @Override
-    public @NotNull ZeroOrMoreRule withReduction(@NotNull ReductionType red) {
+    public @NotNull ZeroOrMoreRule withReduction(@NotNull Reduction red) {
         return getReduction() == red ? this : new ZeroOrMoreRule(hide, red, rule);
     }
 }

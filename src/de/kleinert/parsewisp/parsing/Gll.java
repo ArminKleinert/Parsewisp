@@ -7,7 +7,7 @@ import de.kleinert.parsewisp.parser.Parser;
 import de.kleinert.parsewisp.parser_options.ParsingOptions;
 import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.functions.*;
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import de.kleinert.parsewisp.result.*;
 import de.kleinert.parsewisp.result.success.ParseMessage;
 import de.kleinert.parsewisp.result.failure.*;
@@ -201,7 +201,7 @@ public final class Gll {
         if (rule.isHiddenInResult()) {
             result = result.reset();
         }
-        if (rule.getReduction().getReductionType() != ReductionType.Type.INITIAL) {
+        if (rule.getReduction().getType() != Reduction.RedType.INITIAL) {
             final ParseTree tree = ParseTree.create(
                     rule.getReduction().getKey(), result.getResult(),
                     nodeKey.index(), result.index());

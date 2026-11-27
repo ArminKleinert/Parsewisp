@@ -45,16 +45,12 @@ import java.util.Objects;
  *
  * @since 0.9.7
  */
-public final class ReductionType {
-    private static ReductionType mergeReduction = null;
-    private static ReductionType initialReduction = null;
-
+public final class Reduction {
     /**
      * The default output format for results that are to be merged into a parent tree. It has the following properties:
      * <ul>
      *     <li>The NULL_TAG (see {@link ParseTree#NULL_TAG}) as its tag.</li>
-     *     <li>The type is {@link Type#MERGE}.</li>
-     *     <li>{@link ReductionType#isHiddenOrRaw} returns true.</li>
+     *     <li>The type is {@link RedType#MERGE}.</li>
      * </ul>
      *
      * <pre>
@@ -70,19 +66,15 @@ public final class ReductionType {
      * @return Default output format for intermediate operations.
      * @since 0.9.7
      */
-    public static @NotNull ReductionType merging() {
-        if (mergeReduction == null)
-            mergeReduction =
-                    new ReductionType(ParseTree.NULL_TAG.content(), Type.MERGE, true);
-        return mergeReduction;
+    public static @NotNull Reduction merging() {
+        return new Reduction(ParseTree.NULL_TAG.content(), RedType.MERGE);
     }
 
     /**
      * Default output format for new instances of {@link Rule}. It has the following properties:
      * <ul>
      *     <li>The NULL_TAG (see {@link ParseTree#NULL_TAG}) as its tag.</li>
-     *     <li>The type is {@link Type#INITIAL}.</li>
-     *     <li>{@link ReductionType#isHiddenOrRaw} returns true.</li>
+     *     <li>The type is {@link RedType#INITIAL}.</li>
      * </ul>
      *
      * <pre>
@@ -98,11 +90,8 @@ public final class ReductionType {
      * @return Default output format for new instances of {@link Rule}.
      * @since 0.9.7
      */
-    public static @NotNull ReductionType initial() {
-        if (initialReduction == null)
-            initialReduction =
-                    new ReductionType(ParseTree.NULL_TAG.content(), Type.INITIAL, true);
-        return initialReduction;
+    public static @NotNull Reduction initial() {
+        return new Reduction(ParseTree.NULL_TAG.content(), RedType.INITIAL);
     }
 
     /**
@@ -123,8 +112,8 @@ public final class ReductionType {
      * @return A new output descriptor.
      * @since 0.9.7
      */
-    public static @NotNull ReductionType taggedTree(final @NotNull Sym key) {
-        return new ReductionType(key, Type.TAGGED_PARSE_TREE, false);
+    public static @NotNull Reduction taggedTree(final @NotNull Sym key) {
+        return new Reduction(key, RedType.TAGGED_PARSE_TREE);
     }
 
     /**
@@ -132,7 +121,7 @@ public final class ReductionType {
      *
      * @since 0.9.7
      */
-    public enum Type {
+    public enum RedType {
         /**
          * The default type. This should not be used directly.
          *
@@ -140,7 +129,7 @@ public final class ReductionType {
          */
         INITIAL,
         /**
-         * Has the same properties as {@link Type#INITIAL}, but will not be replaced with {@link Type#TAGGED_PARSE_TREE} when finalizing the grammar.
+         * Has the same properties as {@link RedType#INITIAL}, but will not be replaced with {@link RedType#TAGGED_PARSE_TREE} when finalizing the grammar.
          *
          * @since 0.9.7
          */
@@ -154,25 +143,23 @@ public final class ReductionType {
     }
 
     private final @NotNull Sym key;
-    private final @NotNull ReductionType.Type type;
-    private final boolean hiddenOrRaw;
+    private final @NotNull Reduction.RedType type;
 
-    private ReductionType(final @NotNull Sym key, final @NotNull ReductionType.Type type, final boolean hiddenOrRaw) {
+    private Reduction(final @NotNull Sym key, final @NotNull Reduction.RedType type) {
         this.key = key;
         this.type = type;
-        this.hiddenOrRaw = hiddenOrRaw;
     }
 
     @Override
     public boolean equals(final Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        final @NotNull ReductionType that = (ReductionType) o;
+        final @NotNull Reduction that = (Reduction) o;
         return Objects.equals(key, that.key);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(key, type, hiddenOrRaw);
+        return Objects.hash(key, type);
     }
 
     /**
@@ -186,12 +173,12 @@ public final class ReductionType {
     }
 
     /**
-     * The {@link Type} type of this reduction.
+     * The {@link RedType} type of this reduction.
      *
-     * @return The {@link Type} type of this reduction.
+     * @return The {@link RedType} type of this reduction.
      * @since 0.9.7
      */
-    public @NotNull ReductionType.Type getReductionType() {
+    public @NotNull Reduction.RedType getType() {
         return type;
     }
 
@@ -204,17 +191,7 @@ public final class ReductionType {
     }
 
     /**
-     * If true, the intermediate result will be hidden in the final output tree.
-     *
-     * @return If true, the intermediate result will be hidden in the final output tree.
-     * @since 0.9.7
-     */
-    public boolean isHiddenOrRaw() {
-        return hiddenOrRaw;
-    }
-
-    /**
-     * Replaces all rules that have the reduction type {@link Type#INITIAL} (the default when created) with rules with the reduction type {@link Type#TAGGED_PARSE_TREE}.
+     * Replaces all rules that have the reduction type {@link RedType#INITIAL} (the default when created) with rules with the reduction type {@link RedType#TAGGED_PARSE_TREE}.
      *
      * @param productions The productions as a mapping of symbols to rules.
      * @since 0.9.7
@@ -224,8 +201,8 @@ public final class ReductionType {
         for (final @NotNull var prod : productions.entrySet()) {
             final @NotNull var key = prod.getKey();
             @NotNull var value = prod.getValue();
-            if (value.getReduction().getReductionType() == Type.INITIAL) {
-                value = value.withReduction(ReductionType.taggedTree(key));
+            if (value.getReduction().getType() == RedType.INITIAL) {
+                value = value.withReduction(Reduction.taggedTree(key));
             }
             prod.setValue(value);
         }

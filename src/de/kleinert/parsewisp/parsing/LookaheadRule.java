@@ -1,6 +1,6 @@
 package de.kleinert.parsewisp.parsing;
 
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class LookaheadRule extends RuleWithChild {
     private LookaheadRule(final boolean hide,
-                          final @NotNull ReductionType red,
+                          final @NotNull Reduction red,
                           final @NotNull Rule rule) {
         super(hide, red, rule);
     }
@@ -25,7 +25,7 @@ public final class LookaheadRule extends RuleWithChild {
     public static @NotNull Rule create(final @NotNull Rule rule) {
         if (rule instanceof EpsilonTerm)
             return rule;
-        return new LookaheadRule(defaultHidden, defaultReductionType, rule);
+        return new LookaheadRule(DEFAULT_HIDDEN, DEFAULT_REDUCTION, rule);
     }
 
     @Override
@@ -49,16 +49,16 @@ public final class LookaheadRule extends RuleWithChild {
 
     @Override
     public @NotNull LookaheadRule withHideTag(final boolean hide) {
-        return isHiddenInResult() == hide ? this : new LookaheadRule(hide, red, rule);
+        return isHiddenInResult() == hide ? this : new LookaheadRule(hide, reduction, rule);
     }
 
     @Override
-    public @NotNull LookaheadRule withReduction(final @NotNull ReductionType red) {
+    public @NotNull LookaheadRule withReduction(final @NotNull Reduction red) {
         return getReduction() == red ? this : new LookaheadRule(hide, red, rule);
     }
 
     @Override
     public @NotNull LookaheadRule withRule(final @NotNull Rule rule) {
-        return new LookaheadRule(hide, red, rule);
+        return new LookaheadRule(hide, reduction, rule);
     }
 }

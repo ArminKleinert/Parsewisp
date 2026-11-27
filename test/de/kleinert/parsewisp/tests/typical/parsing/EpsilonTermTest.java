@@ -3,7 +3,7 @@ package de.kleinert.parsewisp.tests.typical.parsing;
 import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.parsing.*;
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import de.kleinert.parsewisp.testutil.Gr;
 import de.kleinert.parsewisp.testutil.PT;
 import org.junit.jupiter.api.Assertions;
@@ -99,7 +99,7 @@ class EpsilonTermTest {
         // Default.
         Assertions.assertEquals(
                 EpsilonTerm.getDefault(),
-                EpsilonTerm.getDefault().withReduction(ReductionType.initial()));
+                EpsilonTerm.getDefault().withReduction(Reduction.initial()));
 
         // Default: Don't merge up
         var pDefault = Parsewisp.parser(
@@ -115,7 +115,7 @@ class EpsilonTermTest {
         var pMerge = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", EpsilonTerm.getDefault().withReduction(ReductionType.merging())));
+                        "A", EpsilonTerm.getDefault().withReduction(Reduction.merging())));
         Assertions.assertEquals(PT.create("S"), pMerge.parse(""));
     }
 
@@ -124,14 +124,14 @@ class EpsilonTermTest {
         // Add to parse tree with potentially different name (Top-level)
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
-                        "S", EpsilonTerm.getDefault().withReduction(ReductionType.taggedTree(Sym.sym("B")))));
+                        "S", EpsilonTerm.getDefault().withReduction(Reduction.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("B"), pMerge2.parse(""));
 
         // Add to parse tree with potentially different name (Nested)
         var pMerge3 = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", EpsilonTerm.getDefault().withReduction(ReductionType.taggedTree(Sym.sym("B")))));
+                        "A", EpsilonTerm.getDefault().withReduction(Reduction.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("S", PT.create("B")), pMerge3.parse(""));
     }
 
@@ -142,7 +142,7 @@ class EpsilonTermTest {
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", ConcatRule.create(List.of(
-                                EpsilonTerm.getDefault().withReduction(ReductionType.taggedTree(Sym.sym("B"))),
+                                EpsilonTerm.getDefault().withReduction(Reduction.taggedTree(Sym.sym("B"))),
                                 EpsilonTerm.getDefault()
                         ))));
         Assertions.assertEquals(

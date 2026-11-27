@@ -1,10 +1,10 @@
 package de.kleinert.parsewisp.parsing;
 
+import de.kleinert.parsewisp.reduction.Reduction;
 import de.kleinert.parsewisp.trampoline.ListenerKey;
 
 import de.kleinert.parsewisp.collections.FlatResultSeq;
 import de.kleinert.parsewisp.grammar.GrammarPrinter;
-import de.kleinert.parsewisp.reduction.ReductionType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -19,14 +19,14 @@ public abstract sealed class Rule
      *
      * @since 0.9.7
      */
-    protected static final boolean defaultHidden = false;
+    protected static final boolean DEFAULT_HIDDEN = false;
 
     /**
      * Default value for {@link Rule#getReduction()}.
      *
      * @since 0.9.7
      */
-    protected static final ReductionType defaultReductionType = ReductionType.initial();
+    protected static final Reduction DEFAULT_REDUCTION = Reduction.initial();
 
     /**
      * Whether to hide the rule in the output.
@@ -36,22 +36,22 @@ public abstract sealed class Rule
     protected final boolean hide;
 
     /**
-     * See {@link ReductionType}.
+     * See {@link Reduction}.
      *
      * @since 0.9.7
      */
-    protected final @NotNull ReductionType red;
+    protected final @NotNull Reduction reduction;
 
     /**
      * The constructor. Do not call directly unless you are maintaining this library.
      *
      * @param hide The hide option.
-     * @param red  The reduction type for this rule.
+     * @param reduction  The reduction type for this rule.
      * @since 0.9.7
      */
-    protected Rule(final boolean hide, final @NotNull ReductionType red) {
+    protected Rule(final boolean hide, final @NotNull Reduction reduction) {
         this.hide = hide;
-        this.red = red;
+        this.reduction = reduction;
     }
 
     /**
@@ -92,7 +92,7 @@ public abstract sealed class Rule
      * @return An instance of the same class with the reduction type set to the parameter.
      * @since 0.9.7
      */
-    public abstract @NotNull Rule withReduction(final @NotNull ReductionType red);
+    public abstract @NotNull Rule withReduction(final @NotNull Reduction red);
 
     /**
      * Check whether the content is hidden in the output.
@@ -110,8 +110,8 @@ public abstract sealed class Rule
      * @return The current reduction type.
      * @since 0.9.7
      */
-    public @NotNull ReductionType getReduction() {
-        return red;
+    public @NotNull Reduction getReduction() {
+        return reduction;
     }
 
     /**
@@ -144,7 +144,7 @@ public abstract sealed class Rule
      * @since 0.9.7
      */
     public @NotNull Rule mergeToTop() {
-        return withReduction(ReductionType.merging());
+        return withReduction(Reduction.merging());
     }
 
     // Force children to override this.

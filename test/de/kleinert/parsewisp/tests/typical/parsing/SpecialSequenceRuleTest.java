@@ -6,7 +6,7 @@ import de.kleinert.parsewisp.parsing.ConcatRule;
 import de.kleinert.parsewisp.parsing.NonTerminal;
 import de.kleinert.parsewisp.parsing.SpecialSequenceRule;
 import de.kleinert.parsewisp.parsing.StringTerm;
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import de.kleinert.parsewisp.testutil.Gr;
 import de.kleinert.parsewisp.testutil.PT;
 import org.junit.jupiter.api.Assertions;
@@ -136,7 +136,7 @@ class SpecialSequenceRuleTest {
         // Default.
         Assertions.assertEquals(
                 simpleRuleForTests(),
-                simpleRuleForTests().withReduction(ReductionType.initial()));
+                simpleRuleForTests().withReduction(Reduction.initial()));
 
         // Default: Don't merge up
         var pDefault = Parsewisp.parser(
@@ -152,7 +152,7 @@ class SpecialSequenceRuleTest {
         var pMerge = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", simple_a().withReduction(ReductionType.merging())));
+                        "A", simple_a().withReduction(Reduction.merging())));
         Assertions.assertEquals(PT.create("S", "a"), pMerge.parse("a"));
     }
 
@@ -161,14 +161,14 @@ class SpecialSequenceRuleTest {
         // Add to parse tree with potentially different name (Top-level)
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
-                        "S", simple_a().withReduction(ReductionType.taggedTree(Sym.sym("B")))));
+                        "S", simple_a().withReduction(Reduction.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("B", "a"), pMerge2.parse("a"));
 
         // Add to parse tree with potentially different name (Nested)
         var pMerge3 = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", simple_a().withReduction(ReductionType.taggedTree(Sym.sym("B")))));
+                        "A", simple_a().withReduction(Reduction.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("S", PT.create("B", "a")), pMerge3.parse("a"));
     }
 
@@ -179,7 +179,7 @@ class SpecialSequenceRuleTest {
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", ConcatRule.create(List.of(
-                                simple_a().withReduction(ReductionType.taggedTree(Sym.sym("B"))),
+                                simple_a().withReduction(Reduction.taggedTree(Sym.sym("B"))),
                                 StringTerm.createDirect("b", false)
                         ))));
         Assertions.assertEquals(

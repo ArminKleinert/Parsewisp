@@ -1,6 +1,6 @@
 package de.kleinert.parsewisp.parsing;
 
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -15,7 +15,7 @@ public final class ValueRangeTerm extends Terminal {
     private final int hi;
 
     private ValueRangeTerm(final boolean hide,
-                           final @NotNull ReductionType red,
+                           final @NotNull Reduction red,
                            final int lo, final int hi) {
         super(hide, red);
         if (lo > hi || lo < 0 || hi > 0x10FFFF)
@@ -35,7 +35,7 @@ public final class ValueRangeTerm extends Terminal {
      * @since 0.9.7
      */
     public static @NotNull Rule create(final int lo, final int hi) {
-        return new ValueRangeTerm(defaultHidden, defaultReductionType, lo, hi);
+        return new ValueRangeTerm(DEFAULT_HIDDEN, DEFAULT_REDUCTION, lo, hi);
     }
 
     @Override
@@ -88,11 +88,11 @@ public final class ValueRangeTerm extends Terminal {
 
     @Override
     public @NotNull ValueRangeTerm withHideTag(final boolean hide) {
-        return isHiddenInResult() == hide ? this : new ValueRangeTerm(hide, red, lo, hi);
+        return isHiddenInResult() == hide ? this : new ValueRangeTerm(hide, reduction, lo, hi);
     }
 
     @Override
-    public @NotNull ValueRangeTerm withReduction(final @NotNull ReductionType red) {
+    public @NotNull ValueRangeTerm withReduction(final @NotNull Reduction red) {
         return getReduction() == red ? this : new ValueRangeTerm(hide, red, lo, hi);
     }
 
@@ -101,13 +101,13 @@ public final class ValueRangeTerm extends Terminal {
         if (!(o instanceof ValueRangeTerm that)) return false;
         if (this == that) return true;
         return hide == that.hide
-                && Objects.equals(red, that.red)
+                && Objects.equals(reduction, that.reduction)
                 && lo == that.lo
                 && hi == that.hi;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(hide, red, lo, hi);
+        return Objects.hash(hide, reduction, lo, hi);
     }
 }

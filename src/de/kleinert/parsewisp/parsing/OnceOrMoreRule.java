@@ -1,10 +1,10 @@
 package de.kleinert.parsewisp.parsing;
 
+import de.kleinert.parsewisp.reduction.Reduction;
 import de.kleinert.parsewisp.trampoline.ListenerKey;
 
 import de.kleinert.parsewisp.collections.FlatResultSeq;
 import de.kleinert.parsewisp.functions.Listener;
-import de.kleinert.parsewisp.reduction.ReductionType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class OnceOrMoreRule extends RuleWithChild {
     private OnceOrMoreRule(final boolean hide,
-                           final @NotNull ReductionType red,
+                           final @NotNull Reduction red,
                            final @NotNull Rule rule) {
         super(hide, red, rule);
     }
@@ -29,7 +29,7 @@ public final class OnceOrMoreRule extends RuleWithChild {
     public static @NotNull Rule create(final @NotNull Rule rule) {
         if (rule instanceof EpsilonTerm)
             return rule;
-        return new OnceOrMoreRule(defaultHidden, defaultReductionType, rule);
+        return new OnceOrMoreRule(DEFAULT_HIDDEN, DEFAULT_REDUCTION, rule);
     }
 
     @Override
@@ -103,16 +103,16 @@ public final class OnceOrMoreRule extends RuleWithChild {
 
     @Override
     public @NotNull OnceOrMoreRule withRule(final @NotNull Rule rule) {
-        return new OnceOrMoreRule(hide, red, rule);
+        return new OnceOrMoreRule(hide, reduction, rule);
     }
 
     @Override
     public @NotNull OnceOrMoreRule withHideTag(boolean hide) {
-        return isHiddenInResult() == hide ? this : new OnceOrMoreRule(hide, red, rule);
+        return isHiddenInResult() == hide ? this : new OnceOrMoreRule(hide, reduction, rule);
     }
 
     @Override
-    public @NotNull OnceOrMoreRule withReduction(@NotNull ReductionType red) {
+    public @NotNull OnceOrMoreRule withReduction(@NotNull Reduction red) {
         return getReduction() == red ? this : new OnceOrMoreRule(hide, red, rule);
     }
 }

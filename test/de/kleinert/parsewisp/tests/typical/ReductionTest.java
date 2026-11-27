@@ -2,21 +2,18 @@ package de.kleinert.parsewisp.tests.typical;
 
 import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.Sym;
-import de.kleinert.parsewisp.grammar.Grammar;
 import de.kleinert.parsewisp.parsing.ConcatRule;
 import de.kleinert.parsewisp.parsing.NonTerminal;
-import de.kleinert.parsewisp.parsing.Rule;
 import de.kleinert.parsewisp.parsing.StringTerm;
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import de.kleinert.parsewisp.testutil.Gr;
 import de.kleinert.parsewisp.testutil.PT;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 
-class ReductionTypeTest {
+class ReductionTest {
 
     @Test
     void standardIntermediateReduction() {
@@ -25,7 +22,7 @@ class ReductionTypeTest {
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", StringTerm.createDirect("a", false)
-                                .withReduction(ReductionType.merging())));
+                                .withReduction(Reduction.merging())));
         Assertions.assertEquals(PT.create("S", "a"), pMerge.parse("a"));
     }
 
@@ -43,7 +40,7 @@ class ReductionTypeTest {
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", StringTerm.createDirect("a", false)
-                                .withReduction(ReductionType.initial())));
+                                .withReduction(Reduction.initial())));
         Assertions.assertEquals(PT.create("S", PT.create("A", "a")), pMerge.parse("a"));
     }
 
@@ -53,7 +50,7 @@ class ReductionTypeTest {
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", StringTerm.createDirect("a", false)
-                                .withReduction(ReductionType.taggedTree(Sym.sym("B")))));
+                                .withReduction(Reduction.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("B", "a"), pMerge2.parse("a"));
 
         // Add to parse tree with potentially different name (Nested)
@@ -61,7 +58,7 @@ class ReductionTypeTest {
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", StringTerm.createDirect("a", false)
-                                .withReduction(ReductionType.taggedTree(Sym.sym("B")))));
+                                .withReduction(Reduction.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("S", PT.create("B", "a")), pMerge3.parse("a"));
 
         // Create a parse tree which wouldn't be obvious from the grammar.
@@ -70,7 +67,7 @@ class ReductionTypeTest {
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", ConcatRule.create(List.of(
                                 StringTerm.createDirect("a", false)
-                                        .withReduction(ReductionType.taggedTree(Sym.sym("B"))),
+                                        .withReduction(Reduction.taggedTree(Sym.sym("B"))),
                                 StringTerm.createDirect("b", false)
                         ))));
         Assertions.assertEquals(

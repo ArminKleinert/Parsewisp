@@ -1,6 +1,6 @@
 package de.kleinert.parsewisp.parsing;
 
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class OptionalRule extends RuleWithChild {
     private OptionalRule(final boolean hide,
-                         final @NotNull ReductionType red,
+                         final @NotNull Reduction red,
                          final @NotNull Rule rule) {
         super(hide, red, rule);
     }
@@ -26,7 +26,7 @@ public final class OptionalRule extends RuleWithChild {
     public static @NotNull Rule create(final @NotNull Rule rule) {
         if (rule instanceof EpsilonTerm)
             return rule;
-        return new OptionalRule(defaultHidden, defaultReductionType, rule);
+        return new OptionalRule(DEFAULT_HIDDEN, DEFAULT_REDUCTION, rule);
     }
 
     @Override
@@ -52,16 +52,16 @@ public final class OptionalRule extends RuleWithChild {
 
     @Override
     public @NotNull OptionalRule withRule(final @NotNull Rule rule) {
-        return new OptionalRule(hide, red, rule);
+        return new OptionalRule(hide, reduction, rule);
     }
 
     @Override
     public @NotNull OptionalRule withHideTag(boolean hide) {
-        return isHiddenInResult() == hide ? this : new OptionalRule(hide, red, rule);
+        return isHiddenInResult() == hide ? this : new OptionalRule(hide, reduction, rule);
     }
 
     @Override
-    public @NotNull OptionalRule withReduction(@NotNull ReductionType red) {
+    public @NotNull OptionalRule withReduction(@NotNull Reduction red) {
         return getReduction() == red ? this : new OptionalRule(hide, red, rule);
     }
 }

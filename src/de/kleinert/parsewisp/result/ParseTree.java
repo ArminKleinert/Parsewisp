@@ -140,13 +140,10 @@ public final class ParseTree implements List<@NotNull Node>, ParseResult {
             afs = List.of();
         } else if (content instanceof FlatResultSeq) {
             afs = ((FlatResultSeq) content).stream().map(Node::of).toList();
-        } else if (content instanceof String) {
-            afs = List.of(Node.of(content));
-        } else if (content instanceof TotalParsesFailureNode) {
-            afs = List.of(Node.of(content));
-        } else if (content instanceof ParseFailureNode) {
-            afs = List.of(Node.of(content));
-        } else if (content instanceof ParseTree) {
+        } else if (content instanceof String
+                || content instanceof TotalParsesFailureNode
+                || content instanceof ParseFailureNode
+                || content instanceof ParseTree) {
             afs = List.of(Node.of(content));
         } else if (content instanceof List<?>) {
             afs = ((List<?>) content).stream().map(Node::of).toList();

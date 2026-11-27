@@ -1,6 +1,6 @@
 package de.kleinert.parsewisp.parsing;
 
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -13,7 +13,7 @@ import java.util.Objects;
  * @since 0.9.7
  */
 public final class EOFTerm extends Terminal {
-    private EOFTerm(final boolean hide, final @NotNull ReductionType red) {
+    private EOFTerm(final boolean hide, final @NotNull Reduction red) {
         super(hide, red);
     }
 
@@ -34,7 +34,7 @@ public final class EOFTerm extends Terminal {
      * @since 0.9.7
      */
     public static @NotNull EOFTerm getDefault() {
-        return new EOFTerm(defaultHidden, defaultReductionType);
+        return new EOFTerm(DEFAULT_HIDDEN, DEFAULT_REDUCTION);
     }
 
     @Override
@@ -52,11 +52,11 @@ public final class EOFTerm extends Terminal {
 
     @Override
     public @NotNull EOFTerm withHideTag(final boolean hide) {
-        return isHiddenInResult() == hide ? this : new EOFTerm(hide, red);
+        return isHiddenInResult() == hide ? this : new EOFTerm(hide, reduction);
     }
 
     @Override
-    public @NotNull EOFTerm withReduction(final @NotNull ReductionType red) {
+    public @NotNull EOFTerm withReduction(final @NotNull Reduction red) {
         return getReduction() == red ? this : new EOFTerm(hide, red);
     }
 
@@ -64,11 +64,11 @@ public final class EOFTerm extends Terminal {
     public boolean equals(Object o) {
         if (!(o instanceof EOFTerm that)) return false;
         if (this == that) return true;
-        return hide == that.hide && Objects.equals(red, that.red);
+        return hide == that.hide && Objects.equals(reduction, that.reduction);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(hide, red);
+        return Objects.hash(hide, reduction);
     }
 }

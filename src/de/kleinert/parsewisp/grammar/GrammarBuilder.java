@@ -6,7 +6,7 @@ import de.kleinert.parsewisp.parser.Parser;
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
 import de.kleinert.parsewisp.parser_options.RedefinitionOption;
 import de.kleinert.parsewisp.parsing.*;
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -131,7 +131,7 @@ public abstract class GrammarBuilder {
 
         //compress(resultProductions);
 
-        ReductionType.applyStandardReductionToProductions(resultProductions);
+        Reduction.applyStandardReductionToProductions(resultProductions);
         if (wsParser != null) {
             autoWhitespace(resultProductions, start, wsParser.grammar(), wsParser.startProduction());
         }
@@ -705,11 +705,12 @@ public abstract class GrammarBuilder {
             final @NotNull List<Rule> rules = new ArrayList<>();
             rules.add(whitespaceRule);
             final @NotNull Rule result;
-            if (!originalRule.getReduction().isHiddenOrRaw()) {
+            if (originalRule.getReduction().getType() != Reduction.RedType.INITIAL
+             || originalRule.getReduction().getType() != Reduction.RedType.MERGE) {
                 // Hide the terminal in the output.
                 // It still appears in the tree, but is flattened into the concatenation.
                 rules.add(originalRule.withReduction(
-                        ReductionType.merging()));
+                        Reduction.merging()));
                 result = cat(rules).withReduction(originalRule.getReduction());
             } else {
                 rules.add(originalRule);
@@ -739,7 +740,7 @@ public abstract class GrammarBuilder {
 
         final @NotNull Rule startWithoutReduction = (
                 finalGrammar.get(start)
-                        .withReduction(ReductionType.initial()));
+                        .withReduction(Reduction.initial()));
         final @NotNull Rule newStartComb =
                 cat(List.of(startWithoutReduction, wsRule))
                         .withReduction(finalGrammar.get(start).getReduction());

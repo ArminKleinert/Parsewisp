@@ -1,6 +1,6 @@
 package de.kleinert.parsewisp.parsing;
 
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -16,7 +16,7 @@ import java.util.Objects;
 public final class EpsilonTerm extends Terminal {
     //private static final @NotNull EpsilonTerm epsilon = new EpsilonTerm(defaultHidden, defaultReductionType);
 
-    private EpsilonTerm(final boolean hide, final @NotNull ReductionType red) {
+    private EpsilonTerm(final boolean hide, final @NotNull Reduction red) {
         super(hide, red);
     }
 
@@ -28,7 +28,7 @@ public final class EpsilonTerm extends Terminal {
      */
     public static @NotNull EpsilonTerm getDefault() {
         //return epsilon;
-        return new EpsilonTerm(defaultHidden, defaultReductionType);
+        return new EpsilonTerm(DEFAULT_HIDDEN, DEFAULT_REDUCTION);
     }
 
     @Override
@@ -46,11 +46,11 @@ public final class EpsilonTerm extends Terminal {
 
     @Override
     public @NotNull EpsilonTerm withHideTag(final boolean hide) {
-        return isHiddenInResult() == hide ? this : new EpsilonTerm(hide, red);
+        return isHiddenInResult() == hide ? this : new EpsilonTerm(hide, reduction);
     }
 
     @Override
-    public @NotNull EpsilonTerm withReduction(final @NotNull ReductionType red) {
+    public @NotNull EpsilonTerm withReduction(final @NotNull Reduction red) {
         return getReduction() == red ? this : new EpsilonTerm(hide, red);
     }
 
@@ -58,11 +58,11 @@ public final class EpsilonTerm extends Terminal {
     public boolean equals(Object o) {
         if (!(o instanceof EpsilonTerm that)) return false;
         if (this == that) return true;
-        return hide == that.hide && Objects.equals(red, that.red);
+        return hide == that.hide && Objects.equals(reduction, that.reduction);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(hide, red);
+        return Objects.hash(hide, reduction);
     }
 }

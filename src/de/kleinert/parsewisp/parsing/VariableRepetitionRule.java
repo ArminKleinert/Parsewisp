@@ -1,9 +1,9 @@
 package de.kleinert.parsewisp.parsing;
 
+import de.kleinert.parsewisp.reduction.Reduction;
 import de.kleinert.parsewisp.trampoline.ListenerKey;
 import de.kleinert.parsewisp.collections.FlatResultSeq;
 import de.kleinert.parsewisp.functions.Listener;
-import de.kleinert.parsewisp.reduction.ReductionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +26,7 @@ public final class VariableRepetitionRule extends RuleWithChild {
     private final int max;
 
     private VariableRepetitionRule(final boolean hide,
-                                   final @NotNull ReductionType red,
+                                   final @NotNull Reduction red,
                                    final @NotNull Rule rule,
                                    final int min, final int max) {
         super(hide, red, rule);
@@ -60,7 +60,7 @@ public final class VariableRepetitionRule extends RuleWithChild {
                     ((long) rc.getMax()) * max);
             return VariableRepetitionRule.create(rc.getRule(), newMin, newMax);
         }
-        return new VariableRepetitionRule(defaultHidden, defaultReductionType, rule, min, max);
+        return new VariableRepetitionRule(DEFAULT_HIDDEN, DEFAULT_REDUCTION, rule, min, max);
     }
 
     @Override
@@ -175,16 +175,16 @@ public final class VariableRepetitionRule extends RuleWithChild {
 
     @Override
     public @NotNull VariableRepetitionRule withRule(final @NotNull Rule rule) {
-        return new VariableRepetitionRule(hide, red, rule, min, max);
+        return new VariableRepetitionRule(hide, reduction, rule, min, max);
     }
 
     @Override
     public @NotNull VariableRepetitionRule withHideTag(boolean hide) {
-        return isHiddenInResult() == hide ? this : new VariableRepetitionRule(hide, red, rule, min, max);
+        return isHiddenInResult() == hide ? this : new VariableRepetitionRule(hide, reduction, rule, min, max);
     }
 
     @Override
-    public @NotNull VariableRepetitionRule withReduction(@NotNull ReductionType red) {
+    public @NotNull VariableRepetitionRule withReduction(@NotNull Reduction red) {
         return getReduction() == red ? this : new VariableRepetitionRule(hide, red, rule, min, max);
     }
 
@@ -193,7 +193,7 @@ public final class VariableRepetitionRule extends RuleWithChild {
         if (!(o instanceof VariableRepetitionRule that)) return false;
         if (this == that) return true;
         return hide == that.hide
-                && Objects.equals(red, that.red)
+                && Objects.equals(reduction, that.reduction)
                 && Objects.equals(rule, that.rule)
                 && Objects.equals(min, that.min)
                 && Objects.equals(max, that.max);
@@ -201,6 +201,6 @@ public final class VariableRepetitionRule extends RuleWithChild {
 
     @Override
     public int hashCode() {
-        return min * 31 + max * 31 + Objects.hash(hide, red, rule);
+        return min * 31 + max * 31 + Objects.hash(hide, reduction, rule);
     }
 }

@@ -1,7 +1,6 @@
 package de.kleinert.parsewisp.parsing;
 
-import de.kleinert.parsewisp.reduction.ReductionType;
-
+import de.kleinert.parsewisp.reduction.Reduction;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -17,7 +16,7 @@ public final class StringTerm extends Terminal {
     private final boolean caseInsensitive;
 
     private StringTerm(final boolean hide,
-                       final @NotNull ReductionType red,
+                       final @NotNull Reduction red,
                        final @NotNull String string,
                        final boolean caseInsensitive) {
         super(hide, red);
@@ -38,7 +37,7 @@ public final class StringTerm extends Terminal {
         if (string.isEmpty()) {
             return EpsilonTerm.getDefault();
         }
-        return new StringTerm(defaultHidden, defaultReductionType, string, caseInsensitive);
+        return new StringTerm(DEFAULT_HIDDEN, DEFAULT_REDUCTION, string, caseInsensitive);
     }
 
     /**
@@ -51,7 +50,7 @@ public final class StringTerm extends Terminal {
      * @since 0.9.7
      */
     public static @NotNull StringTerm createDirect(final @NotNull String string, final boolean caseInsensitive) {
-        return new StringTerm(defaultHidden, defaultReductionType, string, caseInsensitive);
+        return new StringTerm(DEFAULT_HIDDEN, DEFAULT_REDUCTION, string, caseInsensitive);
     }
 
     @Override
@@ -103,11 +102,11 @@ public final class StringTerm extends Terminal {
 
     @Override
     public @NotNull StringTerm withHideTag(final boolean hide) {
-        return isHiddenInResult() == hide ? this : new StringTerm(hide, red, string, caseInsensitive);
+        return isHiddenInResult() == hide ? this : new StringTerm(hide, reduction, string, caseInsensitive);
     }
 
     @Override
-    public @NotNull StringTerm withReduction(final @NotNull ReductionType red) {
+    public @NotNull StringTerm withReduction(final @NotNull Reduction red) {
         return getReduction() == red ? this : new StringTerm(hide, red, string, caseInsensitive);
     }
 
@@ -116,13 +115,13 @@ public final class StringTerm extends Terminal {
         if (!(o instanceof StringTerm that)) return false;
         if (this == that) return true;
         return hide == that.hide
-                && Objects.equals(red, that.red)
+                && Objects.equals(reduction, that.reduction)
                 && Objects.equals(string, that.getString())
                 && (string.isEmpty() || caseInsensitive == that.caseInsensitive);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(hide, red, string, caseInsensitive);
+        return Objects.hash(hide, reduction, string, caseInsensitive);
     }
 }

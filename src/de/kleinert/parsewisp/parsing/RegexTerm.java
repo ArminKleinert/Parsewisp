@@ -1,7 +1,7 @@
 package de.kleinert.parsewisp.parsing;
 
 import de.kleinert.parsewisp.parser_options.ParsingOptions;
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,7 +25,7 @@ public final class RegexTerm extends Terminal {
     private final @NotNull Pattern regexp;
 
     private RegexTerm(final boolean hide,
-                      final @NotNull ReductionType red,
+                      final @NotNull Reduction red,
                       final @NotNull Pattern regexp) {
         super(hide, red);
         this.regexp = regexp;
@@ -42,7 +42,7 @@ public final class RegexTerm extends Terminal {
         var s = regexp.pattern();
         if (regexp.flags() == 0 && s.chars().allMatch(Character::isLetterOrDigit))
             return StringTerm.createDirect(s, false);
-        return new RegexTerm(defaultHidden, defaultReductionType, regexp);
+        return new RegexTerm(DEFAULT_HIDDEN, DEFAULT_REDUCTION, regexp);
     }
 
     private @Nullable String reMatchAtFront(final @NotNull CharSequence text) {
@@ -124,11 +124,11 @@ public final class RegexTerm extends Terminal {
 
     @Override
     public @NotNull RegexTerm withHideTag(final boolean hide) {
-        return isHiddenInResult() == hide ? this : new RegexTerm(hide, red, regexp);
+        return isHiddenInResult() == hide ? this : new RegexTerm(hide, reduction, regexp);
     }
 
     @Override
-    public @NotNull RegexTerm withReduction(final @NotNull ReductionType red) {
+    public @NotNull RegexTerm withReduction(final @NotNull Reduction red) {
         return getReduction() == red ? this : new RegexTerm(hide, red, regexp);
     }
 
@@ -137,12 +137,12 @@ public final class RegexTerm extends Terminal {
         if (!(o instanceof RegexTerm that)) return false;
         if (this == that) return true;
         return hide == that.hide
-                && Objects.equals(red, that.red)
+                && Objects.equals(reduction, that.reduction)
                 && Objects.equals(regexp.pattern(), that.getRegexp().pattern());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(hide, red, regexp.pattern());
+        return Objects.hash(hide, reduction, regexp.pattern());
     }
 }

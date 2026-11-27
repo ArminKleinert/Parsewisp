@@ -1,6 +1,6 @@
 package de.kleinert.parsewisp.parsing;
 
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -20,7 +20,7 @@ public final class SpecialSequenceRule extends SimpleRule {
     private final @NotNull Function<@NotNull String, Optional<String>> function;
 
     private SpecialSequenceRule(final boolean hide,
-                                final @NotNull ReductionType red,
+                                final @NotNull Reduction red,
                                 final @NotNull String description,
                                 final @NotNull Function<@NotNull String, Optional<String>> function) {
         super(hide, red);
@@ -58,7 +58,7 @@ public final class SpecialSequenceRule extends SimpleRule {
      */
     public static @NotNull Rule create(final @NotNull String description,
                                        final @NotNull Function<@NotNull String, Optional<String>> function) {
-        return new SpecialSequenceRule(defaultHidden, defaultReductionType, description, function);
+        return new SpecialSequenceRule(DEFAULT_HIDDEN, DEFAULT_REDUCTION, description, function);
     }
 
     @Override
@@ -89,11 +89,11 @@ public final class SpecialSequenceRule extends SimpleRule {
 
     @Override
     public @NotNull SpecialSequenceRule withHideTag(final boolean hide) {
-        return isHiddenInResult() == hide ? this : new SpecialSequenceRule(hide, red, description, function);
+        return isHiddenInResult() == hide ? this : new SpecialSequenceRule(hide, reduction, description, function);
     }
 
     @Override
-    public @NotNull SpecialSequenceRule withReduction(final @NotNull ReductionType red) {
+    public @NotNull SpecialSequenceRule withReduction(final @NotNull Reduction red) {
         return getReduction() == red ? this : new SpecialSequenceRule(hide, red, description, function);
     }
 
@@ -102,13 +102,13 @@ public final class SpecialSequenceRule extends SimpleRule {
         if (!(o instanceof SpecialSequenceRule that)) return false;
         if (this == that) return true;
         return hide == that.hide
-                && Objects.equals(red, that.red)
+                && Objects.equals(reduction, that.reduction)
                 && Objects.equals(function, that.function);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(hide, red, function);
+        return Objects.hash(hide, reduction, function);
     }
 
     @Override

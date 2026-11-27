@@ -1,7 +1,7 @@
 package de.kleinert.parsewisp.parsing;
 
 import de.kleinert.parsewisp.parser_options.ParserCreationOptions;
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ import java.util.List;
  */
 public final class AlternationRule extends RuleWithManyChildren {
     private AlternationRule(final boolean hide,
-                            final @NotNull ReductionType red,
+                            final @NotNull Reduction red,
                             final @NotNull List<Rule> rules) {
         super(hide, red, rules);
     }
@@ -77,7 +77,7 @@ public final class AlternationRule extends RuleWithManyChildren {
             return rules.get(0);
 
         return new AlternationRule(
-                defaultHidden, defaultReductionType,
+                DEFAULT_HIDDEN, DEFAULT_REDUCTION,
                 Collections.unmodifiableList(compressedRules));
     }
 
@@ -92,7 +92,7 @@ public final class AlternationRule extends RuleWithManyChildren {
      */
     public static @NotNull AlternationRule altUnsafe(
             final @NotNull List<Rule> rules) {
-        return new AlternationRule(defaultHidden, defaultReductionType, rules);
+        return new AlternationRule(DEFAULT_HIDDEN, DEFAULT_REDUCTION, rules);
     }
 
     @Override
@@ -121,7 +121,7 @@ public final class AlternationRule extends RuleWithManyChildren {
     }
 
     @Override
-    public @NotNull AlternationRule withReduction(@NotNull ReductionType red) {
+    public @NotNull AlternationRule withReduction(@NotNull Reduction red) {
         return getReduction() == red ? this : new AlternationRule(isHiddenInResult(), red, getRules());
     }
 

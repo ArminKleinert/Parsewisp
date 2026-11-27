@@ -2,9 +2,8 @@ package de.kleinert.parsewisp.parsing;
 
 import de.kleinert.parsewisp.collections.FlatResultSeq;
 import de.kleinert.parsewisp.functions.Listener;
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +19,7 @@ import de.kleinert.parsewisp.trampoline.ListenerKey;
  */
 public final class ConcatRule extends RuleWithManyChildren {
     private ConcatRule(final boolean hide,
-                       final @NotNull ReductionType red,
+                       final @NotNull Reduction red,
                        final @NotNull List<Rule> parsers) {
         super(hide, red, parsers);
     }
@@ -41,7 +40,7 @@ public final class ConcatRule extends RuleWithManyChildren {
         var compressedResult = new ArrayList<Rule>();
 
         for (@NotNull Rule rule : rules) {
-            if (rule instanceof ConcatRule cc && !cc.isHiddenInResult() && cc.red.equals(defaultReductionType)) {
+            if (rule instanceof ConcatRule cc && !cc.isHiddenInResult() && cc.reduction.equals(DEFAULT_REDUCTION)) {
                 compressedResult.addAll(cc.getRules());
             } else {
                 compressedResult.add(rule);
@@ -49,7 +48,7 @@ public final class ConcatRule extends RuleWithManyChildren {
         }
 
         return new ConcatRule(
-                defaultHidden, defaultReductionType,
+                DEFAULT_HIDDEN, DEFAULT_REDUCTION,
                 Collections.unmodifiableList(compressedResult));
     }
 
@@ -63,7 +62,7 @@ public final class ConcatRule extends RuleWithManyChildren {
      */
     public static @NotNull ConcatRule createDirect(
             final @NotNull List<Rule> rules) {
-        return new ConcatRule(defaultHidden, defaultReductionType, rules);
+        return new ConcatRule(DEFAULT_HIDDEN, DEFAULT_REDUCTION, rules);
     }
 
     @Override
@@ -134,7 +133,7 @@ public final class ConcatRule extends RuleWithManyChildren {
     }
 
     @Override
-    public @NotNull Rule withReduction(@NotNull ReductionType red) {
+    public @NotNull Rule withReduction(@NotNull Reduction red) {
         return getReduction() == red ? this : new ConcatRule(isHiddenInResult(), red, getRules());
     }
 

@@ -3,7 +3,7 @@ package de.kleinert.parsewisp.tests.typical.parsing;
 import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.parsing.*;
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import de.kleinert.parsewisp.testutil.Gr;
 import de.kleinert.parsewisp.testutil.PT;
 import org.junit.jupiter.api.Assertions;
@@ -171,7 +171,7 @@ class VariableRepetitionRuleTest {
         var r = (VariableRepetitionRule) VariableRepetitionRule
                 .create(i, 1, 4)
                 .withHideTag(true)
-                .withReduction(ReductionType.taggedTree(Sym.sym("A")));
+                .withReduction(Reduction.taggedTree(Sym.sym("A")));
 
         // As expected.
         Assertions.assertEquals(i, r.getRule());
@@ -231,7 +231,7 @@ class VariableRepetitionRuleTest {
         // Default.
         Assertions.assertEquals(
                 rep_a14(),
-                rep_a14().withReduction(ReductionType.initial()));
+                rep_a14().withReduction(Reduction.initial()));
 
         // Default: Don't merge up
         var pDefault = Parsewisp.parser(
@@ -247,7 +247,7 @@ class VariableRepetitionRuleTest {
         var pMerge = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", rep_a14().withReduction(ReductionType.merging())));
+                        "A", rep_a14().withReduction(Reduction.merging())));
         Assertions.assertEquals(PT.create("S", "a"), pMerge.parse("a"));
     }
 
@@ -256,14 +256,14 @@ class VariableRepetitionRuleTest {
         // Add to parse tree with potentially different name (Top-level)
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
-                        "S", rep_a14().withReduction(ReductionType.taggedTree(Sym.sym("B")))));
+                        "S", rep_a14().withReduction(Reduction.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("B", "a"), pMerge2.parse("a"));
 
         // Add to parse tree with potentially different name (Nested)
         var pMerge3 = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", rep_a14().withReduction(ReductionType.taggedTree(Sym.sym("B")))));
+                        "A", rep_a14().withReduction(Reduction.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("S", PT.create("B", "a")), pMerge3.parse("a"));
     }
 
@@ -274,7 +274,7 @@ class VariableRepetitionRuleTest {
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", ConcatRule.create(List.of(
-                                rep_a14().withReduction(ReductionType.taggedTree(Sym.sym("B"))),
+                                rep_a14().withReduction(Reduction.taggedTree(Sym.sym("B"))),
                                 OptionalRule.create(StringTerm.create("b", false))
                         ))));
         Assertions.assertEquals(

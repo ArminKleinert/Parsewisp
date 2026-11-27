@@ -1,6 +1,6 @@
 package de.kleinert.parsewisp.parsing;
 
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -18,7 +18,7 @@ public abstract sealed class SimpleRule
      * @param red  The reduction type for this rule.
      * @since 0.9.7
      */
-    protected SimpleRule(final boolean hide, final @NotNull ReductionType red) {
+    protected SimpleRule(final boolean hide, final @NotNull Reduction red) {
         super(hide, red);
     }
 }

@@ -3,7 +3,7 @@ package de.kleinert.parsewisp.tests.typical.parsing;
 import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.parsing.*;
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import de.kleinert.parsewisp.testutil.Gr;
 import de.kleinert.parsewisp.testutil.PT;
 import org.junit.jupiter.api.Assertions;
@@ -141,16 +141,16 @@ class ConcatRuleTest {
 
     /**
      * The {@link ConcatRule#create(List)} is allowed to flatten concatenations.
-     * But it must not flatten if the sub-concatenation has been changed with {@link ConcatRule#withHideTag(boolean)} or {@link ConcatRule#withReduction(ReductionType)}.
+     * But it must not flatten if the sub-concatenation has been changed with {@link ConcatRule#withHideTag(boolean)} or {@link ConcatRule#withReduction(Reduction)}.
      */
     @Test
     void createDoesNotMergeConcatIfRedOrHidden() {
         var c1 = ConcatRule.create(List.of(string_a(), string_a()))
                 .withHideTag(true); // different hide-tag
         var c2 = ConcatRule.create(List.of(string_a(), string_a()))
-                .withReduction(ReductionType.taggedTree(Sym.sym("A"))); // reduction has changed
+                .withReduction(Reduction.taggedTree(Sym.sym("A"))); // reduction has changed
         var c3 = ConcatRule.create(List.of(string_a(), string_a()))
-                .withReduction(ReductionType.taggedTree(Sym.sym("B"))).withHideTag(true); // different reduction and hide-tag
+                .withReduction(Reduction.taggedTree(Sym.sym("B"))).withHideTag(true); // different reduction and hide-tag
 
         var cc = ConcatRule.create(List.of(c1, c2, c3));
         Assertions.assertEquals(
@@ -255,7 +255,7 @@ class ConcatRuleTest {
         var r = (ConcatRule) ConcatRule
                 .create(i)
                 .withHideTag(true)
-                .withReduction(ReductionType.taggedTree(Sym.sym("A")));
+                .withReduction(Reduction.taggedTree(Sym.sym("A")));
 
         // Expected
         Assertions.assertEquals(i, r.getRules());
@@ -321,7 +321,7 @@ class ConcatRuleTest {
         // Default.
         Assertions.assertEquals(
                 simpleRuleForTests,
-                simpleRuleForTests.withReduction(ReductionType.initial()));
+                simpleRuleForTests.withReduction(Reduction.initial()));
 
         // Default: Don't merge up
         var pDefault = Parsewisp.parser(
@@ -334,20 +334,20 @@ class ConcatRuleTest {
         var pMerge = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", simpleRuleForTests.withReduction(ReductionType.merging())));
+                        "A", simpleRuleForTests.withReduction(Reduction.merging())));
         Assertions.assertEquals(PT.create("S", "a", "a"), pMerge.parse("aa"));
 
         // Add to parse tree with potentially different name (Top-level)
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
-                        "S", simpleRuleForTests.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
+                        "S", simpleRuleForTests.withReduction(Reduction.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("B", "a", "a"), pMerge2.parse("aa"));
 
         // Add to parse tree with potentially different name (Nested)
         var pMerge3 = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", simpleRuleForTests.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
+                        "A", simpleRuleForTests.withReduction(Reduction.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("S", PT.create("B", "a", "a")), pMerge3.parse("aa"));
 
         // Add parse tree from a rule which doesn't appear in the grammar.
@@ -355,7 +355,7 @@ class ConcatRuleTest {
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", ConcatRule.create(List.of(
-                                simpleRuleForTests.withReduction(ReductionType.taggedTree(Sym.sym("B"))),
+                                simpleRuleForTests.withReduction(Reduction.taggedTree(Sym.sym("B"))),
                                 StringTerm.create("b", false)
                         ))));
         Assertions.assertEquals(

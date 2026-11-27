@@ -1,6 +1,6 @@
 package de.kleinert.parsewisp.parsing;
 
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -23,7 +23,7 @@ public sealed abstract class RuleWithChild
     protected final @NotNull Rule rule;
 
     RuleWithChild(final boolean hide,
-                  final @NotNull ReductionType red,
+                  final @NotNull Reduction red,
                   final @NotNull Rule rule) {
         super(hide, red);
         this.rule = rule;

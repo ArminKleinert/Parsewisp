@@ -3,7 +3,7 @@ package de.kleinert.parsewisp.tests.typical.parsing;
 import de.kleinert.parsewisp.Parsewisp;
 import de.kleinert.parsewisp.Sym;
 import de.kleinert.parsewisp.parsing.*;
-import de.kleinert.parsewisp.reduction.ReductionType;
+import de.kleinert.parsewisp.reduction.Reduction;
 import de.kleinert.parsewisp.testutil.Gr;
 import de.kleinert.parsewisp.testutil.PT;
 import org.jetbrains.annotations.NotNull;
@@ -149,7 +149,7 @@ class OrderedChoiceRuleTest {
         var r = (OrderedChoiceRule) OrderedChoiceRule
                 .create(i)
                 .withHideTag(true)
-                .withReduction(ReductionType.taggedTree(Sym.sym("A")));
+                .withReduction(Reduction.taggedTree(Sym.sym("A")));
 
         // As expected.
         Assertions.assertEquals(i, r.getRules());
@@ -215,7 +215,7 @@ class OrderedChoiceRuleTest {
         // Default.
         Assertions.assertEquals(
                 simpleRuleForTests,
-                simpleRuleForTests.withReduction(ReductionType.initial()));
+                simpleRuleForTests.withReduction(Reduction.initial()));
 
         // Default: Don't merge up
         var pDefault = Parsewisp.parser(
@@ -232,7 +232,7 @@ class OrderedChoiceRuleTest {
         var pMerge = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", simpleRuleForTests.withReduction(ReductionType.merging())));
+                        "A", simpleRuleForTests.withReduction(Reduction.merging())));
         Assertions.assertEquals(PT.create("S", "a"), pMerge.parse("a"));
     }
 
@@ -242,14 +242,14 @@ class OrderedChoiceRuleTest {
         // Add to parse tree with potentially different name (Top-level)
         var pMerge2 = Parsewisp.parser(
                 Gr.grammarS("S",
-                        "S", simpleRuleForTests.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
+                        "S", simpleRuleForTests.withReduction(Reduction.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("B", "a"), pMerge2.parse("a"));
 
         // Add to parse tree with potentially different name (Nested)
         var pMerge3 = Parsewisp.parser(
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
-                        "A", simpleRuleForTests.withReduction(ReductionType.taggedTree(Sym.sym("B")))));
+                        "A", simpleRuleForTests.withReduction(Reduction.taggedTree(Sym.sym("B")))));
         Assertions.assertEquals(PT.create("S", PT.create("B", "a")), pMerge3.parse("a"));
     }
 
@@ -261,7 +261,7 @@ class OrderedChoiceRuleTest {
                 Gr.grammarS("S",
                         "S", NonTerminal.create(Sym.sym("A")),
                         "A", ConcatRule.create(List.of(
-                                simpleRuleForTests.withReduction(ReductionType.taggedTree(Sym.sym("B"))),
+                                simpleRuleForTests.withReduction(Reduction.taggedTree(Sym.sym("B"))),
                                 StringTerm.create("b", false)
                         ))));
         Assertions.assertEquals(
